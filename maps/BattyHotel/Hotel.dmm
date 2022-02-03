@@ -1,0 +1,121 @@
+"a" = (/turf/simulated/floor/exoplanet/concrete,/area/space)
+"b" = (/turf/simulated/floor/carpet/purcarpet,/area/space)
+"d" = (/obj/machinery/door/airlock/multi_tile/glass,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"e" = (/obj/structure/table/woodentable,/turf/simulated/floor/tiled/steel/bar_light,/area/space)
+"h" = (/turf/simulated/wall/r_wall,/area/space)
+"m" = (/obj/effect/floor_decal/fact_plaque/med4,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"n" = (/obj/machinery/holoposter,/turf/simulated/wall,/area/space)
+"r" = (/obj/effect/floor_decal/fact_plaque/med3,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"s" = (/obj/effect/floor_decal/fact_plaque/med1,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"u" = (/turf/space,/area/space)
+"v" = (/obj/machinery/door/airlock/glass,/turf/simulated/floor/wood,/area/space)
+"x" = (/turf/simulated/floor/tiled/steel/bar_light,/area/space)
+"E" = (/obj/structure/cyberplant,/turf/simulated/floor/wood,/area/space)
+"F" = (/obj/structure/sign/faction/frozenstar,/turf/simulated/wall,/area/space)
+"I" = (/turf/simulated/floor/wood,/area/space)
+"J" = (/turf/simulated/wall,/area/space)
+"K" = (/obj/effect/window_lwall_spawn,/turf/space,/area/space)
+"L" = (/obj/effect/floor_decal/fact_plaque/rnd1,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"M" = (/obj/machinery/holoposter{pixel_x = -32},/turf/simulated/floor/wood,/area/space)
+"P" = (/obj/machinery/door/airlock/glass,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"S" = (/obj/effect/floor_decal/fact_plaque/med2,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"T" = (/obj/effect/floor_decal/fact_plaque/rnd2,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"X" = (/obj/effect/floor_decal/fact_plaque/rnd4,/turf/simulated/floor/exoplanet/concrete,/area/space)
+"Y" = (/obj/effect/floor_decal/fact_plaque/rnd3,/turf/simulated/floor/exoplanet/concrete,/area/space)
+
+(1,1,1) = {"
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaJJJJJJJJJJJJJJJJaaaaaaah
+haaaaJaaaaaaaaaaaaaaaJaaaaaaah
+haaaaaaaaaaaaaaaaaaaaJaaaaaaah
+haaaJaaaaaaaaaaaaaJJJJaaaaaaah
+haaaJaaaaaaaaaaaaaJaaaaaaaaaah
+haaaJvJvJKKKKKKKKKJaaaaaaaaaah
+haaaJIEIJxxxxxxxxxJaaaaaaaaaah
+haaaJIIIPxxxxxxxxxJaaaaaaaaaah
+haaaJIIIneeeeeeeeeJaaaaaaaaaah
+haaaJIIIEIIIIIIIIIJaaaaaaaaaah
+haaaJIbbbbbbbbbbbInaaaaaaaaaah
+haaaJIbbbbbbbbbbbIJaaaaaaaaaah
+haaaJMbbbbbbbbbbbIJaaaaaaaaaah
+haaaJIIIIIIEIIIIIIJaaaaaaaaaah
+haaaJJJFJdandaJJJJJaaaaaaaaaah
+haaaaaaaasSaLTaaaaaaaaaaaaaaah
+haaaaaaaarmaYXaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+haaaaaaaaaaaaaaaaaaaaaaaaaaaah
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+"}
+(1,1,2) = {"
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+"}
+(1,1,3) = {"
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+uuuuuuuuuuuuuuuuuuuuuuuuuuuuuu
+"}

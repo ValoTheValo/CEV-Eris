@@ -1,0 +1,89 @@
+"a" = (/turf/space,/area/space)
+"b" = (/obj/machinery/atmospherics/pipe/simple/hidden{dir = 5},/turf/simulated/floor/tiled/steel,/area/space)
+"c" = (/obj/structure/table/standard,/turf/simulated/floor/tiled/cafe,/area/space)
+"d" = (/obj/structure/bed/chair/comfy/lime{dir = 4},/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"e" = (/turf/simulated/floor/tiled/cafe,/area/space)
+"f" = (/obj/structure/table/standard,/turf/simulated/floor/tiled/steel,/area/space)
+"g" = (/obj/machinery/portable_atmospherics/canister/oxygen,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"h" = (/obj/structure/closet/wardrobe/color/pink/artist,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"i" = (/obj/structure/bed/chair{dir = 1},/turf/simulated/floor/tiled/cafe,/area/space)
+"j" = (/obj/structure/dispenser/oxygen,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"k" = (/obj/machinery/sleeper{dir = 4},/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"l" = (/turf/simulated/wall/r_wall,/area/space)
+"m" = (/obj/machinery/atmospherics/pipe/tank/air,/turf/simulated/floor/tiled/steel,/area/space)
+"n" = (/obj/structure/table/glass,/turf/simulated/floor/tiled/cafe,/area/space)
+"o" = (/obj/structure/closet/wardrobe/color/mixed,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"p" = (/obj/structure/table/rack,/obj/item/device/radio,/obj/item/device/radio,/obj/item/device/radio,/obj/item/device/radio,/obj/item/device/radio,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"q" = (/obj/structure/bed/chair{dir = 4},/turf/simulated/floor/tiled/cafe,/area/space)
+"r" = (/obj/structure/table/standard,/obj/machinery/microwave,/turf/simulated/floor/tiled/cafe,/area/space)
+"s" = (/obj/machinery/atmospherics/pipe/tank/air{dir = 8},/turf/simulated/floor/tiled/steel,/area/space)
+"t" = (/obj/machinery/suit_storage_unit/mining,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"u" = (/obj/machinery/suit_storage_unit,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"v" = (/obj/structure/bed/chair{dir = 8},/turf/simulated/floor/tiled/cafe,/area/space)
+"w" = (/obj/item/modular_computer/console/preset/civilian/professional{dir = 8},/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"A" = (/obj/structure/table/rack,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"B" = (/obj/machinery/door/airlock/gold,/turf/simulated/floor/tiled/steel,/area/space)
+"C" = (/obj/structure/table/steel_reinforced,/obj/item/reagent_containers/food/drinks/bottle/vodka,/obj/item/reagent_containers/syringe/drugs_recreational,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"D" = (/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"F" = (/obj/machinery/door/window{dir = 1},/turf/simulated/floor/tiled/steel,/area/space)
+"G" = (/obj/structure/closet/wardrobe/color/pink,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"H" = (/obj/machinery/door/airlock/gold,/obj/machinery/atmospherics/pipe/simple/hidden,/turf/simulated/floor/tiled/steel,/area/space)
+"I" = (/obj/structure/bed/chair/comfy/teal{dir = 4},/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"J" = (/obj/machinery/door/window{dir = 2},/turf/simulated/floor/tiled/steel,/area/space)
+"K" = (/obj/structure/window/plasmabasic,/turf/simulated/floor/tiled/steel,/area/space)
+"L" = (/obj/machinery/atmospherics/pipe/simple/hidden{dir = 6},/turf/simulated/floor/tiled/steel,/area/space)
+"M" = (/obj/effect/window_lwall_spawn/smartspawnplasma,/turf/space,/area/space)
+"N" = (/obj/structure/sign/atmos_waste{desc = "WARNING! Untreated solid waste. Wash hands after contact."; name = "Solid waste warning sign"; pixel_y = 32},/obj/structure/toilet,/turf/simulated/floor/tiled/steel,/area/space)
+"P" = (/turf/simulated/floor/tiled/steel,/area/space)
+"Q" = (/obj/machinery/computer/shuttle_control/explore{dir = 8},/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"R" = (/obj/structure/window/plasmabasic{dir = 1},/turf/simulated/floor/tiled/steel,/area/space)
+"S" = (/obj/machinery/atmospherics/unary/vent_pump/high_volume{dir = 1},/turf/simulated/floor/tiled/steel,/area/space)
+"T" = (/obj/item/modular_computer/console/preset/civilian/professional,/turf/simulated/floor/tiled/steel,/area/space)
+"U" = (/obj/machinery/autolathe/artist_bench,/turf/simulated/floor/tiled/steel,/area/space)
+"W" = (/obj/machinery/atmospherics/pipe/simple/hidden{dir = 9},/turf/simulated/floor/tiled/steel,/area/space)
+"X" = (/obj/structure/bed/chair,/turf/simulated/floor/carpet/gaycarpet,/area/space)
+"Y" = (/obj/machinery/atmospherics/pipe/simple/hidden{dir = 4},/turf/simulated/floor/tiled/steel,/area/space)
+"Z" = (/obj/machinery/atmospherics/unary/vent_pump/high_volume,/turf/simulated/floor/tiled/steel,/area/space)
+
+(1,1,1) = {"
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaalBBlaaaaalllllaaaaaaaaaaaaaaaaa
+aaaaaaaaalPZlllllllUffllaaaaaaaaaaaaaaaa
+aaaaaaaaalBHlmPPPPlDDDDMaaaaaaaaaaaaaaaa
+aaaaaaaaalPbYWPPPPBDDDDMaaaaaaaaaaaaaaaa
+aaaaaaaallKJMllllllllBlllMMaaaaaaaaaaaaa
+aaaaaaaaMuDDglaalPTPlDtlIQMaaaaaaaaaaaaa
+aaaaaaaaMuDDpMaaMkDDBDDBDCMaaaaaaaaaaaaa
+aaaaaaaaMuDDjlaalPPPlDDldwMaaaaaaaaaaaaa
+aaaaaaaallRFMlllllAAlBlllMMaaaaaaaaaaaaa
+aaaaaaaaalPLYYslNllllDDDlaaaaaaaaaaaaaaa
+aaaaaaaaalBHlPPlBlGohDDDlaaaaaaaaaaaaaaa
+aaaaaaaaalPSlPPPPBDDDXDDlaaaaaaaaaaaaaaa
+aaaaaaaaalBBllllllreqnvllaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaalceeielaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaalllMMMlaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+"}
