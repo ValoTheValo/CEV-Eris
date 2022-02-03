@@ -1,14 +1,9 @@
-//These are meant for spawning on maps, namely Away Missions.
-
-//If someone can do this in a neater way, be my guest-Kor
-
-//To do: Allow corpses to appear mangled, bloody, etc. Allow customizing the bodies appearance (they're all bald and white right now).
-
 /obj/landmark/corpse
-	name = "Unknown"
+	name = "Corpse Spawner"
 	icon_state = "player-black"
-	var/mobname = "Unknown"  //Unused now but it'd fuck up maps to remove it now
-	var/corpseuniform //Set this to an object path to have the slot filled with said object on the corpse.
+	var/mobname
+	var/skintone				// Needs to be a negative number
+	var/corpseuniform			// Set this to an object path to have the slot filled with said object on the corpse.
 	var/corpsesuit
 	var/corpseshoes
 	var/corpsegloves
@@ -20,10 +15,11 @@
 	var/corpsepocket1
 	var/corpsepocket2
 	var/corpseback
-	var/corpseid = 0     //Just set to 1 if you want them to have an ID
-	var/corpseidjob // Needs to be in quotes, such as "Clown" or "Chef." This just determines what the ID reads as, not their access
-	var/corpseidaccess //This is for access. See access.dm for which jobs give what access. Again, put in quotes. Use "Captain" if you want it to be all access.
+	var/corpseid = 0    		// Just set to 1 if you want them to have an ID
+	var/corpseidjob 			// Needs to be in quotes, such as "Clown" or "Chef." This just determines what the ID reads as, not their access
+	var/corpseidaccess 			// This is for access. See access.dm for which jobs give what access. Again, put in quotes. Use "Captain" if you want it to be all access.
 	var/species = SPECIES_HUMAN
+	var/injury_level = 0		// Number of times to inflict a random injury on the mob
 
 /obj/landmark/corpse/Initialize()
 	..()
@@ -33,8 +29,30 @@
 /obj/landmark/corpse/proc/createCorpse() //Creates a mob and checks for gear in each slot before attempting to equip it.
 	var/mob/living/carbon/human/M = new /mob/living/carbon/human (src.loc)
 	M.set_species(species)
-	M.real_name = src.name
-	M.death(1) //Kills the new mob
+
+	if(species)
+		M.reset_hair()
+
+	for(var/count in 1 to src.injury_level)
+		M.take_overall_damage(30,10)
+
+	for(var/obj/item/organ/O in M.internal_organs)	// Kills the mob and all internal organs
+		O.die()
+
+	M.death(0)										// Just in case the mob doesn't die
+	M.pulse = PULSE_NONE							// Because killing a mob and its organs doesn't stop its pulse
+
+
+	if(src.mobname)
+		M.real_name = mobname
+	else
+		M.real_name = M.species.get_random_name(gender)
+
+	if(src.skintone)
+		M.change_skin_tone(skintone)
+	else
+		M.change_skin_tone(rand(-200,-15))
+
 	if(src.corpseuniform)
 		M.equip_to_slot_or_del(new src.corpseuniform(M), slot_w_uniform)
 	if(src.corpsesuit)
@@ -77,13 +95,8 @@
 		M.set_id_info(W)
 		M.equip_to_slot_or_del(W, slot_wear_id)
 
-
-
-// I'll work on making a list of corpses people request for maps, or that I think will be commonly used. Syndicate operatives for example.
-
-
-
-
+// Old stuff
+///////////Syndicate//////////////////////
 
 /obj/landmark/corpse/syndicatesoldier
 	name = "Syndicate Operative"
@@ -115,9 +128,6 @@
 	corpseidjob = "Operative"
 	corpseidaccess = "Syndicate"
 
-/obj/landmark/corpse/hobo
-	name = "Hobo"
-	corpseuniform = /obj/item/clothing/under/rank/assistant
 
 ///////////Civilians//////////////////////
 
