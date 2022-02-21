@@ -95,6 +95,24 @@
 		M.set_id_info(W)
 		M.equip_to_slot_or_del(W, slot_wear_id)
 
+//SpaceRuins
+///////////LTSLorraine///////////
+/obj/landmark/corpse/genericsec
+	name = "Private Security"
+	corpseuniform = /obj/item/clothing/under/serbiansuit/black
+	corpsesuit = /obj/item/clothing/suit/armor/vest/security
+	corpseshoes = /obj/item/clothing/shoes/jackboots
+	corpsegloves = /obj/item/clothing/gloves/security
+	corpseradio = /obj/item/device/radio/headset
+	corpsemask = /obj/item/clothing/mask/balaclava
+	corpsehelmet = /obj/item/clothing/head/soft/sec/corp
+	corpseback = /obj/item/storage/backpack
+	corpsebelt = /obj/item/storage/belt/tactical
+	corpseid = 1
+	corpseidjob = "Private Security"
+	injury_level = 1
+	//corpseidaccess = "Syndicate"
+
 // Old stuff
 ///////////Syndicate//////////////////////
 
