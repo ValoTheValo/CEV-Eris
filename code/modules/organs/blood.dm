@@ -81,6 +81,27 @@
 						custom_pain("You feel a stabbing pain in your [temp]!",1)
 				else
 					blood_max += W.damage * WOUND_BLEED_MULTIPLIER
+					var/list/blood_data = get_blood_data()
+					var/datum/organ_description/pre_tag = temp?.default_description
+					var/organ_tag = pre_tag.organ_tag
+					if(organ_tag)
+						var/list/bodyparts = list(
+						BP_HEAD = HEAD,
+						BP_CHEST = UPPER_TORSO,
+						BP_GROIN = LOWER_TORSO,
+						BP_L_ARM = ARM_LEFT,
+						BP_R_ARM = ARM_RIGHT,
+						BP_L_LEG = LEG_LEFT,
+						BP_R_LEG = LEG_RIGHT,
+						)
+						var/list/clothing_to_bloody = list()
+						for(var/obj/item/clothing/C in src)
+							if(l_hand == C || r_hand == C)
+								continue
+							if(C.body_parts_covered & bodyparts[organ_tag])
+								clothing_to_bloody | C 
+						for(var/obj/item/clothing/C in clothing_to_bloody)
+							C.blood_DNA | blood_data[blood_DNA]
 		if (temp.open)
 			blood_max += OPEN_ORGAN_BLEED_AMOUNT  //Yer stomach is cut open
 
