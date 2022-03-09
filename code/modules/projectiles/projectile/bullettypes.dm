@@ -297,7 +297,7 @@ There are important things regarding this file:
 	name = "shrapnel"
 	icon_state = "birdshot-1"
 	damage_types = list(BRUTE = 10)
-	armor_penetration = 60
+	armor_penetration = 40
 	pellets = 8
 	range_step = 1
 	spread_step = 10
@@ -308,7 +308,7 @@ There are important things regarding this file:
 	icon_state = "birdshot-[rand(1,4)]"
 
 /obj/item/projectile/bullet/pellet/shotgun/scrap
-	damage_types = list(BRUTE = 7)
+	damage_types = list(BRUTE = 9)
 
 //Miscellaneous
 /obj/item/projectile/bullet/blank
