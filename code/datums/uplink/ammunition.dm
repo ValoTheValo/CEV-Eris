@@ -10,14 +10,14 @@
 /datum/uplink_item/item/ammo/pistol/highvelocity
 	name = "Holdout .35 Auto HV magazine"
 	desc = "Holdout .35 magazine, loaded with high velocity ammunition.  Can fit 10 bullets."
-	item_cost = 1
+	item_cost = 2
 	antag_roles = list(ROLE_CONTRACTOR,ROLE_MARSHAL,ROLE_INQUISITOR,ROLE_MERCENARY,ROLE_CARRION)
 	path = /obj/item/ammo_magazine/pistol/highvelocity
 
 /datum/uplink_item/item/ammo/hpistol/highvelocity
 	name = "Highcap .35 Auto HV magazine"
 	desc = "Highcap .35 magazine, loaded with high velocity ammunition.  Can fit 16 bullets."
-	item_cost = 2
+	item_cost = 3
 	antag_roles = list(ROLE_CONTRACTOR,ROLE_MARSHAL,ROLE_INQUISITOR,ROLE_MERCENARY,ROLE_CARRION)
 	path = /obj/item/ammo_magazine/hpistol/highvelocity
 
@@ -31,14 +31,14 @@
 /datum/uplink_item/item/ammo/magnum/hv
 	name = "Standard .40 HV magazine"
 	desc = "Standard .40 magazine, loaded with high velocity ammunition. Can fit 10 bullets."
-	item_cost = 2
+	item_cost = 3
 	antag_roles = list(ROLE_CONTRACTOR,ROLE_MARSHAL,ROLE_INQUISITOR,ROLE_MERCENARY,ROLE_CARRION)
 	path = /obj/item/ammo_magazine/magnum/hv
 
 /datum/uplink_item/item/ammo/magnum/msmg/hv
 	name = "SMG .40 HV magazine"
 	desc = "SMG .40 magazine, loaded with high velocity ammunition. Can fit 25 bullets."
-	item_cost = 4
+	item_cost = 5
 	antag_roles = list(ROLE_CONTRACTOR,ROLE_MARSHAL,ROLE_INQUISITOR,ROLE_MERCENARY,ROLE_CARRION)
 	path = /obj/item/ammo_magazine/msmg/hv
 
