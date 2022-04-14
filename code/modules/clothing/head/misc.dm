@@ -285,7 +285,7 @@
 	siemens_coefficient = 1
 	price_tag = 1000
 	spawn_blacklisted = TRUE
-	style = STYLE_HIGH
+	style = STYLE_HATHATHAT
 	armor = list(
 		melee = 10,
 		bullet = 35,
