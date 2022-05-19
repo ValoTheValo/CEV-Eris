@@ -1,5 +1,5 @@
 /obj/item/gun/projectile/type_69
-    name = "OS MP .40 \"Type LXIX\""
+    name = "OS MP .40 \"Type 69\""
     desc = "An Onestar machine pistol. While unwieldy, its users can't deny that it is brutally effective. Uses .40 pistol magazines."
     icon = 'icons/obj/guns/projectile/os/type_69.dmi'
     icon_state = "type_69"
