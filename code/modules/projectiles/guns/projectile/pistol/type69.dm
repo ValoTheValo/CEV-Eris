@@ -1,5 +1,5 @@
 /obj/item/gun/projectile/type_69
-    name = "OS PDW .40 \"Type 69\""
+    name = "OS PDW .40 \"Type 69\"" //god forgive me
     desc = "A Compact and Powerfull Protoype Onestar PDW. Unweildy but extremely deadly in CQC, the perfect gun for self defense and urban warfare. Takes Both pistol and SMG .40 magazines "
     icon = 'icons/obj/guns/projectile/os/type_69.dmi'
     icon_state = "type_69"
@@ -12,7 +12,7 @@
     matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLATINUM = 8, MATERIAL_PLASTIC = 4)
     can_dual = TRUE
     slot_flags = SLOT_BELT|SLOT_HOLSTER
-    damage_multiplier = 1.2
+    damage_multiplier = 1.1
     penetration_multiplier = 1.4
     recoil_buildup = 2.2
     init_firemodes = list(
