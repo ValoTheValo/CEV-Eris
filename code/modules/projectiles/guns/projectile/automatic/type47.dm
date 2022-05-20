@@ -4,25 +4,32 @@
 	icon = 'icons/obj/guns/projectile/os/type_47.dmi'
 	icon_state = "type_47"
 	item_state = "type_47"
-	w_class = ITEM_SIZE_BULKY
+	w_class = ITEM_SIZE_NORMAL
 	ammo_mag = "ih_sol"
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_IH
 	caliber = CAL_CLRIFLE
 	magazine_type = /obj/item/ammo_magazine/ihclrifle
-	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2)
+	auto_eject = 1
+	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
+	origin_tech = list(TECH_COMBAT = 8, TECH_MATERIAL = 5)
 	slot_flags = SLOT_BELT
 	matter = list(MATERIAL_PLASTEEL = 16, MATERIAL_PLATINUM = 4, MATERIAL_PLASTIC = 12)
 	price_tag = 2800
-	recoil_buildup = 2
-	penetration_multiplier = 1.5
-	damage_multiplier = 1.5
+	fire_sound = 'sound/weapons/guns/fire/cal/sky_driver.ogg'
+	unload_sound = 'sound/weapons/guns/interact/batrifle_magout.ogg'
+	reload_sound = 'sound/weapons/guns/interact/batrifle_magin.ogg'
+	cocked_sound = 'sound/weapons/guns/interact/batrifle_cock.ogg'
+	recoil_buildup = 1.7
+	penetration_multiplier = 1.8
+	damage_multiplier = 1.4
 	one_hand_penalty = 10
 	gun_tags = list(GUN_SILENCABLE)
 	gun_parts = list(/obj/item/part/gun = 2 ,/obj/item/stack/material/plasteel = 6)
 	init_firemodes = list(
 		SEMI_AUTO_NODELAY,
-		BURST_3_ROUND
+		BURST_3_ROUND,
+		FULL_AUTO_600
 		)
 
 	spawn_blacklisted = TRUE
