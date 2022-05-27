@@ -25,8 +25,9 @@
     penetration_multiplier = 1.7
     spawn_tags = SPAWN_TAG_GUN_OS
     init_firemodes = list(
-		BURST_3_ROUND,
-        SEMI_AUTO_NODELAY
+		    BURST_3_ROUND,
+        SEMI_AUTO_NODELAY,
+        FULL_AUTO_400
 		)
     spawn_blacklisted = TRUE //until loot rework
 
