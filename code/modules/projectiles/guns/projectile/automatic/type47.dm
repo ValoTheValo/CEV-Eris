@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/type_47
 	name = "OS CAR .25 CS \"Type 47\""
-	desc = "A standard-issue weapon used by Onestar peacekeeping forces. Compact and reliable. Uses .25 Caseless rounds."
+	desc = "A compact assault carbine of onestar orgin. "
 	icon = 'icons/obj/guns/projectile/os/type_47.dmi'
 	icon_state = "type_47"
 	item_state = "type_47"
@@ -15,7 +15,7 @@
 	origin_tech = list(TECH_COMBAT = 8, TECH_MATERIAL = 5)
 	slot_flags = SLOT_BELT|SLOT_BACK
 	matter = list(MATERIAL_PLASTEEL = 16, MATERIAL_PLATINUM = 4, MATERIAL_PLASTIC = 12)
-	price_tag = 2800
+	price_tag = 3400
 	fire_sound = 'sound/weapons/guns/fire/cal/sky_driver.ogg'
 	unload_sound = 'sound/weapons/guns/interact/batrifle_magout.ogg'
 	reload_sound = 'sound/weapons/guns/interact/batrifle_magin.ogg'

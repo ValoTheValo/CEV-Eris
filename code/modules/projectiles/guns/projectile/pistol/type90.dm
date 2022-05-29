@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/type_90
-	name = "OS HG .25 CS \"Type 90\""
-	desc = "An old Onestar pistol, designed with esoteric mechanisms. Uses .25 Caseless rounds."
+	name = "OS HG .35 Auto \"Type 90\""
+	desc = "A Highly advanced gauss pistol used by onestar in staggering numbers. "
 	icon = 'icons/obj/guns/projectile/os/type_42.dmi'
 	icon_state = "type_42"
 	item_state = "type_42"
@@ -8,17 +8,20 @@
 	can_dual = TRUE
 	origin_tech = list(TECH_COMBAT = 2, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 10, MATERIAL_PLATINUM = 4, MATERIAL_PLASTIC = 6)
-	price_tag = 1800
-	caliber = CAL_CLRIFLE
+	price_tag = 2600
+	caliber = CAL_PISTOL
 	load_method = MAGAZINE
-	mag_well = MAG_WELL_PISTOL
+	mag_well = MAG_WELL_PISTOL|MAG_WELL_H_PISTOL
 	slot_flags = SLOT_BELT|SLOT_HOLSTER
-	magazine_type = /obj/item/ammo_magazine/cspistol
-	damage_multiplier = 1.8
-	penetration_multiplier = 1.5
+	magazine_type = /obj/item/ammo_magazine/pistol
+	damage_multiplier = 1.7
+	penetration_multiplier = 2
 	recoil_buildup = 2
 	spawn_tags = SPAWN_TAG_GUN_OS
-	fire_sound = 'sound/weapons/guns/fire/m41_shoot.ogg'
+	fire_sound = 'sound/weapons/guns/fire/cal/sky_driver.ogg'
+	unload_sound = 'sound/weapons/guns/interact/pistol_magout.ogg'
+	reload_sound = 'sound/weapons/guns/interact/pistol_magin.ogg'
+	cocked_sound = 'sound/weapons/guns/interact/pistol_cock.ogg'
 
 	spawn_blacklisted = TRUE //until loot rework
 
