@@ -25,7 +25,7 @@
     penetration_multiplier = 1.7
     spawn_tags = SPAWN_TAG_GUN_OS
     init_firemodes = list(
-		    BURST_3_ROUND,
+		BURST_3_ROUND,
         SEMI_AUTO_NODELAY,
         FULL_AUTO_400
 		)
