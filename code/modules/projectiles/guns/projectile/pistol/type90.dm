@@ -1,5 +1,5 @@
-/obj/item/gun/projectile/type_42
-	name = "OS HG .25 CS \"Type 42\""
+/obj/item/gun/projectile/type_90
+	name = "OS HG .25 CS \"Type 90\""
 	desc = "An old Onestar pistol, designed with esoteric mechanisms. Uses .25 Caseless rounds."
 	icon = 'icons/obj/guns/projectile/os/type_42.dmi'
 	icon_state = "type_42"
@@ -16,7 +16,7 @@
 	magazine_type = /obj/item/ammo_magazine/cspistol
 	damage_multiplier = 1.8
 	penetration_multiplier = 1.5
-	recoil_buildup = 2.5
+	recoil_buildup = 2
 	spawn_tags = SPAWN_TAG_GUN_OS
 	fire_sound = 'sound/weapons/guns/fire/m41_shoot.ogg'
 

@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/type_69
     name = "OS PDW .40 \"Type 69\"" //god forgive me
-    desc = "A Compact and Powerfull Protoype Onestar PDW typically issued to high ranking officals and military officers. Unweildy but extremely deadly in CQC, the perfect gun for self defense and urban warfare. \ Takes Both pistol and SMG .40 magazines "
+    desc = "A Compact and Powerfull Protoype Onestar PDW typically issued to high ranking officals and spies. Unweildy but extremely deadly in CQC, the perfect gun for self defense and urban warfare. \ Takes Both pistol and SMG .40 magazines "
     icon = 'icons/obj/guns/projectile/os/type_69.dmi'
     icon_state = "type_69"
     item_state = "type_69"
@@ -18,9 +18,10 @@
     unload_sound = 'sound/weapons/guns/interact/hpistol_magout.ogg'
     reload_sound = 'sound/weapons/guns/interact/hpistol_magin.ogg'
     cocked_sound = 'sound/weapons/guns/interact/hpistol_cock.ogg'
-    recoil_buildup = 2.2
+    recoil_buildup = 2.5
     init_firemodes = list(
         FULL_AUTO_600,
+        FULL_AUTO_800,
         SEMI_AUTO_NODELAY
         )
     spawn_tags = SPAWN_TAG_GUN_OS

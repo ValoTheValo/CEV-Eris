@@ -13,7 +13,7 @@
 	auto_eject = 1
 	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
 	origin_tech = list(TECH_COMBAT = 8, TECH_MATERIAL = 5)
-	slot_flags = SLOT_BELT
+	slot_flags = SLOT_BELT|SLOT_BACK
 	matter = list(MATERIAL_PLASTEEL = 16, MATERIAL_PLATINUM = 4, MATERIAL_PLASTIC = 12)
 	price_tag = 2800
 	fire_sound = 'sound/weapons/guns/fire/cal/sky_driver.ogg'
@@ -24,6 +24,7 @@
 	penetration_multiplier = 1.8
 	damage_multiplier = 1.4
 	one_hand_penalty = 10
+	spawn_tags = SPAWN_TAG_GUN_OS
 	gun_tags = list(GUN_SILENCABLE)
 	gun_parts = list(/obj/item/part/gun = 2 ,/obj/item/stack/material/plasteel = 6)
 	init_firemodes = list(
