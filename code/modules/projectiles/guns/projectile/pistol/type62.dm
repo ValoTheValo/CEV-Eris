@@ -1,9 +1,9 @@
-/obj/item/gun/projectile/type_69
-    name = "OS PDW .40 \"QCQ-60\"" //god forgive me
+/obj/item/gun/projectile/type_62
+    name = "OS PDW .40 \"QCQ-62\"" //god forgive me
     desc = "A Compact and Powerfull Protoype Onestar PDW typically issued to high ranking officals and spies. Unweildy but extremely deadly in CQC, the perfect gun for self defense and urban warfare. \ Takes Both pistol and SMG .40 magazines "
-    icon = 'icons/obj/guns/projectile/os/type_69.dmi'
-    icon_state = "type_69"
-    item_state = "type_69"
+    icon = 'icons/obj/guns/projectile/os/qcq60.dmi'
+    icon_state = "type_62"
+    item_state = "type_62"
     origin_tech = list(TECH_COMBAT = 10, TECH_MATERIAL = 2)
     caliber = CAL_MAGNUM
     load_method = MAGAZINE
