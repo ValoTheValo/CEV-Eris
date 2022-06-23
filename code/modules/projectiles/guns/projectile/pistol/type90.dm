@@ -1,7 +1,7 @@
 /obj/item/gun/projectile/type_90
 	name = "OS HG .35 Auto \"Type 90\""
-	desc = "A Highly advanced gauss pistol used by onestar in staggering numbers. "
-	icon = 'icons/obj/guns/projectile/os/type_42.dmi'
+	desc = "A Highly advanced gauss pistol produced by onestar right before its collapse "
+	icon = 'icons/obj/guns/projectile/os/type_90.dmi'
 	icon_state = "type_90"
 	item_state = "type_90"
 	w_class = ITEM_SIZE_SMALL
@@ -28,7 +28,7 @@
 		WEAPON_CHARGE
         )
 
-	spawn_blacklisted = TRUE //until loot rework
+	spawn_blacklisted = TRUE //until ruins are finished
 
 	serial_type = "OS"
 
