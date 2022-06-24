@@ -1,7 +1,7 @@
 /obj/item/gun/projectile/type_62
     name = "OS PDW .40 \"QCQ-62\"" //god forgive me
     desc = "A Compact and Powerfull Protoype Onestar PDW typically issued to high ranking officals and spies. Unweildy but extremely deadly in CQC, the perfect gun for self defense and urban warfare. \ Takes Both pistol and SMG .40 magazines "
-    icon = 'icons/obj/guns/projectile/os/qcq60.dmi'
+    icon = 'icons/obj/guns/projectile/os/type_62.dmi'
     icon_state = "type_62"
     item_state = "type_62"
     origin_tech = list(TECH_COMBAT = 10, TECH_MATERIAL = 2)
@@ -30,7 +30,7 @@
     spawn_blacklisted = TRUE //until loot rework
     serial_type = "OS"
 
-/obj/item/gun/projectile/type_69/update_icon()
+/obj/item/gun/projectile/pistol/type62/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
@@ -39,10 +39,17 @@
 	if (ammo_magazine)
 		iconstring += "_mag"
 		itemstring += "_mag"
+		if(ammo_magazine.mag_well == MAG_WELL_SMG)
+			itemstring += "_smg"
+		if(!LAZYLEN(ammo_magazine.stored_ammo))
+        	iconstring += "_empty"
+
+	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
+		iconstring += "_empty"
 
 	icon_state = iconstring
 	set_item_state(itemstring)
 
-/obj/item/gun/projectile/type_69/Initialize()
+/obj/item/gun/projectile/automatic/type62/Initialize()
 	. = ..()
 	update_icon()
