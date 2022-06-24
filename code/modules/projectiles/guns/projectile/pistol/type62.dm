@@ -30,26 +30,23 @@
     spawn_blacklisted = TRUE //until loot rework
     serial_type = "OS"
 
-/obj/item/gun/projectile/pistol/type62/update_icon()
+/obj/item/gun/projectile/type_62/update_icon()
 	..()
 
 	var/iconstring = initial(icon_state)
 	var/itemstring = ""
 
-	if (ammo_magazine)
+	if(ammo_magazine)
 		iconstring += "_mag"
 		itemstring += "_mag"
-		if(ammo_magazine.mag_well == MAG_WELL_SMG)
+		if(ammo_magazine.mag_well == MAG_WELL_SMG) //thank you to kirov for the code help -Valo
 			itemstring += "_smg"
 		if(!LAZYLEN(ammo_magazine.stored_ammo))
-        	iconstring += "_empty"
-
-	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
-		iconstring += "_empty"
+			iconstring += "_empty"
 
 	icon_state = iconstring
 	set_item_state(itemstring)
 
-/obj/item/gun/projectile/automatic/type62/Initialize()
+/obj/item/gun/projectile/type_62/Initialize()
 	. = ..()
 	update_icon()
