@@ -24,7 +24,7 @@
 	cocked_sound = 'sound/weapons/guns/interact/pistol_cock.ogg'
 	init_firemodes = list(
         SEMI_AUTO_NODELAY,
-		BURST_3_ROUND,
+		BURST_3_ROUND_DAMAGE,
 		WEAPON_CHARGE
         )
 
