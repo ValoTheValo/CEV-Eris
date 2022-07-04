@@ -10575,6 +10575,7 @@
 /obj/item/device/radio/intercom{
 	pixel_y = 24
 	},
+/obj/landmark/IH_Armoury_Gun_Serial_Printer,
 /turf/simulated/floor/tiled/dark/gray_perforated,
 /area/eris/security/warden)
 "azN" = (
@@ -17907,7 +17908,6 @@
 /obj/item/cell/medium/high,
 /obj/item/cell/medium/high,
 /obj/item/cell/medium/high,
-/obj/landmark/IH_Armoury_Gun_Serial_Printer,
 /turf/simulated/floor/tiled/dark/gray_perforated,
 /area/eris/security/warden)
 "aSz" = (
@@ -28159,9 +28159,11 @@
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section2deck4central)
 "boI" = (
-/obj/spawner/mob/roaches/cluster,
-/turf/simulated/floor/tiled/white/brown_platform,
-/area/eris/maintenance/section3deck1central)
+/obj/machinery/holoposter{
+	pixel_y = -32
+	},
+/turf/simulated/floor/tiled/techmaint,
+/area/eris/maintenance/section2deck4central)
 "boJ" = (
 /obj/structure/disposalpipe/junction{
 	dir = 2;
@@ -33388,6 +33390,7 @@
 /area/eris/maintenance/section3deck1central)
 "bBI" = (
 /obj/structure/table/rack/shelf,
+/obj/spawner/medical,
 /turf/simulated/floor/tiled/white/brown_perforated,
 /area/space)
 "bBJ" = (
@@ -49461,6 +49464,9 @@
 	pixel_y = 4
 	},
 /obj/item/electronics/circuitboard/teleporter,
+/obj/machinery/holoposter{
+	pixel_y = -32
+	},
 /turf/simulated/floor/tiled/white/gray_platform,
 /area/eris/command/meo)
 "cop" = (
@@ -69913,6 +69919,9 @@
 /obj/structure/bed/chair/comfy/purp{
 	dir = 8
 	},
+/obj/machinery/holoposter{
+	pixel_x = 32
+	},
 /turf/simulated/floor/tiled/white/brown_perforated,
 /area/eris/rnd/research)
 "dlV" = (
@@ -85383,7 +85392,9 @@
 /turf/simulated/floor/tiled/techmaint,
 /area/eris/maintenance/section4deck1central)
 "dWx" = (
-/obj/structure/closet/wall_mounted/emcloset/escape_pods,
+/obj/structure/closet/wall_mounted/emcloset/escape_pods{
+	pixel_y = 32
+	},
 /turf/simulated/floor/tiled/techmaint,
 /area/eris/maintenance/section2deck1port)
 "dWy" = (
@@ -100760,6 +100771,12 @@
 	},
 /turf/simulated/floor/tiled/steel/techfloor,
 /area/eris/engineering/propulsion/right)
+"eJD" = (
+/obj/structure/table/rack/shelf,
+/obj/spawner/medical,
+/obj/spawner/firstaid,
+/turf/simulated/floor/tiled/white/brown_perforated,
+/area/space)
 "eKc" = (
 /obj/structure/catwalk,
 /obj/structure/cable/green{
@@ -101612,6 +101629,10 @@
 /obj/effect/floor_decal/industrial/warning,
 /turf/simulated/floor/tiled/steel/monofloor,
 /area/eris/quartermaster/hangarsupply)
+"gWP" = (
+/obj/spawner/closet,
+/turf/simulated/floor/tiled/white/brown_platform,
+/area/space)
 "gWZ" = (
 /obj/structure/table/woodentable,
 /obj/machinery/firealarm{
@@ -102059,6 +102080,12 @@
 	},
 /turf/simulated/floor/tiled/steel/cargo,
 /area/eris/hallway/main/section2)
+"iyv" = (
+/obj/machinery/holoposter{
+	pixel_x = 32
+	},
+/turf/simulated/floor/tiled/techmaint,
+/area/eris/maintenance/section3deck1central)
 "ize" = (
 /obj/machinery/door/firedoor,
 /obj/structure/disposalpipe/segment{
@@ -102143,6 +102170,12 @@
 /obj/machinery/camera/motion/security,
 /turf/simulated/floor/plating,
 /area/eris/maintenance/section1deck4central)
+"iRD" = (
+/obj/machinery/holoposter{
+	pixel_y = 32
+	},
+/turf/simulated/floor/tiled/techmaint,
+/area/eris/maintenance/section3deck1central)
 "iUs" = (
 /obj/machinery/atmospherics/pipe/simple/visible/black{
 	dir = 9
@@ -103285,6 +103318,12 @@
 	},
 /turf/simulated/floor/tiled/white/golden,
 /area/eris/neotheology/chapelritualroom)
+"niL" = (
+/obj/machinery/holoposter{
+	pixel_y = -32
+	},
+/turf/simulated/floor/tiled/steel,
+/area/eris/maintenance/section3deck1central)
 "nkz" = (
 /obj/item/modular_computer/console/preset/genetics{
 	dir = 8
@@ -103405,6 +103444,13 @@
 	},
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section3deck5port)
+"nCW" = (
+/obj/spawner/junk/low_chance,
+/obj/structure/sign/faction/excelsior_old{
+	pixel_y = 32
+	},
+/turf/simulated/floor/tiled/techmaint,
+/area/eris/maintenance/section2deck1port)
 "nDL" = (
 /obj/structure/railing{
 	dir = 8
@@ -165881,7 +165927,7 @@ auG
 aCN
 aDd
 bel
-aCN
+boI
 aDd
 aHN
 aHR
@@ -252340,7 +252386,7 @@ cgx
 cMm
 cjr
 crB
-cyv
+czx
 cZp
 czx
 cyv
@@ -283059,7 +283105,7 @@ anQ
 anQ
 anQ
 anQ
-aof
+nCW
 ezf
 dQZ
 dNZ
@@ -286505,7 +286551,7 @@ cNH
 cNH
 cNH
 boS
-cNH
+iRD
 bmi
 esg
 cNH
@@ -291565,7 +291611,7 @@ eAl
 bun
 dXi
 eAv
-buN
+niL
 boS
 eAQ
 cNH
@@ -294197,7 +294243,7 @@ eBe
 cNH
 boS
 bBu
-boI
+boF
 boS
 boS
 boS
@@ -295805,7 +295851,7 @@ cNH
 cNH
 cNH
 cNH
-cNH
+iyv
 dXi
 bkK
 bkK
@@ -296826,10 +296872,10 @@ axN
 bBA
 dsv
 bBI
-bBI
+eJD
 aae
-aaa
-aaa
+gWP
+aad
 aae
 aaa
 aaa
@@ -297030,7 +297076,7 @@ aad
 aad
 aad
 aae
-aaa
+aad
 aaa
 aaa
 aaa
