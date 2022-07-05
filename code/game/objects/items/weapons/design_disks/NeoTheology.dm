@@ -30,14 +30,14 @@
 // Batteries that printed fully charged, at the cost of some biomatter or plasma being non-refundable
 /obj/item/computer_hardware/hard_drive/portable/design/nt/cells
 	disk_name = "NeoTheology Armory - Power Cells Pack"
-	license = 12
+	license = -1
 	designs = list(
-		/datum/design/bioprinter/nt_cells/large = 3,
-		/datum/design/bioprinter/nt_cells/large/plasma = 4,
-		/datum/design/bioprinter/nt_cells/medium = 2,
-		/datum/design/bioprinter/nt_cells/medium/plasma = 3,
+		/datum/design/bioprinter/nt_cells/large,
+		/datum/design/bioprinter/nt_cells/large/plasma,
+		/datum/design/bioprinter/nt_cells/medium,
+		/datum/design/bioprinter/nt_cells/medium/plasma,
 		/datum/design/bioprinter/nt_cells/small,
-		/datum/design/bioprinter/nt_cells/small/plasma = 2
+		/datum/design/bioprinter/nt_cells/small/plasma
 	)
 
 // Laser pistol
@@ -283,7 +283,7 @@
 	license = 12
 	designs = list(
 		/datum/design/autolathe/gun/sniperrifle = 3, //"NT MER \"Valkyrie\""
-		/datum/design/autolathe/cell/medium/high,
+		/datum/design/bioprinter/nt_cells/medium
 	)
 
 /obj/item/computer_hardware/hard_drive/portable/design/guns/nt_halicon
@@ -294,7 +294,7 @@
 	license = 12
 	designs = list(
 		/datum/design/autolathe/gun/ionrifle = 3, // "NT IR \"Halicon\""
-		/datum/design/autolathe/cell/medium/high,
+		/datum/design/bioprinter/nt_cells/medium
 	)
 
 /obj/item/computer_hardware/hard_drive/portable/design/guns/nt/nt_counselor
@@ -306,7 +306,7 @@
 	spawn_blacklisted = FALSE
 	designs = list(
 		/datum/design/autolathe/gun/taser = 3, // "NT SP \"Counselor\""
-		/datum/design/autolathe/cell/medium/high
+		/datum/design/bioprinter/nt_cells/medium
 	)
 
 /obj/item/computer_hardware/hard_drive/portable/design/guns/nt_mk58
