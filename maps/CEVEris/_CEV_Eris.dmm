@@ -9342,9 +9342,7 @@
 /turf/simulated/wall/r_wall,
 /area/eris/crew_quarters/fitness)
 "awt" = (
-/turf/simulated/floor/reinforced{
-	name = "Holodeck Projector Floor"
-	},
+/turf/simulated/floor/reinforced,
 /area/holodeck/alphadeck)
 "awu" = (
 /obj/machinery/atmospherics/unary/vent_scrubber/on,
@@ -55636,9 +55634,6 @@
 /turf/simulated/floor/tiled/steel/gray_perforated,
 /area/eris/crew_quarters/fitness)
 "cDN" = (
-/obj/machinery/computer/HolodeckControl/Exodus{
-	dir = 8
-	},
 /turf/simulated/floor/tiled/steel/gray_perforated,
 /area/eris/crew_quarters/fitness)
 "cDO" = (
@@ -88422,7 +88417,6 @@
 /turf/simulated/floor/tiled/steel/gray_perforated,
 /area/eris/quartermaster/misc)
 "edO" = (
-/obj/spawner/scrap/sparse,
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section3deck2port)
 "edP" = (
@@ -89603,9 +89597,8 @@
 /turf/simulated/floor/tiled/white,
 /area/eris/rnd/xenobiology/xenoflora)
 "egI" = (
-/obj/spawner/mob/roaches/cluster/low_chance,
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck2port)
+/area/eris/crew_quarters/fitness)
 "egJ" = (
 /obj/structure/railing{
 	dir = 4
@@ -96811,10 +96804,6 @@
 	},
 /turf/simulated/floor/carpet,
 /area/eris/quartermaster/office)
-"exD" = (
-/obj/spawner/scrap/sparse,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck2port)
 "exE" = (
 /obj/spawner/junk,
 /turf/simulated/floor/tiled/techmaint,
@@ -99354,10 +99343,6 @@
 /obj/effect/window_lwall_spawn/smartspawn,
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section3deck2starboard)
-"eDa" = (
-/obj/spawner/traps/low_chance,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck2port)
 "eDb" = (
 /obj/structure/closet,
 /obj/spawner/pack/tech_loot,
@@ -99448,10 +99433,6 @@
 	},
 /turf/simulated/floor/wood,
 /area/eris/crew_quarters/hydroponics)
-"eDm" = (
-/obj/spawner/flora/low_chance,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck2port)
 "eDn" = (
 /obj/structure/table/standard,
 /obj/spawner/powercell,
@@ -201719,7 +201700,7 @@ cmE
 cmE
 cmE
 cmE
-cqP
+duI
 duI
 ccz
 duI
@@ -241111,14 +241092,14 @@ dqI
 egf
 dqB
 dqB
-egI
+dqB
 dqB
 eFo
 ebW
 eiL
 eiL
 ebW
-enV
+dqB
 dqI
 cPb
 aCM
@@ -241312,8 +241293,8 @@ dqI
 dqI
 egg
 dqB
-ebW
-ebW
+dqB
+dqB
 ebW
 eFn
 eFp
@@ -241508,9 +241489,9 @@ dZW
 eae
 eaD
 dqB
-exD
 dqB
-exD
+dqB
+dqB
 ebW
 dqB
 dqB
@@ -241520,7 +241501,7 @@ axB
 axB
 axB
 eqx
-egI
+dqB
 dqB
 dqB
 dCi
@@ -241911,12 +241892,12 @@ dqI
 ecO
 eak
 dqI
-exD
+dqB
 dqB
 dqB
 dqB
 eFk
-eDa
+dqB
 eFk
 dqB
 eDk
@@ -242114,13 +242095,13 @@ ecP
 eal
 dqI
 dqB
-egI
+dqB
 dqB
 eBw
 ebW
 dqB
 ebW
-ebz
+dqB
 dqB
 axB
 axG
@@ -242323,7 +242304,7 @@ ebW
 dqB
 ebW
 dqB
-eDm
+dqB
 axB
 axG
 dGw
@@ -242515,7 +242496,7 @@ abF
 abF
 dqI
 cDp
-eDa
+dqB
 dqB
 dqB
 eDk
@@ -242724,7 +242705,7 @@ awr
 awr
 awr
 awr
-awr
+egI
 awr
 awr
 awr
@@ -281519,7 +281500,7 @@ blB
 aCh
 aQV
 aRM
-evG
+cNH
 dXi
 aaa
 aCM
