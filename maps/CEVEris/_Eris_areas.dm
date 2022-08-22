@@ -310,6 +310,7 @@
 	icon_state = "head_quarters"
 	sound_env = SMALL_SOFTFLOOR
 	holomap_color = HOLOMAP_AREACOLOR_SCIENCE
+	ambience = list('sound/ambience/researchambient1.ogg','sound/ambience/researchambient2.ogg','sound/ambience/researchambient3.ogg','sound/ambience/researchambient4.ogg','sound/ambience/researchambient5.ogg','sound/ambience/researchambient6.ogg','sound/ambience/researchambient7.ogg','sound/ambience/researchambient8.ogg','sound/ambience/researchambient9.ogg')
 
 /area/eris/command/meo/quarters
 	name = "\improper Research - MEO's Quarters"
@@ -552,6 +553,7 @@
 /area/eris/neotheology/chapelritualroom
 	name = "Chapel Rituals Room"
 	icon_state = "erisgreen"
+	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_BRIGHT
 
 /area/eris/neotheology/biogenerator
 	name = "\improper Church Biogenerator Room"
@@ -861,6 +863,7 @@
 	name = "Chemical Storage"
 	icon_state = "erisblue"
 	area_light_color = COLOR_LIGHTING_SCI_DARK
+	flags = AREA_FLAG_RAD_SHIELDED
 
 /area/eris/medical/medeva
 	name = "Medical E.V.A. Storage"

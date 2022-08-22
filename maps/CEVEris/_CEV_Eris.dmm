@@ -25966,12 +25966,17 @@
 /turf/simulated/floor/tiled/dark,
 /area/eris/hallway/side/morguehallway)
 "bjQ" = (
-/obj/spawner/junk/low_chance,
+/obj/machinery/light/small{
+	dir = 1
+	},
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section3deck3starboard)
 "bjR" = (
+/obj/machinery/light/small{
+	dir = 4
+	},
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section3deck3starboard)
 "bjS" = (
 /obj/structure/catwalk,
 /obj/structure/cable/green{
@@ -81669,10 +81674,6 @@
 	},
 /turf/simulated/floor/tiled/steel/techfloor_grid,
 /area/eris/engineering/propulsion/right)
-"dMX" = (
-/obj/machinery/light/small,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
 "dMY" = (
 /obj/machinery/atmospherics/pipe/simple/visible/yellow{
 	dir = 10
@@ -86170,7 +86171,7 @@
 /obj/machinery/door/firedoor,
 /obj/effect/window_lwall_spawn/smartspawn,
 /turf/simulated/floor/plating,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section2deck1starboard)
 "dYn" = (
 /obj/structure/disposalpipe/down{
 	dir = 4
@@ -87213,16 +87214,12 @@
 "eaT" = (
 /turf/simulated/wall/r_wall,
 /area/eris/medical/genetics)
-"eaU" = (
-/obj/spawner/mob/roaches/cluster/low_chance,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
 "eaV" = (
 /obj/structure/table/standard,
 /obj/spawner/boxes,
 /obj/spawner/lowkeyrandom/low_chance,
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section2deck1starboard)
 "eaX" = (
 /obj/structure/table/standard,
 /obj/item/device/lighting/toggleable/lamp,
@@ -100667,10 +100664,6 @@
 "eIo" = (
 /turf/simulated/wall,
 /area/eris/engineering/propulsion/right)
-"eIp" = (
-/obj/structure/cyberplant,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck1central)
 "eJd" = (
 /obj/machinery/atmospherics/pipe/manifold4w/visible/yellow,
 /turf/simulated/floor/tiled/steel/techfloor,
@@ -104454,7 +104447,7 @@
 /obj/spawner/junk/low_chance,
 /obj/spawner/pack/machine,
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section2deck1starboard)
 "oZm" = (
 /obj/machinery/atmospherics/pipe/manifold/hidden/supply{
 	dir = 1
@@ -105972,7 +105965,7 @@
 /obj/spawner/electronics,
 /obj/spawner/lowkeyrandom/low_chance,
 /turf/simulated/floor/tiled/techmaint,
-/area/eris/medical/genetics)
+/area/eris/maintenance/section2deck1starboard)
 "tuO" = (
 /obj/machinery/atmospherics/pipe/manifold/hidden/scrubbers,
 /obj/machinery/atmospherics/pipe/manifold/hidden/supply,
@@ -209339,7 +209332,7 @@ dyI
 iwp
 dHp
 bvy
-dFw
+bjQ
 esV
 chY
 chY
@@ -210151,7 +210144,7 @@ dhi
 dFG
 dvd
 dFw
-dFw
+bjR
 dFw
 dFw
 dvd
@@ -282852,7 +282845,7 @@ abF
 abF
 aaa
 dXi
-eIp
+cNH
 aRA
 bby
 bby
@@ -285467,7 +285460,7 @@ dQr
 dQr
 amc
 hkv
-cpw
+dUW
 ekQ
 elB
 emI
@@ -285669,7 +285662,7 @@ dNZ
 dNZ
 amc
 amc
-cpw
+dUW
 eDZ
 elB
 emI
@@ -285871,7 +285864,7 @@ anQ
 dER
 amc
 dAH
-dsJ
+dYl
 eDI
 elB
 emI
@@ -287676,13 +287669,13 @@ ala
 ala
 ala
 ala
-eaT
-eaT
+ala
+ala
 dYl
 dYl
-eaT
-eaT
-eaT
+ala
+ala
+ala
 ala
 ath
 egQ
@@ -287879,11 +287872,11 @@ dNL
 eEB
 alC
 oYV
-bjQ
+aor
 eaV
 ttp
 eaV
-bjR
+alG
 oYV
 dUW
 alG
@@ -288080,13 +288073,13 @@ dNn
 dNP
 eEC
 alC
-bjQ
-bjR
-bjR
-bjR
-bjR
-bjR
-bjR
+aor
+alG
+alG
+alG
+alG
+alG
+alG
 ath
 alG
 amt
@@ -288116,7 +288109,7 @@ boS
 bsj
 cNH
 aRM
-eIp
+cNH
 boS
 bfe
 bvj
@@ -288282,13 +288275,13 @@ dNn
 dNU
 dOC
 alC
-bjR
-eaU
-bjR
-bjR
-bjR
-bjR
-bjR
+alG
+amt
+alG
+alG
+alG
+alG
+alG
 efd
 efd
 efd
@@ -288484,13 +288477,13 @@ dNn
 dNV
 dNL
 ala
-bjR
-bjR
-bjR
-bjQ
-bjR
-bjR
-dMX
+alG
+alG
+alG
+aor
+alG
+alG
+dUR
 efd
 efY
 egT
@@ -288686,9 +288679,9 @@ dNn
 dNL
 dOK
 ath
-bjR
-bjR
-bjQ
+alG
+alG
+aor
 ect
 ect
 ect
