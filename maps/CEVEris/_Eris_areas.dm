@@ -730,7 +730,7 @@
 	name = "Right Propulsion Hangar"
 
 //MedBay
-/area/eris/medical/medbay
+/area/eris/medical
 	name = "\improper Medical"
 	icon_state = "erisgreen"
 	area_light_color = COLOR_LIGHTING_SCI_BRIGHT
