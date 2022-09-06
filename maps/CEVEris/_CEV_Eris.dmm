@@ -95451,6 +95451,7 @@
 	dir = 4;
 	pixel_y = 8
 	},
+/obj/structure/cyberplant,
 /turf/simulated/floor/carpet/turcarpet,
 /area/eris/crew_quarters/librarybackroom)
 "euH" = (
@@ -100697,8 +100698,8 @@
 /area/eris/engineering/propulsion/right)
 "eIp" = (
 /obj/structure/cyberplant,
-/turf/simulated/floor/tiled/techmaint,
-/area/eris/maintenance/section3deck1central)
+/turf/simulated/floor/carpet/sblucarpet,
+/area/eris/medical/medbreak)
 "eJd" = (
 /obj/machinery/atmospherics/pipe/manifold4w/visible/yellow,
 /turf/simulated/floor/tiled/steel/techfloor,
@@ -103916,9 +103917,13 @@
 /turf/simulated/floor/wood,
 /area/eris/crew_quarters/clownoffice)
 "nnt" = (
-/obj/machinery/holoposter,
-/turf/simulated/wall,
-/area/eris/maintenance/section3deck1central)
+/obj/machinery/door/airlock/glass_medical{
+	id_tag = null;
+	name = "Medical Bay";
+	req_access = list(5)
+	},
+/turf/simulated/floor/tiled/white,
+/area/eris/medical/medbreak)
 "npf" = (
 /obj/structure/table/woodentable,
 /obj/item/storage/secure/briefcase,
@@ -105724,10 +105729,6 @@
 	},
 /turf/simulated/floor/tiled/steel/gray_perforated,
 /area/eris/engineering/long_range_scanner)
-"sDP" = (
-/obj/structure/sign/faction/frozenstar,
-/turf/simulated/wall,
-/area/eris/maintenance/section3deck1central)
 "sEG" = (
 /obj/structure/sign/faction/neotheology_cross,
 /turf/simulated/wall/r_wall,
@@ -203789,9 +203790,9 @@ beo
 dBG
 dxx
 dAm
-cpC
+eIp
 eBq
-eBq
+nnt
 crs
 csf
 csV
@@ -203993,8 +203994,8 @@ dyU
 dAm
 cpC
 eBq
-eBq
-chD
+cgB
+cgB
 dAv
 dAv
 dAv
@@ -282991,7 +282992,7 @@ abF
 abF
 aaa
 dXi
-eIp
+cNH
 aRA
 bby
 bby
@@ -288255,7 +288256,7 @@ boS
 bsj
 cNH
 aRM
-eIp
+cNH
 boS
 bfe
 bvj
@@ -289261,7 +289262,7 @@ cNH
 ezN
 ezV
 cNH
-sDP
+boS
 cNH
 cNH
 aRM
@@ -289872,7 +289873,7 @@ cNH
 aRM
 cNH
 cNH
-nnt
+boS
 eDS
 eEp
 eEu
