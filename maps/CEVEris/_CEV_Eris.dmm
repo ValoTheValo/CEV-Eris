@@ -65374,10 +65374,10 @@
 /obj/machinery/atmospherics/pipe/simple/hidden/supply{
 	dir = 4
 	},
+/obj/structure/catwalk,
 /obj/machinery/light/small{
 	dir = 1
 	},
-/obj/structure/catwalk,
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section2deck2port)
 "dcc" = (
@@ -65678,6 +65678,7 @@
 /obj/structure/railing{
 	dir = 4
 	},
+/obj/machinery/light/small,
 /turf/simulated/floor/plating/under,
 /area/eris/maintenance/section2deck2port)
 "dcC" = (
@@ -69643,6 +69644,12 @@
 /obj/machinery/door/airlock/command{
 	name = "Moebius Biolab Officer";
 	req_access = list(40)
+	},
+/obj/machinery/door/blast/shutters{
+	dir = 2;
+	id = "maint_hatch_medchem";
+	layer = 3.3;
+	name = "Maintenance Hatch"
 	},
 /turf/simulated/floor/tiled/white/cargo,
 /area/eris/command/mbo)
@@ -76032,6 +76039,12 @@
 /obj/machinery/atmospherics/unary/vent_pump/on{
 	dir = 1
 	},
+/obj/machinery/button/remote/blast_door{
+	id = "maint_hatch_medchem";
+	name = "Maintenance Hatch Control";
+	pixel_y = -24;
+	req_access = newlist()
+	},
 /turf/simulated/floor/tiled/white,
 /area/eris/command/mbo)
 "dAk" = (
@@ -82063,13 +82076,11 @@
 /turf/simulated/floor/tiled/steel/danger,
 /area/eris/engineering/propulsion/right)
 "dOc" = (
-/obj/structure/bed/chair/wood{
-	dir = 1
-	},
 /obj/machinery/firealarm{
 	dir = 4;
 	pixel_x = 28
 	},
+/obj/machinery/power/nt_obelisk,
 /turf/simulated/floor/carpet/bcarpet,
 /area/eris/neotheology/chapel)
 "dOd" = (
@@ -205687,7 +205698,7 @@ jDi
 bmx
 aaa
 cmE
-dvA
+ewb
 dFy
 mKQ
 dGn
