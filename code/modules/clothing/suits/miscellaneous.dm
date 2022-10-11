@@ -217,6 +217,14 @@
 	icon_open = "service_open"
 	icon_closed = "service"
 	style = STYLE_LOW
+	armor = list(
+		melee = 2,
+		bullet = 2,
+		energy = 0,
+		bomb = 0,
+		bio = 30,
+		rad = 0
+	)
 
 /obj/item/clothing/suit/storage/jamrock
 	name = "disco blazer"
