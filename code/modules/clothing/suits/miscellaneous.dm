@@ -210,7 +210,7 @@
 	icon_closed = "fur_bomber"
 
 /obj/item/clothing/suit/storage/toggle/service
-	name = "ironhammer jacket"
+	name = "Ironhammer jacket"
 	desc = "a blue jacket with insignia designed for use by ironhammer troops in non combat areas."
 	icon_state = "service"
 	item_state = "service"
