@@ -38,3 +38,11 @@
 	item_state = "germansuit_brown"
 	has_sensor = 0
 
+/obj/item/clothing/under/marine
+	name = "Marine Battle Dress Uniform"
+	desc = "A camoflauge military uniform."
+	icon_state = "marine_uniform"
+	item_state = "marine_uniform"
+	price_tag = 65
+	has_sensor = 1
+

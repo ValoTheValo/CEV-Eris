@@ -156,14 +156,14 @@
 
 /obj/item/clothing/head/armor/helmet/marine
 	name = "marine helmet"
-	desc = "a helmet desined for space marines. painted green and has a neck protector on the back and is best worn when bald. \"Game over man, Game over!\""
+	desc = "a helmet desined for space marines. painted green and has a neck protector on the back and a tag saying best worn when bald. \"Game over man, Game over!\""
 	icon_state = "marine"
 	armor = list(
-		melee = 10,
+		melee = 11,
 		bullet = 10,
-		energy = 5,
+		energy = 8,
 		bomb = 20,
-		bio = 10,
+		bio = 15,
 		rad = 2
 	)
 	matter = list(
