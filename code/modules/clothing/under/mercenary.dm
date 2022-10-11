@@ -43,6 +43,6 @@
 	desc = "A camoflauge military uniform."
 	icon_state = "marine_uniform"
 	item_state = "marine_uniform"
-	price_tag = 65
 	has_sensor = 1
+	price_tag = 150
 
