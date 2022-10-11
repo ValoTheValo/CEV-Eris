@@ -16,7 +16,6 @@
 	var/jacket = list(
 		"Bomber"				=	/obj/item/clothing/suit/storage/toggle/bomber,
 		"Bomber, furred"		=	/obj/item/clothing/suit/storage/toggle/bomber/furred,
-		"Service"				=	/obj/item/clothing/suit/storage/toggle/service,
 		"Tactful"		=	/obj/item/clothing/suit/storage/khaki,
 		"Leather"		=	/obj/item/clothing/suit/storage/leather_jacket,
 		"White"			=	/obj/item/clothing/suit/storage/drive_jacket,
@@ -41,6 +40,19 @@
 	var/jacket = list(
 		"Black"		=	/obj/item/clothing/suit/storage/toggle/hoodie/black,
 		"Grey"		=	/obj/item/clothing/suit/storage/toggle/hoodie,
+	)
+	gear_tweaks += new /datum/gear_tweak/path(jacket)
+
+/datum/gear/suit/ironhammer
+	display_name = "ironhammer jackets"
+	path = /obj/item/clothing/suit/storage/toggle/service
+	allowed_roles = list(JOBS_SECURITY)
+
+/datum/gear/suit/ironhammer/New()
+	..()
+	var/jacket = list(
+		"Service"		=	/obj/item/clothing/suit/storage/toggle/service,
+		"Windbreaker"		=	/obj/item/clothing/suit/storage/toggle/windbreaker,
 	)
 	gear_tweaks += new /datum/gear_tweak/path(jacket)
 

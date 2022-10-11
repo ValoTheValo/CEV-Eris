@@ -166,7 +166,7 @@
 	cost = 2
 
 /datum/gear/uniform/security_formal
-	display_name = "formal security outfit"
+	display_name = "ironhammer formal uniform"
 	path = /obj/item/clothing/under/security_formal
 	allowed_roles = list(JOBS_SECURITY)
 	cost = 2
@@ -207,6 +207,10 @@
 /datum/gear/uniform/battledress_german
 	display_name = "battle dress uniform, oberth"
 	path = /obj/item/clothing/under/germansuit
+
+/datum/gear/uniform/battledress_marine
+	display_name = "battle dress uniform, marine"
+	path = /obj/item/clothing/under/marine
 
 /datum/gear/uniform/ntsec
 	display_name = "Nanotrasen security uniform"
