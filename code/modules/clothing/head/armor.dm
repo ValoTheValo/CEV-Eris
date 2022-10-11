@@ -154,6 +154,25 @@
 	)
 	price_tag = 200
 
+/obj/item/clothing/head/armor/helmet/marine
+	name = "marine helmet"
+	desc = "a helmet desined for space marines. painted green and has a neck protector on the back and is best worn when bald. \"Game over man, Game over!\""
+	icon_state = "marine"
+	armor = list(
+		melee = 10,
+		bullet = 10,
+		energy = 5,
+		bomb = 20,
+		bio = 10,
+		rad = 2
+	)
+	matter = list(
+		MATERIAL_STEEL = 8,
+		MATERIAL_PLASTEEL = 5,
+		MATERIAL_PLASTIC = 3
+	)
+	price_tag = 400
+
 /obj/item/clothing/head/armor/helmet/thunderdome
 	name = "\improper Thunderdome helmet"
 	desc = "<i>'Let the battle commence!'</i>"
