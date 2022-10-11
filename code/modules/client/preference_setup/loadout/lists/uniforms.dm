@@ -190,10 +190,6 @@
 	path = /obj/item/clothing/under/dress/dress_hop
 	allowed_roles = list("First Officer")*/
 
-/datum/gear/uniform/soviet
-	display_name = "soviet uniform"
-	path = /obj/item/clothing/under/soviet
-
 /datum/gear/uniform/battledress_serb
 	display_name = "battle dress uniform, serbian"
 	path = /obj/item/clothing/under/serbiansuit
@@ -203,7 +199,8 @@
 	var/battledress_serb = list(
 		"green"	=	/obj/item/clothing/under/serbiansuit,
 		"brown"	=	/obj/item/clothing/under/serbiansuit/brown,
-		"black"	=	/obj/item/clothing/under/serbiansuit/black
+		"black"	=	/obj/item/clothing/under/serbiansuit/black,
+		"sweater" = /obj/item/clothing/under/turtleneck
 	)
 	gear_tweaks += new /datum/gear_tweak/path(battledress_serb)
 
