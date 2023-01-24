@@ -18,12 +18,14 @@
 		show_message(msg1, 1)
 
 /mob/living/proc/damage_through_armor(damage = 0, damagetype = BRUTE, def_zone, attack_flag = ARMOR_MELEE, armor_divisor = 1, used_weapon, sharp = FALSE, edge = FALSE, wounding_multiplier = 1, list/dmg_types = list(), return_continuation = FALSE)
-
 	if(damage) // If damage is defined, we add it to the list
 		if(!dmg_types[damagetype])
 			dmg_types += damagetype
 		dmg_types[damagetype] += damage
 
+	if(armor_divisor <= 0)
+		armor_divisor = 1
+		log_debug("[used_weapon] applied damage to [name] with a nonpositive armor divisor")
 
 	var/total_dmg = 0
 	var/dealt_damage = 0
@@ -51,15 +53,17 @@
 			if(dmg_type in list(BRUTE, BURN, TOX, BLAST)) // Some damage types do not help penetrate armor
 				if(remaining_armor)
 					var/dmg_armor_difference = dmg - remaining_armor
-					used_armor += dmg_armor_difference ? dmg - dmg_armor_difference : dmg
-					remaining_armor = dmg_armor_difference ? 0 : -dmg_armor_difference
-					dmg = dmg_armor_difference ? dmg_armor_difference : 0
+					var/is_difference_positive = dmg_armor_difference > 0
+					used_armor += is_difference_positive ? dmg - dmg_armor_difference : dmg
+					remaining_armor = is_difference_positive ? 0 : -dmg_armor_difference
+					dmg = is_difference_positive ? dmg_armor_difference : 0
 				if(remaining_ablative && dmg)
 					var/ablative_difference
 					ablative_difference = dmg - remaining_ablative
-					used_armor += ablative_difference ? dmg - ablative_difference : dmg
-					remaining_ablative = ablative_difference ? 0 : -ablative_difference
-					dmg = ablative_difference ? ablative_difference : 0
+					var/is_difference_positive = ablative_difference > 0
+					used_armor += is_difference_positive ? dmg - ablative_difference : dmg
+					remaining_ablative = is_difference_positive ? 0 : -ablative_difference
+					dmg = is_difference_positive ? ablative_difference : 0
 			else
 				dmg = max(dmg - remaining_armor - remaining_ablative, 0)
 
