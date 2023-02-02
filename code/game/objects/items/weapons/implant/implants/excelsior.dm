@@ -21,6 +21,12 @@
 /obj/item/implant/excelsior/get_scanner_name()
 	return disguise
 
+/obj/item/implant/excelsior/process_hud(mob/M)
+	if(..())
+		return
+	if(is_excelsior(M))
+		process_excel_hud(M)
+
 /obj/item/implantcase/excelsior
 	name = "glass case - 'complant'"
 	desc = "A case containing an excelsior complant."
