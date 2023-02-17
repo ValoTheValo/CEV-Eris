@@ -66,11 +66,9 @@
 
 /decl/hierarchy/outfit/job/security/ihoper
 	name = OUTFIT_JOB_NAME("Ironhammer Operative")
-	l_pocket = /obj/item/device/flash
 	uniform = /obj/item/clothing/under/rank/security
-	suit = /obj/item/clothing/suit/armor/vest/full/ironhammer
 	mask = /obj/item/clothing/mask/balaclava/tactical
 	glasses = /obj/item/clothing/glasses/sunglasses/sechud/tactical
-	head = /obj/item/clothing/head/armor/helmet/ironhammer
-	gloves = /obj/item/clothing/gloves/stungloves
-	backpack_contents = list(/obj/item/handcuffs = 1, /obj/item/device/lighting/toggleable/flashlight/seclite = 1, /obj/item/cell/small/high = 2, /obj/item/gun/energy/gun/martin = 1)
+	head = /obj/item/clothing/head/soft/sec2soft
+	gloves = /obj/item/clothing/gloves/security/ironhammer
+	backpack_contents = list(/obj/item/device/lighting/toggleable/flashlight/seclite = 1, /obj/item/cell/small/high = 2, /obj/item/gun/energy/gun/martin = 1)

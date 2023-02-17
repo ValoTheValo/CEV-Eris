@@ -4,10 +4,10 @@
 	head_position = 1
 	department = DEPARTMENT_SECURITY
 	department_flag = IRONHAMMER | COMMAND
-	faction = "CEV Eris"
+	faction = "Hansa"
 	total_positions = 1
 	spawn_positions = 1
-	supervisors = "the Captain"
+	supervisors = "Ironhammer Commander"
 	selection_color = "#97b0be"
 	req_admin_notify = 1
 	wage = WAGE_COMMAND
@@ -65,7 +65,7 @@
 	flag = GUNSERG
 	department = DEPARTMENT_SECURITY
 	department_flag = IRONHAMMER
-	faction = "CEV Eris"
+	faction = "Hansa"
 	total_positions = 1
 	spawn_positions = 1
 	supervisors = "the Ironhammer Commander"
@@ -119,9 +119,9 @@
 	flag = INSPECTOR
 	department = DEPARTMENT_SECURITY
 	department_flag = IRONHAMMER
-	faction = "CEV Eris"
-	total_positions = 2
-	spawn_positions = 2
+	faction = "Hansa"
+	total_positions = 0
+	spawn_positions = 0
 	supervisors = "the Ironhammer Commander"
 	selection_color = "#a7bbc6"
 	wage = WAGE_PROFESSIONAL
@@ -177,7 +177,7 @@
 	flag = MEDSPEC
 	department = DEPARTMENT_SECURITY
 	department_flag = IRONHAMMER
-	faction = "CEV Eris"
+	faction = "Hansa"
 	total_positions = 2
 	spawn_positions = 2
 	supervisors = "the Ironhammer Commander, Ironhammer Sergeant"
@@ -230,9 +230,9 @@
 	flag = IHOPER
 	department = DEPARTMENT_SECURITY
 	department_flag = IRONHAMMER
-	faction = "CEV Eris"
-	total_positions = 6
-	spawn_positions = 6
+	faction = "Hansa"
+	total_positions = 99
+	spawn_positions = 99
 	supervisors = "the Ironhammer Commander, Ironhammer Sergeant"
 	//alt_titles = list("Ironhammer Junior Operative")
 	selection_color = "#a7bbc6"

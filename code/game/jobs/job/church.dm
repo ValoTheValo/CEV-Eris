@@ -1,13 +1,13 @@
 /datum/job/chaplain
-	title = "NeoTheology Preacher"
+	title = "NeoTheology Inquisitor"
 	flag = CHAPLAIN
 	head_position = 1
 	department = DEPARTMENT_CHURCH
 	department_flag = CHURCH | COMMAND
-	faction = "CEV Eris"
+	faction = "Neotheology"
 	total_positions = 1
 	spawn_positions = 1
-	supervisors = "the NeoTheology Church"
+	supervisors = "The High Inquisitor"
 	selection_color = "#ecd37d"
 	also_known_languages = list(LANGUAGE_LATIN = 100)
 	security_clearance = CLEARANCE_CLERGY
@@ -24,9 +24,9 @@
 	outfit_type = /decl/hierarchy/outfit/job/church/chaplain
 
 	stat_modifiers = list(
-		STAT_TGH = 10,
-		STAT_ROB = 20,
-		STAT_VIG = 15,
+		STAT_TGH = 30,
+		STAT_ROB = 40,
+		STAT_VIG = 25,
 		STAT_COG = 20,
 	)
 
@@ -56,7 +56,7 @@
 	For those who are not part of the fold, the next best thing you can offer is a dignified funeral. The chapel area contains coffins and machinery to commit the dead unto the void. Burial at space. Any player who is given a proper funeral will have their respawn time reduced, allowing them to rejoin the crew as a new character more quickly, after death."
 
 
-	duties = "Represent the interests of NT disciples aboard Eris. Protect them from persecution and speak for them.<br>\
+	duties = "you must lead your flock to victory and destroy the heathens of hanza.<br>\
 		Hold mass, give sermons, preach to the faithful, and lead group ritual sessions.<br>\
 		Recover and clone the faithful dead.<br>\
 		Hold funerals for the dead heathens."
@@ -118,8 +118,8 @@
 	department = DEPARTMENT_CHURCH
 	department_flag = CHURCH
 	faction = "CEV Eris"
-	total_positions = 3
-	spawn_positions = 3
+	total_positions = 0
+	spawn_positions = 0
 	supervisors = "the NeoTheology Preacher"
 	selection_color = "#ecd37d"
 	//alt_titles = list("Hydroponicist")
@@ -165,8 +165,8 @@
 	department = DEPARTMENT_CHURCH
 	department_flag = CHURCH
 	faction = "CEV Eris"
-	total_positions = 2
-	spawn_positions = 2
+	total_positions = 0
+	spawn_positions = 0
 	supervisors = "the NeoTheology Preacher"
 	selection_color = "#ecd37d"
 	//alt_titles = list("Custodian","Sanitation Technician")
@@ -206,3 +206,47 @@
 	name = "NeoTheology Custodian"
 	icon_state = "player-black"
 	join_tag = /datum/job/janitor
+
+/datum/job/crusader
+	title = "NeoTheology Crusader"
+	flag = CRUSADER
+	department = DEPARTMENT_CHURCH
+	department_flag = CHURCH
+	faction = "Neotheology"
+	total_positions = 99
+	spawn_positions = 99
+	supervisors = "the NeoTheology Preacher"
+	selection_color = "#ecd37d"
+	also_known_languages = list(LANGUAGE_LATIN = 100)
+	security_clearance = CLEARANCE_COMMON
+	cruciform_access = list(access_morgue, access_crematorium, access_maint_tunnels, access_hydroponics)
+	wage = WAGE_PROFESSIONAL // The money of the soul is faith, and cold hard cash
+	outfit_type = /decl/hierarchy/outfit/job/church/acolyte
+
+	stat_modifiers = list(
+		STAT_VIG = 25,
+		STAT_TGH = 25,
+		STAT_ROB = 25,
+		STAT_COG = 25,
+	)
+
+	core_upgrades = list(
+		CRUCIFORM_ACOLYTE
+	)
+
+	description = "You serve the Inquisitor as a disciple of the Faith.<br>\
+	<br>\
+	your duty is to defend the church and destroy the heathens of hana.<br>\
+	<br>\
+	DEUS VULT!."
+
+	duties = "defend the chapel.<br>\
+	kill the heathens of ironhammer.<br>\
+	Serve the Inquisitors's will."
+
+	setup_restricted = TRUE
+
+/obj/landmark/join/start/crusader
+	name = "NeoTheology Crusader"
+	icon_state = "player-black"
+	join_tag = /datum/job/crusader
