@@ -330,3 +330,14 @@
 
 /obj/landmark/corpse/russian/ranged
 	corpsehelmet = /obj/item/clothing/head/ushanka
+
+/////////////////Team Deathmatch//////////////////////
+
+/obj/landmark/corpse/miner/void
+	name = "Guild Miner"
+	corpseuniform = /obj/item/clothing/under/rank/miner
+	corpseshoes = /obj/item/clothing/shoes/color/black
+	corpseradio = /obj/item/device/radio/headset/headset_cargo
+	corpsesuit = /obj/item/clothing/suit/space/void/mining
+	corpseid = 1
+	corpseidjob = "Guild Miner"
