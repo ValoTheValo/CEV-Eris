@@ -214,3 +214,9 @@
 
 /datum/job_flavor/assistant/archimandrite
 	title = "Christian Era Vector \"Eris\" Archimandrite"
+
+/datum/job_flavor/assistant/prisoner
+	title = "Convict Exploitation Vehicle \"Eris\" Laborer"
+
+/datum/job_flavor/assistant/warden
+	title = "Convict Exploitation Vehicle \"Eris\" Warden"
