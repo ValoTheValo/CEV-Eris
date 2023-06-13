@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/shotgun/type_21
 	name = "OS Type 21 SG \"Yaoguai\"" //Demon
-	desc = "An early model shotgun used by One Star. It is compact with a sawn down barrel and no stock, and designed for police use in megacities. Its recoil kicks badly but the stopping power is worth it. Its fed from .50 drum and box magazines"
+	desc = "An early model shotgun used by One Star. It is compact with a sawn down barrel and no stock, designed for police use in megacities. The recoil kicks badly but the stopping power is worth it. fed from .50 drum and box magazines"
 	icon = 'icons/obj/guns/projectile/os/type_21.dmi'
 	icon_state = "type_21"
 	item_state = "type_21"
