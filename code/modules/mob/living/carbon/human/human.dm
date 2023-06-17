@@ -985,11 +985,6 @@ var/list/rank_prefix = list(\
 						H.brainmob.mind.transfer_to(src)
 						qdel(H)
 
-
-	for(var/ID in virus2)
-		var/datum/disease2/disease/V = virus2[ID]
-		V.cure(src)
-
 	losebreath = 0
 
 	..()
@@ -1463,7 +1458,7 @@ var/list/rank_prefix = list(\
 /mob/living/carbon/human/slip(var/slipped_on, stun_duration=8)
 	if((species.flags & NO_SLIP) || (shoes && (shoes.item_flags & NOSLIP)))
 		return FALSE
-	..(slipped_on,stun_duration)
+	return ..(slipped_on,stun_duration)
 
 
 /mob/living/carbon/human/reset_view(atom/A, update_hud = 1)
