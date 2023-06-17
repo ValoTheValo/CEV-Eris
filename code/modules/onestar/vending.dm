@@ -22,11 +22,11 @@
 	icon_state = "vendor_guns"
 
 	products = list(
-		/obj/item/gun/projectile/pistol/type_62 = 5,
-		/obj/item/gun/projectile/pistol/type_90 = 5,
-		/obj/item/gun/projectile/shotgun/type_21 = 5,
-		/obj/item/gun/projectile/automatic/type_17 = 5,
-		/obj/item/gun/projectile/type_47 = 5
+		/obj/item/gun/projectile/pistol/type_62 = 99,
+		/obj/item/gun/projectile/pistol/type_90 = 99,
+		/obj/item/gun/projectile/shotgun/type_21 = 99,
+		/obj/item/gun/projectile/automatic/type_17 = 99,
+		/obj/item/gun/projectile/type_47 = 99
 		)
 
 	prices = list(

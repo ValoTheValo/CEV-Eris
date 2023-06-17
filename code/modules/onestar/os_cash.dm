@@ -74,3 +74,18 @@
 
 /obj/item/stack/os_cash/full
 	amount = 1000
+
+/obj/item/stack/os_cash/c5
+	amount = 5
+
+/obj/item/stack/os_cash/c10
+	amount = 10
+
+/obj/item/stack/os_cash/c20
+	amount = 20
+
+/obj/item/stack/os_cash/c50
+	amount = 50
+
+/obj/item/stack/os_cash/c100
+	amount = 100
