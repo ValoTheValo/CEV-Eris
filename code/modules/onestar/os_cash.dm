@@ -72,6 +72,10 @@
 	rand_min = 1
 	rand_max = 1000
 
+/obj/item/stack/os_cash/random/c10
+	rand_min = 1
+	rand_max = 10
+
 /obj/item/stack/os_cash/full
 	amount = 1000
 
