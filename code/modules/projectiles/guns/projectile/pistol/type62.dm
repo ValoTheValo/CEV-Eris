@@ -27,7 +27,7 @@
         )
 	spawn_tags = SPAWN_TAG_GUN_OS
 	spawn_blacklisted = TRUE
-	price_tag = 2700
+	price_tag = 2500
 
 	serial_type = "OS"
 

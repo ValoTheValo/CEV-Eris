@@ -8,7 +8,7 @@
 	can_dual = TRUE
 	origin_tech = list(TECH_COMBAT = 6, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 10, MATERIAL_PLATINUM = 4, MATERIAL_PLASTIC = 6)
-	price_tag = 3900
+	price_tag = 5000
 	caliber = CAL_PISTOL
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_PISTOL|MAG_WELL_H_PISTOL
