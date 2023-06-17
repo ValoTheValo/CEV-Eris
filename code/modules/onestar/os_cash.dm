@@ -89,3 +89,9 @@
 
 /obj/item/stack/os_cash/c100
 	amount = 100
+
+/obj/item/stack/os_cash/c200
+	amount = 200
+
+/obj/item/stack/os_cash/c500
+	amount = 500
