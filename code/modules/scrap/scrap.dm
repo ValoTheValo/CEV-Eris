@@ -405,7 +405,7 @@ GLOBAL_LIST_EMPTY(scrap_base_cache)
 /obj/structure/scrap_spawner/food
 	icontype = "food"
 	name = "food trash pile"
-	desc = "Pile of thrown away food. Someone sure have lots of spare food while children on Mars are starving."
+	desc = "Pile of thrown away food. "
 	parts_icon = 'icons/obj/structures/scrap/food_trash.dmi'
 	rarity_value = 5.77
 	loot_tags = list(
