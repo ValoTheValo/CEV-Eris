@@ -289,6 +289,29 @@
 	corpseidaccess = "ihoper"
 	injury_level = 9
 
+/obj/landmark/corpse/scientist
+	name = "Moebius Scientist"
+	corpseuniform = /obj/item/clothing/under/rank/scientist
+	corpseshoes = /obj/item/clothing/shoes/jackboots
+	corpsegloves = list(/obj/item/clothing/gloves/thick, /obj/item/clothing/gloves/latex)
+	corpseradio = /obj/item/device/radio/headset/headset_sci
+	corpsesuit = /obj/item/clothing/suit/storage/toggle/labcoat/science
+	corpsehelmet = list(/obj/item/clothing/head/beret/moebius, null, null)
+	corpseid = 1
+	corpseidjob = "Moebius Scientist"
+	injury_level = 6
+
+/obj/landmark/corpse/doctor
+	name = "Moebius Doctor"
+	corpseuniform = /obj/item/clothing/under/rank/medical
+	corpseshoes = /obj/item/clothing/shoes/reinforced
+	corpsegloves = list(/obj/item/clothing/gloves/latex/nitrile, /obj/item/clothing/gloves/latex)
+	corpseradio = /obj/item/device/radio/headset_sci
+	corpsesuit = list(/obj/item/clothing/suit/storage/toggle/labcoat/cmo, /obj/item/clothing/suit/storage/toggle/labcoat)
+	corpsebelt = /obj/item/storage/belt/medical
+	corpseid = 1
+	corpseidjob = "Moebius Doctor"
+
 ////LEGACY CORPSES////REPLACE WITH NEW CORPSES IF FOUND IN MAP////
 /obj/landmark/corpse/syndicatesoldier
 	name = "Syndicate Operative"
@@ -303,8 +326,6 @@
 	corpseid = 1
 	corpseidjob = "Operative"
 	corpseidaccess = "Syndicate"
-
-
 
 /obj/landmark/corpse/syndicatecommando
 	name = "Syndicate Commando"
@@ -364,15 +385,6 @@
 	corpseid = 1
 	corpseidjob = "Clown"
 	//corpseidaccess = "Clown" //not exist
-
-/obj/landmark/corpse/scientist
-	name = "Scientist"
-	corpseuniform = /obj/item/clothing/under/rank/scientist
-	corpseshoes = /obj/item/clothing/shoes/jackboots
-	corpseradio = /obj/item/device/radio/headset
-	corpsesuit = /obj/item/clothing/suit/storage/toggle/labcoat/science
-	corpseid = 1
-	corpseidjob = "Scientist"
 
 /obj/landmark/corpse/miner
 	name = "Guild Miner"
