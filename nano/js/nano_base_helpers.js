@@ -47,6 +47,19 @@ NanoBaseHelpers = function ()
 
 				return '';
 			},
+			// change ui styling to "moebius mode"
+			moebiusMode: function() {
+				$('body').css("background-color","#3C385B");
+				$('body').css("background-image","url('uiBackground-moebius.png')");
+				$('body').css("background-position","50% 0");
+				$('body').css("background-repeat","repeat-x");
+
+				$('#uiTitleFluff').css("background-image","url('uiTitleFluff-Moebius.png')");
+				$('#uiTitleFluff').css("background-position","50% 50%");
+				$('#uiTitleFluff').css("background-repeat", "no-repeat");
+
+				return '';
+			},
 			// Generate a Byond link
 			link: function( text, icon, parameters, status, elementClass, elementId) {
 
@@ -128,7 +141,7 @@ NanoBaseHelpers = function ()
 					return 'COULD NOT FIND ENTRY(' + type + ')';
 				var text = entry['entry_name']
 				var parameters = {"set_active_entry" : entry['entry_type']};
-				
+
 				var iconHtml = '';
 				var iconClass = 'noIcon';
 				if(entry['entry_img_path'])
@@ -196,12 +209,12 @@ NanoBaseHelpers = function ()
 				{
 					showText = '';
 				}
-				
+
 				if (typeof difClass == 'undefined' || !difClass)
 				{
 					difClass = ''
 				}
-				
+
 				if(typeof direction == 'undefined' || !direction)
 				{
 					direction = 'width'
@@ -210,9 +223,9 @@ NanoBaseHelpers = function ()
 				{
 					direction = 'height'
 				}
-				
+
 				var percentage = Math.round((value - rangeMin) / (rangeMax - rangeMin) * 100);
-				
+
 				return '<div class="displayBar' + difClass + ' ' + styleClass + '"><div class="displayBar' + difClass + 'Fill ' + styleClass + '" style="' + direction + ': ' + percentage + '%;"></div><div class="displayBar' + difClass + 'Text ' + styleClass + '">' + showText + '</div></div>';
 			},
 			// Display DNA Blocks (for the DNA Modifier UI)
@@ -270,12 +283,12 @@ NanoBaseHelpers = function ()
 				return html;
 			}
 		};
-		
+
 	return {
-		init: function () 
+		init: function ()
 		{
-			_data = $('body').data('initialData');	
-			
+			_data = $('body').data('initialData');
+
         },
         addHelpers: function ()
 		{
@@ -289,11 +302,11 @@ NanoBaseHelpers = function ()
 				{
 					NanoTemplate.removeHelper(helperKey);
 				}
-			}            
+			}
         }
 	};
 } ();
- 
+
 
 
 
