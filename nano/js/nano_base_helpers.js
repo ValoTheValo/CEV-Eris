@@ -60,6 +60,19 @@ NanoBaseHelpers = function ()
 
 				return '';
 			},
+						// change ui styling to "neotheology mode"
+			neotheologyMode: function() {
+				$('body').css("background-color","#070603");
+				$('body').css("background-image","url('uiBackground-Neotheology.png')");
+				$('body').css("background-position","50% 30%");
+				$('body').css("background-repeat","repeat-x");
+
+				$('#uiTitleFluff').css("background-image","url('uiTitleFluff.png')");
+				$('#uiTitleFluff').css("background-position","50% 50%");
+				$('#uiTitleFluff').css("background-repeat", "no-repeat");
+
+				return '';
+			},
 			// Generate a Byond link
 			link: function( text, icon, parameters, status, elementClass, elementId) {
 

@@ -1,4 +1,4 @@
-
+{{:helper.neotheologyMode()}}
 <div class="itemLabel"> Status:  </div>
 {{if data.operational}}
 	<div class="itemContent">
@@ -31,7 +31,7 @@
 		</div>
 	{{/if}}
 </div>
-	
+
 <div class="itemLabel"> CO2 output:  </div>
 <div class="itemContent">
 	{{if data.CO2_output}}
@@ -76,7 +76,7 @@
 		</div>
 	{{/if}}
 </div>
-	
+
 <div class="itemLabel"> Coil condition: </div>
 {{if data.wires_integrity > 0}}
 	<div class="itemContent"> {{:data.coil_condition}} % </div>
@@ -96,7 +96,7 @@
 		<div class="itemContent"> UNDETECTED </div>
 	</div>
 {{/if}}
-	
+
 {{if data.wires}}
 	<div class="itemLabel"> Wires integrity: </div>
 	{{if data.wires_integrity > 0}}
