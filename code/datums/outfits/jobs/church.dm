@@ -23,6 +23,7 @@
 /decl/hierarchy/outfit/job/church/acolyte
 	name = OUTFIT_JOB_NAME("NeoTheology Acolyte")
 	uniform = /obj/item/clothing/under/rank/acolyte
+	suit = /obj/item/clothing/suit/storage/neotheology_jacket/black
 	shoes = /obj/item/clothing/shoes/reinforced
 	gloves = /obj/item/clothing/gloves/thick
 

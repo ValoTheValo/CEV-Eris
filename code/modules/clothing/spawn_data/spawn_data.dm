@@ -477,6 +477,9 @@
 /obj/item/clothing/suit/storage/neotheology_jacket
 	rarity_value = 23.8889
 
+/obj/item/clothing/suit/storage/neotheology_jacket/black
+	rarity_value = 19.8889
+
 /obj/item/clothing/suit/storage/neotheology_coat
 	rarity_value = 27.2222
 

@@ -556,7 +556,7 @@
 	sound_env = LARGE_ENCLOSED
 
 /area/eris/neotheology/storage
-	name = "\improper Church Break Room"
+	name = "\improper Church Storage"
 	icon_state = "erisyellow"
 	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_BRIGHT
 
@@ -568,12 +568,13 @@
 /area/eris/neotheology/office
 	name = "\improper Chapel Office"
 	icon_state = "chapeloffice"
+	sound_env = SMALL_SOFTFLOOR
 	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_DARK
 
 /area/eris/neotheology/funeral
 	name = "\improper Funeral Chamber"
 	icon_state = "erisyellow"
-	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_DARK
+	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_BRIGHT
 
 /area/eris/neotheology/chapelritualroom
 	name = "Chapel Rituals Room"
@@ -586,7 +587,7 @@
 /area/eris/neotheology/bioprinter
 	name = "Chapel Work Room"
 	icon_state = "purple"
-	
+
 /area/eris/neotheology/biogenerator
 	name = "\improper Church Biogenerator Room"
 	icon_state = "erisred"
@@ -595,6 +596,7 @@
 /area/eris/neotheology/churchbarracks
 	name = "Church Barracks"
 	icon_state = "erisblue"
+	area_light_color = COLOR_LIGHTING_NEOTHEOLOGY_BRIGHT
 
 /area/eris/neotheology/churchcorridor
 	name = "Church Hallway"
