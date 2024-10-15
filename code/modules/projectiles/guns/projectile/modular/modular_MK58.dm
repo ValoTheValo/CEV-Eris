@@ -71,6 +71,11 @@
 	spawn_tags = SPAWN_TAG_GUN_PROJECTILE
 	magazine_type = /obj/item/ammo_magazine/pistol
 
+/obj/item/gun/projectile/automatic/modular/mk58/black/tactical
+	gun_parts = list(/obj/item/part/gun/modular/mechanism/pistol = 0, /obj/item/part/gun/modular/barrel/pistol = 0, /obj/item/part/gun/modular/grip/rubber = 0)
+	spawn_tags = SPAWN_TAG_GUN_PROJECTILE
+	magazine_type = /obj/item/ammo_magazine/pistol
+
 /obj/item/gun/projectile/automatic/modular/mk58/black/army
 	gun_parts = list(/obj/item/part/gun/modular/mechanism/pistol = 0, /obj/item/part/gun/modular/barrel/pistol = 0, /obj/item/part/gun/modular/grip/excel = 1)
 	spawn_tags = SPAWN_TAG_GUN_PROJECTILE

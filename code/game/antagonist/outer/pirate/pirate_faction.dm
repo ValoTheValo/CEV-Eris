@@ -1,6 +1,6 @@
 /datum/faction/pirate
 	id = FACTION_PIRATES
-	name = "Pirates"
+	name = "Founders"
 	antag = "pirate"
 	antag_plural = "pirates"
 	welcome_text = WELCOME_PIRATES

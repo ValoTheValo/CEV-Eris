@@ -11,7 +11,7 @@
 	id = ROLE_PIRATE
 	bantype = ROLE_PIRATE
 	faction_id = FACTION_PIRATES
-	role_text = "Pirate"
+	role_text = "Founders Insurgent"
 	welcome_text = WELCOME_PIRATES
 	antaghud_indicator = "hudoperative"
 	landmark_id = "pirate-spawn"
