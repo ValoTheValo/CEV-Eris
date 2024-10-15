@@ -1,6 +1,6 @@
 /obj/machinery/autolathe
 	name = "autolathe"
-	desc = "It produces items using metal and glass."
+	desc = "A general purpose fabricator capable of producing nearly any item you need, provided you have the necessary materials and design disks."
 	icon = 'icons/obj/machines/autolathe.dmi'
 	description_info = "Can be upgraded to print faster, cheaper or hold more material. Can recycle items by trying to insert them as material"
 	icon_state = "autolathe"
@@ -552,8 +552,14 @@
 		return FALSE
 
 	if(!length(eating.get_matter()))
-		to_chat(user, SPAN_WARNING("\The [eating] does not contain significant amounts of useful materials and cannot be accepted."))
-		return FALSE
+		var/matterless = TRUE
+		for(var/obj/O in eating.GetAllContents()) // can now recycle empty shells to get at the contents
+			if(length(O.get_matter()))
+				matterless = FALSE
+				break
+		if(matterless)
+			to_chat(user, SPAN_WARNING("\The [eating] does not contain significant amounts of useful materials and cannot be accepted."))
+			return FALSE
 
 	if(istype(eating, /obj/item/computer_hardware/hard_drive/portable))
 		var/obj/item/computer_hardware/hard_drive/portable/DISK = eating
@@ -809,7 +815,7 @@
 		working = FALSE
 		next_file()
 
-	use_power = working ? ACTIVE_POWER_USE : IDLE_POWER_USE
+	set_power_use(working ? ACTIVE_POWER_USE : IDLE_POWER_USE)
 
 	special_process()
 	update_icon()
