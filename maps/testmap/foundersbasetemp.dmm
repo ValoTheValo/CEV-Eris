@@ -1,5 +1,135 @@
-"a" = ()
+"aq" = (/obj/item/gun/projectile/revolver/medium,/turf/space,/area/space)
+"aK" = (/obj/machinery/recharger,/obj/structure/table/reinforced,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"bU" = (/obj/item/gun/projectile/automatic/atreides,/turf/space,/area/space)
+"ca" = (/obj/item/clothing/suit/armor/platecarrier/full,/turf/space,/area/space)
+"cK" = (/obj/item/clothing/shoes/reinforced,/turf/space,/area/space)
+"dS" = (/obj/item/stool/padded,/obj/landmark/storyevent/pirate_spawn,/turf/floor/tiled/dark/cargo,/area/space)
+"eD" = (/obj/structure/table/rack,/obj/item/storage/deferred/crate/ak,/turf/floor/tiled/steel/gray_platform,/area/space)
+"fH" = (/turf/floor/wood,/area/space)
+"fR" = (/obj/structure/closet/secure_closet/pirate,/turf/floor/carpet,/area/space)
+"gk" = (/turf/wall/dummy{desc = "That looks like it doesn't open easily."; icon = 'icons/obj/doors/rapid_pdoor.dmi'; icon_state = "pdoor1"; name = "Shuttle Bay Blast Door"},/area/space)
+"gQ" = (/obj/structure/closet/crate/pirate,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"gR" = (/obj/item/clothing/accessory/armband,/turf/space,/area/space)
+"hF" = (/turf/shuttle/wall{icon_state = "wall3"},/area/space)
+"hT" = (/obj/item/grenade/explosive,/obj/item/grenade/explosive,/turf/space,/area/space)
+"hV" = (/obj/item/clothing/head/beret/syndicate,/turf/space,/area/space)
+"it" = (/obj/structure/table/rack,/obj/item/handcuffs/zipties,/obj/item/handcuffs/zipties,/obj/item/handcuffs/zipties,/obj/item/handcuffs/zipties,/obj/item/handcuffs/zipties,/obj/item/handcuffs/zipties,/turf/floor/tiled/steel/gray_platform,/area/space)
+"jg" = (/turf/shuttle/wall{dir = 4; icon_state = "diagonalWall3"},/area/space)
+"jX" = (/obj/structure/bed/chair{dir = 1},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"ku" = (/obj/machinery/cryopod,/turf/floor/tiled/steel/gray_platform,/area/space)
+"kM" = (/obj/machinery/door/airlock/external{req_access = list(145)},/turf/floor/dummy{icon_state = "plating"; name = "plating"},/area/space)
+"lg" = (/obj/structure/table/woodentable,/obj/item/device/lighting/toggleable/lamp{pixel_x = 4; pixel_y = 8},/turf/floor/tiled/dark/cargo,/area/space)
+"mu" = (/obj/item/gun/projectile/automatic/sts35,/turf/space,/area/space)
+"mB" = (/obj/machinery/light{dir = 8; icon_state = "tube1"; pixel_y = 0},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"nr" = (/obj/item/contraband/poster/placed{icon_state = "founders"; pixel_y = 32},/turf/floor/tiled/dark/cargo,/area/space)
+"nt" = (/obj/structure/table/rack,/obj/item/tool/hammer/sledgehammer,/obj/item/tool/hammer/sledgehammer,/obj/item/tool/hammer/sledgehammer,/turf/floor/tiled/steel/gray_platform,/area/space)
+"nY" = (/obj/structure/table/rack,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/obj/item/cell/small/high,/turf/floor/tiled/steel/gray_platform,/area/space)
+"oI" = (/turf/wall/dummy,/area/space)
+"oX" = (/obj/item/clothing/mask/scarf/style/redstyle,/turf/space,/area/space)
+"po" = (/obj/structure/bed,/obj/item/bedsheet/hos,/turf/floor/carpet,/area/space)
+"pU" = (/obj/structure/closet/wall_mounted/emcloset{pixel_y = -31},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"qu" = (/turf/shuttle/wall{dir = 1; icon_state = "diagonalWall3"},/area/space)
+"qA" = (/obj/structure/table/woodentable,/obj/item/reagent_containers/food/snacks/kabob,/turf/floor/tiled/dark/cargo,/area/space)
+"rl" = (/obj/machinery/vending/cigarette{name = "hacked cigarette machine"; prices = list(); products = list(/obj/item/storage/fancy/cigarettes=10,/obj/item/storage/box/matches=10,/obj/item/flame/lighter/zippo=4,/obj/item/clothing/mask/smokable/cigarette/cigar/havana=2)},/turf/floor/tiled/dark/cargo,/area/space)
+"rZ" = (/obj/item/gun/projectile/shotgun/pump/regulator,/turf/space,/area/space)
+"sD" = (/obj/machinery/button/remote/blast_door{id = "pirateshutters_right"; name = "remote shutter control"; pixel_x = -25; req_access = list(145)},/turf/floor/tiled/dark/cargo,/area/space)
+"sG" = (/obj/structure/table/woodentable,/obj/item/reagent_containers/food/drinks/drinkingglass/shot{pixel_x = -4; pixel_y = 9},/obj/item/reagent_containers/food/drinks/drinkingglass/shot{pixel_x = -3; pixel_y = -1},/obj/item/reagent_containers/food/drinks/drinkingglass/shot{pixel_x = 5; pixel_y = 3},/turf/floor/tiled/dark/cargo,/area/space)
+"tr" = (/obj/structure/table/woodentable,/obj/item/storage/deferred/rations,/turf/floor/tiled/dark/cargo,/area/space)
+"uP" = (/obj/structure/table/rack,/obj/item/tank/emergency_oxygen/double,/obj/item/tank/emergency_oxygen/double,/obj/item/tank/emergency_oxygen/double,/obj/item/tank/emergency_oxygen/double,/obj/item/tank/emergency_oxygen/double,/obj/item/tank/emergency_oxygen/double,/obj/structure/table/rack,/turf/floor/tiled/steel/gray_platform,/area/space)
+"uW" = (/obj/structure/table/rack,/obj/item/storage/deferred/surgery,/turf/floor/tiled/steel/gray_platform,/area/space)
+"vO" = (/obj/item/clothing/gloves/security/tactical,/turf/space,/area/space)
+"vW" = (/obj/item/stack/material/steel{amount = 120},/obj/item/stack/material/steel{amount = 120},/obj/structure/table/rack,/turf/floor/tiled/steel/gray_platform,/area/space)
+"wg" = (/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"xZ" = (/obj/structure/table/woodentable,/obj/item/reagent_containers/food/drinks/drinkingglass{pixel_x = -5; pixel_y = 2},/obj/item/reagent_containers/food/drinks/bottle/rum{pixel_x = 5; pixel_y = 5},/turf/floor/tiled/dark/cargo,/area/space)
+"yk" = (/turf/shuttle/wall{icon_state = "diagonalWall3"},/area/space)
+"ys" = (/obj/structure/mirror/antag{pixel_x = 28},/turf/floor/tiled/dark/cargo,/area/space)
+"yv" = (/obj/item/clothing/suit/armor/vest/toggle/full,/turf/space,/area/space)
+"yW" = (/obj/structure/table/rack,/obj/item/storage/deferred/crate/sidearm,/turf/floor/tiled/steel/gray_platform,/area/space)
+"yZ" = (/obj/machinery/light{dir = 4},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"zz" = (/obj/structure/table/rack,/obj/item/storage/belt/utility/full,/obj/item/storage/belt/utility/full,/obj/item/storage/belt/utility/full,/obj/item/storage/belt/utility/full,/obj/item/storage/belt/utility/full,/obj/item/storage/belt/utility/full,/turf/floor/tiled/steel/gray_platform,/area/space)
+"zL" = (/obj/item/clothing/gloves/aerostatic,/turf/space,/area/space)
+"Ar" = (/obj/item/clothing/under/color/black,/turf/space,/area/space)
+"AX" = (/obj/item/clothing/mask/balaclava,/turf/space,/area/space)
+"CE" = (/obj/item/clothing/suit/armor/flak/full,/turf/space,/area/space)
+"CP" = (/obj/item/clothing/shoes/jackboots,/turf/space,/area/space)
+"Dd" = (/obj/structure/cyberplant,/turf/floor/tiled/dark/cargo,/area/space)
+"Dw" = (/obj/item/clothing/suit/armor/vest/full,/turf/space,/area/space)
+"DG" = (/turf/shuttle/wall{dir = 8; icon_state = "diagonalWall3"},/area/space)
+"DX" = (/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_left"; name = "Outer Airlock"; opacity = 0},/turf/wall/low/with_glass/reinforced,/area/space)
+"Eo" = (/obj/effect/shuttle_landmark/pirate/start,/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_front"; name = "Outer Airlock"; opacity = 0},/turf/wall/low/with_glass/reinforced,/area/space)
+"EV" = (/obj/item/clothing/head/beret/oldsec,/turf/space,/area/space)
+"Fc" = (/obj/structure/shuttle/engine/propulsion{icon_state = "propulsion_l"},/turf/space,/area/space)
+"Fl" = (/obj/item/gun/projectile/automatic/modular/mk58/gray/stock,/turf/space,/area/space)
+"Fp" = (/obj/item/ammo_magazine/ammobox/lrifle,/obj/structure/table/rack,/turf/floor/tiled/steel/gray_platform,/area/space)
+"FQ" = (/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_front"; name = "Outer Airlock"; opacity = 0},/turf/wall/low/with_glass/reinforced,/area/space)
+"FX" = (/obj/structure/table/rack,/obj/item/storage/deferred/crate/demolition,/turf/floor/tiled/steel/gray_platform,/area/space)
+"FY" = (/obj/structure/table/rack,/obj/item/storage/deferred/meds,/obj/item/clothing/glasses/hud/health,/obj/item/clothing/glasses/hud/health,/obj/item/clothing/glasses/hud/health,/turf/floor/tiled/steel/gray_platform,/area/space)
+"Gw" = (/obj/structure/closet/crate,/obj/item/reagent_containers/food/drinks/bottle/rum{pixel_x = -7},/obj/item/reagent_containers/food/drinks/bottle/rum,/obj/item/reagent_containers/food/drinks/bottle/rum{pixel_x = 7},/turf/floor/tiled/dark/cargo,/area/space)
+"GJ" = (/obj/item/clothing/head/soft/synd,/turf/space,/area/space)
+"He" = (/obj/item/gun/projectile/revolver/mateba,/turf/space,/area/space)
+"Hg" = (/obj/machinery/button/remote/blast_door{id = "pirateshutters_front"; name = "remote shutter control"; pixel_x = 25; req_access = list(145)},/obj/structure/table/reinforced,/obj/item/device/loot_checker,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"Iz" = (/obj/item/clothing/under/serbiansuit/black,/turf/space,/area/space)
+"IQ" = (/obj/item/grenade/frag,/obj/item/grenade/frag,/turf/space,/area/space)
+"JI" = (/turf/space,/area/space)
+"JO" = (/obj/structure/shuttle/engine/propulsion{icon_state = "propulsion_r"},/turf/space,/area/space)
+"KY" = (/obj/item/gun/projectile/shotgun/pump/regulator/army,/turf/space,/area/space)
+"Lo" = (/obj/structure/table/rack,/obj/item/storage/toolbox/electrical,/obj/item/storage/toolbox/electrical,/turf/floor/tiled/steel/gray_platform,/area/space)
+"Me" = (/obj/machinery/door/airlock/external{frequency = 1331; id_tag = "pirate_shuttle_outer"; name = "Ship External Access"; req_access = list(145)},/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_right"; name = "Outer Airlock"; opacity = 0},/obj/machinery/shield_diffuser,/turf/shuttle/plating,/area/space)
+"MA" = (/turf/floor/tiled/dark/cargo,/area/space)
+"MB" = (/obj/item/gun/projectile/automatic/z8,/turf/space,/area/space)
+"MI" = (/obj/structure/table/rack,/obj/item/storage/box/smokes,/obj/item/storage/box/smokes,/turf/floor/tiled/steel/gray_platform,/area/space)
+"Qa" = (/obj/machinery/button/remote/blast_door{id = "pirateshutters_right"; name = "remote shutter control"; pixel_x = 25; pixel_y = 24; req_access = list(145)},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"Qj" = (/obj/machinery/computer/shuttle_control/multi/pirate,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"Qv" = (/obj/item/storage/toolbox/syndicate{pixel_x = -1; pixel_y = 3},/obj/item/storage/toolbox/syndicate{pixel_x = -1; pixel_y = 3},/obj/structure/table/rack,/turf/floor/tiled/steel/gray_platform,/area/space)
+"QE" = (/obj/machinery/door/airlock/external{frequency = 1331; id_tag = "pirate_shuttle_outer"; name = "Ship External Access"; req_access = list(145)},/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_left"; name = "Outer Airlock"; opacity = 0},/obj/machinery/shield_diffuser,/turf/shuttle/plating,/area/space)
+"RM" = (/obj/structure/reagent_dispensers/rumkeg,/turf/floor/tiled/dark/cargo,/area/space)
+"RP" = (/obj/machinery/light{dir = 4},/obj/structure/closet,/obj/item/clothing/suit/space/void/riggedvoidsuit,/obj/item/clothing/suit/space/void/riggedvoidsuit,/obj/item/clothing/suit/space/void/riggedvoidsuit,/obj/item/clothing/suit/space/void/riggedvoidsuit,/obj/item/clothing/suit/space/void/riggedvoidsuit,/obj/item/clothing/suit/space/void/riggedvoidsuit,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"RQ" = (/obj/item/clothing/gloves/security,/turf/space,/area/space)
+"Tb" = (/obj/structure/cryofeed,/turf/floor/tiled/steel/gray_platform,/area/space)
+"Uj" = (/obj/machinery/button/remote/blast_door{id = "pirateshutters_left"; name = "remote shutter control"; pixel_x = -25; pixel_y = 25; req_access = list(145)},/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"Uo" = (/turf/floor/carpet,/area/space)
+"UG" = (/obj/machinery/door/airlock/centcom{name = "Barracks"; req_access = list(145)},/turf/floor/wood,/area/space)
+"UU" = (/obj/structure/table/woodentable,/obj/item/paper_bin{pixel_x = -3; pixel_y = 7},/obj/item/pen{pixel_y = 4},/turf/floor/tiled/dark/cargo,/area/space)
+"UX" = (/obj/structure/shuttle/engine/heater,/obj/structure/window/reinforced/crescent{dir = 1},/turf/floor/airless,/area/space)
+"Vu" = (/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/item/device/lighting/toggleable/flashlight/seclite,/obj/structure/table/rack,/turf/floor/tiled/steel/gray_platform,/area/space)
+"VE" = (/obj/machinery/door/blast/regular{density = 0; icon_state = "pdoor0"; id = "pirateshutters_right"; name = "Outer Airlock"; opacity = 0},/turf/wall/low/with_glass/reinforced,/area/space)
+"VX" = (/obj/machinery/light{dir = 8; icon_state = "tube1"; pixel_y = 0},/obj/item/device/scanner/price,/obj/item/device/scanner/price,/obj/item/device/scanner/price,/obj/item/device/scanner/price,/obj/item/device/scanner/price,/obj/item/device/scanner/price,/obj/structure/table/reinforced,/turf/shuttle/floor{icon_state = "floor6"},/area/space)
+"YO" = (/obj/item/clothing/gloves/fingerless,/turf/space,/area/space)
 
 (1,1,1) = {"
-a
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIFlaqHebUKYrZmuMBIQJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIgRAXCPEVArcazLhTJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIoXcKGJIzCEYOJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIhVJIDwRQJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIyvvOJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIDGgkgkgkgkgkgkoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIJIJIJIJIJIJIJIJIJIJIJI
+JIgkJIJIDGFQEoFQquJIJIoIuWnrQvMAFXMAFpMAvWMAuPoIoIoIoIoIJIJIJIJIJIJIJI
+JIgkJIDGhFaKQjHghFquJIoIFYMAzzMAyWMAFpMAnYMAMIoIfHkuTboIJIJIJIJIJIJIJI
+JIgkDGhFVXwgjXwgRPhFquoIFYMALoMAntMAeDMAVuMAitoIfHkuTboIJIJIJIJIJIJIJI
+JIgkhFwgUjwgwgwgQawghFoIsDMAMAMAMAMAMAMAMAMAMAoIfHkuTboIJIJIJIJIJIJIJI
+JIgkQEwgwgwgwgwgwgwgMekMMAMAMAMAMAMAMAMAMAMAMAUGfHfHfHoIJIJIJIJIJIJIJI
+JIgkDXpUwgwgwgwgwgpUVEoIMAMAdSdSMAMAoIpoUoUopooIfHkuTboIJIJIJIJIJIJIJI
+JIgkykhFgQwgwgwggQhFjgoIMAdStrtrdSysoIfRUoUofRoIfHkuTboIJIJIJIJIJIJIJI
+JIgkJIykhFmBwgyZhFjgJIoIMAdSlgUUdSMAoIpoUoUopooIfHkuTboIJIJIJIJIJIJIJI
+JIgkJIJIhFgQgQgQhFJIJIoIMAdSqAqAdSysoIfRUoUofRoIoIoIoIoIJIJIJIJIJIJIJI
+JIgkJIJIhFUXhFUXhFJIJIoIMAMAMAMAMAMAoIpoUoUopooIJIJIJIJIJIJIJIJIJIJIJI
+JIgkJIJIykFchFJOjgJIJIoIRMGwxZsGrlDdoIfRUoUofRoIJIJIJIJIJIJIJIJIJIJIJI
+JIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIoIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
+JIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJIJI
 "}
