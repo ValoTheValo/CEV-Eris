@@ -26,10 +26,10 @@
 	desc = "Standard Security gear. Protects the head from impacts."
 	icon_state = "helmet"
 	armor = list(
-		melee = 7,
-		bullet = 10,
-		energy = 10,
-		bomb = 50,
+		melee = 30,
+		bullet = 40,
+		energy = 40,
+		bomb = 20,
 		bio = 0,
 		rad = 0
 	)
@@ -54,15 +54,16 @@
 	icon_state = "merchelm"
 	body_parts_covered = HEAD | EARS | EYES | FACE
 	armor = list(
-		melee = 12,
-		bullet = 12,
-		energy = 12,
-		bomb = 75,
+		melee = 50,
+		bullet = 50,
+		energy = 50,
+		bomb = 25,
 		bio = 0,
 		rad = 0
 	)
 	flash_protection = FLASH_PROTECTION_MODERATE
 	price_tag = 500
+	obscuration = LIGHT_OBSCURATION
 	style_coverage = COVERS_WHOLE_HEAD
 
 /obj/item/clothing/head/armor/helmet/dermal
@@ -81,7 +82,6 @@
 /obj/item/clothing/head/armor/helmet/technomancer
 	name = "insulated technomancer helmet"
 	desc = "A piece of armor used in hostile work conditions to protect the head. Comes with a built-in flashlight."
-	description_info = "The appearance of the visor can be changed with a wrench."
 	body_parts_covered = HEAD|EARS|EYES|FACE
 	item_flags = THICKMATERIAL
 	flags_inv = BLOCKHEADHAIR|HIDEEARS|HIDEEYES|HIDEFACE
@@ -89,10 +89,10 @@
 	light_overlay = "technohelmet_light"
 	brightness_on = 4
 	armor = list(
-		melee = 7,
-		bullet = 7,
-		energy = 3,
-		bomb = 100,
+		melee = 30,
+		bullet = 30,
+		energy = 10,
+		bomb = 50,
 		bio = 0,
 		rad = 80
 	)//Mix between hardhat.dm armor values, helmet armor values in armor.dm, and armor values for TM void helmet in station.dm.
@@ -105,18 +105,6 @@
 	. = ..()
 	icon_state = pick(list("technohelmet_visor", "technohelmet_googles"))
 
-/obj/item/clothing/head/armor/helmet/technomancer/attackby(obj/item/W, mob/user)
-	if(QUALITY_BOLT_TURNING in W.tool_qualities)
-		if(icon_state == "technohelmet_visor")
-			icon_state = "technohelmet_googles"
-			to_chat(usr, "You reconfigure the [src]'s visor to look like a pair of goggles.")
-			return
-		else
-			icon_state = "technohelmet_visor"
-			to_chat(usr, "You reconfigure the [src]'s goggles to look like a visor.")
-			return
-	. = ..()
-
 /obj/item/clothing/head/armor/helmet/technomancer_old
 	name = "reinforced technomancer helmet"
 	desc = "Technomancer League's ballistic helmet. Comes with a built-in flashlight. The welder-proof visor hinders aim."
@@ -127,14 +115,15 @@
 	action_button_name = "Toggle Headlamp"
 	brightness_on = 4
 	armor = list(
-		melee = 9,
-		bullet = 9,
-		energy = 9,
-		bomb = 100,
+		melee = 35,
+		bullet = 50,
+		energy = 30,
+		bomb = 40,
 		bio = 0,
 		rad = 0
 	)
 	flash_protection = FLASH_PROTECTION_MAJOR
+	obscuration = MEDIUM_OBSCURATION
 	price_tag = 500
 
 /obj/item/clothing/head/armor/helmet/handmade
@@ -142,28 +131,14 @@
 	desc = "It looks like it was made from a bucket and some steel. Uncomfortable and heavy but better than nothing."
 	icon_state = "helmet_handmade"
 	armor = list(
-		melee = 7,
-		bullet = 7,
-		energy = 7,
-		bomb = 35,
+		melee = 30,
+		bullet = 30,
+		energy = 30,
+		bomb = 20,
 		bio = 0,
 		rad = 0
 	)
 	price_tag = 75
-
-/obj/item/clothing/head/armor/helmet/scavengerhelmet
-	name = "scavenger helmet"
-	desc = "A sturdy, handcrafted helmet. It's well balanced and sits low on your head, with padding on the inside."
-	icon_state = "scav_helmet"
-	armor = list(
-		melee = 10,
-		bullet = 9,
-		energy = 7,
-		bomb = 35,
-		bio = 0,
-		rad = 0
-	)
-	price_tag = 200
 
 /obj/item/clothing/head/armor/helmet/thunderdome
 	name = "\improper Thunderdome helmet"
@@ -179,10 +154,10 @@
 	icon_state = "bulletproof"
 	body_parts_covered = HEAD | EARS | EYES | FACE
 	armor = list(
-		melee = 7,
-		bullet = 15,
-		energy = 7,
-		bomb = 30,
+		melee = 30,
+		bullet = 60,
+		energy = 30,
+		bomb = 20,
 		bio = 0,
 		rad = 0
 	)
@@ -194,6 +169,7 @@
 		MATERIAL_PLASTEEL = 2, //Higher plasteel cost since it's booletproof
 		MATERIAL_GLASS = 3 //For the visor parts
 	)
+	obscuration = LIGHT_OBSCURATION
 	style_coverage = COVERS_WHOLE_HEAD
 
 /obj/item/clothing/head/armor/bulletproof/ironhammer_nvg //currently junk-only
@@ -289,10 +265,10 @@
 	body_parts_covered = HEAD | EARS | EYES
 	flags_inv = HIDEEARS | HIDEEYES
 	armor = list(
-		melee = 7,
-		bullet = 7,
-		energy = 16,
-		bomb = 20,
+		melee = 30,
+		bullet = 30,
+		energy = 65,
+		bomb = 0,
 		bio = 0,
 		rad = 0
 	)
@@ -312,6 +288,7 @@
 	var/list/armor_down = list(melee = 0, bullet = 0, energy = 0, bomb = 0, bio = 0, rad = 0)
 
 	var/tint_down = TINT_LOW
+	var/obscuration_down = MEDIUM_OBSCURATION
 	flags_inv = HIDEEARS
 	var/flags_inv_down = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|BLOCKHEADHAIR
 	body_parts_covered = HEAD|EARS
@@ -327,8 +304,8 @@
 	name = "riot helmet"
 	desc = "A helmet specifically designed to protect against close range attacks."
 	icon_state = "riot"
-	armor_up = list(melee = 7, bullet = 5, energy = 5, bomb = 35, bio = 0, rad = 0)
-	armor_down = list(melee = 10, bullet = 8, energy = 7, bomb = 50, bio = 0, rad = 0)
+	armor_up = list(melee = 30, bullet = 20, energy = 20, bomb = 20, bio = 0, rad = 0)
+	armor_down = list(melee = 40, bullet = 35, energy = 30, bomb = 35, bio = 0, rad = 0)
 	item_flags = THICKMATERIAL | COVER_PREVENT_MANIPULATION
 	price_tag = 150
 	matter = list(
@@ -355,6 +332,7 @@
 		armor = getArmor(arglist(armor_up))
 		flash_protection = initial(flash_protection)
 		tint = initial(tint)
+		obscuration = initial(obscuration)
 		flags_inv = initial(flags_inv)
 		body_parts_covered = initial(body_parts_covered)
 		style_coverage = initial(style_coverage)
@@ -362,6 +340,7 @@
 		armor = getArmor(arglist(armor_down))
 		flash_protection = flash_protection_down
 		tint = tint_down
+		obscuration = obscuration_down
 		flags_inv = flags_inv_down
 		body_parts_covered = body_parts_covered_down
 		style_coverage = COVERS_WHOLE_HEAD
@@ -397,13 +376,14 @@
 	icon_state = "light_riot"
 
 	tint = TINT_NONE
+	obscuration = LIGHT_OBSCURATION
 
 	body_parts_covered = HEAD|FACE|EARS
 	armor = list(
-		melee = 16,
-		bullet = 13,
-		energy = 10,
-		bomb = 75,
+		melee = 65,
+		bullet = 50,
+		energy = 40,
+		bomb = 35,
 		bio = 0,
 		rad = 0
 	)
@@ -473,14 +453,7 @@
 	name = "steelpot helmet"
 	desc = "A titanium helmet of serbian origin. Still widely used despite being discontinued."
 	icon_state = "steelpot"
-	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 7,
-		bomb = 50,
-		bio = 0,
-		rad = 0
-	) // slightly buffed IHS helmet minus energy resistance
+	armor = list(melee = 40, bullet = 40, energy = 30, bomb = 30, bio = 0, rad = 0) // slightly buffed IHS helmet minus energy resistance
 	flags_inv = BLOCKHEADHAIR
 	body_parts_covered = HEAD|EARS
 	siemens_coefficient = 1
@@ -489,8 +462,8 @@
 	name = "altyn helmet"
 	desc = "A titanium helmet of serbian origin. Still widely used despite being discontinued."
 	icon_state = "altyn"
-	armor_up = list(melee = 5, bullet = 5, energy = 2, bomb = 30, bio = 0, rad = 0)
-	armor_down = list(melee = 10, bullet = 13, energy = 7, bomb = 50, bio = 0, rad = 0)
+	armor_up = list(melee = 20, bullet = 20, energy = 10, bomb = 15, bio = 0, rad = 0)
+	armor_down = list(melee = 40, bullet = 50, energy = 30, bomb = 35, bio = 0, rad = 0)
 	siemens_coefficient = 1
 	up = TRUE
 
@@ -504,14 +477,7 @@
 	name = "maska helmet"
 	desc = "\"I do not know who I am, I don\'t know why I\'m here. All I know is that I must kill.\""
 	icon_state = "maska"
-	armor_down = list(
-		melee = 14,
-		bullet = 15,
-		energy = 7,
-		bomb = 50,
-		bio = 0,
-		rad = 0
-	) // superior ballistic protection, mediocre laser protection.
+	armor_down = list(melee = 55, bullet = 60, energy = 30, bomb = 45, bio = 0, rad = 0) // superior ballistic protection, mediocre laser protection.
 
 /obj/item/clothing/head/armor/faceshield/altyn/maska/tripoloski
 	name = "striped maska helmet"
@@ -525,9 +491,9 @@
 	flags_inv = HIDEEARS|HIDEEYES|BLOCKHAIR
 	siemens_coefficient = 0.9	//More conductive than most helmets
 	armor = list(
-		melee = 1,
-		bullet = 4,
-		energy = 2,
+		melee = 5,
+		bullet = 20,
+		energy = 10,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -538,10 +504,10 @@
 	name = "\improper Type-34 Semi-Enclosed Headwear"
 	desc = "Armored helmet used by certain law enforcement agencies. It's hard to believe there's a human somewhere behind that."
 	armor = list(
-		melee = 7,
-		bullet = 10,
-		energy = 10,
-		bomb = 30,
+		melee = 30,
+		bullet = 40,
+		energy = 40,
+		bomb = 20,
 		bio = 0,
 		rad = 0
 	)
@@ -551,19 +517,19 @@
 	desc = "May God guide you."
 	icon_state = "crusader_hemet"
 	item_state = "crusader_hemet"
-	body_parts_covered = HEAD|FACE|EYES|EARS
-	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|BLOCKHAIR
+	flags_inv = HIDEEARS|HIDEEYES|BLOCKHAIR
 	matter = list(MATERIAL_BIOMATTER = 15, MATERIAL_PLASTEEL = 5, MATERIAL_STEEL = 5, MATERIAL_GOLD = 1)
 	armor = list(
-		melee = 13,
-		bullet = 13,
-		energy = 13,
-		bomb = 75,
+		melee = 50,
+		bullet = 50,
+		energy = 50,
+		bomb = 25,
 		bio = 0,
 		rad = 0
 	)
 	unacidable = TRUE
 	spawn_blacklisted = TRUE
+	obscuration = MEDIUM_OBSCURATION // May God guide your aim
 	style_coverage = COVERS_WHOLE_HEAD
 
 /obj/item/clothing/head/armor/helmet/tanker
@@ -571,11 +537,11 @@
 	desc = "Protects the head from damage while you are in the exoskeleton."
 	icon_state = "tanker_helmet"
 	item_flags = THICKMATERIAL
-	flags_inv = HIDEEARS|BLOCKHEADHAIR
+	flags_inv = HIDEEARS|BLOCKHAIR
 	siemens_coefficient = 1
 	armor = list(
-		melee = 4,
-		bullet = 3,
+		melee = 15,
+		bullet = 15,
 		energy = 0,
 		bomb = 0,
 		bio = 0,
@@ -594,71 +560,6 @@
 	name = "gray tanker helmet"
 	icon_state = "tanker_helmet_gray"
 
-/obj/item/clothing/head/armor/excel_beret
-	name = "Excelsior beret"
-	desc = "An armored white and orange beret, issued out to Haven's many conscripts"
-	icon_state = "excel_beret"
-	item_state = "excel_beret"
-	armor = list(
-		melee = 5,
-		bullet = 4,
-		energy = 5,
-		bomb = 5,
-		bio = 0,
-		rad = 0
-	)
-	matter = list(
-		MATERIAL_BIOMATTER = 2,
-		MATERIAL_PLASTIC = 1,
-		MATERIAL_STEEL = 1
-	)
-/obj/item/clothing/head/armor/excel_sfera
-	name = "Excelsior sfera-9 helmet"
-	desc = "The most common Excelsior combat helmet, offers decent enough protection for relative ease of production."
-	icon_state = "spherer_helm"
-	item_state = "spherer_helm"
-	armor = list(
-		melee = 8,
-		bullet = 12,
-		energy = 10,
-		bomb = 25,
-		bio = 0,
-		rad = 0
-	)
-	matter = list(
-	MATERIAL_PLASTIC = 2,
-	MATERIAL_GLASS = 2,
-	MATERIAL_STEEL = 3,
-	MATERIAL_PLASTEEL = 2
-	)
-	siemens_coefficient = 1
-	species_restricted = list(SPECIES_HUMAN)
-	price_tag = 150
-
-/obj/item/clothing/head/armor/korund_helm
-	name = "Excelsior sfera-45 helmet"
-	desc = "The most durable and heavy Excelsior helmet to date, for Haven's hardest battles."
-	icon_state = "korund_helm"
-	item_state = "korund_helm"
-	armor = list(
-		melee = 16,
-		bullet = 14,
-		energy = 16,
-		bomb = 95,
-		bio = 0,
-		rad = 0
-	)
-	matter = list(
-	MATERIAL_PLASTIC = 40,
-	MATERIAL_GLASS = 10,
-	MATERIAL_STEEL = 25,
-	MATERIAL_PLASTEEL = 10
-	)
-	siemens_coefficient = 1
-	species_restricted = list(SPECIES_HUMAN)
-	price_tag = 150
-	spawn_blacklisted = TRUE
-
 /obj/item/clothing/head/armor/faceshield/paramedic
 	name = "Moebius paramedic helmet"
 	desc = "Seven minutes or a refund."
@@ -673,24 +574,25 @@
 		MATERIAL_PLATINUM = 2
 		)
 	armor_up = list(
-		melee = 5,
-		bullet = 5,
-		energy = 5,
-		bomb = 20,
+		melee = 20,
+		bullet = 20,
+		energy = 20,
+		bomb = 10,
 		bio = 100,
 		rad = 50
 		)
 	armor_down = list(
-		melee = 7,
-		bullet = 10,
-		energy = 10,
-		bomb = 50,
+		melee = 30,
+		bullet = 40,
+		energy = 40,
+		bomb = 20,
 		bio = 100,
 		rad = 50)
 	up = TRUE
 	spawn_blacklisted = TRUE
 	style = STYLE_HIGH
 	tint_down = TINT_NONE
+	obscuration_down = LIGHT_OBSCURATION
 	var/speaker_enabled = TRUE
 	var/scan_scheduled = FALSE
 	var/scan_interval = 15 SECONDS

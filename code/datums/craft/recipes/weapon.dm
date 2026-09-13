@@ -68,10 +68,10 @@
 	)
 
 /datum/craft_recipe/weapon/throwing_knife
-	name = "throwing knives"
+	name = "throwing knife"
 	result = /obj/item/stack/thrown/throwing_knife
 	steps = list(
-		list(CRAFT_MATERIAL, 3, MATERIAL_PLASTEEL),
+		list(CRAFT_MATERIAL, 2, MATERIAL_PLASTEEL),
 		list(QUALITY_WELDING, 10, "time" = 30),
 		list(QUALITY_HAMMERING, 10, "time" = 20)
 	)
@@ -88,6 +88,18 @@
 	result = /obj/item/material/butterflyhandle
 	steps = list(
 		list(CRAFT_MATERIAL, 4, MATERIAL_PLASTEEL)
+	)
+
+/datum/craft_recipe/weapon/crossbow
+	name = "crossbow"
+	result = /obj/item/gun/launcher/crossbow
+	steps = list(
+		list(CRAFT_MATERIAL, 5, MATERIAL_WOOD), //old frame recipe
+		list(/obj/item/stack/rods, 3, "time" = 20),
+		list(QUALITY_WELDING, 10, "time" = 30),
+		list(/obj/item/stack/cable_coil, 10, "time" = 10),
+		list(CRAFT_MATERIAL, 3, MATERIAL_PLASTIC, "time" = 10),
+		list(QUALITY_SCREW_DRIVING, 5, 10,"time" = 3)
 	)
 
 /datum/craft_recipe/weapon/teleportation_spear
@@ -133,17 +145,6 @@
 		list(/obj/item/storage/belt, 1, "time" = 10)
 	)
 
-/datum/craft_recipe/weapon/dozershield
-	name = "bulldozer shield"
-	result = /obj/item/shield/riot/dozershield
-	steps = list (
-		list(CRAFT_MATERIAL, 6, MATERIAL_STEEL), //frame
-		list(QUALITY_WELDING, 10, 20), //weld to shape of locker
-		list(/obj/item/part/armor, 2), //place armor
-		list(QUALITY_WELDING, 10, 20), //cut apart and spread across frame
-		list(CRAFT_MATERIAL, 15, MATERIAL_PLASTEEL), //place plasteel in thick layers
-		list(QUALITY_WELDING, 10, 20)) // weld together
-
 /datum/craft_recipe/weapon/flamethrower
 	name = "flamethrower"
 	result = /obj/item/flamethrower
@@ -165,6 +166,18 @@
 		list(QUALITY_ADHESIVE, 15, 70)
 	)
 
+/datum/craft_recipe/weapon/rxd
+	name = "RXD - Rapid Crossbow Device"
+	result = /obj/item/gun/launcher/crossbow/RCD
+	steps = list(
+		list(/obj/item/rcd, 1, "time" = 30),
+		list(QUALITY_SCREW_DRIVING, 10, 30),
+		list(QUALITY_SAWING, 10, "time" = 60),
+		list(CRAFT_MATERIAL, 5, MATERIAL_WOOD), //same as the old crossbow frame
+		list(QUALITY_WELDING, 10, "time" = 30),
+		list(/obj/item/stack/cable_coil, 2, "time" = 10)
+	)
+
 /datum/craft_recipe/weapon/mechanical_trap
 	name = "makeshift mechanical trap"
 	result = /obj/item/beartrap/makeshift
@@ -178,57 +191,11 @@
 
 /datum/craft_recipe/weapon/homewrecker
 	name = "homewrecker"
-	result = /obj/item/tool/hammer/sledgehammer/improvised
+	result = /obj/item/tool/hammer/homewrecker
 	steps = list(
 		list(/obj/item/stack/rods, 5, "time" = 30),
 		list(QUALITY_WELDING, 10, "time" = 30),
 		list(CRAFT_MATERIAL, 10, MATERIAL_STEEL),
-		list(QUALITY_ADHESIVE, 15, 70)
-	)
-
-/datum/craft_recipe/weapon/staff
-	name = "makeshift staff"
-	result = /obj/item/tool/hammer/staff
-	steps = list(
-		list(/obj/item/stack/rods, 1),
-		list(QUALITY_ADHESIVE, 10, "time" = 5),
-		list(/obj/item/stack/rods, 1),
-		list(QUALITY_ADHESIVE, 10, "time" = 5),
-		list(/obj/item/stack/rods, 1),
-		list(QUALITY_ADHESIVE, 10, "time" = 5)
-	)
-
-
-/datum/craft_recipe/weapon/battleaxe
-	name = "makeshift axe"
-	result = /obj/item/tool/makeshiftaxe
-	steps = list(
-		list(/obj/item/stack/rods, 3), //get three rods for the shaft
-		list(QUALITY_WELDING, 10, "time" = 10), //weld them togething into a shaft
-		list(CRAFT_MATERIAL, 3, MATERIAL_PLASTEEL), //get some plasteel
-		list(QUALITY_HAMMERING, 10, "time" = 10), //hammer it into a chopping shape and jam the rods into the hole
-		list(QUALITY_WELDING, 10, "time" = 10), //weld it together so it doesnt fly off
-		list(QUALITY_ADHESIVE, 10, "time" = 5) // tape the shaft for better grip
-	)
-/datum/craft_recipe/weapon/halberd
-	name = "makeshift halberd"
-	result = /obj/item/tool/spear/makeshift_halberd
-	steps = list(
-		list(/obj/item/tool/hammer/staff, 1),
-		list(CRAFT_MATERIAL, 5, MATERIAL_STEEL),
-		list(QUALITY_HAMMERING, 10, "time" = 10),
-		list(QUALITY_ADHESIVE, 10, "time" = 5)
-	)
-
-/datum/craft_recipe/weapon/wristshank
-	name = "wristshank"
-	result = /obj/item/organ_module/active/simple/wristshank
-	steps = list(
-		list(CRAFT_MATERIAL, 8, MATERIAL_STEEL, "time" = 10),
-		list(QUALITY_WELDING, 10, "time" = 30),
-		list(QUALITY_HAMMERING, 5, 10),
-		list(/obj/item/stack/cable_coil, 2, "time" = 10),
-		list(QUALITY_SCREW_DRIVING, 10),
 		list(QUALITY_ADHESIVE, 15, 70)
 	)
 
@@ -291,9 +258,9 @@
 	name = "Loudmouth grenade"
 	result = /obj/item/grenade/sonic
 	steps = list(
-		list(/obj/item/cell/large, 1, "time" = 20),
-		list(CRAFT_MATERIAL, 1, MATERIAL_PLASTEEL),
+		list(/obj/item/device/hailer, 1, "time" = 20),
 		list(/obj/item/stack/cable_coil, 3, "time" = 20),
+		list(/obj/item/cell/large, 1, "time" = 20),
 		list(QUALITY_PULSING, 30, "time" = 50),
 		list(QUALITY_ADHESIVE, 30, "time" = 30),
 		list(QUALITY_SCREW_DRIVING, 10, "time" = 20)
@@ -304,26 +271,17 @@
 	result = /obj/item/tool/hammer/mace/makeshift
 	steps = list(
 		list(/obj/item/stack/rods, 5, "time" = 15),
-		list(CRAFT_MATERIAL, 5, MATERIAL_STEEL),
-		list(QUALITY_WELDING, 10, "time" = 30)
-)
-
-/datum/craft_recipe/weapon/mace_refined
-	name = "refined mace"
-	result = /obj/item/tool/hammer/mace
-	steps = list(
-		list(/obj/item/stack/rods, 5, "time" = 15),
-		list(QUALITY_WELDING, 10, "time" = 20),
-		list(CRAFT_MATERIAL, 5, MATERIAL_PLASTEEL),
-		list(QUALITY_HAMMERING, 10, "time" = 20),
 		list(QUALITY_WELDING, 10, "time" = 30),
-		list(/obj/item/stack/cable_coil, 2, "time" = 10))
+		list(CRAFT_MATERIAL, 5, MATERIAL_STEEL),
+		list(QUALITY_WELDING, 10, "time" = 30),
+		list(/obj/item/stack/cable_coil, 2, "time" = 10)
+	  )
 
 /datum/craft_recipe/weapon/charge_hammer
 	name = "charge hammer"
 	result = /obj/item/tool/hammer/charge
 	steps = list(
-		list(/obj/item/tool/hammer/sledgehammer/improvised, 1, "time" = 120), //Get a homewrecker
+		list(/obj/item/tool/hammer/homewrecker, 1, "time" = 120), //Get a homewrecker
 		list(CRAFT_MATERIAL, 4, MATERIAL_PLASTEEL), //Shore it up with some plasteel
 		list(QUALITY_WELDING, 10, "time" = 30), //Weld the plasteel to the head
 		list(/obj/item/rocket_engine, 1, "time" = 30),	//Attach a rocket engine
@@ -333,6 +291,21 @@
 		list(QUALITY_SCREW_DRIVING, 10, "time" = 50), //Secure it
 		list(/obj/item/stack/cable_coil, 2, "time" = 10), //Wire it up
 		list(QUALITY_WIRE_CUTTING, 30, "time" = 50), //Fix the wires
+	)
+
+/datum/craft_recipe/weapon/lasersmg
+	name = "Lasblender"
+	result = /obj/item/gun/energy/lasersmg
+	steps = list(
+		list(/obj/item/gun/projectile/automatic/atreides, 1),
+		list(QUALITY_WELDING, 10, "time" = 30),
+		list(CRAFT_MATERIAL, 6, MATERIAL_PLASTEEL, "time" = 10),
+		list(/obj/item/stock_parts/subspace/crystal, 1),
+		list(/obj/item/computer_hardware/led, 1),
+		list(/obj/item/stack/cable_coil, 5, "time" = 20),
+		list(/obj/item/stock_parts/capacitor, 1, "time" = 5),
+		list(CRAFT_MATERIAL, 2, MATERIAL_GLASS, "time" = 10),
+		list(QUALITY_ADHESIVE, 15, 70)
 	)
 
 /datum/craft_recipe/weapon/gravcharger
@@ -370,15 +343,5 @@
 		list(QUALITY_SCREW_DRIVING, 10, "time" = 30),
 		list(/obj/item/stack/cable_coil, 5),
 		list(QUALITY_WIRE_CUTTING, 10, "time" = 20),
-	)
-
-/datum/craft_recipe/weapon/mech_blade_assembly
-	name = "mech blade assembly"
-	result = /obj/item/mech_blade_assembly
-	steps = list(
-		list(CRAFT_MATERIAL, 15, MATERIAL_PLASTEEL),
-		list(QUALITY_WELDING, 10, "time" = 3 SECONDS),
-		list(CRAFT_MATERIAL, 5, MATERIAL_PLASTIC),
-		list(QUALITY_WELDING, 10, "time" = 2 SECONDS)
 	)
 

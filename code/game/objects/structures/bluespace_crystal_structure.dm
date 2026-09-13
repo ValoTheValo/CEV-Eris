@@ -9,7 +9,7 @@
 
 	var/next_teleportation
 	var/teleportation_timer
-	var/list/turf/floor/destination_candidates = list()
+	var/list/turf/simulated/floor/destination_candidates = list()
 
 	var/teleportation_range = 16  // Maximum range that crystal can teleport mobs and items it's been hit with.
 	var/crystal_amount = 3
@@ -29,12 +29,12 @@
 
 /obj/structure/bs_crystal_structure/New()
 	..()
-	for(var/turf/floor/F in range(2, src.loc))
+	for(var/turf/simulated/floor/F in range(2, src.loc))
 		if(!F.is_wall && !F.is_hole)
 			destination_candidates.Add(F)
 
 	next_teleportation = pick(timer_min, timer_max)
-	teleportation_timer = addtimer(CALLBACK(src, PROC_REF(teleport_random_item)), next_teleportation)
+	teleportation_timer = addtimer(CALLBACK(src, .proc/teleport_random_item), next_teleportation)
 	bluespace_entropy(entropy_value, get_turf(src), TRUE)
 
 /obj/structure/bs_crystal_structure/Destroy()
@@ -56,7 +56,7 @@
 		if(!(I.flags & NOBLUDGEON))
 			user.do_attack_animation(src)
 			if(I.type in explosion_items)
-				explosion(get_turf(src), 200, 50)
+				explosion(src.loc, 0, 1, 2, 3, 0)
 				qdel(I)
 				qdel(src)
 			if(I.hitsound)
@@ -78,7 +78,7 @@
 	if(isobj(AM))
 		var/obj/O = AM
 		if(O.type in explosion_items)
-			explosion(src.loc, 200, 50)
+			explosion(src.loc, 0, 1, 2, 3, 0)
 			qdel(AM)
 			qdel(src)
 	if(ismob(AM) || isobj(AM))
@@ -86,9 +86,9 @@
 		go_to_bluespace(get_turf(src), entropy_value, TRUE, AM, src, aprecision=teleportation_range)
 
 /obj/structure/bs_crystal_structure/proc/teleport_random_item()
-	var/turf/floor/teleport_destination = pick(destination_candidates)
+	var/turf/simulated/floor/teleport_destination = pick(destination_candidates)
 	var/area/target_area = random_ship_area()
-	var/turf/floor/target_turf = target_area.random_space()
+	var/turf/simulated/floor/target_turf = target_area.random_space()
 	if(target_turf)
 		var/list/target_turf_contents = target_turf.contents
 
@@ -101,4 +101,4 @@
 			new /obj/item/bluespace_dust(target_turf)
 
 			next_teleportation = pick(timer_min, timer_max)
-			teleportation_timer = addtimer(CALLBACK(src, PROC_REF(teleport_random_item)), next_teleportation)
+			teleportation_timer = addtimer(CALLBACK(src, .proc/teleport_random_item), next_teleportation)

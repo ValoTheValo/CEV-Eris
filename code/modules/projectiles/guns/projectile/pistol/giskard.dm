@@ -16,11 +16,11 @@
 	magazine_type = /obj/item/ammo_magazine/pistol
 	matter = list(MATERIAL_PLASTEEL = 10, MATERIAL_WOOD = 4)
 	price_tag = 400
-	damage_multiplier = 1.2
-	penetration_multiplier = 0
-	init_recoil = HANDGUN_RECOIL(1)
+	damage_multiplier = 1.3
+	penetration_multiplier = 0.8
+	init_recoil = HANDGUN_RECOIL(0.7)
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
-	gun_parts = list(/obj/item/part/gun/frame/giskard = 1, /obj/item/part/gun/modular/grip/wood = 1, /obj/item/part/gun/modular/mechanism/pistol = 1, /obj/item/part/gun/modular/barrel/pistol = 1)
+	gun_parts = list(/obj/item/part/gun/frame/giskard = 1, /obj/item/part/gun/grip/wood = 1, /obj/item/part/gun/mechanism/pistol = 1, /obj/item/part/gun/barrel/pistol = 1)
 	serial_type = "FS"
 
 /obj/item/gun/projectile/giskard/update_icon()
@@ -28,11 +28,9 @@
 
 	var/iconstring = initial(icon_state)
 	var/itemstring = ""
-	wielded_item_state = "_doble"
 
 	if (ammo_magazine)
 		iconstring += "_mag"
-		wielded_item_state += "_mag"
 
 	if (!ammo_magazine || !length(ammo_magazine.stored_ammo))
 		iconstring += "_slide"
@@ -40,7 +38,6 @@
 	if (silenced)
 		iconstring += "_s"
 		itemstring += "_s"
-		wielded_item_state += "_s"
 
 	icon_state = iconstring
 	set_item_state(itemstring)
@@ -53,7 +50,7 @@
 	name = "Giskard frame"
 	desc = "A Giskard pistol frame. A ubiquitous pocket deterrent."
 	icon_state = "frame_giskard"
-	resultvars = list(/obj/item/gun/projectile/giskard)
-	gripvars = list(/obj/item/part/gun/modular/grip/wood)
-	mechanismvar = /obj/item/part/gun/modular/mechanism/pistol
-	barrelvars = list(/obj/item/part/gun/modular/barrel/pistol)
+	result = /obj/item/gun/projectile/giskard
+	grip = /obj/item/part/gun/grip/wood
+	mechanism = /obj/item/part/gun/mechanism/pistol
+	barrel = /obj/item/part/gun/barrel/pistol

@@ -42,10 +42,14 @@
 
 //A washing machine cleans away most of the bad effects of old clothes
 //Armor penalties and name/desc changes are left
-/obj/machinery/washing_machine/proc/wash(obj/laundry)
-	laundry.clean_blood()
-	if(istype(laundry))
-		laundry.make_young()
+/obj/machinery/washing_machine/proc/wash(atom/A)
+	A.clean_blood()
+	if(isobj(A))
+		var/obj/O = A
+		if(istype(A, /obj/item))
+			var/obj/item/I = A
+			I.decontaminate()
+		O.make_young()
 
 /obj/machinery/washing_machine/Process()
 	if(tick > 0 && (state == WASHSTATE_RUNNING))
@@ -68,13 +72,14 @@
 				qdel(HH)
 
 			state = WASHSTATE_FULLCLOSEDDOOR
-			set_power_use(IDLE_POWER_USE)
+			use_power = IDLE_POWER_USE
 			update_icon()
 
-/obj/machinery/washing_machine/examine(mob/user, extra_description = "")
-	if(tick > 0 && (state == WASHSTATE_RUNNING))
-		extra_description += SPAN_NOTICE("It has [tick*(SSmachines.wait/10)] seconds remaining on this cycle.")
-	..(user, extra_description)
+/obj/machinery/washing_machine/examine(mob/user)
+	..()
+	if(tick > 0 && (state ==WASHSTATE_RUNNING))
+		to_chat(user, SPAN_NOTICE("It has [tick*(SSmachines.wait/10)] seconds remaining on this cycle."))
+
 
 /obj/machinery/washing_machine/verb/start()
 	set name = "Start Washing"
@@ -93,7 +98,7 @@
 	tick = WASH_BASETIME
 	for(var/atom/A in contents)
 		tick += WASH_ADDTIME
-	set_power_use(ACTIVE_POWER_USE)
+	use_power = ACTIVE_POWER_USE
 	update_icon()
 
 /obj/machinery/washing_machine/verb/climb_out()

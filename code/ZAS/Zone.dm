@@ -12,10 +12,10 @@ Class Vars:
 	air - The gas mixture that any turfs in this zone will return. Values are per-tile with a group multiplier.
 
 Class Procs:
-	add(turf/T)
+	add(turf/simulated/T)
 		Adds a turf to the contents, sets its zone and merges its air.
 
-	remove(turf/T)
+	remove(turf/simulated/T)
 		Removes a turf, sets its zone to null and erases any gas graphics.
 		Invalidates the zone if it has no more tiles.
 
@@ -28,7 +28,7 @@ Class Procs:
 	rebuild()
 		Invalidates the zone and marks all its former tiles for updates.
 
-	add_tile_air(turf/T)
+	add_tile_air(turf/simulated/T)
 		Adds the air contained in T.air to the zone's air supply. Called when adding a turf.
 
 	tick()
@@ -39,17 +39,22 @@ Class Procs:
 
 */
 
-/zone
-	var/name
-	var/invalid = FALSE
-	var/needs_update = FALSE
-	var/list/contents = list()
-	var/list/fire_tiles = list()
-	var/list/fuel_objs = list()
-	var/list/edges = list()
-	var/list/graphic_add = list()
-	var/list/graphic_remove = list()
-	var/datum/gas_mixture/air = new
+
+/zone/var/name
+/zone/var/invalid = FALSE
+/zone/var/list/contents = list()
+/zone/var/list/fire_tiles = list()
+/zone/var/list/fuel_objs = list()
+
+/zone/var/needs_update = FALSE
+
+/zone/var/list/edges = list()
+
+/zone/var/datum/gas_mixture/air = new
+
+/zone/var/list/graphic_add = list()
+/zone/var/list/graphic_remove = list()
+
 
 /zone/New()
 	SSair.add_zone(src)
@@ -57,10 +62,11 @@ Class Procs:
 	air.group_multiplier = 1
 	air.volume = CELL_VOLUME
 
-/zone/proc/add(turf/T)
+/zone/proc/add(turf/simulated/T)
 #ifdef ZASDBG
 	ASSERT(!invalid)
-	ASSERT(T.is_simulated)
+	ASSERT(istype(T))
+	ASSERT(!SSair.has_valid_zone(T))
 #endif
 
 	var/datum/gas_mixture/turf_air = T.return_air()
@@ -74,11 +80,12 @@ Class Procs:
 		if(fuel) fuel_objs += fuel
 	T.update_graphic(air.graphic)
 
-/zone/proc/remove(turf/T)
+/zone/proc/remove(turf/simulated/T)
 #ifdef ZASDBG
 	ASSERT(!invalid)
-	ASSERT(T.is_simulated)
+	ASSERT(istype(T))
 	ASSERT(T.zone == src)
+	soft_assert(T in contents, "Lists are weird broseph")
 #endif
 	contents.Remove(T)
 	fire_tiles.Remove(T)
@@ -100,42 +107,37 @@ Class Procs:
 	ASSERT(!into.invalid)
 #endif
 	c_invalidate()
-	for(var/turf/turf as anything in contents)
-		if(turf.is_simulated)
-			into.add(turf)
-			turf.update_graphic(graphic_remove = air.graphic)
-			#ifdef ZASDBG
-			turf.add_ZAS_debug_overlay(ZAS_DEBUG_OVERLAY_ZONE_MERGED)
-			#endif
+	for(var/turf/simulated/T in contents)
+		into.add(T)
+		T.update_graphic(graphic_remove = air.graphic)
+		#ifdef ZASDBG
+		T.dbg(merged)
+		#endif
 
 	//rebuild the old zone's edges so that they will be possessed by the new zone
 	for(var/connection_edge/E in edges)
 		if(E.contains_zone(into))
 			continue //don't need to rebuild this edge
 		for(var/turf/T in E.connecting_turfs)
-			if(T.is_simulated)
-				SSair.mark_for_update(T)
+			SSair.mark_for_update(T)
 
 /zone/proc/c_invalidate()
 	invalid = TRUE
 	SSair.remove_zone(src)
+	SEND_SIGNAL(src, COMSIG_ZAS_DELETE, TRUE)
 	#ifdef ZASDBG
-	for(var/turf/turf as anything in contents)
-		if(turf.is_simulated)
-			turf.add_ZAS_debug_overlay(ZAS_DEBUG_OVERLAY_ZONE_INVALID)
+	for(var/turf/simulated/T in contents)
+		T.dbg(invalid_zone)
 	#endif
 
 /zone/proc/rebuild()
 	if(invalid) return //Short circuit for explosions where rebuild is called many times over.
 	c_invalidate()
-	for(var/turf/turf as anything in contents)
-		if(turf.is_simulated)
-			turf.update_graphic(graphic_remove = air.graphic) //we need to remove the overlays so they're not doubled when the zone is rebuilt
-			turf.needs_air_update = FALSE //Reset the marker so that it will be added to the list.
-			SSair.mark_for_update(turf)
-			#ifdef ZASDBG
-			turf.add_ZAS_debug_overlay(ZAS_DEBUG_OVERLAY_ZONE_INVALID)
-			#endif
+	for(var/turf/simulated/T in contents)
+		T.update_graphic(graphic_remove = air.graphic) //we need to remove the overlays so they're not doubled when the zone is rebuilt
+		//T.dbg(invalid_zone)
+		T.needs_air_update = 0 //Reset the marker so that it will be added to the list.
+		SSair.mark_for_update(T)
 
 /zone/proc/add_tile_air(datum/gas_mixture/tile_air)
 	//air.volume += CELL_VOLUME
@@ -152,15 +154,16 @@ Class Procs:
 			T.create_fire(vsc.fire_firelevel_multiplier)
 
 	if(air.check_tile_graphic(graphic_add, graphic_remove))
-		for(var/turf/turf as anything in contents)
-			if(turf.is_simulated)
-				turf.update_graphic(graphic_add, graphic_remove)
+		for(var/turf/simulated/T in contents)
+			T.update_graphic(graphic_add, graphic_remove)
 		graphic_add.len = 0
 		graphic_remove.len = 0
 
 	for(var/connection_edge/E in edges)
 		if(E.sleeping)
 			E.recheck()
+
+	SEND_SIGNAL(src, COMSIG_ZAS_TICK, src)
 
 /zone/proc/dbg_data(mob/M)
 	to_chat(M, name)

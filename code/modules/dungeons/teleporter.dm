@@ -21,12 +21,6 @@
 	var/turfs_around = list()
 	var/victims_to_teleport = list()
 	var/obj/crawler/spawnpoint/target
-	var/obj/crawler/map_maker/dungeon_generator
-	var/destination_map_name = "crawler"
-	var/destination_map_is_generated = FALSE
-	var/dungeon_generation_started = FALSE
-	var/dungeon_is_generated = FALSE
-
 	anchored = TRUE
 	unacidable = 1
 	density = TRUE
@@ -34,56 +28,20 @@
 /obj/rogue/teleporter/New()
 	for(var/turf/T in orange(7, src))
 		turfs_around += T
-	var/order = 1
-	while(charge <= 0)
-		playsound(src, ('sound/machines/onestar/teleporter1.ogg'), 100, 1, 4, use_pressure = FALSE)
-		order++
-		if(order == 3)
-			order = 1
-		sleep(10 SECONDS)
-
 
 /obj/rogue/teleporter/attack_hand(mob/user)
-	// In case dungeon_generator haven't initialized in time and
-	// on_destination_map_loaded() failed to locate it
-	if(destination_map_is_generated && !dungeon_generation_started)
-		on_destination_map_loaded()
-	// Only trigger map loading if it wasn't queued before
-	else if(destination_map_name in SSmapping.loaded_map_names)
-		if(!destination_map_is_generated)
-			on_destination_map_loaded()
-		to_chat(user, "Nothing seems to happen.")
-	else if(destination_map_name in SSmapping.map_loading_queue)
-		to_chat(user, "Teleporter is charging up.")
-	else
-		to_chat(user, "You activate the teleporter. A strange rumbling fills the area around you.")
-		SSmapping.queue_map_loading(destination_map_name)
-
 	if(!charge)
-		charge++
-
+		target = locate(/obj/crawler/spawnpoint)
+		if(target)
+			to_chat(user, "You activate the teleporter. A strange rumbling fills the area around you.")
+			start_teleporter_event()
+		else
+			to_chat(user, "Nothing seems to happen.")
 	else if(charging)
 		if(flick_lighting)
 			to_chat(user, "The portal looks too unstable to pass through!")
 		else
 			to_chat(user, "The teleporter needs time to charge.")
-
-/obj/rogue/teleporter/proc/on_destination_map_loaded()
-	destination_map_is_generated = TRUE
-	dungeon_generator = locate(/obj/crawler/map_maker)
-	if(dungeon_generator)
-		dungeon_generation_started = TRUE
-		// Listen to signal for when the generation will be finished
-		RegisterSignal(src, COMSIG_DUNGEON_GENERATED, PROC_REF(dungeon_generated))
-		// Generate the dungeon while mobs are spawning to attack the teleporter
-		SEND_SIGNAL_OLD(dungeon_generator, COMSIG_GENERATE_DUNGEON, src)
-		start_teleporter_event()
-
-
-/obj/rogue/teleporter/proc/dungeon_generated()
-	SIGNAL_HANDLER
-	dungeon_is_generated = TRUE
-	UnregisterSignal(src, COMSIG_DUNGEON_GENERATED)
 
 /obj/rogue/teleporter/proc/start_teleporter_event()
 	charging = TRUE
@@ -93,7 +51,6 @@
 	while(charge < charge_max)
 		update_icon()
 		sleep(15)
-		playsound(src, pick("sound/machines/Teleport_charging_1.ogg", "sound/machines/Teleport_charging_2", "sound/machines/Teleport_charging_3"), 500, 1, use_pressure = FALSE)
 		charge++
 		if(ticks_before_next_summon)
 			ticks_before_next_summon--
@@ -101,18 +58,7 @@
 			summon_mobs()
 		sleep(5)
 
-	var/start_waiting = world.time
-	while(!dungeon_is_generated && (world.time - start_waiting < 3 MINUTES))
-		sleep(10 SECONDS)
-
-	target = locate(/obj/crawler/spawnpoint)
-	if(!dungeon_is_generated || !target)
-		// Something wrong happened and dungeon was not properly generated
-		admin_notice("Failed to generate the OneStar dungeon - Warn coders.")
-		visible_message(SPAN_WARNING("The teleporter malfunctions and explodes in a shower of sparks!"))
-		destroy_teleporter()
-	else
-		end_teleporter_event()
+	end_teleporter_event()
 
 /obj/rogue/teleporter/proc/summon_mobs()
 	var/max_mobs = 3
@@ -171,11 +117,7 @@
 
 	for(var/mob/living/M in victims_to_teleport)
 		go_to_bluespace(get_turf(src), 3, FALSE, M, get_turf(target))
-		M.playsound_local(get_turf(M), "sound/machines/Teleport.ogg", 100)
 
-	destroy_teleporter()
-
-/obj/rogue/teleporter/proc/destroy_teleporter()
 	new /obj/structure/scrap_spawner/science/large(src.loc)
 
 	sleep(2)
@@ -219,7 +161,7 @@
 				A.activate_ai()
 
 	overlays.Add(image(icon, icon_state = "portal_failing"))
-	visible_message("The portal starts flickering!")
+	visible_message("The portal starts flick_lighting!")
 	flick_lighting = 1
 	sleep(100)
 	update_icon()
@@ -233,15 +175,26 @@
 		if (get_dist(src, O) > 8)
 			continue
 
+		var/flash_time = 8
 		if (ishuman(O))
 			var/mob/living/carbon/human/H = O
-			H.flash(8, FALSE , FALSE , FALSE, 8)
+			if(!H.eyecheck() <= 0)
+				continue
+			flash_time *= H.species.flash_mod
+			var/eye_efficiency = H.get_organ_efficiency(OP_EYES)
+			if(eye_efficiency < 2)
+				return
+			if(eye_efficiency < 50 && prob(100 - eye_efficiency  + 20))
+				if (O.HUDtech.Find("flash"))
+					flick("e_flash", O.HUDtech["flash"])
 
 		else
 			if(!O.blinded)
 				if (istype(O,/mob/living/silicon/ai))
 					return
-				O.flash(8, FALSE, FALSE ,FALSE)
+				if (O.HUDtech.Find("flash"))
+					flick("flash", O.HUDtech["flash"])
+		O.Weaken(flash_time)
 
 		sleep(1)
 

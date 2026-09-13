@@ -42,7 +42,7 @@
 
 /obj/machinery/particle_accelerator/control_box/update_state()
 	if(construction_state < 3)
-		set_power_use(NO_POWER_USE)
+		update_use_power(0)
 		assembled = 0
 		active = 0
 		for(var/obj/structure/particle_accelerator/part in connected_parts)
@@ -52,7 +52,7 @@
 		connected_parts = list()
 		return
 	if(!part_scan())
-		set_power_use(IDLE_POWER_USE)
+		update_use_power(1)
 		active = 0
 		connected_parts = list()
 
@@ -121,7 +121,7 @@
 		if(strength > strength_upper_limit)
 			strength = strength_upper_limit
 		else
-			message_admins("PA Control Computer increased to [strength] by [key_name(usr, usr.client)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+			message_admins("PA Control Computer increased to [strength] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 			log_game("PA Control Computer increased to [strength] by [usr.ckey]([usr]) in ([x],[y],[z])")
 			investigate_log("increased to <font color='red'>[strength]</font> by [usr.key]","singulo")
 		strength_change()
@@ -132,7 +132,7 @@
 		if(strength < 0)
 			strength = 0
 		else
-			message_admins("PA Control Computer decreased to [strength] by [key_name(usr, usr.client)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+			message_admins("PA Control Computer decreased to [strength] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 			log_game("PA Control Computer decreased to [strength] by [usr.ckey]([usr]) in ([x],[y],[z])")
 			investigate_log("decreased to <font color='green'>[strength]</font> by [usr.key]","singulo")
 		strength_change()
@@ -141,9 +141,9 @@
 	..()
 	if(stat & NOPOWER)
 		active = 0
-		set_power_use(NO_POWER_USE)
+		update_use_power(0)
 	else if(!stat && construction_state == 3)
-		set_power_use(IDLE_POWER_USE)
+		update_use_power(1)
 	return
 
 
@@ -213,16 +213,16 @@
 /obj/machinery/particle_accelerator/control_box/proc/toggle_power()
 	src.active = !src.active
 	investigate_log("turned [active?"<font color='red'>ON</font>":"<font color='green'>OFF</font>"] by [usr ? usr.key : "outside forces"]","singulo")
-	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [key_name(usr, usr.client)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
+	message_admins("PA Control Computer turned [active ?"ON":"OFF"] by [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a>)",0,1)
 	log_game("PA Control Computer turned [active ?"ON":"OFF"] by [usr.ckey]([usr]) in ([x],[y],[z])")
 	if(src.active)
-		set_power_use(ACTIVE_POWER_USE)
+		update_use_power(2)
 		for(var/obj/structure/particle_accelerator/part in connected_parts)
 			part.strength = src.strength
 			part.powered = 1
 			part.update_icon()
 	else
-		set_power_use(IDLE_POWER_USE)
+		update_use_power(1)
 		for(var/obj/structure/particle_accelerator/part in connected_parts)
 			part.strength = null
 			part.powered = 0
@@ -240,11 +240,11 @@
 
 	var/dat = ""
 	dat += "Particle Accelerator Control Panel<BR>"
-	dat += "<a href='byond://?src=\ref[src];close=1'>Close</A><BR><BR>"
+	dat += "<A href='?src=\ref[src];close=1'>Close</A><BR><BR>"
 	dat += "Status:<BR>"
 	if(!assembled)
 		dat += "Unable to detect all parts!<BR>"
-		dat += "<a href='byond://?src=\ref[src];scan=1'>Run Scan</A><BR><BR>"
+		dat += "<A href='?src=\ref[src];scan=1'>Run Scan</A><BR><BR>"
 	else
 		dat += "All parts in place.<BR><BR>"
 		dat += "Power:"
@@ -252,9 +252,9 @@
 			dat += "On<BR>"
 		else
 			dat += "Off <BR>"
-		dat += "<a href='byond://?src=\ref[src];togglep=1'>Toggle Power</A><BR><BR>"
+		dat += "<A href='?src=\ref[src];togglep=1'>Toggle Power</A><BR><BR>"
 		dat += "Particle Strength: [src.strength] "
-		dat += "<a href='byond://?src=\ref[src];strengthdown=1'>--</A>|<a href='byond://?src=\ref[src];strengthup=1'>++</A><BR><BR>"
+		dat += "<A href='?src=\ref[src];strengthdown=1'>--</A>|<A href='?src=\ref[src];strengthup=1'>++</A><BR><BR>"
 
 	user << browse(dat, "window=pacontrol;size=420x500")
 	onclose(user, "pacontrol")

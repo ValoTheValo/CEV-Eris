@@ -5,8 +5,6 @@
 	anchored = TRUE
 	layer = BELOW_OBJ_LAYER
 	circuit = /obj/item/electronics/circuitboard/chemmaster
-	description_info = "Can be used to make pill bottles, pills,beakers or just to separate a reagent"
-	description_antag = "Nothing prevents you from mis-labeling the pills."
 	icon = 'icons/obj/chemical.dmi'
 	icon_state = "mixer0"
 	use_power = IDLE_POWER_USE
@@ -36,6 +34,14 @@
 		var/amount = G.reagents.get_free_space()
 		reagents.trans_to_holder(G, amount)
 	..()
+
+/obj/machinery/chem_master/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+		if(2)
+			if (prob(50))
+				qdel(src)
 
 /obj/machinery/chem_master/MouseDrop_T(atom/movable/I, mob/user, src_location, over_location, src_control, over_control, params)
 	if(!Adjacent(user) || !I.Adjacent(user) || user.stat)
@@ -94,11 +100,11 @@
 					var/A = G.name
 					var/B = G.data["blood_type"]
 					var/C = G.data["blood_DNA"]
-					dat += "<TITLE>Chemmaster 3000</TITLE>Chemical infos:<BR><BR>Name:<BR>[A]<BR><BR>Description:<BR>Blood Type: [B]<br>DNA: [C]<BR><BR><BR><a href='byond://?src=\ref[src];main=1'>(Back)</A>"
+					dat += "<TITLE>Chemmaster 3000</TITLE>Chemical infos:<BR><BR>Name:<BR>[A]<BR><BR>Description:<BR>Blood Type: [B]<br>DNA: [C]<BR><BR><BR><A href='?src=\ref[src];main=1'>(Back)</A>"
 				else
-					dat += "<TITLE>Chemmaster 3000</TITLE>Chemical infos:<BR><BR>Name:<BR>[href_list["name"]]<BR><BR>Description:<BR>[href_list["desc"]]<BR><BR><BR><a href='byond://?src=\ref[src];main=1'>(Back)</A>"
+					dat += "<TITLE>Chemmaster 3000</TITLE>Chemical infos:<BR><BR>Name:<BR>[href_list["name"]]<BR><BR>Description:<BR>[href_list["desc"]]<BR><BR><BR><A href='?src=\ref[src];main=1'>(Back)</A>"
 			else
-				dat += "<TITLE>Condimaster 3000</TITLE>Condiment infos:<BR><BR>Name:<BR>[href_list["name"]]<BR><BR>Description:<BR>[href_list["desc"]]<BR><BR><BR><a href='byond://?src=\ref[src];main=1'>(Back)</A>"
+				dat += "<TITLE>Condimaster 3000</TITLE>Condiment infos:<BR><BR>Name:<BR>[href_list["name"]]<BR><BR>Description:<BR>[href_list["desc"]]<BR><BR><BR><A href='?src=\ref[src];main=1'>(Back)</A>"
 			usr << browse(dat, "window=chem_master;size=575x400")
 			return
 
@@ -162,7 +168,7 @@
 						if (pillamount > max_pill_vol)
 							alert("Maximum volume supported in pills is [max_pill_vol]","Error.","Ok")
 							return
-
+						
 						count = CLAMP(count, 1, max_pill_count)
 					if("By volume")
 						amount_per_pill = input("Select the volume that single pill should contain.", "Max [R.total_volume]", 5) as num
@@ -212,8 +218,6 @@
 				P.pixel_y = rand(-7, 7)
 				P.icon_state = bottlesprite
 				reagents.trans_to_obj(P,60)
-				if(P.name != " bottle")		// it can be named "bottle" if you create a bottle with no reagents in buffer (it doesn't work without a space in the name, trust me)
-					P.force_label = TRUE	// if this isn't the case we force a label on the sprite
 				P.toggle_lid()
 			else
 				var/obj/item/reagent_containers/food/condiment/P = new/obj/item/reagent_containers/food/condiment(src.loc)
@@ -256,10 +260,10 @@
 	var/dat = ""
 	if(!beaker)
 		dat = "Please insert beaker.<BR>"
-		dat += "<a href='byond://?src=\ref[src];close=1'>Close</A>"
+		dat += "<A href='?src=\ref[src];close=1'>Close</A>"
 	else
 		var/datum/reagents/R = beaker:reagents
-		dat += "<a href='byond://?src=\ref[src];eject=1'>Eject beaker and Clear Buffer</A><BR>"
+		dat += "<A href='?src=\ref[src];eject=1'>Eject beaker and Clear Buffer</A><BR>"
 		if(!R.total_volume)
 			dat += "Beaker is empty."
 		else
@@ -267,35 +271,35 @@
 			dat += "Add to buffer:<BR>"
 			for(var/datum/reagent/G in R.reagent_list)
 				dat += "[G.name] , [G.volume] Units - "
-				dat += "<a href='byond://?src=\ref[src];analyze=1;desc=[G.description];name=[G.name]'>(Analyze)</A> "
+				dat += "<A href='?src=\ref[src];analyze=1;desc=[G.description];name=[G.name]'>(Analyze)</A> "
 				for(var/volume in list(1, 5, 10))
 					if(free_space >= volume)
-						dat += "<a href='byond://?src=\ref[src];add=[G.id];amount=[volume]'>([volume])</A> "
+						dat += "<A href='?src=\ref[src];add=[G.id];amount=[volume]'>([volume])</A> "
 					else
 						dat += "([volume]) "
-				dat += "<a href='byond://?src=\ref[src];add=[G.id];amount=[G.volume]'>(All)</A> "
-				dat += "<a href='byond://?src=\ref[src];addcustom=[G.id]'>(Custom)</A><BR>"
+				dat += "<A href='?src=\ref[src];add=[G.id];amount=[G.volume]'>(All)</A> "
+				dat += "<A href='?src=\ref[src];addcustom=[G.id]'>(Custom)</A><BR>"
 			if(free_space < 1)
 				dat += "The [name] is full!"
 
-		dat += "<HR>Transfer to <a href='byond://?src=\ref[src];toggle=1'>[(!mode ? "disposal" : "beaker")]:</A><BR>"
+		dat += "<HR>Transfer to <A href='?src=\ref[src];toggle=1'>[(!mode ? "disposal" : "beaker")]:</A><BR>"
 		if(reagents.total_volume)
 			for(var/datum/reagent/N in reagents.reagent_list)
 				dat += "[N.name] , [N.volume] Units - "
-				dat += "<a href='byond://?src=\ref[src];analyze=1;desc=[N.description];name=[N.name]'>(Analyze)</A> "
-				dat += "<a href='byond://?src=\ref[src];remove=[N.id];amount=1'>(1)</A> "
-				dat += "<a href='byond://?src=\ref[src];remove=[N.id];amount=5'>(5)</A> "
-				dat += "<a href='byond://?src=\ref[src];remove=[N.id];amount=10'>(10)</A> "
-				dat += "<a href='byond://?src=\ref[src];remove=[N.id];amount=[N.volume]'>(All)</A> "
-				dat += "<a href='byond://?src=\ref[src];removecustom=[N.id]'>(Custom)</A><BR>"
+				dat += "<A href='?src=\ref[src];analyze=1;desc=[N.description];name=[N.name]'>(Analyze)</A> "
+				dat += "<A href='?src=\ref[src];remove=[N.id];amount=1'>(1)</A> "
+				dat += "<A href='?src=\ref[src];remove=[N.id];amount=5'>(5)</A> "
+				dat += "<A href='?src=\ref[src];remove=[N.id];amount=10'>(10)</A> "
+				dat += "<A href='?src=\ref[src];remove=[N.id];amount=[N.volume]'>(All)</A> "
+				dat += "<A href='?src=\ref[src];removecustom=[N.id]'>(Custom)</A><BR>"
 		else
 			dat += "Empty<BR>"
 		if(!condi)
-			dat += "<HR><BR><a href='byond://?src=\ref[src];createpill=1'>Create pill ([max_pill_count] units max)</A><a href=\"?src=\ref[src]&change_pill=1\"><img src=\"pill[pillsprite].png\" /></a><BR>"
-			dat += "<a href='byond://?src=\ref[src];createpill_multiple=1'>Create multiple pills</A><BR>"
-			dat += "<a href='byond://?src=\ref[src];createbottle=1'>Create bottle (60 units max)<a href=\"?src=\ref[src]&change_bottle=1\"><img src=\"[bottlesprite].png\" /></A>"
+			dat += "<HR><BR><A href='?src=\ref[src];createpill=1'>Create pill ([max_pill_count] units max)</A><a href=\"?src=\ref[src]&change_pill=1\"><img src=\"pill[pillsprite].png\" /></a><BR>"
+			dat += "<A href='?src=\ref[src];createpill_multiple=1'>Create multiple pills</A><BR>"
+			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (60 units max)<a href=\"?src=\ref[src]&change_bottle=1\"><img src=\"[bottlesprite].png\" /></A>"
 		else
-			dat += "<a href='byond://?src=\ref[src];createbottle=1'>Create bottle (50 units max)</A>"
+			dat += "<A href='?src=\ref[src];createbottle=1'>Create bottle (50 units max)</A>"
 	if(!condi)
 		user << browse("<TITLE>Chemmaster 3000</TITLE>Chemmaster menu:<BR><BR>[dat]", "window=chem_master;size=575x400")
 	else

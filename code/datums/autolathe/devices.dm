@@ -14,6 +14,10 @@
 	name = "slime scanner"
 	build_path = /obj/item/device/scanner/xenobio
 
+/datum/design/autolathe/device/antibody_scanner
+	name = "antibody scanner"
+	build_path = /obj/item/device/antibody_scanner
+
 /datum/design/autolathe/device/megaphone
 	name = "megaphone"
 	build_path = /obj/item/device/megaphone
@@ -83,7 +87,3 @@
 /datum/design/autolathe/device/mechpainter
 	name = "mech painter"
 	build_path = /obj/item/device/floor_painter/mech_painter
-
-/datum/design/autolathe/device/spraypaint
-	name = "spraycan"
-	build_path = /obj/item/spraypaint

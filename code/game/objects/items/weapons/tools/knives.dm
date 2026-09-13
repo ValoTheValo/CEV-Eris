@@ -5,7 +5,6 @@
 	desc = "A general purpose Chef's Knife made by Asters Merchant Guild. Guaranteed to stay sharp for years to come."
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "knife"
-	description_info = "Could be attached to a gun"
 	flags = CONDUCT
 	sharp = TRUE
 	edge = TRUE
@@ -13,7 +12,7 @@
 	w_class = ITEM_SIZE_SMALL //2
 	force = WEAPON_FORCE_NORMAL //10
 	throwforce = WEAPON_FORCE_WEAK
-	armor_divisor = ARMOR_PEN_SHALLOW
+	armor_penetration = ARMOR_PEN_SHALLOW
 	max_upgrades = 2
 	tool_qualities = list(QUALITY_CUTTING = 20,  QUALITY_WIRE_CUTTING = 10, QUALITY_SCREW_DRIVING = 5)
 	matter = list(MATERIAL_STEEL = 3, MATERIAL_PLASTIC = 1)
@@ -25,18 +24,6 @@
 	//spawn values
 	rarity_value = 10
 	spawn_tags = SPAWN_TAG_KNIFE
-
-/obj/item/tool/knife/New()
-	..()
-	var/datum/component/item_upgrade/I = AddComponent(/datum/component/item_upgrade)
-	I.weapon_upgrades = list(
-		GUN_UPGRADE_BAYONET = TRUE,
-		GUN_UPGRADE_MELEEDAMAGE = 5,
-		GUN_UPGRADE_MELEEPENETRATION = (ARMOR_PEN_MODERATE-1),
-		GUN_UPGRADE_OFFSET = 4
-		)
-	I.gun_loc_tag = GUN_UNDERBARREL
-	I.req_gun_tags = list(SLOT_BAYONET)
 
 /obj/item/tool/knife/boot
 	name = "boot knife"
@@ -56,7 +43,7 @@
 	item_state = "hook_knife"
 	matter = list(MATERIAL_PLASTEEL = 5, MATERIAL_PLASTIC = 2)
 	force = WEAPON_FORCE_DANGEROUS
-	armor_divisor = ARMOR_PEN_HALF //Should be countered be embedding
+	armor_penetration = ARMOR_PEN_EXTREME //Should be countered be embedding
 	embed_mult = 1.5 //This is designed for embedding
 	rarity_value = 5
 
@@ -74,7 +61,7 @@
 	desc = "A huge thing used for chopping and chopping up meat. This includes roaches and roach-by-products."
 	force = WEAPON_FORCE_DANGEROUS
 	throwforce = WEAPON_FORCE_NORMAL
-	armor_divisor = ARMOR_PEN_MODERATE
+	armor_penetration = ARMOR_PEN_MODERATE
 	attack_verb = list("cleaved", "slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	matter = list(MATERIAL_STEEL = 5, MATERIAL_PLASTIC = 1)
 	tool_qualities = list(QUALITY_CUTTING = 20,  QUALITY_WIRE_CUTTING = 15)
@@ -88,14 +75,14 @@
 	item_state = "knife"
 	matter = list(MATERIAL_PLASTEEL = 4, MATERIAL_PLASTIC = 1)
 	force = WEAPON_FORCE_PAINFUL
-	embed_mult = 6
+	embed_mult = 3
 	max_upgrades = 3
 	spawn_blacklisted = TRUE
 
 /obj/item/tool/knife/neotritual/equipped(mob/living/H)
 	. = ..()
 	if(is_held() && is_neotheology_disciple(H))
-		embed_mult = 0.05
+		embed_mult = 0.1
 	else
 		embed_mult = initial(embed_mult)
 
@@ -107,9 +94,21 @@
 	item_state = "knife"
 	matter = list(MATERIAL_PLASTEEL = 3, MATERIAL_PLASTIC = 2)
 	force = WEAPON_FORCE_PAINFUL
-	armor_divisor = ARMOR_PEN_MODERATE
-	embed_mult = 0.6
+	armor_penetration = ARMOR_PEN_MODERATE
+	embed_mult = 0.3
 	max_upgrades = 3
+
+/obj/item/tool/knife/tacknife/New()
+	..()
+	var/datum/component/item_upgrade/I = AddComponent(/datum/component/item_upgrade)
+	I.weapon_upgrades = list(
+		GUN_UPGRADE_BAYONET = TRUE,
+		GUN_UPGRADE_MELEEDAMAGE = 5,
+		GUN_UPGRADE_MELEEPENETRATION = 15,
+		GUN_UPGRADE_OFFSET = 4
+		)
+	I.gun_loc_tag = GUN_UNDERBARREL
+	I.req_gun_tags = list(SLOT_BAYONET)
 
 /obj/item/tool/knife/dagger
 	name = "dagger"
@@ -119,7 +118,7 @@
 	item_state = "dagger"
 	matter = list(MATERIAL_PLASTEEL = 3, MATERIAL_PLASTIC = 2)
 	force = WEAPON_FORCE_NORMAL * 1.3
-	armor_divisor = ARMOR_PEN_MASSIVE
+	armor_penetration = ARMOR_PEN_HALF
 	rarity_value = 15
 
 /obj/item/tool/knife/dagger/ceremonial
@@ -128,8 +127,8 @@
 	icon_state = "fancydagger"
 	item_state = "fancydagger"
 	matter = list(MATERIAL_PLASTEEL = 3, MATERIAL_PLASTIC = 2, MATERIAL_GOLD = 1, MATERIAL_SILVER = 1)
-	armor_divisor = ARMOR_PEN_MASSIVE
-	embed_mult = 0.6
+	armor_penetration = ARMOR_PEN_HALF
+	embed_mult = 0.3
 	max_upgrades = 4
 	spawn_blacklisted = TRUE
 
@@ -140,7 +139,7 @@
 	item_state = "bluespace_dagger"
 	matter = list(MATERIAL_PLASTEEL = 3, MATERIAL_PLASTIC = 2, MATERIAL_SILVER = 10, MATERIAL_GOLD = 5, MATERIAL_PLASMA = 20)
 	force = WEAPON_FORCE_NORMAL+1
-	embed_mult = 50 //You WANT it to embed
+	embed_mult = 25 //You WANT it to embed
 	suitable_cell = /obj/item/cell/small
 	toggleable = TRUE
 	use_power_cost = 0.4
@@ -335,13 +334,11 @@
 	flags = CONDUCT
 	sharp = TRUE
 	edge = TRUE
-	extended_reach = TRUE
-	push_attack = TRUE
 	worksound = WORKSOUND_HARD_SLASH
 	w_class = ITEM_SIZE_BULKY //4 , it's a spear mate
-	force = WEAPON_FORCE_PAINFUL
-	throwforce = WEAPON_FORCE_DANGEROUS
-	armor_divisor = ARMOR_PEN_MODERATE
+	force = WEAPON_FORCE_PAINFUL 
+	throwforce = WEAPON_FORCE_DANGEROUS 
+	armor_penetration = ARMOR_PEN_MODERATE 
 	throw_speed = 3
 	max_upgrades = 5
 	tool_qualities = list(QUALITY_CUTTING = 10,  QUALITY_WIRE_CUTTING = 5, QUALITY_SCREW_DRIVING = 1)
@@ -351,6 +348,8 @@
 	slot_flags = SLOT_BACK
 	structure_damage_factor = STRUCTURE_DAMAGE_BLADE
 	allow_spin = FALSE
+	style_damage = 20
+
 	rarity_value = 20
 	spawn_tags = SPAWN_TAG_KNIFE
 
@@ -360,12 +359,13 @@
 	icon_state = "spear_steel"
 	item_state = "spear_steel"
 	wielded_icon = "spear_steel_wielded"
-	force = WEAPON_FORCE_DANGEROUS
-	throwforce = WEAPON_FORCE_ROBUST
-	armor_divisor = ARMOR_PEN_DEEP
+	force = WEAPON_FORCE_DANGEROUS 
+	throwforce = WEAPON_FORCE_ROBUST 
+	armor_penetration = ARMOR_PEN_DEEP 
 	tool_qualities = list(QUALITY_CUTTING = 10,  QUALITY_WIRE_CUTTING = 5, QUALITY_SCREW_DRIVING = 5)
 	matter = list(MATERIAL_STEEL = 3)
 	structure_damage_factor = STRUCTURE_DAMAGE_WEAK
+	style_damage = 30
 
 	rarity_value = 60
 
@@ -375,12 +375,13 @@
 	icon_state = "spear_plasteel"
 	item_state = "spear_plasteel"
 	wielded_icon = "spear_plasteel_wielded"
-	force = WEAPON_FORCE_ROBUST
-	throwforce = WEAPON_FORCE_BRUTAL
-	armor_divisor = ARMOR_PEN_DEEP
+	force = WEAPON_FORCE_ROBUST 
+	throwforce = WEAPON_FORCE_BRUTAL 
+	armor_penetration = ARMOR_PEN_DEEP 
 	tool_qualities = list(QUALITY_CUTTING = 15,  QUALITY_WIRE_CUTTING = 10, QUALITY_SCREW_DRIVING = 10)
 	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTEEL = 2)
 	structure_damage_factor = STRUCTURE_DAMAGE_NORMAL
+	style_damage = 50
 
 /obj/item/tool/spear/uranium
 	name = "uranium spear"
@@ -388,28 +389,15 @@
 	icon_state = "spear_uranium"
 	item_state = "spear_uranium"
 	wielded_icon = "spear_uranium_wielded"
-	force = WEAPON_FORCE_DANGEROUS
-	throwforce = WEAPON_FORCE_DANGEROUS
-	armor_divisor = ARMOR_PEN_DEEP
+	force = WEAPON_FORCE_DANGEROUS 
+	throwforce = WEAPON_FORCE_DANGEROUS 
+	armor_penetration = ARMOR_PEN_DEEP 
 	tool_qualities = list(QUALITY_CUTTING = 10,  QUALITY_WIRE_CUTTING = 5, QUALITY_SCREW_DRIVING = 5)
 	matter = list(MATERIAL_STEEL = 3, MATERIAL_URANIUM = 1)
+	style_damage = 50
 
 /obj/item/tool/spear/uranium/apply_hit_effect(mob/living/carbon/human/target, mob/living/user, hit_zone)
 	..()
 	if(istype(target))
-		target.apply_effect(rand(60, 65), IRRADIATE)
-
-/obj/item/tool/spear/makeshift_halberd
-	name = "makeshift halberd"
-	desc = "Slap a heavy blade on some rods duct-taped together and call it a day."
-	icon_state = "makeshift_halberd"
-	item_state = "makeshift_halberd"
-	wielded_icon = "makeshift_halberd_wielded"
-	force = WEAPON_FORCE_ROBUST
-	throwforce = WEAPON_FORCE_NORMAL
-	armor_divisor = ARMOR_PEN_SHALLOW
-	tool_qualities = list(QUALITY_CUTTING = 10)
-	matter = list(MATERIAL_STEEL = 5)
-	forced_broad_strike = TRUE
-	rarity_value = 90
-	degradation = 3
+		target.apply_effect(rand(5, 10), IRRADIATE)
+		

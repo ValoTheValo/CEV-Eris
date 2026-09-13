@@ -1,4 +1,3 @@
-//NO new variables here, might as well not even have this category, many guns outside /automatic use automatic firemodes
 /obj/item/gun/projectile/automatic
 	name = "automatic projectile gun"
 	desc = "A debug firearm, which should be reported if present in-game. Uses 9mm rounds."
@@ -16,12 +15,12 @@
 	unload_sound = 'sound/weapons/guns/interact/smg_magout.ogg'
 	reload_sound = 'sound/weapons/guns/interact/smg_magin.ogg'
 	cocked_sound = 'sound/weapons/guns/interact/smg_cock.ogg'
-	zoom_factors = list() //Default zoom factor you want on all automatic weapons.
+	zoom_factor = 0 //Default zoom factor you want on all automatic weapons.
 	bad_type = /obj/item/gun/projectile/automatic
 	gun_parts = list(/obj/item/part/gun = 3 ,/obj/item/stack/material/steel = 15)
 	init_firemodes = list(
 		FULL_AUTO_400,
-		SEMI_AUTO_300,
+		SEMI_AUTO_NODELAY,
 		BURST_3_ROUND,
 		BURST_5_ROUND
 		)
@@ -38,10 +37,6 @@
 	var/mob/living/L
 	if (gun && gun.is_held())
 		L = gun.loc
-	else if(ismech(gun.loc?.loc))
-		// location inception
-		var/mob/living/exosuit/mech = gun.loc.loc
-		L = mech.get_mob()
 
 	var/enable = FALSE
 	//Force state is used for forcing it to be disabled in circumstances where it'd normally be valid
@@ -52,23 +47,10 @@
 		//First of all, lets determine whether we're enabling or disabling the click handler
 
 
-		//We enable it if the gun is held in the user's active hand and the safety is off or if they are doing this from inside a mech
-		if (L.get_active_hand() == gun || ismech(L.loc))
+		//We enable it if the gun is held in the user's active hand and the safety is off
+		if (L.get_active_hand() == gun)
 			//Lets also make sure it can fire
 			var/can_fire = TRUE
-
-			if(ismech(gun.loc?.loc))
-				// location inception
-				var/mob/living/exosuit/mech = gun.loc.loc
-				// so that we can actually switch it off
-				if(istype(mech.selected_system, /obj/item/mech_equipment/mounted_system))
-					var/obj/item/mech_equipment/mounted_system/mount = mech.selected_system
-					// not our gun that were holding so we dont fire
-					if(mount.holding != gun)
-						can_fire = FALSE
-				else
-					can_fire = FALSE
-
 
 			//Safety stops it
 			if (gun.safety)

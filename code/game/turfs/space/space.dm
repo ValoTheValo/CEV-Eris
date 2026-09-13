@@ -6,11 +6,11 @@
 
 	plane = PLANE_SPACE
 	layer = SPACE_LAYER
-	oxygen = 0
-	nitrogen = 0
+
+	temperature = T20C
 	thermal_conductivity = OPEN_HEAT_TRANSFER_COEFFICIENT
 	is_hole = TRUE
-	is_simulated = FALSE
+//	heat_capacity = 700000 No.
 
 /turf/space/New()
 	if(!istype(src, /turf/space/transit))
@@ -25,13 +25,13 @@
 	plane = np
 
 /turf/space/is_space()
-	return TRUE
+	return 1
 
 // override for space turfs, since they should never hide anything
 /turf/space/levelupdate()
 	for(var/obj/O in src)
 		O.hide(FALSE)
-		SEND_SIGNAL_OLD(O, COMSIG_TURF_LEVELUPDATE, FALSE)
+		SEND_SIGNAL(O, COMSIG_TURF_LEVELUPDATE, FALSE)
 
 /turf/space/is_solid_structure()
 	return locate(/obj/structure/lattice, src) //counts as solid structure if it has a lattice
@@ -39,13 +39,13 @@
 /turf/space/proc/update_starlight()
 	if(!config.starlight)
 		return
-	for(var/turf/turf in RANGE_TURFS(1, src))
-		if(istype(turf) && turf.is_simulated) // RANGE_TURFS() can give 'null' type objects; the loop doesn't type check a thing
-			set_light(2, 1, config.starlight)
-			return
-	set_light(0)
+	if(locate(/turf/simulated) in RANGE_TURFS(1, src))
+		set_light(2, 1, config.starlight)
+	else
+		set_light(0)
 
 /turf/space/attackby(obj/item/C as obj, mob/user as mob)
+
 	if (istype(C, /obj/item/stack/rods))
 		var/obj/structure/lattice/L = locate(/obj/structure/lattice, src)
 		if(L)
@@ -57,37 +57,54 @@
 			ReplaceWithLattice()
 		return
 
+	if (istype(C, /obj/item/stack/tile/floor))
+		var/obj/structure/lattice/L = locate(/obj/structure/lattice, src)
+		if(L)
+			var/obj/item/stack/tile/floor/S = C
+			if (S.get_amount() < 1)
+				return
+			qdel(L)
+			playsound(src, 'sound/weapons/Genhit.ogg', 50, 1)
+			S.use(1)
+			ChangeTurf(/turf/simulated/floor/airless)
+			return
+		else
+			to_chat(user, SPAN_WARNING("The plating is going to need some support."))
+			return
 	if (istype(C, /obj/item/stack/material))
 		var/obj/item/stack/material/M = C
 		var/material/mat = M.get_material()
 		if (!mat.name == MATERIAL_STEEL)
 			return
-
 		var/obj/structure/lattice/L = locate(/obj/structure/lattice, src)
 		if(L)
-			to_chat(user, SPAN_NOTICE("You start constructing underplating on the lattice."))
+			var/obj/item/stack/tile/S = C
+			if (S.get_amount() < 1)
+				return
+			qdel(L)
 			playsound(src, 'sound/weapons/Genhit.ogg', 50, 1)
-			if(do_after(user, (40 * user.stats.getMult(STAT_MEC, STAT_LEVEL_EXPERT, src))))
-				qdel(L)
-				M.use(1)
-				ChangeTurf(/turf/floor/plating/under)
+			S.use(1)
+			ChangeTurf(/turf/simulated/floor/plating/under)
 			return
 		else
 			to_chat(user, SPAN_WARNING("The plating is going to need some support."))
+	return
+
 
 // Ported from unstable r355
 
-/turf/space/Entered(atom/movable/A)
-	ASSERT(A)
+/turf/space/Entered(atom/movable/A as mob|obj)
+	if(movement_disabled)
+		to_chat(usr, SPAN_WARNING("Movement is admin-disabled.")) //This is to identify lag problems
+		return
 	..()
+	if ((!(A) || src != A.loc))	return
+
 	// Okay, so let's make it so that people can travel z levels
-	var/min_x_check = A.x <= TRANSITIONEDGE
-	var/max_x_check = A.x >= (world.maxx - TRANSITIONEDGE + 1)
-	var/min_y_check = A.y <= TRANSITIONEDGE
-	var/max_y_check = A.y >= (world.maxy - TRANSITIONEDGE + 1)
-	if(min_x_check || max_x_check || min_y_check || max_y_check)
+	if (A.x <= TRANSITIONEDGE || A.x >= (world.maxx - TRANSITIONEDGE + 1) || A.y <= TRANSITIONEDGE || A.y >= (world.maxy - TRANSITIONEDGE + 1))
 		A.touch_map_edge()
 
+	..()
 
 /turf/space/proc/Sandbox_Spacemove(atom/movable/A as mob|obj)
 	var/cur_x
@@ -197,3 +214,6 @@
 				if ((A && A.loc))
 					A.loc.Entered(A)
 	return
+
+/turf/space/ChangeTurf(var/turf/N, var/tell_universe=1, var/force_lighting_update = 0)
+	return ..(N, tell_universe, 1)

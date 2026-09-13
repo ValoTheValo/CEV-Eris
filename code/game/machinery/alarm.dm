@@ -1,3 +1,11 @@
+//all air alarms in area are connected via magic
+/area
+	var/obj/machinery/alarm/master_air_alarm
+	var/list/air_vent_names = list()
+	var/list/air_scrub_names = list()
+	var/list/air_vent_info = list()
+	var/list/air_scrub_info = list()
+
 /obj/machinery/alarm
 	name = "alarm"
 	icon = 'icons/obj/monitors.dmi'
@@ -123,7 +131,7 @@
 	if((stat & (NOPOWER|BROKEN)) || shorted || buildstage != 2)
 		return
 
-	var/turf/location = loc
+	var/turf/simulated/location = loc
 	if(!istype(location))
 		return//returns if loc is not simulated
 
@@ -165,14 +173,14 @@
 	if (!regulating_temperature)
 		//check for when we should start adjusting temperature
 		if(get_danger_level(environment.temperature, TLV["temperature"]) || abs(environment.temperature - target_temperature) > 2)
-			set_power_use(ACTIVE_POWER_USE)
+			update_use_power(2)
 			regulating_temperature = 1
 			visible_message("\The [src] clicks as it starts up.",\
 			"You hear a click and a faint electronic hum.")
 	else
 		//check for when we should stop adjusting temperature
 		if (!get_danger_level(environment.temperature, TLV["temperature"]) && abs(environment.temperature - target_temperature) <= 0.5)
-			set_power_use(IDLE_POWER_USE)
+			update_use_power(1)
 			regulating_temperature = 0
 			visible_message("\The [src] clicks quietly.",\
 			"You hear a click as a faint electronic humming stops.")
@@ -226,7 +234,7 @@
 
 // Returns whether this air alarm thinks there is a breach, given the sensors that are available to it.
 /obj/machinery/alarm/proc/breach_detected()
-	var/turf/location = loc
+	var/turf/simulated/location = loc
 
 	if(!istype(location))
 		return 0
@@ -455,7 +463,7 @@
 	frequency.post_signal(src, alert_signal)
 
 /obj/machinery/alarm/attack_ai(mob/user)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/alarm/attack_hand(mob/user)
 	. = ..()
@@ -464,10 +472,10 @@
 	return interact(user)
 
 /obj/machinery/alarm/interact(mob/user)
-	nano_ui_interact(user)
+	ui_interact(user)
 	wires.Interact(user)
 
-/obj/machinery/alarm/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, var/master_ui = null, var/datum/nano_topic_state/state = GLOB.default_state)
+/obj/machinery/alarm/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, var/master_ui = null, var/datum/topic_state/state = GLOB.default_state)
 	var/data[0]
 	var/remote_connection = 0
 	var/remote_access = 0
@@ -595,7 +603,7 @@
 
 			data["thresholds"] = thresholds
 
-/obj/machinery/alarm/CanUseTopic(var/mob/user, var/datum/nano_topic_state/state, var/href_list = list())
+/obj/machinery/alarm/CanUseTopic(var/mob/user, var/datum/topic_state/state, var/href_list = list())
 	if(buildstage != 2)
 		return STATUS_CLOSE
 
@@ -619,7 +627,7 @@
 			AA.apply_danger_level(0)
 	update_icon()
 
-/obj/machinery/alarm/Topic(href, href_list, var/datum/nano_topic_state/state)
+/obj/machinery/alarm/Topic(href, href_list, var/datum/topic_state/state)
 	if(..(href, href_list, state))
 		return 1
 
@@ -868,12 +876,12 @@
 	spawn(rand(0,15))
 		update_icon()
 
-/obj/machinery/alarm/examine(mob/user, extra_description = "")
-	if(buildstage < 2)
-		extra_description += "It is not wired."
-	if(buildstage < 1)
-		extra_description += "The circuit is missing."
-	..(user, extra_description)
+/obj/machinery/alarm/examine(mob/user)
+	..(user)
+	if (buildstage < 2)
+		to_chat(user, "It is not wired.")
+	if (buildstage < 1)
+		to_chat(user, "The circuit is missing.")
 
 /obj/machinery/alarm/proc/toggle_lock(mob/user)
 	if(stat & (NOPOWER|BROKEN))
@@ -917,6 +925,7 @@ FIRE ALARM
 	var/working = 1
 	var/time = 10
 	var/timing = 0
+	var/lockdownbyai = 0
 	anchored = TRUE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 2
@@ -953,7 +962,7 @@ FIRE ALARM
 			set_light(l_range = 1.5, l_power = 0.5, l_color = COLOR_LIGHTING_RED_MACHINERY)
 		else
 			icon_state = "fire0"
-			var/decl/security_state/security_state = decls_repository.get_decl(SSmapping.security_state)
+			var/decl/security_state/security_state = decls_repository.get_decl(GLOB.maps_data.security_state)
 			var/decl/security_level/sl = security_state.current_security_level
 
 			set_light(sl.light_max_bright, sl.light_inner_range, sl.light_outer_range, 2, sl.light_color_alarm)
@@ -969,7 +978,7 @@ FIRE ALARM
 	. = ..()
 	if (.)
 		return
-	return nano_ui_interact(user)
+	return ui_interact(user)
 
 /obj/machinery/firealarm/bullet_act()
 	return src.alarm()
@@ -1098,9 +1107,9 @@ FIRE ALARM
 	spawn(rand(0,15))
 		update_icon()
 
-/obj/machinery/firealarm/nano_ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/nano_topic_state/state = GLOB.outside_state)
+/obj/machinery/firealarm/ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/topic_state/state = GLOB.outside_state)
 	var/data[0]
-	var/decl/security_state/security_state = decls_repository.get_decl(SSmapping.security_state)
+	var/decl/security_state/security_state = decls_repository.get_decl(GLOB.maps_data.security_state)
 
 	data["seclevel"] = security_state.current_security_level.name
 	data["time"] = round(src.time)
@@ -1193,7 +1202,7 @@ FIRE ALARM
 
 /obj/machinery/firealarm/Destroy()
 	GLOB.firealarm_list -= src
-	. = ..()
+	..()
 
 /*
 FIRE ALARM CIRCUIT
@@ -1216,6 +1225,7 @@ Just a object used in constructing fire alarms
 	var/working = 1
 	var/time = 10
 	var/timing = 0
+	var/lockdownbyai = 0
 	anchored = TRUE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 2
@@ -1233,27 +1243,27 @@ Just a object used in constructing fire alarms
 	if (ishuman(user) || istype(user, /mob/living/silicon/ai))
 
 		if (A.party)
-			d1 = text("<a href='byond://?src=\ref[];reset=1'>No Party :(</A>", src)
+			d1 = text("<A href='?src=\ref[];reset=1'>No Party :(</A>", src)
 		else
-			d1 = text("<a href='byond://?src=\ref[];alarm=1'>PARTY!!!</A>", src)
+			d1 = text("<A href='?src=\ref[];alarm=1'>PARTY!!!</A>", src)
 		if (timing)
-			d2 = text("<a href='byond://?src=\ref[];time=0'>Stop Time Lock</A>", src)
+			d2 = text("<A href='?src=\ref[];time=0'>Stop Time Lock</A>", src)
 		else
-			d2 = text("<a href='byond://?src=\ref[];time=1'>Initiate Time Lock</A>", src)
+			d2 = text("<A href='?src=\ref[];time=1'>Initiate Time Lock</A>", src)
 		var/second = time % 60
 		var/minute = (time - second) / 60
-		var/dat = text("<HTML><HEAD></HEAD><BODY><TT><B>Party Button</B> []\n<HR>\nTimer System: []<BR>\nTime Left: [][] <a href='byond://?src=\ref[];tp=-30'>-</A> <a href='byond://?src=\ref[];tp=-1'>-</A> <a href='byond://?src=\ref[];tp=1'>+</A> <a href='byond://?src=\ref[];tp=30'>+</A>\n</TT></BODY></HTML>", d1, d2, (minute ? text("[]:", minute) : null), second, src, src, src, src)
+		var/dat = text("<HTML><HEAD></HEAD><BODY><TT><B>Party Button</B> []\n<HR>\nTimer System: []<BR>\nTime Left: [][] <A href='?src=\ref[];tp=-30'>-</A> <A href='?src=\ref[];tp=-1'>-</A> <A href='?src=\ref[];tp=1'>+</A> <A href='?src=\ref[];tp=30'>+</A>\n</TT></BODY></HTML>", d1, d2, (minute ? text("[]:", minute) : null), second, src, src, src, src)
 		user << browse(dat, "window=partyalarm")
 		onclose(user, "partyalarm")
 	else
 		if (A.fire)
-			d1 = text("<a href='byond://?src=\ref[];reset=1'>[]</A>", src, stars("No Party :("))
+			d1 = text("<A href='?src=\ref[];reset=1'>[]</A>", src, stars("No Party :("))
 		else
-			d1 = text("<a href='byond://?src=\ref[];alarm=1'>[]</A>", src, stars("PARTY!!!"))
+			d1 = text("<A href='?src=\ref[];alarm=1'>[]</A>", src, stars("PARTY!!!"))
 		if (timing)
-			d2 = text("<a href='byond://?src=\ref[];time=0'>[]</A>", src, stars("Stop Time Lock"))
+			d2 = text("<A href='?src=\ref[];time=0'>[]</A>", src, stars("Stop Time Lock"))
 		else
-			d2 = text("<a href='byond://?src=\ref[];time=1'>[]</A>", src, stars("Initiate Time Lock"))
+			d2 = text("<A href='?src=\ref[];time=1'>[]</A>", src, stars("Initiate Time Lock"))
 		var/second = time % 60
 		var/minute = (time - second) / 60
 		var/time_string = "[second]"
@@ -1264,8 +1274,8 @@ Just a object used in constructing fire alarms
 			<B>[stars("Party Button")]</B> [d1]<HR>
 			Timer System: [d2]<BR>
 			Time Left: [time_string]
-			<a href='byond://?src=\ref[src];tp=-30'>-</A> <a href='byond://?src=\ref[src];tp=-1'>-</A>
-			<a href='byond://?src=\ref[src];tp=1'>+</A> <a href='byond://?src=\ref[src];tp=30'>+</A>
+			<A href='?src=\ref[src];tp=-30'>-</A> <A href='?src=\ref[src];tp=-1'>-</A>
+			<A href='?src=\ref[src];tp=1'>+</A> <A href='?src=\ref[src];tp=30'>+</A>
 			</TT></BODY></HTML>
 		"}
 		user << browse(dat, "window=partyalarm")

@@ -1,8 +1,5 @@
 //Lallander was here
-/mob/living/carbon/human/verb/whisper(message as text)
-	set name = "Whisper"
-	set category = "IC"
-
+/mob/living/carbon/human/whisper(message as text)
 	var/alt_name = ""
 
 	if(say_disabled)	//This is here to try to identify lag problems
@@ -83,15 +80,15 @@
 	if(istype(back,/obj/item/rig))
 		var/obj/item/rig/rig = back
 		// todo: fix this shit
-		if(rig.speech && rig.speech.voice_holder && rig.speech.voice_holder.active && rig.speech.voice_holder.voice_name)
-			voice_sub = rig.speech.voice_holder.voice_name
+		if(rig.speech && rig.speech.voice_holder && rig.speech.voice_holder.active && rig.speech.voice_holder.voice)
+			voice_sub = rig.speech.voice_holder.voice
 	else
 		for(var/obj/item/gear in list(wear_mask,wear_suit,head))
 			if(!gear)
 				continue
 			var/obj/item/voice_changer/changer = locate() in gear
-			if(changer && changer.active && changer.voice_name)
-				voice_sub = changer.voice_name
+			if(changer && changer.active && changer.voice)
+				voice_sub = changer.voice
 
 	if(voice_sub == "Unknown")
 		if(copytext(message, 1, 2) != "*")

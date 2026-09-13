@@ -22,8 +22,7 @@
 		/datum/design/autolathe/part/sensor_prox,
 		/datum/design/autolathe/part/camera_assembly,
 		/datum/design/autolathe/part/laserguide,
-		/datum/design/autolathe/container/hcase_parts,
-		/datum/design/autolathe/part/solar_assembly
+		/datum/design/autolathe/container/hcase_parts
 	)
 
 /obj/item/computer_hardware/hard_drive/portable/design/adv_tools
@@ -39,7 +38,6 @@
 		/datum/design/research/item/weapon/mining/drill,
 		/datum/design/research/item/weapon/mining/drill_diamond,
 		/datum/design/autolathe/tool/pickaxe_excavation,
-		/datum/design/autolathe/tool/sledgehammer_advanced,
 		/datum/design/autolathe/tool/shovel/power,
 		/datum/design/autolathe/tool/circularsaw,
 		/datum/design/autolathe/tool/powered_hammer,
@@ -50,7 +48,6 @@
 		/datum/design/autolathe/tool/combi_driver,
 		/datum/design/autolathe/tool/armature_cutter,
 		/datum/design/autolathe/tool/weldertool_adv,
-		/datum/design/autolathe/tool/superglue,
 		/datum/design/autolathe/part/diamondblade,
 		/datum/design/autolathe/tool/rpd,
 		/datum/design/autolathe/container/hcase_engi,
@@ -74,8 +71,6 @@
 		/datum/design/autolathe/circuit/autolathe_disk_cloner = 3,
 		/datum/design/autolathe/circuit/vending,
 		/datum/design/research/circuit/arcade_battle,
-		/datum/design/research/circuit/solarcontrol,
-		/datum/design/autolathe/circuit/tracker,
 		/datum/design/research/circuit/arcade_orion_trail,
 		/datum/design/research/circuit/teleconsole,
 		/datum/design/research/circuit/operating,

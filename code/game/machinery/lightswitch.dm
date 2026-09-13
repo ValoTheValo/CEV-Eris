@@ -3,7 +3,7 @@
 // can also operate on non-loc area through "otherarea" var
 /obj/machinery/light_switch
 	name = "light switch"
-	desc = "A light switch. It turns lights on and off."
+	desc = "It turns lights on and off. What are you, simple?"
 	icon = 'icons/obj/machines/buttons.dmi'
 	icon_state = "light1"
 	anchored = TRUE
@@ -59,8 +59,9 @@
 		set_plane(ABOVE_LIGHTING_PLANE)
 		layer = ABOVE_LIGHTING_LAYER
 
-/obj/machinery/light_switch/examine(mob/user, extra_description = "")
-	..(user, "It is [on ? "on" : "off"].")
+/obj/machinery/light_switch/examine(mob/user)
+	if(..(user, 1))
+		to_chat(user, "A light switch. It is [on? "on" : "off"].")
 
 /obj/machinery/light_switch/proc/dramatic_turning()
 	if(slow_turning_on) // Sanity check. So nothing can force this thing to run twice simultaneously.
@@ -126,9 +127,9 @@
 	var/input_color = COLOR_LIGHTING_DEFAULT_BRIGHT
 
 /obj/machinery/light_switch/dimmer_switch/attack_hand(mob/user)
-	return nano_ui_interact(user)
+	return ui_interact(user)
 
-/obj/machinery/light_switch/dimmer_switch/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/light_switch/dimmer_switch/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data = list()
 	data["on"] = on
 	data["input_color"] = input_color

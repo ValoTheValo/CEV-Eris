@@ -16,7 +16,7 @@
 	var/sticker = null
 	var/closed = TRUE
 
-/obj/item/storage/hcases/can_interact(mob/user)
+/obj/item/storage/hcases/proc/can_interact(mob/user)
 	if((!ishuman(user) && (loc != user)) || user.stat || user.restrained())
 		return 1
 	if(istype(loc, /obj/item/storage))
@@ -74,11 +74,6 @@
 	open_close(user)
 
 /obj/item/storage/hcases/AltClick(mob/user)
-	if(user.incapacitated())
-		to_chat(user, SPAN_WARNING("You can't do that right now!"))
-		return
-	if(!in_range(src, user))
-		return
 
 	var/able = can_interact(user)
 
@@ -97,7 +92,6 @@
 		to_chat(user, SPAN_NOTICE("You open the lid of the [src]."))
 		w_class = ITEM_SIZE_BULKY
 		closed = FALSE
-		open(user)
 	else
 		to_chat(user, SPAN_NOTICE("You close the lid of the [src]."))
 		w_class = ITEM_SIZE_NORMAL
@@ -124,7 +118,7 @@ obj/item/storage/hcases/attackby(obj/item/W, mob/user)
 	desc = "A generic ammo can. Can hold ammo magazines, boxes, and bullets. Alt+click to open and close."
 	icon_state = "ammo_case"
 	sticker_name = "ammo"
-	matter = list(MATERIAL_STEEL = 15)
+	matter = list(MATERIAL_STEEL = 20)
 	spawn_blacklisted = FALSE
 	rarity_value = 60
 

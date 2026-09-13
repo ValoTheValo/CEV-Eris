@@ -105,6 +105,7 @@ var/list/wireColours = list("red", "blue", "green", "darkred", "orange", "brown"
 
 	var/datum/browser/popup = new(user, "wires", holder.name, window_x, window_y)
 	popup.set_content(html)
+	popup.set_title_image(user.browse_rsc_icon(holder.icon, holder.icon_state))
 	popup.open()
 
 /datum/wires/proc/GetInteractWindow(mob/living/user)
@@ -130,9 +131,9 @@ var/list/wireColours = list("red", "blue", "green", "darkred", "orange", "brown"
 		else
 			html += "<td[row_options1]><font color='[colour]'>[capitalize(colour)]</font></td>"
 		html += "<td[row_options2]>"
-		html += "<a href='byond://?src=\ref[src];action=1;cut=[colour]'>[IsColourCut(colour) ? "Mend" :  "Cut"]</A>"
-		html += " <a href='byond://?src=\ref[src];action=1;pulse=[colour]'>Pulse</A>"
-		html += " <a href='byond://?src=\ref[src];action=1;attach=[colour]'>[IsAttached(colour) ? "Detach" : "Attach"] Signaller</A>"
+		html += "<A href='?src=\ref[src];action=1;cut=[colour]'>[IsColourCut(colour) ? "Mend" :  "Cut"]</A>"
+		html += " <A href='?src=\ref[src];action=1;pulse=[colour]'>Pulse</A>"
+		html += " <A href='?src=\ref[src];action=1;attach=[colour]'>[IsAttached(colour) ? "Detach" : "Attach"] Signaller</A>"
 	html += "</table>"
 	html += "</div>"
 
@@ -145,11 +146,7 @@ var/list/wireColours = list("red", "blue", "green", "darkred", "orange", "brown"
 		var/mob/living/L = usr
 		if(CanUse(L) && href_list["action"])
 			var/obj/item/I = L.get_active_hand()
-			if(!ismech(L.loc))
-				holder.add_hiddenprint(L)
-			else
-				var/mob/living/exosuit/mech = L.loc
-				I = mech.get_active_hand()
+			holder.add_hiddenprint(L)
 			if(href_list["cut"]) // Toggles the cut/mend status
 				if (!istype(I))
 					return

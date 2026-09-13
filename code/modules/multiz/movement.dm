@@ -46,15 +46,9 @@
 	//If we're inside a thing, that thing is the thing that moves
 	if (istype(loc, /obj))
 		mover = loc
-	// If were inside a mech
-	if(istype(loc, /mob/living/exosuit))
-		var/mob/living/exosuit/mech = loc
-		if(src in mech.pilots)
-			mover = loc
 
 
-
-	var/turf/destination = (direction == UP) ? SSmapping.GetAbove(src) : SSmapping.GetBelow(src)
+	var/turf/destination = (direction == UP) ? GetAbove(src) : GetBelow(src)
 	var/turf/start = get_turf(src)
 	if(!destination)
 		to_chat(src, SPAN_NOTICE("There is nothing of interest in this direction"))
@@ -62,22 +56,13 @@
 
 	//After checking that there's a valid destination, we'll first attempt phase movement as a shortcut.
 	//Since it can pass through obstacles, we'll do this before checking whether anything is blocking us
-	if(istype(mover, /mob/living/exosuit))
-		var/mob/living/mech = mover
-		if(mech.current_vertical_travel_method)
-			to_chat(src, SPAN_NOTICE("You can't do this yet!"))
-	else if(src.current_vertical_travel_method)
+	if(src.current_vertical_travel_method)
 		to_chat(src, SPAN_NOTICE("You can't do this yet!"))
 		return
 
 	var/datum/vertical_travel_method/VTM = new Z_MOVE_PHASE(src)
 	if(VTM.can_perform(direction))
-		// special case for mechs
-		if(istype(mover, /mob/living/exosuit))
-			var/mob/living/mech = mover
-			mech.current_vertical_travel_method = VTM
-		else
-			src.current_vertical_travel_method = VTM
+		src.current_vertical_travel_method = VTM
 		VTM.attempt(direction)
 		return
 
@@ -96,13 +81,6 @@
 		to_chat(src, SPAN_WARNING("\The [destination] blocks you."))
 		return FALSE
 
-	// Prevent people from going directly inside or outside a shuttle through the ceiling
-	// Would be possible if the shuttle is not on the highest z-level
-	// Also prevent the bug where people could get in from under the shuttle
-	if(istype(start, /turf/shuttle) || istype(destination, /turf/shuttle))
-		to_chat(src, SPAN_WARNING("An invisible energy shield around the shuttle blocks you."))
-		return FALSE
-
 	// Check for blocking atoms at the destination.
 	for (var/atom/A in destination)
 		if (!A.CanPass(mover, start, 1.5, 0))
@@ -112,12 +90,7 @@
 	for (var/a in possible_methods)
 		VTM = new a(src)
 		if(VTM.can_perform(direction))
-			// special case for mechs
-			if(istype(mover, /mob/living/exosuit))
-				var/mob/living/mech = mover
-				mech.current_vertical_travel_method = VTM
-			else
-				src.current_vertical_travel_method = VTM
+			src.current_vertical_travel_method = VTM
 			VTM.attempt(direction)
 			return TRUE
 
@@ -161,7 +134,7 @@
 	if(allow_spacemove())
 		return TRUE
 
-	for(var/turf/T in RANGE_TURFS(1,src))
+	for(var/turf/simulated/T in RANGE_TURFS(1,src))
 		if(T.density)
 			if(check_shoegrip(FALSE))
 				return TRUE
@@ -173,7 +146,7 @@
 	if(allow_spacemove()) //Checks for active jetpack
 		return TRUE
 
-	for(var/turf/T in RANGE_TURFS(1,src)) //Robots get "magboots"
+	for(var/turf/simulated/T in RANGE_TURFS(1,src)) //Robots get "magboots"
 		if(T.density)
 			return TRUE
 
@@ -222,13 +195,13 @@
  * @param	below The turf that the mob is expected to end up at.
  * @param	dest The tile we're presuming the mob to be at for this check. Default
  * value is src.loc, (src. is important there!) but this is used for magboot lookahead
- * checks it turf/open/Enter().
+ * checks it turf/simulated/open/Enter().
  *
  * @return	TRUE if the atom can continue falling in its present situation.
  *			FALSE if it should stop falling and not invoke fall_through or fall_impact
  * this cycle.
  */
-/atom/movable/proc/can_fall(turf/below, turf/open/dest = src.loc)
+/atom/movable/proc/can_fall(turf/below, turf/simulated/open/dest = src.loc)
 	if (!istype(dest) || !dest.is_hole)
 		return FALSE
 
@@ -253,7 +226,7 @@
 /obj/effect/decal/cleanable/can_fall()
 	return TRUE
 
-/obj/item/pipe/can_fall(turf/below, turf/open/dest = src.loc)
+/obj/item/pipe/can_fall(turf/below, turf/simulated/open/dest = src.loc)
 	. = ..()
 
 	if((locate(/obj/structure/disposalpipe/up) in below) || locate(/obj/machinery/atmospherics/pipe/zpipe/up) in below)
@@ -261,11 +234,11 @@
 
 
 
-/mob/living/carbon/human/can_fall(turf/below, turf/open/dest = src.loc)
+/mob/living/carbon/human/can_fall(turf/below, turf/simulated/open/dest = src.loc)
 	if (CanAvoidGravity())
 		return FALSE
 	// can't fall on walls anymore
-	var/turf/true_below = SSmapping.GetBelow(src)
+	var/turf/true_below = GetBelow(src)
 	for(var/obj/structure/possible_blocker in true_below.contents)
 		if(possible_blocker.density)
 			if(possible_blocker.climbable)
@@ -277,13 +250,15 @@
 		var/tile_view = view(src, 1)
 		var/obj/item/clothing/shoes/magboots/MB = shoes
 		if(stats.getPerk(PERK_PARKOUR))
-			for(var/turf/wall/low/LW in tile_view)
+			for(var/obj/structure/low_wall/LW in tile_view)
 				return FALSE
 			for(var/obj/structure/railing/R in get_turf(src))
 				return FALSE
 		if(istype(MB))
 			if(MB.magpulse)
-				for(var/turf/wall/W in tile_view)
+				for(var/obj/structure/low_wall/LW in tile_view)
+					return FALSE
+				for(var/turf/simulated/wall/W in tile_view)
 					return FALSE
 
 	return ..()
@@ -294,16 +269,12 @@
 /mob/eye/can_fall()
 	return FALSE
 
-/mob/living/silicon/robot/can_fall(turf/below, turf/open/dest = src.loc)
+/mob/living/silicon/robot/can_fall(turf/below, turf/simulated/open/dest = src.loc)
 	if (CanAvoidGravity())
 		return FALSE
-	if(HasTrait(CYBORG_TRAIT_PARKOUR))
-		var/tile_view = view(src, 1)
-		for(var/obj/structure/railing/R in get_turf(src))
-			return FALSE
-		for(var/turf/wall/W in tile_view)
-			return FALSE
+
 	return ..()
+
 
 // Ladders and stairs pulling movement
 /obj/structure/multiz/proc/try_resolve_mob_pulling(mob/M, obj/structure/multiz/ES)
@@ -316,7 +287,7 @@
 			for(var/obj/item/grab/G in list(H.r_hand, H.l_hand))
 				moveWithMob += G.affecting
 		if(moveWithMob.len)
-			var/turf/pull_target = istop ? SSmapping.GetBelow(ES) : SSmapping.GetAbove(ES)
+			var/turf/pull_target = istop ? GetBelow(ES) : GetAbove(ES)
 			if(target)
 				pull_target = get_turf(target)
 			if(!pull_target)

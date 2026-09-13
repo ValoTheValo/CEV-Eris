@@ -65,8 +65,8 @@
 	var/squeakcooldown = 0
 
 
-/mob/living/simple_animal/mouse/Initialize()
-	. = ..()
+/mob/living/simple_animal/mouse/New()
+	..()
 	nutrition = rand(max_nutrition*0.25, max_nutrition*0.75)
 
 /mob/living/simple_animal/mouse/Life()
@@ -86,6 +86,9 @@
 					squeals++
 					last_squealgain = world.time
 
+	else
+		if ((world.time - timeofdeath) > decompose_time)
+			dust()
 
 
 //Pixel offsetting as they scamper around
@@ -104,8 +107,8 @@
 
 /mob/living/simple_animal/mouse/Initialize()
 	. = ..()
-	add_verb(src, /mob/living/proc/ventcrawl)
-	add_verb(src, /mob/living/proc/hide)
+	verbs += /mob/living/proc/ventcrawl
+	verbs += /mob/living/proc/hide
 
 	if(name == initial(name))
 		name = "[name] ([rand(1, 1000)])"
@@ -241,7 +244,7 @@
 		if(ckey || prob(35))
 			squeak_loud(0)//deathgasp
 
-		addtimer(CALLBACK(src, PROC_REF(dust)), decompose_time)
+		addtimer(CALLBACK(src, .proc/dust), decompose_time)
 
 	..()
 

@@ -1,5 +1,0 @@
-author: Chickenish
-delete-after: true
-changes:
-  - bugfix: self-harm and hysteric breakdowns no longer cause a runtime when 
-      they begin shortly before the associated human is obliterated.

@@ -1,5 +1,5 @@
 /datum/species/slime
-	name = SPECIES_SLIME
+	name = "Slime"
 	name_plural = "slimes"
 	mob_size = MOB_SMALL
 
@@ -17,8 +17,6 @@
 	siemens_coefficient = 3 //conductive
 	darksight = 3
 
-	injury_type =  INJURY_TYPE_HOMOGENOUS
-
 	blood_color = "#05FF9B"
 	flesh_color = "#05FFFB"
 
@@ -26,7 +24,7 @@
 	death_message = "rapidly loses cohesion, splattering across the ground..."
 
 	has_process = list(
-		BP_BRAIN = /obj/item/organ/internal/vital/brain/slime
+		BP_BRAIN = /obj/item/organ/internal/brain/slime
 		)
 
 	breath_type = null
@@ -60,7 +58,7 @@
 	if(!user || !species)
 		return
 	if(user.stat)
-		return
+		return 
 	for(var/limb_tag in BP_ALL_LIMBS)
 		var/obj/item/organ/external/organ_to_check = organs_by_name[limb_tag]
 		if(!organ_to_check || istype(organ_to_check , /obj/item/organ/external/stump))
@@ -69,15 +67,11 @@
 	if(!missing_limb_tag)
 		to_chat(user, "You don't have any limbs to replace!")
 		return
-	if(nutrition < 100)
-		to_chat(user, "You do not have enough nutrition to regenerate a limb")
-		return
-
 	if(user.species.has_limbs.Find(missing_limb_tag))
 		var/stump_to_delete = organs_by_name[missing_limb_tag]
 		if(stump_to_delete)
 			qdel(stump_to_delete)
-		user.adjustNutrition(-100)
+		user.adjustNutrition(-50)
 		var/datum/organ_description/OD = species.has_limbs[missing_limb_tag]
 		OD.create_organ(src)
-		to_chat(user, "You regenerate your [OD.name]")
+		to_chat(user, "You regenerate your [missing_limb_tag]")

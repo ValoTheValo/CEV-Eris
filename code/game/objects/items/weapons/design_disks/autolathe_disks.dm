@@ -20,8 +20,7 @@
 		/datum/design/autolathe/sec/gold = 3,
 		/datum/design/autolathe/gun/colt = 3,
 		/datum/design/autolathe/gun/atreides = 6,
-		/datum/design/autolathe/gun/avasarala = 6,
-		/datum/design/autolathe/gun/ak47_fs = 6
+		/datum/design/autolathe/gun/avasarala = 6
 	)
 
 // ARMOR

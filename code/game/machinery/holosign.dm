@@ -27,10 +27,9 @@
 
 /obj/machinery/holosign/proc/toggle()
 	if (stat & (BROKEN|NOPOWER))
-		set_power_use(NO_POWER_USE)
 		return
 	lit = !lit
-	set_power_use(lit ? ACTIVE_POWER_USE : IDLE_POWER_USE)
+	use_power = lit ? 2 : 1
 	update_icon()
 
 /obj/machinery/holosign/update_icon()
@@ -42,7 +41,7 @@
 /obj/machinery/holosign/power_change()
 	if (stat & NOPOWER)
 		lit = 0
-		set_power_use(NO_POWER_USE)
+		use_power = NO_POWER_USE
 	update_icon()
 
 /obj/machinery/holosign/surgery

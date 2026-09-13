@@ -249,7 +249,7 @@
 			to_chat(mob, "<span class='notice'>You're pinned down by \a [mob.pinned[1]]!</span>")
 		return MOVEMENT_STOP
 
-	if(length(mob.grabbed_by))
+	for(var/obj/item/grab/G in mob.grabbed_by)
 		return MOVEMENT_STOP
 		/* TODO: Bay grab system
 		if(G.stop_move())
@@ -267,12 +267,6 @@
 					return MOVEMENT_STOP
 				else
 					M.stop_pulling()
-
-	if(istype(mob.loc, /obj/item/mech_equipment/forklifting_system))
-		if(mover == mob && isliving(mob))
-			mob:resist()
-		return MOVEMENT_STOP
-
 
 	return MOVEMENT_PROCEED
 
@@ -296,12 +290,14 @@
 		mob.lastarea = get_area(mob.loc)
 
 	//We are now going to move
-	mob.moving = TRUE
+	mob.moving = 1
 
 	direction = mob.AdjustMovementDirection(direction)
 	var/old_turf = get_turf(mob)
 	step(mob, direction)
 
+	if(!MOVING_DELIBERATELY(mob))
+		mob.handle_movement_recoil()
 	mob.add_momentum(direction)
 	// Something with pulling things
 	var/extra_delay = HandleGrabs(direction, old_turf)
@@ -315,9 +311,7 @@
 	for (var/obj/item/grab/G in mob.grabbed_by)
 		G.adjust_position()
 	*/
-	mob.moving = FALSE
-
-	mob.update_cursor()
+	mob.moving = 0
 
 /datum/movement_handler/mob/movement/MayMove(var/mob/mover)
 	return IS_SELF(mover) &&  mob.moving ? MOVEMENT_STOP : MOVEMENT_PROCEED

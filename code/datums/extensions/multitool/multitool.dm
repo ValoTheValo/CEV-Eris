@@ -10,6 +10,7 @@
 	if(html)
 		var/datum/browser/popup = new(usr, "multitool", "Multitool Menu", window_x, window_y)
 		popup.set_content(html)
+		popup.set_title_image(user.browse_rsc_icon(M.icon, M.icon_state))
 		popup.open()
 	else
 		close_window(usr)
@@ -24,7 +25,7 @@
 	. += "<b>Buffer Memory:</b><br>"
 	var/buffer_name = multitool.get_buffer_name()
 	if(buffer_name)
-		. += "[buffer_name] <a href='byond://?src=\ref[src];send=\ref[multitool.buffer_object]'>Send</a> <a href='byond://?src=\ref[src];purge=1'>Purge</a><br>"
+		. += "[buffer_name] <a href='?src=\ref[src];send=\ref[multitool.buffer_object]'>Send</a> <a href='?src=\ref[src];purge=1'>Purge</a><br>"
 	else
 		. += "No connection stored in the buffer."
 

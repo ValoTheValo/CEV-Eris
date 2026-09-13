@@ -25,7 +25,7 @@
 	var/dat = "<B>Bluespace Artillery Control:</B><BR>"
 	dat += "Locked on<BR>"
 	dat += "<B>Charge progress: [reload]/180:</B><BR>"
-	dat += "<a href='byond://?src=\ref[src];fire=1'>Open Fire</A><BR>"
+	dat += "<A href='byond://?src=\ref[src];fire=1'>Open Fire</A><BR>"
 	dat += "Deployment of weapon authorized by <br>[company_name] Naval Command<br><br>Remember, friendly fire is grounds for termination of your contract and life.<HR>"
 	user << browse(dat, "window=scroll")
 	onclose(user, "scroll")
@@ -37,8 +37,8 @@
 		return
 	if ((usr.contents.Find(src) || (in_range(src, usr) && istype(src.loc, /turf))) || (issilicon(usr)))
 		var/A
-		A = input("Area to jump bombard", "Open Fire", A) in SSmapping.main_ship_areas_by_name
-		var/area/thearea = SSmapping.main_ship_areas_by_name[A]
+		A = input("Area to jump bombard", "Open Fire", A) in SSmapping.teleportlocs
+		var/area/thearea = SSmapping.teleportlocs[A]
 		if (usr.stat || usr.restrained()) return
 		if(src.reload < 180) return
 		if ((usr.contents.Find(src) || (in_range(src, usr) && istype(src.loc, /turf))) || (issilicon(usr)))
@@ -48,5 +48,18 @@
 			for(var/turf/T in get_area_turfs(thearea.type))
 				L+=T
 			var/loc = pick(L)
-			explosion(get_turf(loc), 1000, 75)
+			explosion(loc,2,5,11)
 			reload = 0
+
+/*mob/proc/openfire()
+	var/A
+	A = input("Area to jump bombard", "Open Fire", A) in SSmapping.teleportlocs
+	var/area/thearea = SSmapping.teleportlocs[A]
+	command_alert("Bluespace artillery fire detected. Brace for impact.")
+	spawn(30)
+	var/list/L = list()
+
+	for(var/turf/T in get_area_turfs(thearea.type))
+		L+=T
+	var/loc = pick(L)
+	explosion(loc,2,5,11)*/

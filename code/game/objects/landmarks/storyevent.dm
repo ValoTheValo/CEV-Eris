@@ -35,11 +35,6 @@
 	icon_state = "spy-green"
 	navigation = "This marks Serbia, it is our land."
 
-/obj/landmark/storyevent/pirate_spawn
-	name = "pirate-spawn"
-	icon_state = "spy-green"
-	navigation = "This marks Tortuga, our base of operation."
-
 /obj/landmark/storyevent/potential_unique_oddity_spawn
 	name = "special-oddity-spawn"
 	icon_state = "spy-cyan"

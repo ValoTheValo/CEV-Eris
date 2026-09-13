@@ -201,7 +201,7 @@
 						if("number")
 							master.buildmode.valueholder = input(usr,"Enter variable value:" ,"Value", 123) as num
 						if("mob-reference")
-							master.buildmode.valueholder = input(usr,"Enter variable value:" ,"Value") as mob in SSmobs.mob_list | SShumans.mob_list
+							master.buildmode.valueholder = input(usr,"Enter variable value:" ,"Value") as mob in SSmobs.mob_list
 						if("obj-reference")
 							master.buildmode.valueholder = input(usr,"Enter variable value:" ,"Value") as obj in world
 						if("turf-reference")
@@ -222,32 +222,32 @@
 			if(istype(object,/turf) && pa.Find("left") && !pa.Find("alt") && !pa.Find("ctrl") )
 				if(istype(object,/turf/space))
 					var/turf/T = object
-					T.ChangeTurf(/turf/floor)
+					T.ChangeTurf(/turf/simulated/floor)
 					return
-				if(istype(object,/turf/open))
+				if(istype(object,/turf/simulated/open))
 					var/turf/T = object
-					T.ChangeTurf(/turf/floor)
+					T.ChangeTurf(/turf/simulated/floor)
 					return
-				else if(istype(object,/turf/floor))
+				else if(istype(object,/turf/simulated/floor))
 					var/turf/T = object
-					T.ChangeTurf(/turf/wall)
+					T.ChangeTurf(/turf/simulated/wall)
 					return
-				else if(istype(object,/turf/wall))
+				else if(istype(object,/turf/simulated/wall))
 					var/turf/T = object
-					T.ChangeTurf(/turf/wall/reinforced)
+					T.ChangeTurf(/turf/simulated/wall/r_wall)
 					return
 			else if(pa.Find("right"))
-				if(istype(object,/turf/wall))
+				if(istype(object,/turf/simulated/wall))
 					var/turf/T = object
-					T.ChangeTurf(/turf/floor)
+					T.ChangeTurf(/turf/simulated/floor)
 					return
-				else if(istype(object,/turf/floor))
+				else if(istype(object,/turf/simulated/floor))
 					var/turf/T = object
 					T.ChangeTurf(/turf/space)
 					return
-				else if(istype(object,/turf/wall/reinforced))
+				else if(istype(object,/turf/simulated/wall/r_wall))
 					var/turf/T = object
-					T.ChangeTurf(/turf/wall)
+					T.ChangeTurf(/turf/simulated/wall)
 					return
 				else if(isobj(object))
 					qdel(object)

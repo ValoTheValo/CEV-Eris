@@ -4,8 +4,8 @@
 
 /datum/design/autolathe/part/cable_coil
 	name = "cable coil"
-	build_path = /obj/item/stack/cable_coil
-
+	build_path = /obj/item/stack/cable_coil 
+	
 /datum/design/autolathe/part/igniter
 	name = "igniter"
 	build_path = /obj/item/device/assembly/igniter
@@ -13,10 +13,6 @@
 /datum/design/autolathe/part/signaler
 	name = "signaler"
 	build_path = /obj/item/device/assembly/signaler
-
-/datum/design/autolathe/part/door_signaler
-	name = "door signaler"
-	build_path = /obj/item/device/assembly/signaler/door_controller
 
 /datum/design/autolathe/part/sensor_infra
 	name = "infrared sensor"
@@ -46,7 +42,3 @@
 /datum/design/autolathe/part/diamondblade
 	name = "Asters \"Gleaming Edge\": Diamond blade"
 	build_path = /obj/item/tool_upgrade/productivity/diamond_blade
-
-/datum/design/autolathe/part/solar_assembly
-	name = "solar panel assembly"
-	build_path = /obj/item/solar_assembly

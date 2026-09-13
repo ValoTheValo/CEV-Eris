@@ -87,7 +87,7 @@
 	var/animating = FALSE
 
 
-/datum/vertical_travel_method/New(mob/L)
+/datum/vertical_travel_method/New(var/mob/L)
 	if (istype(L.loc, /mob/living/exosuit)) //Add more vehicle related checks here in future
 		M = L.loc
 	else
@@ -169,7 +169,7 @@
 	if (!get_destination())
 		to_chat(M, SPAN_NOTICE("There is nothing in that direction."))
 		return FALSE
-
+	
 	if(ismob(M))
 		var/mob/O = M
 		if(O.resting)
@@ -225,7 +225,7 @@
 	delete_self()
 
 /datum/vertical_travel_method/proc/get_destination()
-	destination = (direction == UP) ? SSmapping.GetAbove(origin) : SSmapping.GetBelow(origin)
+	destination = (direction == UP) ? GetAbove(origin) : GetBelow(origin)
 	return destination
 
 
@@ -296,7 +296,7 @@
 
 	if (!spaces.len)
 		//Welp we didn't find one. lets loop again, all floors are allowed now
-		for (var/turf/floor/T in orange(1, M))
+		for (var/turf/simulated/floor/T in orange(1, M))
 			spaces.Add(T)
 
 	if (!spaces.len)

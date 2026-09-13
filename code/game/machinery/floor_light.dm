@@ -95,8 +95,7 @@ var/list/floor_light_cache = list()
 			return
 
 		on = !on
-		if(on)
-			set_power_use(ACTIVE_POWER_USE)
+		if(on) use_power = ACTIVE_POWER_USE
 		visible_message("<span class='notice'>\The [user] turns \the [src] [on ? "on" : "off"].</span>")
 		update_brightness()
 		return
@@ -105,11 +104,11 @@ var/list/floor_light_cache = list()
 	..()
 	var/need_update
 	if((!anchored || broken()) && on)
-		set_power_use(NO_POWER_USE)
+		use_power = NO_POWER_USE
 		on = FALSE
 		need_update = 1
 	else if(use_power && !on)
-		set_power_use(NO_POWER_USE)
+		use_power = NO_POWER_USE
 		need_update = 1
 	if(need_update)
 		update_brightness()
@@ -119,7 +118,7 @@ var/list/floor_light_cache = list()
 		if(light_range != default_light_range || light_power != default_light_power || light_color != default_light_colour)
 			set_light(default_light_range, default_light_power, default_light_colour)
 	else
-		set_power_use(NO_POWER_USE)
+		use_power = NO_POWER_USE
 		if(light_range || light_power)
 			set_light(0)
 
@@ -142,7 +141,7 @@ var/list/floor_light_cache = list()
 				damaged = rand(1,4)
 			var/cache_key = "floorlight-broken[damaged]-[default_light_colour]"
 			if(!floor_light_cache[cache_key])
-				var/image/I = image("flicker[damaged]")
+				var/image/I = image("flick_light[damaged]")
 				I.color = default_light_colour
 				I.layer = ABOVE_OPEN_TURF_LAYER
 				floor_light_cache[cache_key] = I
@@ -151,15 +150,24 @@ var/list/floor_light_cache = list()
 /obj/machinery/floor_light/proc/broken()
 	return (stat & (BROKEN|NOPOWER))
 
-/obj/machinery/floor_light/take_damage(amount)
-	. = ..()
-	if(QDELETED(src))
-		return 0
-	if(health/maxHealth < 0.5)
-		stat |= BROKEN
-	if(isnull(damaged))
-		damaged = 0
-	return 0
+/obj/machinery/floor_light/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+		if(2)
+			if (prob(50))
+				qdel(src)
+			else if(prob(20))
+				stat |= BROKEN
+			else
+				if(isnull(damaged))
+					damaged = 0
+		if(3)
+			if (prob(5))
+				qdel(src)
+			else if(isnull(damaged))
+				damaged = 0
+	return
 
 /obj/machinery/floor_light/Destroy()
 	var/area/A = get_area(src)

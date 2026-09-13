@@ -18,6 +18,9 @@
 	build_path = /obj/machinery/computer/borgupload
 	origin_tech = list(TECH_DATA = 4)
 
+/obj/item/electronics/circuitboard/med_data
+	name = T_BOARD("medical records console")
+	build_path = /obj/machinery/computer/med_data
 
 /obj/item/electronics/circuitboard/communications
 	name = T_BOARD("command and communications console")
@@ -30,6 +33,9 @@
 	build_path = /obj/machinery/computer/teleporter
 	origin_tech = list(TECH_DATA = 2, TECH_BLUESPACE = 2)
 
+/obj/item/electronics/circuitboard/secure_data
+	name = T_BOARD("security records console")
+	build_path = /obj/machinery/computer/secure_data
 
 /obj/item/electronics/circuitboard/atmos_alert
 	rarity_value = 13.3
@@ -101,6 +107,16 @@
 	build_path = /obj/machinery/computer/operating
 	origin_tech = list(TECH_DATA = 2, TECH_BIO = 2)
 
+/obj/item/electronics/circuitboard/curefab
+	name = T_BOARD("cure fabricator")
+	rarity_value = 40
+	build_path = /obj/machinery/computer/curer
+
+/obj/item/electronics/circuitboard/splicer
+	name = T_BOARD("disease splicer")
+	rarity_value = 40
+	build_path = /obj/machinery/computer/diseasesplicer
+
 /obj/item/electronics/circuitboard/centrifuge
 	name = T_BOARD("centrifuge")
 	build_path = /obj/machinery/centrifuge
@@ -162,3 +178,7 @@
 	name = T_BOARD("guest pass console")
 	build_path = /obj/machinery/computer/guestpass
 	origin_tech = list(TECH_DATA = 2)
+
+/obj/item/electronics/circuitboard/jtb
+	name = T_BOARD("junk tractor beam control console")
+	build_path = /obj/machinery/computer/jtb_console

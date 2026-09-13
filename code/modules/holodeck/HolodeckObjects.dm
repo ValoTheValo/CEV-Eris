@@ -3,216 +3,101 @@
 // Holographic tables are in code/modules/tables/presets.dm
 // Holographic racks are in code/modules/tables/rack.dm
 
-/turf/floor/holofloor
+/turf/simulated/floor/holofloor
 	thermal_conductivity = 0
 
-/turf/floor/holofloor/attackby(obj/item/W as obj, mob/user as mob)
+/turf/simulated/floor/holofloor/attackby(obj/item/W as obj, mob/user as mob)
 	return
 	// HOLOFLOOR DOES NOT GIVE A FUCK
 
-/turf/floor/holofloor/explosion_act(target_power, explosion_handler/handler)
-	if(target_power > 800) //No fucks otherwise
-		take_damage(target_power / 2, BLAST)
-	return 0
-
-/turf/floor/holofloor/set_flooring()
+/turf/simulated/floor/holofloor/set_flooring()
 	return
 
-/turf/floor/holofloor/plating
-	icon = 'icons/turf/flooring/plating.dmi'
-	name = "plating"
-	icon_state = "plating"
-	initial_flooring = /decl/flooring/reinforced/plating
-
-/turf/floor/holofloor/plating/under
-	name = "underplating"
-	icon_state = "under"
-	icon = 'icons/turf/flooring/plating.dmi'
-	initial_flooring = /decl/flooring/reinforced/plating/under
-
-/turf/floor/holofloor/carpet
+/turf/simulated/floor/holofloor/carpet
 	name = "carpet"
 	icon = 'icons/turf/flooring/carpet.dmi'
 	icon_state = "carpet"
 	initial_flooring = /decl/flooring/carpet
 
-/turf/floor/holofloor/tiled
+/turf/simulated/floor/holofloor/tiled
 	name = "floor"
 	icon = 'icons/turf/flooring/tiles_steel.dmi'
 	icon_state = "tiles"
 	initial_flooring = /decl/flooring/tiling/steel
 
-/turf/floor/holofloor/tiled/bar_dance
-	icon_state = "bar_dance"
-	initial_flooring = /decl/flooring/tiling/steel/bar_light
-
-/turf/floor/holofloor/tiled/bar_flat
-	icon_state = "bar_flat"
-	initial_flooring = /decl/flooring/tiling/steel/bar_flat
-
-/turf/floor/holofloor/tiled/bar_light
-	icon_state = "bar_light"
-	initial_flooring = /decl/flooring/tiling/steel/bar_light
-
-/turf/floor/holofloor/tiled/dark
+/turf/simulated/floor/holofloor/tiled/dark
 	name = "floor"
 	icon = 'icons/turf/flooring/tiles_dark.dmi'
 	icon_state = "tiles"
 	initial_flooring = /decl/flooring/tiling/dark
 
-/turf/floor/holofloor/tiled/steel
-	name = "floor"
-	icon = 'icons/turf/flooring/tiles_steel.dmi'
-	icon_state = "tiles"
-	initial_flooring = /decl/flooring/tiling/steel
-
-/turf/floor/holofloor/tiled/steel/gray_perforated
-	icon_state = "gray_perforated"
-	initial_flooring = /decl/flooring/tiling/steel/gray_perforated
-
-/turf/floor/holofloor/wood
+/turf/simulated/floor/holofloor/wood
 	name = "wooden floor"
 	icon = 'icons/turf/flooring/wood.dmi'
 	icon_state = "wood"
 	initial_flooring = /decl/flooring/wood
 
-/turf/floor/holofloor/grass
+/turf/simulated/floor/holofloor/grass
 	name = "lush grass"
 	icon = 'icons/turf/flooring/grass.dmi'
 	icon_state = "grass0"
 	initial_flooring = /decl/flooring/grass
 
-/turf/floor/holofloor/snow
+/turf/simulated/floor/holofloor/snow
 	name = "snow"
 	icon = 'icons/turf/floors.dmi'
 	icon_state = "snow"
 
-/turf/floor/holofloor/space
+/turf/simulated/floor/holofloor/space
 	icon = 'icons/turf/space.dmi'
 	name = "\proper space"
 	icon_state = "0"
 
-/turf/floor/holofloor/reinforced
+/turf/simulated/floor/holofloor/reinforced
 	icon = 'icons/turf/flooring/tiles.dmi'
 	initial_flooring = /decl/flooring/reinforced
 	name = "reinforced holofloor"
 	icon_state = "reinforced"
 
-/turf/floor/holofloor/space/New()
+/turf/simulated/floor/holofloor/space/New()
 	icon_state = "[((x + y) ^ ~(x * y) + z) % 25]"
 
-/turf/floor/holofloor/beach
+/turf/simulated/floor/holofloor/beach
 	desc = "Uncomfortably gritty for a hologram."
 	icon = 'icons/misc/beach.dmi'
 	initial_flooring = null
 
-/turf/floor/holofloor/beach/sand
+/turf/simulated/floor/holofloor/beach/sand
 	name = "sand"
 	icon_state = "desert"
 
-/turf/floor/holofloor/beach/coastline
+/turf/simulated/floor/holofloor/beach/coastline
 	name = "coastline"
 	icon = 'icons/misc/beach2.dmi'
 	icon_state = "sandwater"
 
-/turf/floor/holofloor/beach/water
+/turf/simulated/floor/holofloor/beach/water
 	name = "water"
 	icon_state = "seashallow"
 
-/turf/floor/holofloor/desert
+/turf/simulated/floor/holofloor/desert
 	name = "desert sand"
 	desc = "Uncomfortably gritty for a hologram."
 	icon_state = "asteroid"
 	icon = 'icons/turf/flooring/asteroid.dmi'
 	initial_flooring = null
 
-/turf/floor/holofloor/desert/New()
+/turf/simulated/floor/holofloor/desert/New()
 	..()
 	if(prob(10))
 		overlays += "asteroid[rand(0,9)]"
 
-/turf/open/holonofloor // Simulated nothingness
-
-/turf/open/holonofloor/attackby(obj/item/W as obj, mob/user as mob)
-	return
-
-/turf/open/holonofloor/ChangeTurf(new_turf_type, force_lighting_update)
-	if(new_turf_type == /turf/space) // If we want to become space,
-		var/area/A = get_area(src)
-		if(istype(A, /area/holodeck/source)) // Check if we are a holodeck source,
-			return // And return to prevent becoming space
-	..()
-
-/turf/open/holonofloor/update_air_properties()
-	var/area/A = get_area(src)
-	if(istype(A, /area/holodeck/source)) // Check if we are a holodeck source,
-		return // deny air updates
-	..()
-
-/obj/structure/railing/holorailing
-
-/obj/structure/railing/holorailing/attackby(obj/item/W as obj, mob/user as mob)
-	return
-
-/obj/structure/railing/holorailing/take_damage(amount)
-	return
-
-/obj/structure/railing/holorailing/grey
-	name = "grey railing"
-	desc = "A standard steel railing. Prevents stupid people from falling to their doom."
-	icon_modifier = "grey_"
-	icon_state = "grey_railing0"
-
-/obj/structure/lattice/hololattice
-
-/obj/structure/lattice/hololattice/attackby(obj/item/I, mob/user)
-	return
-
-/obj/structure/catwalk/holo
-
-/obj/structure/catwalk/holo/attackby(obj/item/I, mob/user)
-	return
-
-/obj/item/stool/holostool
-	damtype = HALLOSS
-
-/obj/item/stool/holostool/attackby(obj/item/W as obj, mob/user as mob)
-	if(istool(W) || istype(W,/obj/item/stack))
-		return
-	..()
-
-/obj/item/stool/holostool/attack(mob/M as mob, mob/user as mob)
-	if (prob(5) && isliving(M))
-		user.visible_message(SPAN_DANGER("[user] breaks [src] over [M]'s back, disappearing into mist!"))
-		user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-		user.do_attack_animation(M)
-
-		user.remove_from_mob(src)
-		qdel(src)
-		var/mob/living/T = M
-		T.Weaken(10)
-		T.damage_through_armor(20, HALLOSS, BP_CHEST, ARMOR_MELEE)
-		return
-	..()
-
-/obj/item/stool/holostool/bar
-	name = "bar stool"
-	icon_state = "bar_stool"
-
-/obj/item/stool/holostool/bar/update_icon()
-	return
-
-/obj/structure/bed/chair/custom/holochair
-
-/obj/structure/bed/chair/custom/holochair/attackby(obj/item/W as obj, mob/user as mob)
-	if(istool(W) || istype(W,/obj/item/stack))
-		return
-	..()
-
-/obj/structure/bed/chair/custom/holochair/bar
-	name = "bar chair"
-	desc = "Modern design and soft pad. Served up with the drink and great company."
-	icon_state = "bar_chair"
+/obj/structure/holostool
+	name = "stool"
+	desc = "Apply butt."
+	icon = 'icons/obj/furniture.dmi'
+	icon_state = "stool_padded_preview"
+	anchored = TRUE
 
 /obj/item/clothing/gloves/boxing/hologlove
 	name = "boxing gloves"
@@ -293,7 +178,13 @@
 		visible_message("[src] fades away as it shatters!")
 	qdel(src)
 
-// Holo type items
+/obj/structure/bed/chair/holochair/Destroy()
+	. = ..()
+
+/obj/structure/bed/chair/holochair/attackby(obj/item/W as obj, mob/user as mob)
+	if(istype(W, /obj/item/tool/wrench))
+		to_chat(user, (SPAN_NOTICE("It's a holochair, you can't dismantle it!")))
+	return
 
 /obj/item/holo
 	damtype = HALLOSS

@@ -53,10 +53,13 @@
 	if(!active)
 		icon_state = initial(icon_state)
 
-/obj/machinery/power/port_gen/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += SPAN_NOTICE("The generator is [active ? "on" : "off"].")
-	..(user, extra_description)
+/obj/machinery/power/port_gen/examine(mob/user)
+	if(!..(user,1 ))
+		return
+	if(active)
+		to_chat(user, SPAN_NOTICE("The generator is on."))
+	else
+		to_chat(user, SPAN_NOTICE("The generator is off."))
 
 /obj/machinery/power/port_gen/emp_act(severity)
 	var/duration = 6000 //ten minutes
@@ -77,7 +80,7 @@
 			stat &= ~EMPED
 
 /obj/machinery/power/port_gen/proc/explode()
-	explosion(get_turf(src), min(power_gen/100, 400), power_gen/500)
+	explosion(src.loc, -1, 3, 5, -1)
 	qdel(src)
 
 #define TEMPERATURE_DIVISOR 40
@@ -87,7 +90,6 @@
 /obj/machinery/power/port_gen/pacman
 	name = "\improper P.A.C.M.A.N.-type Portable Generator"
 	desc = "A power generator that runs on solid plasma sheets. Rated for 80 kW max safe output."
-	icon_state = "portgen_p0"
 
 	var/sheet_name = "Plasma Sheets"
 	var/sheet_path = /obj/item/stack/material/plasma
@@ -143,15 +145,16 @@
 
 	power_gen = round(initial(power_gen) * (max(2, temp_rating) / 2))
 
-/obj/machinery/power/port_gen/pacman/examine(mob/user, extra_description = "")
-	extra_description += "\n\The [src] appears to be producing [power_gen*power_output] W."
+/obj/machinery/power/port_gen/pacman/examine(mob/user)
+	..(user)
+	to_chat(user, "\The [src] appears to be producing [power_gen*power_output] W.")
 	if(!use_reagents_as_fuel)
-		extra_description += "\nThere [sheets == 1 ? "is" : "are"] [sheets] sheet\s left in the hopper."
+		to_chat(user, "There [sheets == 1 ? "is" : "are"] [sheets] sheet\s left in the hopper.")
+
 	if(IsBroken())
-		extra_description += SPAN_WARNING("\n\The [src] seems to have broken down.")
+		to_chat(user, SPAN_WARNING("\The [src] seems to have broken down."))
 	if(overheating)
-		extra_description += SPAN_DANGER("\n\The [src] is overheating!")
-	..(user, extra_description)
+		to_chat(user, SPAN_DANGER("\The [src] is overheating!"))
 
 /obj/machinery/power/port_gen/pacman/HasFuel()
 	var/needed_fuel = power_output / time_per_fuel_unit
@@ -343,9 +346,9 @@
 	..()
 	if (!anchored)
 		return
-	nano_ui_interact(user)
+	ui_interact(user)
 
-/obj/machinery/power/port_gen/pacman/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/power/port_gen/pacman/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	if(IsBroken())
 		return
 
@@ -394,27 +397,27 @@
 
 	var/dat = text("<b>[name]</b><br>")
 	if (active)
-		dat += text("Generator: <a href='byond://?src=\ref[src];action=disable'>On</A><br>")
+		dat += text("Generator: <A href='?src=\ref[src];action=disable'>On</A><br>")
 	else
-		dat += text("Generator: <a href='byond://?src=\ref[src];action=enable'>Off</A><br>")
-	dat += text("[capitalize(sheet_name)]: [sheets] - <a href='byond://?src=\ref[src];action=eject'>Eject</A><br>")
+		dat += text("Generator: <A href='?src=\ref[src];action=enable'>Off</A><br>")
+	dat += text("[capitalize(sheet_name)]: [sheets] - <A href='?src=\ref[src];action=eject'>Eject</A><br>")
 	var/stack_percent = round(sheet_left * 100, 1)
 	dat += text("Current stack: [stack_percent]% <br>")
-	dat += text("Power output: <a href='byond://?src=\ref[src];action=lower_power'>-</A> [power_gen * power_output] Watts<a href='byond://?src=\ref[src];action=higher_power'>+</A><br>")
+	dat += text("Power output: <A href='?src=\ref[src];action=lower_power'>-</A> [power_gen * power_output] Watts<A href='?src=\ref[src];action=higher_power'>+</A><br>")
 	dat += text("Power current: [(powernet == null ? "Unconnected" : "[avail()]")]<br>")
 
 	var/tempstr = "Temperature: [temperature]&deg;C<br>"
 	dat += (overheating)? SPAN_DANGER("[tempstr]") : tempstr
-	dat += "<br><a href='byond://?src=\ref[src];action=close'>Close</A>"
+	dat += "<br><A href='?src=\ref[src];action=close'>Close</A>"
 	user << browse("[dat]", "window=port_gen")
 	onclose(user, "port_gen")
 */
 
 /obj/machinery/power/port_gen/pacman/update_icon()
 	if(active)
-		icon_state = "portgen_p1"
+		icon_state = "portgen1"
 	else
-		icon_state = "portgen_p0"
+		icon_state = "portgen0"
 
 /obj/machinery/power/port_gen/pacman/Topic(href, href_list)
 	if(..())
@@ -442,17 +445,11 @@
 /obj/machinery/power/port_gen/pacman/super
 	name = "S.U.P.E.R.P.A.C.M.A.N.-type Portable Generator"
 	desc = "A power generator that utilizes uranium sheets as fuel. Can run for much longer than the standard PACMAN type generators. Rated for 80 kW max safe output."
-	icon_state = "portgen_u0"
+	icon_state = "portgen1"
 	sheet_path = /obj/item/stack/material/uranium
 	sheet_name = "Uranium Sheets"
 	time_per_fuel_unit = 576 //same power output, but a 50 sheet stack will last 2 hours at max safe power
 	circuit = /obj/item/electronics/circuitboard/pacman/super
-
-/obj/machinery/power/port_gen/pacman/super/update_icon()
-	if(active)
-		icon_state = "portgen_u1"
-	else
-		icon_state = "portgen_u0"
 
 /obj/machinery/power/port_gen/pacman/super/UseFuel()
 	//produces a tiny amount of radiation when in use
@@ -469,7 +466,7 @@
 		//I dunno, maybe physics works different when you live in 2D -- SM radiation also works like this, apparently
 		L.apply_effect(max(20, round(rads/get_dist(L,src))), IRRADIATE)
 
-	explosion(get_turf(src), min(sheets * 10, 700), 100, EFLAG_EXPONENTIALFALLOFF)
+	explosion(src.loc, 3, 3, 5, 3)
 	qdel(src)
 
 /obj/machinery/power/port_gen/pacman/mrs
@@ -491,5 +488,5 @@
 
 /obj/machinery/power/port_gen/pacman/mrs/explode()
 	//no special effects, but the explosion is pretty big (same as a supermatter shard).
-	explosion(get_turf(src), min(sheets * 50, 900), 100, EFLAG_ADDITIVEFALLOFF)
+	explosion(src.loc, 3, 6, 12, 16, 1)
 	qdel(src)

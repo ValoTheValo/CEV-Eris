@@ -1,7 +1,7 @@
-/mob/living/carbon/human/proc/change_appearance(var/flags = APPEARANCE_ALL_HAIR, var/location = src, var/mob/user = src, var/check_species_whitelist = 1, var/list/species_whitelist = list(), var/list/species_blacklist = list(), var/datum/nano_topic_state/state =GLOB.default_state)
+/mob/living/carbon/human/proc/change_appearance(var/flags = APPEARANCE_ALL_HAIR, var/location = src, var/mob/user = src, var/check_species_whitelist = 1, var/list/species_whitelist = list(), var/list/species_blacklist = list(), var/datum/topic_state/state =GLOB.default_state)
 	var/datum/nano_module/appearance_changer/AC = new(location, src, check_species_whitelist, species_whitelist, species_blacklist)
 	AC.flags = flags
-	AC.nano_ui_interact(user, state = state)
+	AC.ui_interact(user, state = state)
 
 /mob/living/carbon/human/proc/change_species(var/new_species)
 	if(!new_species)
@@ -173,27 +173,3 @@
 	for(var/obj/item/organ/external/O in organs)
 		O.sync_colour_to_human(src)
 	update_body(0)
-
-/mob/living/carbon/human/proc/randomize_appearance()
-	hair_color = rgb(25 * rand(3,8),25 * rand(1,3),25 * rand(1,3)) //curated hair color
-	change_skin_tone(roll("1d20") * -10) //skintone randomization borrowed from corpse spawner. Increment by 10 to increase variance
-	change_hair(pick(GLOB.hair_styles_list)) //pick from hairstyles
-	change_hair_color(hair_color)
-	change_facial_hair_color(hair_color)
-	age = rand(20,50)
-	//set gender and gender specific traits
-	var/gender = pick(MALE, FEMALE)
-	var/list/tts_voices = new()
-	if(gender == FEMALE) //defaults are MALE so check for FEMALE first, use MALE as default case
-		change_gender(gender) 
-		tts_voices += TTS_SEED_DEFAULT_FEMALE //Failsafe voice
-	else
-		change_facial_hair(pick(GLOB.facial_hair_styles_list)) //pick a random facial hair
-		tts_voices += TTS_SEED_DEFAULT_MALE //Failsafe voice
-	real_name = species.get_random_name(gender) //set name according to gender
-	//Set voice based on gender
-	for(var/i in tts_seeds) //from tts_seeds, add voices that match gender tag to list tts_voices
-		var/list/V = tts_seeds[i]
-		if((V["gender"] == gender || V["category"] == "any") && (V["category"] == "human" || V["gender"] == "any")) //cribbed from /code/modules/client/preference_setup/general/01_basic.dm
-			tts_voices += i
-	tts_seed = pick(tts_voices) //pick a random voice from list tts_voices

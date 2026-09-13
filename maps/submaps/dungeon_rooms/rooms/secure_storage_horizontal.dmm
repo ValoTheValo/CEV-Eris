@@ -1,34 +1,33 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "b" = (
 /obj/crawler/crawler_wallbreaker,
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "c" = (
 /obj/structure/grille,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "d" = (
 /obj/structure/closet/onestar/tier3,
-/obj/spawner/gun/onestar,
-/turf/floor/tiled/dark/brown_perforated,
+/turf/simulated/floor/tiled/dark/brown_perforated,
 /area/crawler)
 "e" = (
 /obj/structure/railing/grey,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "f" = (
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "g" = (
 /obj/machinery/door/blast/shutters,
-/turf/floor/tiled/dark/brown_perforated,
+/turf/simulated/floor/tiled/dark/brown_perforated,
 /area/crawler)
 "h" = (
 /obj/crawler/crawler_wallbreaker/vertical,
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "i" = (
 /obj/structure/railing/grey,
@@ -36,18 +35,18 @@
 	dir = 4
 	},
 /obj/machinery/light/floor,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "j" = (
 /obj/structure/catwalk,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "k" = (
 /obj/structure/railing/grey,
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "l" = (
 /obj/structure/railing/grey,
@@ -55,7 +54,7 @@
 	dir = 8
 	},
 /obj/machinery/light/floor,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "m" = (
 /obj/structure/railing/grey{
@@ -65,14 +64,14 @@
 	dir = 4
 	},
 /obj/machinery/light/floor,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "n" = (
 /obj/structure/railing/grey,
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "o" = (
 /obj/structure/railing/grey{
@@ -82,7 +81,7 @@
 	dir = 8
 	},
 /obj/machinery/light/floor,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "p" = (
 /obj/structure/railing/grey{
@@ -91,18 +90,18 @@
 /obj/structure/railing/grey{
 	dir = 8
 	},
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "q" = (
 /obj/structure/catwalk,
 /obj/spawner/mob/roomba,
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "s" = (
 /obj/structure/railing/grey{
 	dir = 1
 	},
-/turf/floor/plating/under,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 "t" = (
 /obj/structure/railing/grey{
@@ -111,12 +110,7 @@
 /obj/structure/railing/grey{
 	dir = 4
 	},
-/turf/floor/plating/under,
-/area/crawler)
-"J" = (
-/obj/structure/closet/onestar/tier3,
-/obj/spawner/cloth/onestar,
-/turf/floor/tiled/dark/brown_perforated,
+/turf/simulated/floor/plating/under,
 /area/crawler)
 
 (1,1,1) = {"
@@ -171,7 +165,7 @@ j
 j
 j
 g
-J
+d
 b
 "}
 (6,1,1) = {"
@@ -209,13 +203,13 @@ b
 "}
 (9,1,1) = {"
 a
-J
+d
 g
 j
 j
 j
 g
-J
+d
 b
 "}
 (10,1,1) = {"

@@ -20,7 +20,7 @@
 	var/set_temperature = T20C		// Thermostat
 	var/cooling = 0
 
-/obj/machinery/atmospherics/unary/freezer/LateInitialize()
+/obj/machinery/atmospherics/unary/freezer/New()
 	initialize_directions = dir
 	..()
 
@@ -55,9 +55,9 @@
 	return
 
 /obj/machinery/atmospherics/unary/freezer/attack_hand(mob/user as mob)
-	nano_ui_interact(user)
+	ui_interact(user)
 
-/obj/machinery/atmospherics/unary/freezer/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/atmospherics/unary/freezer/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	// this is the data which will be sent to the ui
 	var/data[0]
 	data["on"] = use_power ? 1 : 0
@@ -161,16 +161,21 @@
 		air_contents.volume = max(initial(internal_volume) - 200, 0) + 200 * bin_rating
 	set_power_level(power_setting)
 
-/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(new_power_setting)
+/obj/machinery/atmospherics/unary/freezer/proc/set_power_level(var/new_power_setting)
 	power_setting = new_power_setting
 	power_rating = max_power_rating * (power_setting/100)
 
-/obj/machinery/atmospherics/unary/freezer/attackby(obj/item/I, mob/user)
+/obj/machinery/atmospherics/unary/freezer/attackby(var/obj/item/I, var/mob/user as mob)
+
 	if(default_deconstruction(I, user))
 		return
 
 	if(default_part_replacement(I, user))
 		return
 
-/obj/machinery/atmospherics/unary/freezer/examine(mob/user, extra_description = "")
-	..(user, "The maintenance hatch is [panel_open ? "open" : "closed"].")
+	return
+
+/obj/machinery/atmospherics/unary/freezer/examine(mob/user)
+	..(user)
+	if(panel_open)
+		to_chat(user, "The maintenance hatch is open.")

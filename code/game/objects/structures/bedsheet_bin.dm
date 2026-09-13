@@ -214,23 +214,24 @@ LINEN BINS
 	var/obj/item/hidden
 
 
-/obj/structure/bedsheetbin/examine(mob/user, extra_description = "")
-	if(amount < 1)
-		extra_description += "There is no bed sheets in the bin."
-	else if(amount == 1)
-		extra_description += "There is one bed sheet in the bin."
-	else
-		extra_description += "There are [amount] bed sheets in the bin."
+/obj/structure/bedsheetbin/examine(mob/user)
+	..(user)
 
-	..(user, extra_description)
+	if(amount < 1)
+		to_chat(user, "There are no bed sheets in the bin.")
+		return
+	if(amount == 1)
+		to_chat(user, "There is one bed sheet in the bin.")
+		return
+	to_chat(user, "There are [amount] bed sheets in the bin.")
+
 
 /obj/structure/bedsheetbin/update_icon()
-	if(amount < 1)
-		icon_state = "linenbin-empty"
-	else if(amount < 5)
-		icon_state = "linenbin-half"
-	else
-		icon_state = "linenbin-full"
+	switch(amount)
+		if(0)				icon_state = "linenbin-empty"
+		if(1 to amount / 2)	icon_state = "linenbin-half"
+		else				icon_state = "linenbin-full"
+
 
 /obj/structure/bedsheetbin/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/bedsheet))

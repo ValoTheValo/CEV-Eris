@@ -151,7 +151,8 @@
 			scan_data += chemID
 			scan_data += "<br>"
 
-	usr.visible_message(SPAN_NOTICE("\The [src] rattles and prints out a sheet of paper."), 1)
+	for(var/mob/O in viewers(usr))
+		O.show_message(SPAN_NOTICE("\The [src] rattles and prints out a sheet of paper."), 1)
 
 	sleep(10)
 
@@ -194,8 +195,9 @@
 	if(!S.open)
 		to_chat(usr, SPAN_WARNING("You have to cut the limb open first!"))
 		return
-	M.visible_message(SPAN_NOTICE("\The [user] scans the wounds on [M.name]'s [S.name] with \the [src]"), 1)
-	SEND_SIGNAL_OLD(user, COMSING_AUTOPSY, M)
+	for(var/mob/O in viewers(M))
+		O.show_message(SPAN_NOTICE("\The [user] scans the wounds on [M.name]'s [S.name] with \the [src]"), 1)
+	SEND_SIGNAL(user, COMSING_AUTOPSY, M)
 	if(user.mind && user.mind.assigned_job && (user.mind.assigned_job.department in GLOB.department_moebius))
 		GLOB.moebius_autopsies_mobs |= M
 	src.add_data(S, user)

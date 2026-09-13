@@ -23,13 +23,10 @@
 	var/stored_energy = 0
 	var/temperature_overlay
 
-/obj/machinery/atmospherics/binary/circulator/LateInitialize()
+/obj/machinery/atmospherics/binary/circulator/New()
 	..()
 	desc = initial(desc) + " Its outlet port is to the [dir2text(dir)]."
-	// SSTrade on it's initialization spawns every object to calculate it's price
-	// A circulator wouldn't be connected to anything in this scenario hence 'air1' can be null
-	if(air1)
-		air1.volume = 400
+	air1.volume = 400
 
 /obj/machinery/atmospherics/binary/circulator/proc/return_transfer_air()
 	var/datum/gas_mixture/removed

@@ -60,16 +60,15 @@
 #define SLOT_HOLSTER	       0x8000 //16th bit - higher than this will overflow
 
 // Flags bitmasks.
-#define NOBLUDGEON				0x1    	// When an item has this it produces no "X has been hit by Y with Z" message with the default handler.
-#define CONDUCT					0x2   	// Conducts electricity. (metal etc.)
-#define ON_BORDER				0x4   	// Item has priority to check when entering or leaving.
-#define NOBLOODY				0x8   	// Used for items if they don't want to get a blood overlay.
-//#define VACANT				0x10 	// Free Real Estate, uncomment and use for whatever
-#define PROXMOVE				0x20  	// Does this object require proximity checking in Enter()?
-#define SILENT					0x40 	// Sneaky shoes and silenced tools
-#define LOUD					0x80 	// Loud as hell tools
-#define HONKING					0x100 	// Honking tools
-#define MOVE_NOTIFY				0x200 	// Call entered_with_container() on this item when mob containing it moves
+#define NOBLUDGEON         	0x1    	// When an item has this it produces no "X has been hit by Y with Z" message with the default handler.
+#define CONDUCT            	0x2   	// Conducts electricity. (metal etc.)
+#define ON_BORDER          	0x4   	// Item has priority to check when entering or leaving.
+#define NOBLOODY           	0x8   	// Used for items if they don't want to get a blood overlay.
+#define PLASMAGUARD        	0x10 	// Does not get contaminated by plasma.
+#define PROXMOVE           	0x20  	// Does this object require proximity checking in Enter()?
+#define SILENT				0x40 	// Sneaky shoes and silenced tools
+#define LOUD			    0x80 	// Loud as hell tools
+#define HONKING			    0x100 	// Honking tools
 
 //Flags for items (equipment)
 #define THICKMATERIAL              0x1  // Prevents syringes, parapens and hyposprays if equiped to slot_suit or slot_head.
@@ -82,7 +81,6 @@
 #define DRAG_AND_DROP_UNEQUIP      0x80 // Allow you put intems in hands with drag and drop
 #define EQUIP_SOUNDS               0x100// Play sound when equipped/unequipped
 #define ABSTRACT			       0x200//For items that don't really exist. Can't be put on tables or interacted with.
-#define PIRATE_BASE                0x400//For items spawned in pirate base so that they are worthless if placed in the loot chests (otherwise pirates can loot their own gear)
 
 // Flags for pass_flags.
 #define PASSTABLE  0x1
@@ -219,18 +217,20 @@
 #define STORY_MUTINY "Mutiny"
 #define STORY_MALFUNCTION "Malfunction"
 
+//Recoil for suits
+#define LIGHT_STIFFNESS 0.5
+#define MEDIUM_STIFFNESS 1
+#define HEAVY_STIFFNESS 1.5
+
 //Slowdown for suits
 #define LIGHT_SLOWDOWN 0.1
 #define MEDIUM_SLOWDOWN 0.2
 #define HEAVY_SLOWDOWN 1
 
-//RIG ablation
-#define ABLATION_CERAMIC 3
-#define ABLATION_SOFT 5
-#define ABLATION_STANDARD 10
-#define ABLATION_RESILIENT 15
-#define ABLATION_DURABLE 20
-#define ABLATION_EVERLASTING 30
+//Offset for helmets
+#define LIGHT_OBSCURATION 2
+#define MEDIUM_OBSCURATION 3
+#define HEAVY_OBSCURATION 5
 
 //Style amount
 #define STYLE_NEG_HIGH -2

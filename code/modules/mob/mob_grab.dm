@@ -28,12 +28,8 @@
 	var/last_hit_zone = 0
 	var/force_down //determines if the affecting mob will be pinned to the ground
 	var/dancing //determines if assailant and affecting keep looking at each other.
+				//Basically a wrestling position
 
-	var/counter_timer = 3 SECONDS //sets to 3 seconds after being grabbed
-
-/obj/item/grab/Process()
-	counter_timer--
-	..()
 
 /obj/proc/affect_grab(var/mob/user, var/mob/target, var/state)
 	return FALSE
@@ -41,11 +37,10 @@
 /obj/item/grab/resolve_attackby(obj/O, mob/user, var/click_params)
 	if(ismob(O))
 		return ..()
-	if(get_dist(O, affecting) > 1)
+	if(!istype(O) || get_dist(O, affecting) > 1)
 		return TRUE
-	if(istype(O, /obj) || istype(O, /turf/wall/low))
-		if(O.affect_grab(assailant, affecting, state))
-			qdel(src)
+	if(O.affect_grab(assailant, affecting, state))
+		qdel(src)
 	return TRUE
 
 /obj/item/grab/New(mob/user, mob/victim)
@@ -270,18 +265,13 @@
 
 	// Adjust the grab warmup using assailant's ROB stat
 	var/assailant_stat = assailant?.stats.getStat(STAT_ROB)
-	var/affecting_stat = affecting?.stats.getStat(STAT_ROB)
 	var/warmup_increase
 	if(assailant_stat > 0)
 		// Positive ROB decreases warmup, but not linearly
 		warmup_increase = -(assailant_stat ** 0.8)
 	else
 		// Negative ROB is a flat warmup increase
-		warmup_increase = abs(assailant_stat)
-	if(affecting_stat > 0)
-		warmup_increase += affecting_stat ** 0.8
-	else
-		warmup_increase -= abs(affecting_stat) ** 0.6
+		warmup_increase = assailant_stat
 
 	var/total_warmup = max(0, UPGRADE_WARMUP + round(warmup_increase))
 
@@ -320,10 +310,9 @@
 			msg_admin_attack("[key_name(assailant)] grabbed the neck of [key_name(affecting)]")
 			hud.icon_state = "kill"
 			hud.name = "choke"
-		else if(!QDELETED(src))
+		else
 			state = GRAB_AGGRESSIVE
-			if(hud)
-				hud.icon_state = "reinforce_final"
+			hud.icon_state = "reinforce_final"
 
 	else if(state < GRAB_UPGRADING)
 		assailant.visible_message(SPAN_DANGER("[assailant] starts to tighten \his grip on [affecting]'s neck!"))
@@ -336,6 +325,7 @@
 			assailant.attack_log += "\[[time_stamp()]\] <font color='red'>Strangled (kill intent) [affecting.name] ([affecting.ckey])</font>"
 			msg_admin_attack("[key_name(assailant)] strangled (kill intent) [key_name(affecting)]")
 
+			affecting.setClickCooldown(10)
 			affecting.set_dir(WEST)
 			if(iscarbon(affecting))
 				var/mob/living/carbon/C = affecting
@@ -405,7 +395,7 @@
 	//clicking on the victim while grabbing them
 	if(M == affecting)
 		if(ishuman(affecting))
-			var/obj/item/organ/external/hit_zone = assailant.targeted_organ
+			var/hit_zone = assailant.targeted_organ
 			flick(hud.icon_state, hud)
 			switch(assailant.a_intent)
 				if(I_HELP)
@@ -416,22 +406,10 @@
 						msg_admin_attack("[key_name(assailant)] Released from pin [key_name(affecting)]")
 						force_down = 0
 						return
-					else if(hit_zone == BP_MOUTH)
-						force_vomit(affecting, assailant)
-					else
-						var/mob/living/carbon/human/H = affecting
-						var/obj/item/organ/external/o = H.get_organ(hit_zone)
-
-						if(o.status & ORGAN_BLEEDING)
-							slow_bleeding(affecting, assailant, o)
-						else
-							inspect_organ(affecting, assailant, hit_zone)
+					inspect_organ(affecting, assailant, hit_zone)
 
 				if(I_GRAB)
-					if(hit_zone == BP_CHEST || hit_zone == BP_GROIN)
-						swing(affecting, assailant)
-					else
-						jointlock(affecting, assailant, hit_zone)
+					jointlock(affecting, assailant, hit_zone)
 
 				if(I_HURT)
 					if(hit_zone == BP_EYES)
@@ -439,20 +417,18 @@
 					else if(hit_zone == BP_HEAD)
 						headbutt(affecting, assailant)
 					else if(hit_zone == BP_CHEST)
-						if(state < GRAB_NECK)
-							dropkick(affecting, assailant)
-						else suplex(affecting, assailant)
+						suplex(affecting, assailant)
 					else if(hit_zone == BP_GROIN)
-						gut_punch(affecting, assailant)
+						dropkick(affecting, assailant)
 					else
-						nerve_strike(affecting, assailant, hit_zone)
+						dislocate(affecting, assailant, hit_zone)
 
 				if(I_DISARM)
 					pin_down(affecting, assailant)
 
 	//clicking on yourself while grabbing them
-	if(M == assailant)
-		fireman_throw(affecting, assailant)
+	if(M == assailant && state >= GRAB_AGGRESSIVE)
+		devour(affecting, assailant)
 
 /obj/item/grab/dropped()
 	loc = null

@@ -1,11 +1,9 @@
 /mob
-	datum_flags = DF_USE_TAG
 	density = TRUE
 	layer = 4
 	animate_movement = 2
 	flags = PROXMOVE
 	var/datum/mind/mind
-	var/static/next_mob_id = 0
 
 	movement_handlers = list(
 	/datum/movement_handler/mob/relayed_movement,
@@ -116,7 +114,7 @@ While it would be entirely possible to check the mob's move handlers list for th
 
 	var/in_throw_mode = 0
 
-	var/tts_seed
+
 
 	var/targeted_organ = BP_CHEST
 
@@ -210,4 +208,4 @@ While it would be entirely possible to check the mob's move handlers list for th
 
 	bad_type = /mob
 
-	var/list/update_on_move = list() // Call entered_with_container() on atoms inside when the mob moves
+	var/list/additional_vision_handlers = list() //Basically a list of atoms from which additional vision data is retrieved

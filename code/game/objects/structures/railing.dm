@@ -1,8 +1,6 @@
 /obj/structure/railing
 	name = "orange railing"
 	desc = "A standard steel railing painted in copper color. Prevents stupid people from falling to their doom."
-	description_info = "Can be deconstructed by screwing and wrenching."
-	description_antag = "Hopping above these leaves fingerprints. You can also grab a person and throw them over the ledge instantly."
 	icon = 'icons/obj/railing.dmi'
 	density = TRUE
 	throwpass = TRUE
@@ -11,11 +9,10 @@
 	anchored = TRUE
 	flags = ON_BORDER
 	icon_state = "railing0"
-	matter = list(MATERIAL_STEEL = 2)
+	matter = list(MATERIAL_STEEL = 4)
 	var/broken = 0
-	health=70
-	maxHealth=70
-	explosion_coverage = 0
+	var/health=70
+	var/maxhealth=70
 	var/check = 0
 	var/reinforced = FALSE
 	var/reinforcement_security = 0 // extra health from being reinforced, hardcoded to 40 on add
@@ -62,17 +59,18 @@
 		return 1
 //32 and 4 - in the same turf
 
-/obj/structure/railing/examine(mob/user, extra_description = "")
-	if(health < maxHealth)
-		switch(health / maxHealth)
+/obj/structure/railing/examine(mob/user)
+	. = ..()
+	if(health < maxhealth)
+		switch(health / maxhealth)
 			if(0 to 0.25)
-				extra_description += SPAN_WARNING("\nIt looks severely damaged!")
+				to_chat(user, SPAN_WARNING("It looks severely damaged!"))
 			if(0.25 to 0.5)
-				extra_description += SPAN_WARNING("\nIt looks damaged!")
+				to_chat(user, SPAN_WARNING("It looks damaged!"))
 			if(0.5 to 1)
-				extra_description += SPAN_NOTICE("\nIt has a few scrapes and dents.")
+				to_chat(user, SPAN_NOTICE("It has a few scrapes and dents."))
 	if(reinforced)
-		var/reinforcement_text = "\nIt is reinforced with rods"
+		var/reinforcement_text = "It is reinforced with rods"
 		switch(reinforcement_security)
 			if (0 to 1)
 				reinforcement_text += ", which are barely hanging on"
@@ -80,12 +78,9 @@
 				reinforcement_text += ", which are loosely attached"
 			if (20 to 30)
 				reinforcement_text += ", which are a bit loose"
-		extra_description += SPAN_NOTICE("[reinforcement_text].")
-	..(user, extra_description)
+		to_chat(user, SPAN_NOTICE("[reinforcement_text].")) // MY rods(?) were a bit loose while writing this
 
-/obj/structure/railing/take_damage(amount)
-	. = health - amount < 0 ? amount - health : amount
-	. *= explosion_coverage
+/obj/structure/railing/proc/take_damage(amount)
 	if (reinforced)
 		if (reinforcement_security == 0)
 			visible_message(SPAN_WARNING("[src]'s reinforcing rods fall off!"))
@@ -102,7 +97,6 @@
 		playsound(loc, 'sound/effects/grillehit.ogg', 50, 1)
 		new /obj/item/stack/rods(get_turf(usr))
 		qdel(src)
-	return
 
 /obj/structure/railing/proc/NeighborsCheck(var/UpdateNeighbors = 1)
 	check = 0
@@ -261,7 +255,7 @@
 
 /obj/structure/railing/attackby(obj/item/I, mob/user)
 	var/list/usable_qualities = list(QUALITY_SCREW_DRIVING)
-	if(health < maxHealth)
+	if(health < maxhealth)
 		usable_qualities.Add(QUALITY_WELDING)
 	if(!anchored || reinforced)
 		usable_qualities.Add(QUALITY_BOLT_TURNING)
@@ -287,10 +281,10 @@
 			return
 
 		if(QUALITY_WELDING)
-			if(health < maxHealth)
+			if(health < maxhealth)
 				if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_VERY_EASY, required_stat = STAT_MEC))
 					user.visible_message(SPAN_NOTICE("\The [user] repairs some damage to \the [src]."), SPAN_NOTICE("You repair some damage to \the [src]."))
-					health = min(health+(maxHealth/5), maxHealth)//max(health+(maxHealth/5), maxHealth) // 20% repair per application
+					health = min(health+(maxhealth/5), maxhealth)//max(health+(maxhealth/5), maxhealth) // 20% repair per application
 			return
 
 		if(QUALITY_BOLT_TURNING)
@@ -334,6 +328,20 @@
 
 	return ..()
 
+/obj/structure/railing/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+			return
+		if(2)
+			qdel(src)
+			return
+		if(3)
+			qdel(src)
+			return
+		else
+	return
+
 /obj/structure/railing/attack_generic(mob/M, damage, attack_message)
 	if(damage)
 		M.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
@@ -344,7 +352,7 @@
 	else
 		attack_hand(M)
 
-/obj/structure/railing/do_climb(mob/living/user)
+/obj/structure/railing/do_climb(var/mob/living/user)
 	if(!can_climb(user))
 		return
 
@@ -367,12 +375,12 @@
 		return
 
 	if(get_turf(user) == get_turf(src))
-		user.forceMove(get_step(src, src.dir))
+		usr.forceMove(get_step(src, src.dir))
 	else
-		user.forceMove(get_turf(src))
+		usr.forceMove(get_turf(src))
 
-	user.visible_message(SPAN_WARNING("[user] climbed over \the [src]!"))
-	if(!anchored)	take_damage(maxHealth) // Fatboy
+	usr.visible_message(SPAN_WARNING("[user] climbed over \the [src]!"))
+	if(!anchored)	take_damage(maxhealth) // Fatboy
 	climbers -= user
 
 /obj/structure/railing/get_fall_damage(var/turf/from, var/turf/dest)

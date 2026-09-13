@@ -17,7 +17,7 @@
 		to_chat(user, "<span class='warning'>Access Denied.</span>")
 		return 1
 
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/computer/shuttle_control/proc/get_ui_data(var/datum/shuttle/autodock/shuttle)
 	var/shuttle_state
@@ -52,13 +52,13 @@
 		"can_force" = shuttle.can_force(),
 	)
 
-/obj/machinery/computer/shuttle_control/proc/handle_topic_href(datum/shuttle/autodock/shuttle, list/href_list)
+/obj/machinery/computer/shuttle_control/proc/handle_topic_href(var/datum/shuttle/autodock/shuttle, var/list/href_list, var/user)
 	if(!istype(shuttle))
 		return TOPIC_NOACTION
 
 	if(href_list["move"])
 		if(!shuttle.next_location.is_valid(shuttle))
-			to_chat(usr, "<span class='warning'>Destination zone is invalid or obstructed.</span>")
+			to_chat(user, "<span class='warning'>Destination zone is invalid or obstructed.</span>")
 			return TOPIC_HANDLED
 		shuttle.launch(src)
 		return TOPIC_REFRESH
@@ -71,13 +71,7 @@
 		shuttle.cancel_launch(src)
 		return TOPIC_REFRESH
 
-	if(href_list["pick"])
-		var/dest_key = input("Choose shuttle destination", "Shuttle Destination") as null|anything in shuttle.get_possible_destinations()
-		if(dest_key && CanInteract(usr, GLOB.default_state))
-			shuttle.set_destination(dest_key, usr)
-		return TOPIC_REFRESH
-
-/obj/machinery/computer/shuttle_control/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/computer/shuttle_control/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/datum/shuttle/autodock/shuttle = SSshuttle.shuttles[shuttle_tag]
 	if (!istype(shuttle))
 		to_chat(user, "<span class='warning'>Unable to establish link with the shuttle.</span>")
@@ -93,7 +87,7 @@
 		ui.set_auto_update(1)
 
 /obj/machinery/computer/shuttle_control/Topic(user, href_list)
-	return handle_topic_href(SSshuttle.shuttles[shuttle_tag], href_list)
+	return handle_topic_href(SSshuttle.shuttles[shuttle_tag], href_list, user)
 
 /obj/machinery/computer/shuttle_control/emag_act(var/remaining_charges, var/mob/user)
 	if (!hacked)
@@ -106,8 +100,8 @@
 /obj/machinery/computer/shuttle_control/bullet_act(var/obj/item/projectile/Proj)
 	visible_message("\The [Proj] ricochets off \the [src]!")
 
-/obj/machinery/computer/shuttle_control/explosion_act(target_power, explosion_handler/handler)
-	return 0
+/obj/machinery/computer/shuttle_control/ex_act()
+	return
 
 /obj/machinery/computer/shuttle_control/emp_act()
 	return

@@ -7,7 +7,6 @@
 	gender = PLURAL
 	icon = 'icons/mob/golems.dmi'
 	icon_state = "golem_core"
-	layer = OBJ_LAYER
 	w_class = ITEM_SIZE_SMALL
 	throwforce = 0
 	throw_speed = 4
@@ -19,7 +18,7 @@
 /obj/item/golem_core/New(loc)
 	..(loc)
 	// Golem cores have a limited lifetime
-	addtimer(CALLBACK(src, PROC_REF(crumble)), GOLEM_CORE_LIFETIME)
+	addtimer(CALLBACK(src, .proc/crumble,), GOLEM_CORE_LIFETIME)
 
 /obj/item/golem_core/attack(mob/living/M, mob/living/user)
 	if(..())
@@ -35,7 +34,7 @@
 	if(!do_mob(user, M, 2 SECOND))
 		to_chat(user, SPAN_NOTICE("You must stand still to apply \the [src]."))
 		return TRUE
-
+	
 	// Heal the target
 	M.adjustBruteLoss(-GOLEM_CORE_HEAL)
 	M.adjustFireLoss(-GOLEM_CORE_HEAL)

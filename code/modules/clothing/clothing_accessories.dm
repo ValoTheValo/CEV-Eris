@@ -52,11 +52,11 @@
 		return
 	return ..()
 
-/obj/item/clothing/examine(mob/user, extra_description = "")
-	if(LAZYLEN(accessories))
+/obj/item/clothing/examine(var/mob/user)
+	. = ..(user)
+	if(accessories.len)
 		for(var/obj/item/clothing/accessory/A in accessories)
-			extra_description += "\n\A [A] is attached to it."
-	..(user, extra_description)
+			to_chat(user, "\A [A] is attached to it.")
 
 /obj/item/clothing/proc/remove_accessory(mob/user, obj/item/clothing/accessory/A)
 	if(!(A in accessories))

@@ -16,16 +16,16 @@
 	var/failed_task = FALSE
 
 /obj/machinery/botany/attack_hand(mob/user)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/botany/proc/start_task()
 	// UI is updated by "return 1" in Topic()
-	set_power_use(ACTIVE_POWER_USE)
+	use_power = ACTIVE_POWER_USE
 
-	addtimer(CALLBACK(src, PROC_REF(finish_task)), action_time)
+	addtimer(CALLBACK(src, .proc/finish_task), action_time)
 
 /obj/machinery/botany/proc/finish_task()
-	set_power_use(IDLE_POWER_USE)
+	use_power = IDLE_POWER_USE
 	SSnano.update_uis(src)
 	if(failed_task)
 		failed_task = FALSE
@@ -68,17 +68,17 @@
 		return
 	..()
 
-/obj/machinery/botany/nano_ui_data()
+/obj/machinery/botany/ui_data()
 	var/list/data = list()
 	data["active"] = (use_power == ACTIVE_POWER_USE)
 
-	data["loaded_gene"] = loaded_gene?.nano_ui_data()
+	data["loaded_gene"] = loaded_gene?.ui_data()
 
 	if(disk)
 		var/list/disk_genes = list()
 		for(var/f in disk.find_files_by_type(/datum/computer_file/binary/plantgene))
 			var/datum/computer_file/gene = f
-			disk_genes.Add(list(gene.nano_ui_data()))
+			disk_genes.Add(list(gene.ui_data()))
 
 		data["disk"] = list(
 			"max_capacity" = disk.max_capacity,
@@ -166,7 +166,7 @@
 	icon_state = "traitcopier"
 	var/genes_processed = FALSE
 
-/obj/machinery/botany/extractor/nano_ui_data()
+/obj/machinery/botany/extractor/ui_data()
 	var/list/data = ..()
 
 	var/list/geneMasks = list()
@@ -184,8 +184,8 @@
 
 	return data
 
-/obj/machinery/botany/extractor/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_panel_open = NANOUI_FOCUS)
-	var/list/data = nano_ui_data(user)
+/obj/machinery/botany/extractor/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_panel_open = NANOUI_FOCUS)
+	var/list/data = ui_data(user)
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_panel_open)
 	if (!ui)
@@ -243,8 +243,8 @@
 	name = "bioballistic delivery system"
 	icon_state = "traitgun"
 
-/obj/machinery/botany/editor/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_panel_open = NANOUI_FOCUS)
-	var/list/data = nano_ui_data(user)
+/obj/machinery/botany/editor/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_panel_open = NANOUI_FOCUS)
+	var/list/data = ui_data(user)
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_panel_open)
 	if (!ui)
@@ -265,17 +265,18 @@
 			// Uses best of BIO and COG
 			stat_multiplier = min(usr.stats.getMult(STAT_BIO, STAT_LEVEL_GODLIKE), usr.stats.getMult(STAT_COG, STAT_LEVEL_GODLIKE))
 
-		seed.modified += round(rand(30, 50) * stat_multiplier)
 		if(!isnull(plant_controller.seeds[seed.seed.name]))
 			seed.seed = seed.seed.diverge(1)
 			seed.seed_type = seed.seed.name
 			seed.update_seed()
 
-		if(seed.modified >= 100)
+		if(prob(seed.modified * stat_multiplier))
 			failed_task = TRUE
 			seed.modified = 100
 
 		seed.seed.apply_gene(loaded_gene)
+		seed.modified += round(rand(10, 15) * stat_multiplier)
+		seed.modified = max(seed.modified, 100)
 
 		start_task()
 		return 1

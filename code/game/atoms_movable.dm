@@ -1,6 +1,3 @@
-
-
-
 /atom/movable
 	layer = OBJ_LAYER
 	var/last_move
@@ -26,10 +23,10 @@
 	var/spawn_tags
 	var/rarity_value = 1 //min:1
 	var/spawn_frequency = 0 //min:0
-	var/accompanying_object	// path or text "obj/item,/obj/item/device". This object will spawn alongside (in turf of) the spawned atom.
-	var/prob_aditional_object = 100 // Probability for the accompanying_object to spawn.
-	var/spawn_blacklisted = FALSE // Generally for niche objects, atoms blacklisted can spawn if enabled by spawner. Examples include exoplanet loot tables you don't want spawning within the player starting area.
-	var/bad_type // Use path Ex:(bad_type = obj/item). Generally for abstract code objects, atoms with a set bad_type can never be selected by spawner. Examples include parent objects which should only exist within the code, or deployable embedded items.
+	var/accompanying_object	//path or text "obj/item,/obj/item/device"
+	var/prob_aditional_object = 100
+	var/spawn_blacklisted = FALSE
+	var/bad_type //path
 
 /atom/movable/Del()
 	if(isnull(gc_destroyed) && loc)
@@ -40,7 +37,6 @@
 //	else
 //		testing("GC: [type] was deleted via GC with qdel()")
 	..()
-
 
 /atom/movable/Destroy()
 	. = ..()
@@ -61,28 +57,22 @@
 		src.throw_impact(A)
 		src.throwing = 0
 
-
-	if (A && yes)
-		A.last_bumped = world.time
-		A.Bumped(src)
-	return ..()
+	spawn(0)
+		if (A && yes)
+			A.last_bumped = world.time
+			A.Bumped(src)
+		return
+	..()
+	return
 
 /atom/movable/proc/entered_with_container(var/atom/old_loc)
 	return
 
-// Gets the top-atom that contains us, doesn't care about how deeply nested a item is
-/atom/proc/getContainingAtom()
-	var/atom/checking = src
-	while(!isturf(checking.loc) && !isnull(checking.loc) && !isarea(checking.loc))
-		checking = checking.loc
-	return checking
-
-
-/atom/movable/proc/forceMove(atom/destination, special_event, glide_size_override)
+/atom/movable/proc/forceMove(atom/destination, var/special_event, glide_size_override=0)
 	if(loc == destination)
-		return FALSE
+		return 0
 
-	if(glide_size_override)
+	if (glide_size_override)
 		set_glide_size(glide_size_override)
 
 	var/is_origin_turf = isturf(loc)
@@ -113,32 +103,14 @@
 				destination.loc.Entered(src, origin)
 
 	SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, origin, loc)
-	if(origin && destination)
-		if(get_z(origin) != get_z(destination))
-			SEND_SIGNAL(src, COMSIG_MOVABLE_Z_CHANGED, get_z(origin) , get_z(destination))
+
+	// Only update plane if we're located on map
+	if(isturf(loc))
+		// if we wasn't on map OR our Z coord was changed
+		if( !isturf(origin) || (get_z(loc) != get_z(origin)) )
 			update_plane()
-		else if(!is_origin_turf)
-			update_plane()
-			//for(var/atom/movable/thing in contents)
-			//	SEND_SIGNAL(thing, COMSIG_MOVABLE_Z_CHANGED,get_z(origin),get_z(destination))
-	else if(destination)
-		update_plane()
 
-	// Container change
-	if(origin != destination && !(is_origin_turf && is_destination_turf))
-		var/newContainer = getContainingAtom()
-		var/oldContainer
-		if(is_origin_turf || origin == null)
-			// We are our own top-most container
-			oldContainer = src
-		else
-			oldContainer = origin.getContainingAtom()
-
-		if(newContainer != oldContainer)
-			SEND_SIGNAL(src, COMSIG_ATOM_CONTAINERED, newContainer , oldContainer)
-
-	GLOB.moved_event.raise_event(src, origin, null)
-	return TRUE
+	return 1
 
 
 //called when src is thrown into hit_atom
@@ -157,7 +129,8 @@
 		src.throwing = 0
 		var/turf/T = hit_atom
 		if(T.density)
-			step(src, turn(src.last_move, 180))
+			spawn(2)
+				step(src, turn(src.last_move, 180))
 			if(isliving(src))
 				var/mob/living/M = src
 				M.turf_collision(T, speed)
@@ -169,54 +142,114 @@
 			if(A == src) continue
 			if(isliving(A))
 				if(A:lying) continue
-				//if(SSthrowing.throwing_queue[src][I_THROWNTIME] > world.time - 1 SECONDS && thrower == A) continue
 				src.throw_impact(A,speed)
 			if(isobj(A))
 				if(A.density && !A.throwpass)	// **TODO: Better behaviour for windows which are dense, but shouldn't always stop movement
 					src.throw_impact(A,speed)
 
-/*
-#define I_TARGET 1 /// Index for target
-#define I_SPEED 2 /// Index for speed
-#define I_RANGE 3 /// Index for range
-#define I_MOVED 4 /// Index for amount of turfs we alreathrowing_queue[thing][I_DY] moved by
-#define I_DIST_X 5
-#define I_DIST_Y 6
-#define I_DX 7 // The bias for the X-axis
-#define I_DY 8 // The bias for the Y-axis
-#define I_ERROR 9 // Calculation error accumulated so far
-#define I_TURF_CLICKED 10
-#define I_THROWFLAGS 11 // pass_flags for the thrown obj
-*/
+/atom/movable/proc/throw_at(atom/target, range, speed, thrower)
+	if(!target || !src)	return 0
+	//use a modified version of Bresenham's algorithm to get from the atom's current position to that of the target
 
-
-/atom/movable/proc/throw_at(atom/target, range, speed, thrower, throwflags)
-	if(!target || range < 1 || speed < 1)
-		return FALSE
+	set_dir(pick(cardinal))
+	src.throwing = 1
 	if(target.allow_spin && src.allow_spin)
 		SpinAnimation(5,1)
-	src.throwing = TRUE
 	src.thrower = thrower
-	throw_source = get_turf(thrower)
+	src.throw_source = get_turf(src)	//store the origin turf
+
+//	if(usr)
+//		if(HULK in usr.mutations)
+//			src.throwing = 2 // really strong throw!
+
 	var/dist_x = abs(target.x - src.x)
 	var/dist_y = abs(target.y - src.y)
-	pass_flags += throwflags
-	/// defines for each slot are above the function def
-	var/list/tl = new /list(11)
-	tl[1] = target
-	tl[2] = speed
-	tl[3] = range
-	tl[4] = 0
-	tl[5] = dist_x
-	tl[6] = dist_y
-	tl[7] = (target.x > x ? EAST : WEST)
-	tl[8] =	(target.y > y ? NORTH : SOUTH)
-	tl[9] = (dist_x > dist_y ? dist_x/2 - dist_y : dist_y/2 - dist_x)
-	tl[10] = get_turf(target)
-	tl[11] = throwflags
-	SSthrowing.throwing_queue[src] = tl
-	return TRUE
 
+	var/dx
+	if (target.x > src.x)
+		dx = EAST
+	else
+		dx = WEST
+
+	var/dy
+	if (target.y > src.y)
+		dy = NORTH
+	else
+		dy = SOUTH
+	var/dist_travelled = 0
+	var/dist_since_sleep = 0
+	var/area/a = get_area(src.loc)
+	if(dist_x > dist_y)
+		var/error = dist_x/2 - dist_y
+
+		while(src && target &&((((src.x < target.x && dx == EAST) || (src.x > target.x && dx == WEST)) && dist_travelled < range) || (a && a.has_gravity == 0)  || istype(src.loc, /turf/space)) && src.throwing && istype(src.loc, /turf))
+			// only stop when we've gone the whole distance (or max throw range) and are on a non-space tile, or hit something, or hit the end of the map, or someone picks it up
+			if(error < 0)
+				var/atom/step = get_step(src, dy)
+				if(!step) // going off the edge of the map makes get_step return null, don't let things go off the edge
+					break
+				src.Move(step)
+				hit_check(speed)
+				error += dist_x
+				dist_travelled++
+				dist_since_sleep++
+				if(dist_since_sleep >= speed)
+					dist_since_sleep = 0
+					sleep(1)
+			else
+				var/atom/step = get_step(src, dx)
+				if(!step) // going off the edge of the map makes get_step return null, don't let things go off the edge
+					break
+				src.Move(step)
+				hit_check(speed)
+				error -= dist_y
+				dist_travelled++
+				dist_since_sleep++
+				if(dist_since_sleep >= speed)
+					dist_since_sleep = 0
+					sleep(1)
+			a = get_area(src.loc)
+	else
+		var/error = dist_y/2 - dist_x
+		while(src && target &&((((src.y < target.y && dy == NORTH) || (src.y > target.y && dy == SOUTH)) && dist_travelled < range) || (a && a.has_gravity == 0)  || istype(src.loc, /turf/space)) && src.throwing && istype(src.loc, /turf))
+			// only stop when we've gone the whole distance (or max throw range) and are on a non-space tile, or hit something, or hit the end of the map, or someone picks it up
+			if(error < 0)
+				var/atom/step = get_step(src, dx)
+				if(!step) // going off the edge of the map makes get_step return null, don't let things go off the edge
+					break
+				src.Move(step)
+				hit_check(speed)
+				error += dist_y
+				dist_travelled++
+				dist_since_sleep++
+				if(dist_since_sleep >= speed)
+					dist_since_sleep = 0
+					sleep(1)
+			else
+				var/atom/step = get_step(src, dy)
+				if(!step) // going off the edge of the map makes get_step return null, don't let things go off the edge
+					break
+				src.Move(step)
+				hit_check(speed)
+				error -= dist_x
+				dist_travelled++
+				dist_since_sleep++
+				if(dist_since_sleep >= speed)
+					dist_since_sleep = 0
+					sleep(1)
+
+			a = get_area(src.loc)
+
+	//done throwing, either because it hit something or it finished moving
+	src.throwing = 0
+	src.thrower = null
+	src.throw_source = null
+
+	var/turf/new_loc = get_turf(src)
+	if(new_loc)
+		if(isobj(src))
+			src.throw_impact(new_loc,speed)
+		new_loc.Entered(src)
 
 //Overlays
 /atom/movable/overlay
@@ -239,10 +272,14 @@
 	return
 
 /atom/movable/proc/touch_map_edge()
-	if(z in SSmapping.sealed_z_levels)
+	if(z in GLOB.maps_data.sealed_levels)
 		return
 
-	var/move_to_z = get_transit_zlevel()
+	if(config.use_overmap)
+		overmap_spacetravel(get_turf(src), src)
+		return
+
+	var/move_to_z = src.get_transit_zlevel()
 	var/move_to_x = x
 	var/move_to_y = y
 	if(move_to_z)
@@ -266,21 +303,17 @@
 
 //by default, transition randomly to another zlevel
 /atom/movable/proc/get_transit_zlevel()
-	var/list/candidates = SSmapping.playable_z_levels.Copy()
-	candidates.Remove(z)
-
-	for(var/sealed_z in SSmapping.sealed_z_levels)
-		candidates.Remove(sealed_z)
+	var/list/candidates = GLOB.maps_data.accessable_levels.Copy()
+	candidates.Remove("[src.z]")
 
 	//If something was ejected from the ship, it does not end up on another part of the ship.
-	if(IS_SHIP_LEVEL(z))
-		for(var/n in SSmapping.main_ship_z_levels)
-			candidates.Remove(n)
+	if (z in GLOB.maps_data.station_levels)
+		for (var/n in GLOB.maps_data.station_levels)
+			candidates.Remove("[n]")
 
-	if(!LAZYLEN(candidates))
-		// Fallback in case we somehow got no valid transit Z-levels
-		candidates = SSmapping.main_ship_z_levels
-	return pick(candidates)
+	if(!candidates.len)
+		return null
+	return text2num(pickweight(candidates))
 
 
 /atom/movable/proc/set_glide_size(glide_size_override = 0, var/min = 0.2, var/max = world.icon_size/2)
@@ -300,8 +333,9 @@
 		set_glide_size(glide_size_override)
 
 	// To prevent issues, diagonal movements are broken up into two cardinal movements.
+
 	// Is this a diagonal movement?
-	SEND_SIGNAL_OLD(src, COMSIG_MOVABLE_PREMOVE, src)
+	SEND_SIGNAL(src, COMSIG_MOVABLE_PREMOVE, src)
 	if (Dir & (Dir - 1))
 		if (Dir & NORTH)
 			if (Dir & EAST)
@@ -338,11 +372,7 @@
 		var/atom/oldloc = src.loc
 		var/olddir = dir //we can't override this without sacrificing the rest of movable/New()
 
-		// Movement has either failed by Bump(), or we get moved to a new Turf after entering
-		// Either way , both should count as failures, the move is not on the aimed turf after all -SPCR 2024
 		. = ..()
-		if(!. || loc != NewLoc)
-			return FALSE
 
 		if(Dir != olddir)
 			dir = olddir
@@ -360,15 +390,9 @@
 			// if we wasn't on map OR our Z coord was changed
 			if( !isturf(oldloc) || (get_z(loc) != get_z(oldloc)) )
 				update_plane()
-
-		if(get_z(oldloc) != get_z(loc))
-			SEND_SIGNAL(src, COMSIG_MOVABLE_Z_CHANGED, get_z(oldloc), get_z(NewLoc))
+				onTransitZ(get_z(oldloc, get_z(loc)))
 
 		SEND_SIGNAL(src, COMSIG_MOVABLE_MOVED, oldloc, loc)
-		/* Inserting into contents uses only forceMove
-		if(!isturf(oldloc) || !isturf(loc))
-			SEND_SIGNAL(src, COMSIG_ATOM_CONTAINERED, getContainingAtom())
-		*/
 
 // Wrapper of step() that also sets glide size to a specific value.
 /proc/step_glide(atom/movable/AM, newdir, glide_size_override)
@@ -376,14 +400,10 @@
 	return step(AM, newdir)
 
 //We're changing zlevel
-/*
 /atom/movable/proc/onTransitZ(old_z, new_z)//uncomment when something is receiving this signal
-	SEND_SIGNAL(src, COMSIG_MOVABLE_Z_CHANGED, old_z, new_z)
-	/*
+	/*SEND_SIGNAL(src, COMSIG_MOVABLE_Z_CHANGED, old_z, new_z)
 	for(var/atom/movable/AM in src) // Notify contents of Z-transition. This can be overridden IF we know the items contents do not care.
-		AM.onTransitZ(old_z,new_z)
-	*/
-*/
+		AM.onTransitZ(old_z,new_z)*/
 
 /mob/living/proc/update_z(new_z) // 1+ to register, null to unregister
 	if (registered_z != new_z)
@@ -403,10 +423,10 @@
 	if(anchored == anchorvalue || !can_anchor)
 		return FALSE
 	anchored = anchorvalue
-	SEND_SIGNAL_OLD(src, COMSIG_ATOM_UNFASTEN, anchored)
+	SEND_SIGNAL(src, COMSIG_ATOM_UNFASTEN, anchored)
 	. = TRUE
 
 /atom/movable/proc/update_overlays()
 	SHOULD_CALL_PARENT(TRUE)
 	. = list()
-	SEND_SIGNAL_OLD(src, COMSIG_ATOM_UPDATE_OVERLAYS, .)
+	SEND_SIGNAL(src, COMSIG_ATOM_UPDATE_OVERLAYS, .)

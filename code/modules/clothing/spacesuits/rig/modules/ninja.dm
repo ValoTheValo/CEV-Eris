@@ -26,7 +26,7 @@
 	activate_string = "Enable Cloak"
 	deactivate_string = "Disable Cloak"
 
-	interface_name = "Integrated stealth system"
+	interface_name = "integrated stealth system"
 	interface_desc = "An integrated active camouflage system."
 
 	spawn_blacklisted = TRUE
@@ -118,7 +118,7 @@
 		to_chat(H, SPAN_WARNING("You cannot teleport into solid walls."))
 		return 0
 
-	if(IS_TECHNICAL_LEVEL(T.z))
+	if(isAdminLevel(T.z))
 		to_chat(H, SPAN_WARNING("You cannot use your teleporter on this Z-level."))
 		return 0
 
@@ -147,7 +147,7 @@
 	desc = "Some kind of complex energy projector with a hardsuit mount."
 	icon_state = "enet"
 
-	interface_name = "Energy net launcher"
+	interface_name = "energy net launcher"
 	interface_desc = "An advanced energy-patterning projector used to capture targets."
 
 	engage_string = "Fabricate Net"
@@ -174,15 +174,13 @@
 
 	engage_string = "Detonate"
 
-	interface_name = "Dead man's switch"
+	interface_name = "dead man's switch"
 	interface_desc = "An integrated self-destruct module. When the wearer dies, so does the surrounding area. Do not press this button."
 	rarity_value = 20
-	var/explosion_power = 800
-	var/explosion_falloff = 200
-	var/explosion_flags = EFLAG_ADDITIVEFALLOFF
+	var/list/explosion_values = list(1,2,4,5)
 
 /obj/item/rig_module/self_destruct/small
-	explosion_power = 400
+	explosion_values = list(0,0,3,4)
 
 /obj/item/rig_module/self_destruct/activate()
 	return
@@ -203,7 +201,7 @@
 /obj/item/rig_module/self_destruct/engage(var/skip_check)
 	if(!skip_check && usr && alert(usr, "Are you sure you want to push that button?", "Self-destruct", "No", "Yes") == "No")
 		return
-	explosion(get_turf(src), explosion_power, explosion_falloff, explosion_flags)
+	explosion(get_turf(src), explosion_values[1], explosion_values[2], explosion_values[3], explosion_values[4])
 	if(holder && holder.wearer)
 		holder.wearer.drop_from_inventory(src)
 		qdel(holder)

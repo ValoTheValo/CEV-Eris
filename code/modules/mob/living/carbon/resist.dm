@@ -14,17 +14,6 @@
 		escape_inventory(src.loc)
 		return
 
-	if(istype(loc, /obj/item/mech_equipment/forklifting_system))
-		var/obj/item/mech_equipment/forklifting_system/fork = loc
-		fork.ejectLifting(get_turf(fork))
-		return
-
-	if(istype(loc, /mob/living/exosuit))
-		var/mob/living/exosuit/mech = loc
-		if(src in mech.pilots)
-			mech.eject(src, FALSE)
-			return
-
 	//unbuckling yourself
 	if(buckled)
 		if (buckled.resist_buckle(src))
@@ -56,6 +45,18 @@
 				return
 		M.status_flags &= ~PASSEMOTES
 
+	else if(istype(H.loc,/obj/item/clothing/accessory/holster))
+		var/obj/item/clothing/accessory/holster/holster = H.loc
+		if(holster.holstered == H)
+			holster.clear_holster()
+		to_chat(src, "<span class='warning'>You extricate yourself from \the [holster].</span>")
+		H.forceMove(get_turf(H))
+	else if(istype(H.loc,/obj/item))
+		to_chat(src, "<span class='warning'>You struggle free of \the [H.loc].</span>")
+		H.forceMove(get_turf(H))
+
+
+
 /mob/living/proc/resist_grab()
 	var/resisting = 0
 	for(var/obj/O in requests)
@@ -73,15 +74,9 @@
 					qdel(G)
 			if(GRAB_NECK)
 				var/conditionsapply = (world.time - G.assailant.l_move_time < 30 || !stunned) ? 3 : 1 //If you move when grabbing someone then it's easier for them to break free. Same if the affected mob is immune to stun.
-				if(prob(conditionsapply * (5 + max((stats?.getStat(STAT_ROB)) - G.assailant.stats?.getStat(STAT_ROB), 1) ** 0.8))) // 4% minimal chance
+				if(prob(conditionsapply * max(5+(((stats?.getStat(STAT_ROB)) - G.assailant.stats?.getStat(STAT_ROB)) ** 0.8), 0.5))) // 0.5% chance for mercy
 					visible_message("<span class='warning'>[src] has broken free of [G.assailant]'s headlock!</span>")
 					qdel(G)
-	for(var/mob/living/carbon/superior_animal/G_mob in grabbed_by) //grabs by non-humans work differently, as they have neither stats nor hands
-		resisting++
-		if(prob(max(((stats?.getStat(STAT_ROB) ** 0.9) / grabbed_by.len),20)))
-			G_mob.breakgrab()
-			visible_message(SPAN_WARNING("[src] has broken free of [G_mob]'s grip!"))
-
 	if(resisting)
 		setClickCooldown(20)
 		visible_message("<span class='danger'>[src] resists!</span>")
@@ -100,6 +95,11 @@
 			SPAN_DANGER("[src] rolls on the floor, trying to put themselves out!"),
 			SPAN_NOTICE("You stop, drop, and roll!")
 			)
+		if (ishuman(src))
+			var/mob/living/carbon/human/depleted = src
+			depleted.regen_slickness(-1)
+			depleted.confidence = FALSE
+			depleted.dodge_time = get_game_time()
 		sleep(30)
 		if(fire_stacks <= 0)
 			visible_message(

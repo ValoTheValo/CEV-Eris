@@ -5,12 +5,13 @@
 	hitsound_wall = 'sound/weapons/guns/misc/laser_searwall.ogg'
 	pass_flags = PASSTABLE | PASSGLASS | PASSGRILLE
 	damage_types = list(BURN = 30)
-	armor_divisor = 1
+	armor_penetration = 10
 	check_armour = ARMOR_ENERGY
 	eyeblur = 4
 	var/frequency = 1
 	hitscan = 1
 	invisibility = 101	//beam projectiles are invisible as they are rendered by the effect engine
+	style_damage = 30 //hitscan, light speed projectiles? Be glad its easier to dodge than a revolver.
 	recoil = 1 // Even less than self-propelled bullets
 
 	muzzle_type = /obj/effect/projectile/laser/muzzle
@@ -22,46 +23,31 @@
 /obj/item/projectile/beam/check_penetrate(var/atom/A)
 	if(istype(A, /obj/item/shield))
 		var/obj/item/shield/S = A
-		var/loss = round(S.shield_integrity / 8)
-		block_damage(loss, A)
+		var/loss = min(round(armor_penetration * 2 / S.shield_integrity * 1.8), 1)
+		for(var/i in damage_types)
+			damage_types[i] *= loss
+
 		A.visible_message(SPAN_WARNING("\The [src] is weakened by the \the [A]!"))
 		playsound(A.loc, 'sound/weapons/shield/shielddissipate.ogg', 50, 1)
 		return 1
 	return 0
 
-
-/// Only used by the mech plasmacutter ofr now
 /obj/item/projectile/beam/cutter
 	name = "cutting beam"
 	icon_state = "plasmablaster"
 	damage_types = list(BRUTE = 25)
-	armor_divisor = 1.2
+	armor_penetration = 20
 	pass_flags = PASSTABLE
-	penetrating = 5
-	/// start with 1 extra since somehow 5 becomes 6
-	var/rocks_pierced = 1
-	var/pierce_max = 5
 
 	muzzle_type = /obj/effect/projectile/laser/plasmacutter/muzzle
 	tracer_type = /obj/effect/projectile/laser/plasmacutter/tracer
 	impact_type = /obj/effect/projectile/laser/plasmacutter/impact
 
 /obj/item/projectile/beam/cutter/on_impact(var/atom/A)
-	if(istype(A, /turf/mineral))
-		var/turf/mineral/M = A
-		M.GetDrilled(5)
+	if(istype(A, /turf/simulated/mineral))
+		var/turf/simulated/mineral/M = A
+		M.GetDrilled(1)
 	.=..()
-
-/obj/item/projectile/beam/cutter/check_penetrate(atom/A)
-	. = ..()
-	if(.)
-		return .
-	if(istype(A, /turf/mineral) && rocks_pierced < pierce_max)
-		on_impact(A)
-		rocks_pierced++
-		return TRUE
-	else
-		return FALSE
 
 /obj/item/projectile/beam/practice
 	name = "laser"
@@ -72,13 +58,14 @@
 	eyeblur = 2
 
 /obj/item/projectile/beam/midlaser
-	armor_divisor = 1.2
+	armor_penetration = 20
 
 /obj/item/projectile/beam/heavylaser
 	name = "heavy laser"
 	icon_state = "heavylaser"
 	damage_types = list(BURN = 50)
-	armor_divisor = 1
+	armor_penetration = 20
+	style_damage = 60 //it's a slow firing beam weapon, this is probably fair.
 	recoil = 3
 
 	muzzle_type = /obj/effect/projectile/laser_heavy/muzzle
@@ -91,7 +78,8 @@
 	var/obj/item/gun/energy/psychic/holder
 	var/contractor = FALSE //Check if it's a contractor psychic beam
 	damage_types = list(PSY = 30)
-	armor_divisor = ARMOR_PEN_MAX
+	armor_penetration = 100
+	style_damage = 60 //It's magic brain beams, deal with it.
 	recoil = 2
 
 	muzzle_type = /obj/effect/projectile/psychic_laser_heavy/muzzle
@@ -119,7 +107,7 @@
 	name = "xray beam"
 	icon_state = "xray"
 	damage_types = list(BURN = 25)
-	armor_divisor = 2.5
+	armor_penetration = 40
 
 	muzzle_type = /obj/effect/projectile/xray/muzzle
 	tracer_type = /obj/effect/projectile/xray/tracer
@@ -129,7 +117,7 @@
 	name = "pulse"
 	icon_state = "u_laser"
 	damage_types = list(BURN = 40)
-	armor_divisor = 1
+	armor_penetration = 20
 	recoil = 5 // Effectively hattons floors and walls
 
 	muzzle_type = /obj/effect/projectile/laser_pulse/muzzle
@@ -138,7 +126,7 @@
 
 /obj/item/projectile/beam/pulse/on_hit(atom/target)
 	if(isturf(target))
-		target.explosion_act(100, null)
+		target.ex_act(2)
 	..()
 
 /obj/item/projectile/beam/emitter
@@ -207,8 +195,9 @@
 	name = "sniper beam"
 	icon_state = "xray"
 	damage_types = list(BURN = 60)
-	armor_divisor = 2
+	armor_penetration = 50
 	stutter = 3
+	style_damage = 70 //it's the laser AMR.
 	recoil = 10
 
 	muzzle_type = /obj/effect/projectile/xray/muzzle
@@ -220,7 +209,8 @@
 	icon_state = "stun"
 	nodamage = 1
 	taser_effect = 1
-	damage_types = list(HALLOSS = 30)
+	agony = 30
+	damage_types = list(BURN = 1)
 
 	muzzle_type = /obj/effect/projectile/stun/muzzle
 	tracer_type = /obj/effect/projectile/stun/tracer

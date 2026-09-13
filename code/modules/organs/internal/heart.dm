@@ -1,29 +1,25 @@
-/obj/item/organ/internal/vital/heart
+/obj/item/organ/internal/heart
 	name = "heart"
 	icon_state = "heart-on"
 	organ_efficiency = list(OP_HEART = 100)
 	parent_organ_base = BP_CHEST
 	dead_icon = "heart-off"
 	desc = "A vital organ which pumps blood through the blood vessels of the circulatory system. "
-	description_info = "Increases the efficiency of reagent metabolization in blood"
 	price_tag = 1000
 	specific_organ_size = 2
-	max_damage = IORGAN_VITAL_HEALTH
-	min_bruised_damage = IORGAN_VITAL_BRUISE
-	min_broken_damage = IORGAN_VITAL_BREAK
 	oxygen_req = 10
 	nutriment_req = 10
 	var/open
 
-/obj/item/organ/internal/vital/heart/open
+/obj/item/organ/internal/heart/open
 	open = 1
-/obj/item/organ/internal/vital/heart/proc/is_working()
+/obj/item/organ/internal/heart/proc/is_working()
 	if(!is_usable())
 		return FALSE
 
 	return owner.pulse > PULSE_NONE || BP_IS_ROBOTIC(src) || (owner.status_flags & FAKEDEATH)
 
-/obj/item/organ/internal/vital/heart/huge
+/obj/item/organ/internal/heart/huge
 	name = "five chamber heart"
 	icon_state = "heart_huge"
 	desc = "Can\'t pump the brakes now!"

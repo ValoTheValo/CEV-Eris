@@ -5,6 +5,7 @@
 	var/datum/craft_recipe/recipe
 	var/step = 1
 
+
 /obj/item/craft/New(loc, new_recipe)
 	..(loc)
 	recipe = new_recipe
@@ -12,11 +13,6 @@
 	src.icon_state = recipe.icon_state
 	update()
 
-/obj/item/craft/Destroy(force)
-	for(var/datum/craft_step/CS in recipe.steps)
-		CS.craft_items -= src
-	recipe = null
-	. = ..()
 
 /obj/item/craft/proc/update()
 	desc = recipe.get_description(step-1, src)
@@ -38,6 +34,4 @@
 	return continue_crafting(I, user)
 
 /obj/item/craft/MouseDrop_T(atom/A, mob/user, src_location, over_location, src_control, over_control, params)
-	if(isturf(A))
-		return
 	return continue_crafting(A, user)

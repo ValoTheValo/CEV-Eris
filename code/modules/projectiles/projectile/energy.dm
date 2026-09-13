@@ -13,7 +13,8 @@
 /obj/item/projectile/energy/flash
 	name = "chemical shell"
 	icon_state = "bullet"
-	damage_types = list(BURN = 5, HALLOSS = 10)
+	damage_types = list(BURN = 5)
+	agony = 10
 	kill_count = 15 //if the shell hasn't hit anything after travelling this far it just explodes.
 	var/flash_range = 0
 	var/brightness = 7
@@ -26,7 +27,8 @@
 	//blind adjacent people
 	for (var/mob/living/carbon/M in viewers(T, flash_range))
 		if(M.eyecheck() < FLASH_PROTECTION_MODERATE)
-			M.flash(0, FALSE, FALSE, FALSE)
+			if (M.HUDtech.Find("flash"))
+				flick("e_flash", M.HUDtech["flash"])
 
 	//snap pop
 	playsound(src, 'sound/effects/snap.ogg', 50, 1)
@@ -43,7 +45,6 @@
 	brightness = 9 //similar to a flare
 	light_duration = 200
 	recoil = 8 // Shot from shotguns
-	matter = list(MATERIAL_STEEL = 0.5, MATERIAL_SILVER = 0.5)
 
 /obj/item/projectile/energy/electrode
 	name = "electrode"
@@ -51,21 +52,24 @@
 	mob_hit_sound = list('sound/weapons/tase.ogg')
 	nodamage = 1
 	taser_effect = 1
-	damage_types = list(HALLOSS = 40)
+	agony = 40
+	damage_types = list(HALLOSS = 0)
 	//Damage will be handled on the MOB side, to prevent window shattering.
 	recoil = 2
 
 /obj/item/projectile/energy/electrode/stunshot
 	name = "stunshot"
-	damage_types = list(BURN = 5, HALLOSS = 80)
+	damage_types = list(BURN = 5)
 	taser_effect = 1
+	agony = 80
 	recoil = 5
 
 /obj/item/projectile/energy/declone
 	name = "demolecularisor"
 	icon_state = "declone"
-	damage_types = list(CLONE = 12)
-	irradiate = 10
+	nodamage = 1
+	damage_types = list(CLONE = 0)
+	irradiate = 150
 
 
 /obj/item/projectile/energy/dart
@@ -77,8 +81,9 @@
 /obj/item/projectile/energy/bolt
 	name = "bolt"
 	icon_state = "cbbolt"
-	damage_types = list(TOX = 20, HALLOSS = 30)
+	damage_types = list(TOX = 20)
 	nodamage = 0
+	agony = 30
 	stutter = 10
 	recoil = 3
 

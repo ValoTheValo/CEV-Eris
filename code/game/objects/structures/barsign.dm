@@ -12,17 +12,17 @@
 	if(initial)
 		. -= "Off"
 
-/obj/structure/sign/double/barsign/examine(mob/user, extra_description = "")
+/obj/structure/sign/double/barsign/examine(mob/user)
+	..()
 	switch(icon_state)
 		if("Off")
-			extra_description += "It appears to be switched off."
+			to_chat(user, "It appears to be switched off.")
 		if("narsiebistro")
-			extra_description += "It shows a picture of a large black and red being. Spooky!"
+			to_chat(user, "It shows a picture of a large black and red being. Spooky!")
 		if("on", "empty")
-			extra_description += "The lights are on, but there's no picture."
+			to_chat(user, "The lights are on, but there's no picture.")
 		else
-			extra_description += "It says '[icon_state]'"
-	..(user, extra_description)
+			to_chat(user, "It says '[icon_state]'")
 
 /obj/structure/sign/double/barsign/New()
 	..()

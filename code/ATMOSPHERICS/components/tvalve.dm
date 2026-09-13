@@ -46,7 +46,7 @@
 /obj/machinery/atmospherics/tvalve/hide(var/i)
 	update_underlays()
 
-/obj/machinery/atmospherics/tvalve/LateInitialize()
+/obj/machinery/atmospherics/tvalve/New()
 	initialize_directions()
 	..()
 

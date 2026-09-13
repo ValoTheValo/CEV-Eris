@@ -23,6 +23,11 @@
 	var/message = "<span class='notice'>System bootup complete. Please select an option.</span>"	// The message that shows on the main menu.
 	var/auth = 0 // Are they authenticated?
 	var/optioncount = 8
+	// Custom Message Properties
+	var/customsender = "System Administrator"
+	var/obj/item/device/pda/customrecepient
+	var/customjob		= "Admin"
+	var/custommessage 	= "This is a test, please ignore."
 
 
 /obj/machinery/computer/message_monitor/attackby(obj/item/O as obj, mob/living/user as mob)
@@ -86,10 +91,10 @@
 	dat += "<center><h4><font color='blue'[message]</h5></center>"
 
 	if(auth)
-		dat += "<h4><dd><a href='byond://?src=\ref[src];auth=1'>&#09;<font color='green'>\[Authenticated\]</font></a>&#09;/"
-		dat += " Server Power: <a href='byond://?src=\ref[src];active=1'>[src.linkedServer && src.linkedServer.active ? "<font color='green'>\[On\]</font>":"<font color='red'>\[Off\]</font>"]</a></h4>"
+		dat += "<h4><dd><A href='?src=\ref[src];auth=1'>&#09;<font color='green'>\[Authenticated\]</font></a>&#09;/"
+		dat += " Server Power: <A href='?src=\ref[src];active=1'>[src.linkedServer && src.linkedServer.active ? "<font color='green'>\[On\]</font>":"<font color='red'>\[Off\]</font>"]</a></h4>"
 	else
-		dat += "<h4><dd><a href='byond://?src=\ref[src];auth=1'>&#09;<font color='red'>\[Unauthenticated\]</font></a>&#09;/"
+		dat += "<h4><dd><A href='?src=\ref[src];auth=1'>&#09;<font color='red'>\[Unauthenticated\]</font></a>&#09;/"
 		dat += " Server Power: <u>[src.linkedServer && src.linkedServer.active ? "<font color='green'>\[On\]</font>":"<font color='red'>\[Off\]</font>"]</u></h4>"
 
 	if(hacking || emag)
@@ -103,21 +108,24 @@
 		if(0)
 			//&#09; = TAB
 			var/i = 0
-			dat += "<dd><a href='byond://?src=\ref[src];find=1'>&#09;[++i]. Link To A Server</a></dd>"
+			dat += "<dd><A href='?src=\ref[src];find=1'>&#09;[++i]. Link To A Server</a></dd>"
 			if(auth)
 				if(!linkedServer || (linkedServer.stat & (NOPOWER|BROKEN)))
 					dat += "<dd><A>&#09;ERROR: Server not found!</A><br></dd>"
 				else
-					dat += "<dd><a href='byond://?src=\ref[src];viewr=1'>&#09;[++i]. View Request Console Logs </a></br></dd>"
-					dat += "<dd><a href='byond://?src=\ref[src];clearr=1'>&#09;[++i]. Clear Request Console Logs</a><br></dd>"
-					dat += "<dd><a href='byond://?src=\ref[src];pass=1'>&#09;[++i]. Set Custom Key</a><br></dd>"
-					dat += "<dd><a href='byond://?src=\ref[src];msg=1'>&#09;[++i]. Send Admin Message</a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];view=1'>&#09;[++i]. View Message Logs </a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];viewr=1'>&#09;[++i]. View Request Console Logs </a></br></dd>"
+					dat += "<dd><A href='?src=\ref[src];clear=1'>&#09;[++i]. Clear Message Logs</a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];clearr=1'>&#09;[++i]. Clear Request Console Logs</a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];pass=1'>&#09;[++i]. Set Custom Key</a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];msg=1'>&#09;[++i]. Send Admin Message</a><br></dd>"
+					dat += "<dd><A href='?src=\ref[src];spam=1'>&#09;[++i]. Modify Spam Filter</a><br></dd>"
 			else
 				for(var/n = ++i; n <= optioncount; n++)
 					dat += "<dd><font color='blue'>&#09;[n]. ---------------</font><br></dd>"
 			if((isAI(user) || isrobot(user)) && (user.mind.antagonist.len && user.mind.original == user))
 				//Malf/Contractor AIs can bruteforce into the system to gain the Key.
-				dat += "<dd><a href='byond://?src=\ref[src];hack=1'><i><font color='Red'>*&@#. Bruteforce Key</font></i></font></a><br></dd>"
+				dat += "<dd><A href='?src=\ref[src];hack=1'><i><font color='Red'>*&@#. Bruteforce Key</font></i></font></a><br></dd>"
 			else
 				dat += "<br>"
 
@@ -127,6 +135,22 @@
 			else
 				dat += "<br><hr><dd><span class='warning'>Reg, #514 forbids sending messages to a Head of Staff containing Erotic Rendering Properties.</span>"
 
+		//Message Logs
+		if(1)
+			var/index = 0
+			//var/recipient = "Unspecified" //name of the person
+			//var/sender = "Unspecified" //name of the sender
+			//var/message = "Blank" //transferred message
+			dat += "<center><A href='?src=\ref[src];back=1'>Back</a> - <A href='?src=\ref[src];refresh=1'>Refresh</center><hr>"
+			dat += "<table border='1' width='100%'><tr><th width = '5%'>X</th><th width='15%'>Sender</th><th width='15%'>Recipient</th><th width='300px' word-wrap: break-word>Message</th></tr>"
+			for(var/datum/data_pda_msg/pda in src.linkedServer.pda_msgs)
+				index++
+				if(index > 3000)
+					break
+				// Del - Sender   - Recepient - Message
+				// X   - Al Green - Your Mom  - WHAT UP!?
+				dat += "<tr><td width = '5%'><center><A href='?src=\ref[src];delete=\ref[pda]' style='color: rgb(255,0,0)'>X</a></center></td><td width='15%'>[pda.sender]</td><td width='15%'>[pda.recipient]</td><td width='300px'>[pda.message]</td></tr>"
+			dat += "</table>"
 		//Hacking screen.
 		if(2)
 			if(isAI(user) || isrobot(user))
@@ -170,6 +194,23 @@
 				10010000001110100011010000110000101110100001000000111010<br>
 				001101001011011010110010100101110"}
 
+		//Fake messages
+		if(3)
+			dat += "<center><A href='?src=\ref[src];back=1'>Back</a> - <A href='?src=\ref[src];Reset=1'>Reset</a></center><hr>"
+
+			dat += {"<table border='1' width='100%'>
+					<tr><td width='20%'><A href='?src=\ref[src];select=Sender'>Sender</a></td>
+					<td width='20%'><A href='?src=\ref[src];select=RecJob'>Sender's Job</a></td>
+					<td width='20%'><A href='?src=\ref[src];select=Recepient'>Recipient</a></td>
+					<td width='300px' word-wrap: break-word><A href='?src=\ref[src];select=Message'>Message</a></td></tr>"}
+				//Sender  - Sender's Job  - Recepient - Message
+				//Al Green- Your Dad	  - Your Mom  - WHAT UP!?
+
+			dat += {"<tr><td width='20%'>[customsender]</td>
+			<td width='20%'>[customjob]</td>
+			<td width='20%'>[customrecepient ? customrecepient.owner : "NONE"]</td>
+			<td width='300px'>[custommessage]</td></tr>"}
+			dat += "</table><br><center><A href='?src=\ref[src];select=Send'>Send</a></center>"
 
 		//Request Console Logs
 		if(4)
@@ -184,7 +225,7 @@
 				var/id_auth = "Unauthenticated"					 - 15%
 				var/priority = "Normal"							 - 10%
 			*/
-			dat += "<center><a href='byond://?src=\ref[src];back=1'>Back</a> - <a href='byond://?src=\ref[src];refresh=1'>Refresh</center><hr>"
+			dat += "<center><A href='?src=\ref[src];back=1'>Back</a> - <A href='?src=\ref[src];refresh=1'>Refresh</center><hr>"
 			dat += {"<table border='1' width='100%'><tr><th width = '5%'>X</th><th width='15%'>Sending Dep.</th><th width='15%'>Receiving Dep.</th>
 			<th width='300px' word-wrap: break-word>Message</th><th width='15%'>Stamp</th><th width='15%'>ID Auth.</th><th width='15%'>Priority.</th></tr>"}
 			for(var/datum/data_rc_msg/rc in src.linkedServer.rc_msgs)
@@ -193,10 +234,22 @@
 					break
 				// Del - Sender   - Recepient - Message
 				// X   - Al Green - Your Mom  - WHAT UP!?
-				dat += {"<tr><td width = '5%'><center><a href='byond://?src=\ref[src];deleter=\ref[rc]' style='color: rgb(255,0,0)'>X</a></center></td><td width='15%'>[rc.send_dpt]</td>
+				dat += {"<tr><td width = '5%'><center><A href='?src=\ref[src];deleter=\ref[rc]' style='color: rgb(255,0,0)'>X</a></center></td><td width='15%'>[rc.send_dpt]</td>
 				<td width='15%'>[rc.rec_dpt]</td><td width='300px'>[rc.message]</td><td width='15%'>[rc.stamp]</td><td width='15%'>[rc.id_auth]</td><td width='15%'>[rc.priority]</td></tr>"}
 			dat += "</table>"
 
+		//Spam filter modification
+		if(5)
+			dat += "<center><A href='?src=\ref[src];back=1'>Back</a> - <A href='?src=\ref[src];refresh=1'>Refresh</center><hr>"
+			var/index = 0
+			for(var/token in src.linkedServer.spamfilter)
+				index++
+				if(index > 3000)
+					break
+				dat += "<dd>[index]&#09; <a href='?src=\ref[src];deltoken=[index]'>\[[token]\]</a><br></dd>"
+			dat += "<hr>"
+			if (linkedServer.spamfilter.len < linkedServer.spamfilter_limit)
+				dat += "<a href='?src=\ref[src];addtoken=1'>Add token</a><br>"
 
 
 	dat += "</body>"
@@ -218,6 +271,12 @@
 /obj/machinery/computer/message_monitor/proc/UnmagConsole()
 	src.emag = 0
 	update_icon()
+
+/obj/machinery/computer/message_monitor/proc/ResetMessage()
+	customsender 	= "System Administrator"
+	customrecepient = null
+	custommessage 	= "This is a test, please ignore."
+	customjob 		= "Admin"
 
 /obj/machinery/computer/message_monitor/Topic(href, href_list)
 	if(..())
@@ -254,6 +313,22 @@
 			else
 				message = noserver
 
+		//View the logs - KEY REQUIRED
+		if (href_list["view"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				if(auth)
+					src.screen = 1
+
+		//Clears the logs - KEY REQUIRED
+		if (href_list["clear"])
+			if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				if(auth)
+					src.linkedServer.pda_msgs = list()
+					message = SPAN_NOTICE("NOTICE: Logs cleared.")
 		//Clears the request console logs - KEY REQUIRED
 		if (href_list["clearr"])
 			if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
@@ -292,6 +367,15 @@
 				spawn(100*length(src.linkedServer.decryptkey))
 					if(src && src.linkedServer && usr)
 						BruteForce(usr)
+		//Delete the log.
+		if (href_list["delete"])
+			//Are they on the view logs screen?
+			if(screen == 1)
+				if(!linkedServer || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+					message = noserver
+				else //if(istype(href_list["delete"], /datum/data_pda_msg))
+					src.linkedServer.pda_msgs -= locate(href_list["delete"])
+					message = SPAN_NOTICE("NOTICE: Log Deleted!")
 		//Delete the request console log.
 		if (href_list["deleter"])
 			//Are they on the view logs screen?
@@ -301,6 +385,85 @@
 				else //if(istype(href_list["delete"], /datum/data_pda_msg))
 					src.linkedServer.rc_msgs -= locate(href_list["deleter"])
 					message = SPAN_NOTICE("NOTICE: Log Deleted!")
+		//Create a custom message
+		if (href_list["msg"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				if(auth)
+					src.screen = 3
+		//Fake messaging selection - KEY REQUIRED
+		if (href_list["select"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+				screen = 0
+			else
+				switch(href_list["select"])
+
+					//Reset
+					if("Reset")
+						ResetMessage()
+
+					//Select Your Name
+					if("Sender")
+						customsender 	= sanitize(input(usr, "Please enter the sender's name.") as text|null)
+
+					//Select Receiver
+					if("Recepient")
+						//Get out list of viable PDAs
+						var/list/obj/item/device/pda/sendPDAs = list()
+						for(var/obj/item/device/pda/P in PDAs)
+							if(!P.owner || P.toff || P.hidden) continue
+							sendPDAs += P
+						if(PDAs && PDAs.len > 0)
+							customrecepient = input(usr, "Select a PDA from the list.") as null|anything in sortNames(sendPDAs)
+						else
+							customrecepient = null
+
+					//Enter custom job
+					if("RecJob")
+						customjob	 	= sanitize(input(usr, "Please enter the sender's job.") as text|null)
+
+					//Enter message
+					if("Message")
+						custommessage	= input(usr, "Please enter your message.") as text|null
+						custommessage	= sanitize(custommessage)
+
+					//Send message
+					if("Send")
+
+						if(isnull(customsender) || customsender == "")
+							customsender = "UNKNOWN"
+
+						if(isnull(customrecepient))
+							message = SPAN_NOTICE("NOTICE: No recepient selected!")
+							return src.attack_hand(usr)
+
+						if(isnull(custommessage) || custommessage == "")
+							message = SPAN_NOTICE("NOTICE: No message entered!")
+							return src.attack_hand(usr)
+
+						var/obj/item/device/pda/PDARec
+						for (var/obj/item/device/pda/P in PDAs)
+							if (!P.owner || P.toff || P.hidden)	continue
+							if(P.owner == customsender)
+								PDARec = P
+						//Sender isn't faking as someone who exists
+						if(isnull(PDARec))
+							src.linkedServer.send_pda_message("[customrecepient.owner]", "[customsender]","[custommessage]")
+							customrecepient.new_message(customsender, customsender, customjob, custommessage)
+						//Sender is faking as someone who exists
+						else
+
+							src.linkedServer.send_pda_message("[customrecepient.owner]", "[PDARec.owner]","[custommessage]")
+							customrecepient.tnote.Add(list(list("sent" = 0, "owner" = "[PDARec.owner]", "job" = "[customjob]", "message" = "[custommessage]", "target" ="\ref[PDARec]")))
+
+							if(!customrecepient.conversations.Find("\ref[PDARec]"))
+								customrecepient.conversations.Add("\ref[PDARec]")
+
+							customrecepient.new_message(PDARec, custommessage)
+						//Finally..
+						ResetMessage()
 
 		//Request Console Logs - KEY REQUIRED
 		if(href_list["viewr"])
@@ -312,6 +475,25 @@
 
 			//usr << href_list["select"]
 
+		if(href_list["spam"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				if(auth)
+					src.screen = 5
+
+		if(href_list["addtoken"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				src.linkedServer.spamfilter += input(usr,"Enter text you want to be filtered out","Token creation") as text|null
+
+		if(href_list["deltoken"])
+			if(src.linkedServer == null || (src.linkedServer.stat & (NOPOWER|BROKEN)))
+				message = noserver
+			else
+				var/tokennum = text2num(href_list["deltoken"])
+				src.linkedServer.spamfilter.Cut(tokennum,tokennum+1)
 
 		if (href_list["back"])
 			src.screen = 0

@@ -22,7 +22,6 @@
 	hard_drive.store_file(new /datum/computer_file/program/wordprocessor())
 	hard_drive.store_file(new /datum/computer_file/program/records())
 	hard_drive.store_file(new /datum/computer_file/program/bounty_board_app())
-	hard_drive.store_file(new/datum/computer_file/program/trade/order())
 	if(prob(60)) // Tax software
 		hard_drive.store_file(new /datum/computer_file/program/tax())
 	else if(prob(50)) // "Tax software"
@@ -132,26 +131,21 @@
 /obj/item/modular_computer/pda/club_worker
 	icon_state = "pda-club"
 
-/obj/item/modular_computer/pda/artist
-	icon_state = "pda-clown"
-
-/obj/item/modular_computer/pda/artist/Crossed(AM as mob|obj) //Clown PDA is slippery.
-	if (isliving(AM))
-		var/mob/living/M = AM
-		if((locate(/obj/structure/multiz/stairs) in get_turf(loc)) || (locate(/obj/structure/multiz/ladder) in get_turf(loc)))
-			visible_message(SPAN_DANGER("\The [M] carefully avoids stepping down on \the [src]."))
-			return
-		M.slip("the PDA",8)
-
 /obj/item/modular_computer/pda/club_worker/install_default_programs()
 	..()
 	hard_drive.store_file(new /datum/computer_file/program/drink_catalog())
-	hard_drive.store_file(new /datum/computer_file/program/cook_catalog())
 
+
+// PDA box
 /obj/item/storage/box/PDAs
 	name = "box of spare PDAs"
 	desc = "A box of spare PDA microcomputers."
 	icon = 'icons/obj/pda.dmi'
 	icon_state = "pdabox"
-	prespawned_content_amount = 5
-	prespawned_content_type = /obj/item/modular_computer/pda
+
+/obj/item/storage/box/PDAs/populate_contents()
+	new /obj/item/modular_computer/pda(src)
+	new /obj/item/modular_computer/pda(src)
+	new /obj/item/modular_computer/pda(src)
+	new /obj/item/modular_computer/pda(src)
+	new /obj/item/modular_computer/pda(src)

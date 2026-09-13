@@ -1,13 +1,4 @@
 
-//! ## DB defines
-/**
- * DB schema version
- *
- * Update this whenever the db schema changes
- */
-#define DB_SCHEMA_VERSION 1
-
-
 //! ## Timing subsystem
 /**
  * Don't run if there is an identical unique timer active
@@ -84,11 +75,8 @@
 #define INITIALIZE_IMMEDIATE(X) ##X/New(loc, ...){\
 	..();\
 	if(!initialized) {\
-		var/previous_initialized_value = SSatoms.initialized;\
-		SSatoms.initialized = INITIALIZATION_INNEW_MAPLOAD;\
 		args[1] = TRUE;\
 		SSatoms.InitAtom(src, FALSE, args);\
-		SSatoms.initialized = previous_initialized_value;\
 	}\
 }
 
@@ -97,26 +85,27 @@
 // The numbers just define the ordering, they are meaningless otherwise.
 
 #define INIT_ORDER_GARBAGE 99
-#define INIT_ORDER_DBCORE 98
-#define INIT_ORDER_EXPLOSIONS 97
-#define INIT_ORDER_STATPANELS 96
-#define INIT_ORDER_MAPPING 15
-#define INIT_ORDER_JOBS 14
-#define INIT_ORDER_TICKER 13
-#define INIT_ORDER_SPAWN_DATA 12
-#define INIT_ORDER_CHUNKS 11
-#define INIT_ORDER_LANGUAGE 10
-#define INIT_ORDER_INVENTORY 9
-#define INIT_ORDER_CHAR_SETUP 8
-#define INIT_ORDER_ATOMS 7
-#define INIT_ORDER_MACHINES 6
+#define INIT_ORDER_SKYBOX 20
+#define INIT_ORDER_DBCORE 19
+#define INIT_ORDER_BLACKBOX 18
+#define INIT_ORDER_SERVER_MAINT 17
+#define INIT_ORDER_JOBS 16
+#define INIT_ORDER_EVENTS 15
+#define INIT_ORDER_TICKER 14
+#define INIT_ORDER_SPAWN_DATA 13
+#define INIT_ORDER_MAPPING 12
+#define INIT_ORDER_LANGUAGE 11
+#define INIT_ORDER_INVENTORY 10
+#define INIT_ORDER_CHAR_SETUP 9
+#define INIT_ORDER_ATOMS 8
+#define INIT_ORDER_MACHINES 7
+#define INIT_ORDER_CIRCUIT 4
 #define INIT_ORDER_TIMER 1
 #define INIT_ORDER_DEFAULT 0
 #define INIT_ORDER_AIR -1
 #define INIT_ORDER_ALARM -2
 #define INIT_ORDER_MINIMAP -3
 #define INIT_ORDER_HOLOMAPS -4
-#define INIT_ORDER_CRAFT -4 // DO NOT INIT THIS AFTER ASSETS
 #define INIT_ORDER_ASSETS -5
 #define INIT_ORDER_ICON_SMOOTHING -6
 #define INIT_ORDER_OVERLAY -7
@@ -125,11 +114,13 @@
 #define INIT_ORDER_TICKETS -10
 #define INIT_ORDER_LIGHTING -20
 #define INIT_ORDER_SHUTTLE -21
-#define INIT_ORDER_JAMMING -22
+#define INIT_ORDER_SQUEAK -40
+#define INIT_ORDER_XENOARCH	-50
+#define INIT_ORDER_PERSISTENCE -100
 #define INIT_OPEN_SPACE -150
+#define INIT_ORDER_CRAFT -175
 #define INIT_ORDER_LATELOAD -180
 #define INIT_ORDER_CHAT	-185
-
 
 // SS runlevels
 
@@ -169,16 +160,3 @@ if(Datum.is_processing) {\
 
 #define START_PROCESSING_POWER_OBJECT(Datum) START_PROCESSING_IN_LIST(Datum, power_objects)
 #define STOP_PROCESSING_POWER_OBJECT(Datum) STOP_PROCESSING_IN_LIST(Datum, power_objects)
-
-/// The timer key used to know how long subsystem initialization takes
-#define SS_INIT_TIMER_KEY "ss_init"
-
-/**
-	Create a new timer and add it to the queue.
-	* Arguments:
-	* * callback the callback to call on timer finish
-	* * wait deciseconds to run the timer for
-	* * flags flags for this timer, see: code\__DEFINES\subsystems.dm
-	* * timer_subsystem the subsystem to insert this timer into
-*/
-#define addtimer(args...) _addtimer(args, file = __FILE__, line = __LINE__)

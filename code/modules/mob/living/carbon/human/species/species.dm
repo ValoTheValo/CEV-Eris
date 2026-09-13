@@ -39,7 +39,7 @@
 	var/min_age = 17
 	var/max_age = 70
 
-	// Language vars.
+	// Language/culture vars.
 	var/default_language = LANGUAGE_COMMON   // Default language is used when 'say' is used without modifiers.
 	var/language = LANGUAGE_COMMON           // Default racial language, if any.
 	var/list/secondary_langs = list()        // The names of secondary languages that are available to this species.
@@ -62,7 +62,6 @@
 	var/radiation_mod = 1                    // Radiation modifier
 	var/flash_mod =     1                    // Stun from blindness modifier.
 	var/vision_flags = SEE_SELF              // Same flags as glasses.
-	var/injury_type =  INJURY_TYPE_LIVING    // From _DEFINES/weapons.dm
 
 	var/list/hair_styles
 	var/list/facial_hair_styles
@@ -125,19 +124,21 @@
 	var/appearance_flags = 0      // Appearance/display related features.
 	var/spawn_flags = 0           // Flags that specify who can spawn as this species
 	var/slowdown = 0              // Passive movement speed malus (or boost, if negative)
+	var/primitive_form            // Lesser form, if any (ie. monkey for humans)
+	var/greater_form              // Greater form, if any, ie. human for monkeys.
 	var/lower_sanity_process	  // Controls how much sanity is processed on the mob for performance reasons.
 	var/holder_type
 	var/gluttonous                // Can eat some mobs. Values can be GLUT_TINY, GLUT_SMALLER, GLUT_ANYTHING.
 	var/species_rarity_value = 1          // Relative rarity/collector value for this species.
 	                              // Determines the organs that the species spawns with and
 	var/list/has_process = list(    // which required-process checks are conducted and defalut organs for them.
-		OP_HEART =    /obj/item/organ/internal/vital/heart,
-		OP_LUNGS =    /obj/item/organ/internal/vital/lungs,
+		OP_HEART =    /obj/item/organ/internal/heart,
+		OP_LUNGS =    /obj/item/organ/internal/lungs,
 		OP_STOMACH =  /obj/item/organ/internal/stomach,
 		OP_LIVER =    /obj/item/organ/internal/liver,
 		OP_KIDNEY_LEFT =  /obj/item/organ/internal/kidney/left,
 		OP_KIDNEY_RIGHT = /obj/item/organ/internal/kidney/right,
-		BP_BRAIN =    /obj/item/organ/internal/vital/brain,
+		BP_BRAIN =    /obj/item/organ/internal/brain,
 		OP_APPENDIX = /obj/item/organ/internal/appendix,
 		OP_EYES =     /obj/item/organ/internal/eyes
 		)
@@ -270,12 +271,14 @@
 /datum/species/proc/remove_inherent_verbs(mob/living/carbon/human/H)
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			remove_verb(H, verb_path)
+			H.verbs -= verb_path
+	return
 
 /datum/species/proc/add_inherent_verbs(mob/living/carbon/human/H)
 	if(inherent_verbs)
 		for(var/verb_path in inherent_verbs)
-			add_verb(H, verb_path)
+			H.verbs |= verb_path
+	return
 
 /datum/species/proc/handle_post_spawn(mob/living/carbon/human/H) //Handles anything not already covered by basic species assignment.
 	add_inherent_verbs(H)
@@ -352,7 +355,7 @@
 		else if((!H.equipment_prescription && (H.sdisabilities & NEARSIGHTED)) || H.equipment_tint_total == TINT_MODERATE)
 			H.client.screen |= global_hud.vimpaired
 		else if(H.equipment_tint_total == TINT_LOW)
-			H.client.screen |= global_hud.lightMask
+			H.client.screen |= global_hud.lightMask	
 
 	for(var/overlay in H.equipment_overlays)
 		H.client.screen |= overlay

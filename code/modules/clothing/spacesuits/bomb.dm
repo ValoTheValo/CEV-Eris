@@ -6,15 +6,16 @@
 	desc = "Use in case of bomb. The shielded visor makes aiming harder."
 	icon_state = "bombsuit"
 	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 10,
-		bomb = 1000,
+		melee = 40,
+		bullet = 40,
+		energy = 40,
+		bomb = 100,
 		bio = 100,
 		rad = 90
 	)
 	siemens_coefficient = 0
 	tint = TINT_LOW
+	obscuration = HEAVY_OBSCURATION
 	price_tag = 100
 
 /obj/item/clothing/suit/space/bomb
@@ -26,10 +27,10 @@
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.01
 	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 10,
-		bomb = 1000,
+		melee = 40,
+		bullet = 40,
+		energy = 40,
+		bomb = 100,
 		bio = 100,
 		rad = 90
 	)
@@ -39,6 +40,7 @@
 	equip_delay = 10 SECONDS
 	price_tag = 300
 	slowdown = HEAVY_SLOWDOWN
+	stiffness = HEAVY_STIFFNESS
 
 /obj/item/clothing/head/space/bomb/security
 	icon_state = "bombsuitsec"

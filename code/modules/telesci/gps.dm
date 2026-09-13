@@ -34,7 +34,7 @@ GLOBAL_LIST_EMPTY(gps_by_type)
 	emped = 1
 	overlays.Cut()
 	overlays += image(icon, "emp")
-	addtimer(CALLBACK(src, PROC_REF(post_emp)), 300)
+	addtimer(CALLBACK(src, .proc/post_emp), 300)
 
 /obj/item/device/gps/proc/post_emp()
 	emped = 0
@@ -48,7 +48,7 @@ GLOBAL_LIST_EMPTY(gps_by_type)
 	if(emped)
 		t += "ERROR"
 	else
-		t += "<BR><a href='byond://?src=\ref[src];tag=1'>Set Tag</A> "
+		t += "<BR><A href='?src=\ref[src];tag=1'>Set Tag</A> "
 		t += "<BR>Tag: [gpstag]"
 		if(locked_location && locked_location.loc)
 			t += "<BR>Bluespace coordinates saved: [locked_location.loc]"

@@ -82,8 +82,8 @@
 		visible_message("[src] makes an excited beeping booping sound!")
 
 	if(screwloose && prob(5)) // Make a mess
-		if(istype(loc, /turf))
-			var/turf/T = loc
+		if(istype(loc, /turf/simulated))
+			var/turf/simulated/T = loc
 			T.wet_floor()
 
 	if(oddbutton && prob(5)) // Make a big mess
@@ -170,9 +170,9 @@
 
 	cleaning = 1
 	visible_message("[src] begins to clean up \the [D]")
-	if(prob(10))
-		say(pick(possible_phrases))
-		playsound(loc, "robot_talk_light", 100, 0, 0)
+	var/message = pick(possible_phrases)
+	say(message)
+	playsound(loc, "robot_talk_light", 100, 0, 0)
 	update_icons()
 	var/cleantime = istype(D, /obj/effect/decal/cleanable/dirt) ? 10 : 50
 	if(do_after(src, cleantime, progress = 0))
@@ -217,15 +217,15 @@
 /mob/living/bot/cleanbot/attack_hand(var/mob/user)
 	var/dat
 	dat += "<TT><B>Automatic Ship Cleaner v1.0</B></TT><BR><BR>"
-	dat += "Status: <a href='byond://?src=\ref[src];operation=start'>[on ? "On" : "Off"]</A><BR>"
+	dat += "Status: <A href='?src=\ref[src];operation=start'>[on ? "On" : "Off"]</A><BR>"
 	dat += "Behaviour controls are [locked ? "locked" : "unlocked"]<BR>"
 	dat += "Maintenance panel is [open ? "opened" : "closed"]"
 	if(!locked || issilicon(user))
-		dat += "<BR>Cleans Blood: <a href='byond://?src=\ref[src];operation=blood'>[blood ? "Yes" : "No"]</A><BR>"
-		dat += "<BR>Patrol ship: <a href='byond://?src=\ref[src];operation=patrol'>[should_patrol ? "Yes" : "No"]</A><BR>"
+		dat += "<BR>Cleans Blood: <A href='?src=\ref[src];operation=blood'>[blood ? "Yes" : "No"]</A><BR>"
+		dat += "<BR>Patrol ship: <A href='?src=\ref[src];operation=patrol'>[should_patrol ? "Yes" : "No"]</A><BR>"
 	if(open && !locked)
-		dat += "Odd looking screw twiddled: <a href='byond://?src=\ref[src];operation=screw'>[screwloose ? "Yes" : "No"]</A><BR>"
-		dat += "Weird button pressed: <a href='byond://?src=\ref[src];operation=oddbutton'>[oddbutton ? "Yes" : "No"]</A>"
+		dat += "Odd looking screw twiddled: <A href='?src=\ref[src];operation=screw'>[screwloose ? "Yes" : "No"]</A><BR>"
+		dat += "Weird button pressed: <A href='?src=\ref[src];operation=oddbutton'>[oddbutton ? "Yes" : "No"]</A>"
 
 	user << browse("<HEAD><TITLE>Cleaner v1.0 controls</TITLE></HEAD>[dat]", "window=autocleaner")
 	onclose(user, "autocleaner")

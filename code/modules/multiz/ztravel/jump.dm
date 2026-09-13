@@ -29,7 +29,7 @@
 			testdir = DOWN
 		else
 			//Or in the case of pushing downwards, you need a ceiling above you
-			T = SSmapping.GetAbove(origin)
+			T = GetAbove(origin)
 			testdir = UP
 
 		//Can't push off of nothing

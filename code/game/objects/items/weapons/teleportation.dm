@@ -18,10 +18,7 @@
 	throw_range = 5
 	origin_tech = list(TECH_MAGNET = 1, TECH_BLUESPACE = 3)
 	matter = list(MATERIAL_PLASTIC = 3, MATERIAL_GLASS = 1, MATERIAL_SILVER = 1, MATERIAL_URANIUM = 1)
-	rarity_value = 120
-	spawn_frequency = 4
-	spawn_tags = SPAWN_TAG_SCIENCE
-	spawn_blacklisted = TRUE
+	spawn_blacklisted = TRUE///obj/item/hand_tele
 	var/obj/item/cell/cell
 	var/suitable_cell = /obj/item/cell/small
 	var/portal_type = /obj/effect/portal
@@ -102,8 +99,6 @@
 	portal_fail_chance = 50
 	cell_charge_per_attempt = 50
 	entropy_value = 3 //for bluespace entropy
-	rarity_value = 80
-	spawn_tags = SPAWN_TAG_SCIENCE_JUNK
 	spawn_blacklisted = FALSE
 	var/calibration_required = TRUE
 
@@ -146,11 +141,6 @@
 	icon_state = "telespear"
 	item_state = "telespear"
 	slot_flags = SLOT_BACK
-	spawn_frequency = 4
-	rarity_value = 100
-	extended_reach = TRUE
-	push_attack = TRUE
-	spawn_tags = SPAWN_TAG_KNIFE // This is definately a knife if you're willing to argue semantics for hours.
 	var/entropy_value = 1 //for bluespace entropy
 
 /obj/item/tele_spear/attack(mob/living/carbon/human/M, mob/living/carbon/user)

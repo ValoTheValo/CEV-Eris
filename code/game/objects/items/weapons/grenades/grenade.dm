@@ -1,7 +1,6 @@
 /obj/item/grenade
 	name = "grenade"
 	desc = "A hand held grenade, with an adjustable timer."
-	description_info = "Can have its timer adjusted with a screwdriver."
 	w_class = ITEM_SIZE_SMALL
 	icon = 'icons/obj/grenade.dmi'
 	icon_state = "grenade"
@@ -28,13 +27,15 @@
 */
 	return TRUE
 
-/obj/item/grenade/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
+/obj/item/grenade/examine(mob/user)
+	if(..(user, 0))
 		if(det_time > 1)
-			extra_description += "The timer is set to [det_time/10] seconds."
-		else
-			extra_description += "The timer is set for instant detonation."
-	..(user, extra_description)
+			to_chat(user, "The timer is set to [det_time/10] seconds.")
+			return
+		if(det_time == null)
+			return
+		to_chat(user, "\The [src] is set for instant detonation.")
+
 
 /obj/item/grenade/attack_self(mob/user as mob)
 	if(!active)
@@ -74,7 +75,6 @@
 	var/turf/T = get_turf(src)
 	if(T)
 		T.hotspot_expose(700,125)
-	if(user && user.hud_used)
 		user.hud_used.updatePlaneMasters(user)
 
 
@@ -107,7 +107,7 @@
 		var/mob/living/carbon/human/bonk = dest.contents[found]
 		if(bonk.incapacitated(INCAPACITATION_GROUNDED))
 			return
-		bonk.apply_damage(2, BRUTE, BP_HEAD, sharp = FALSE, edge = FALSE, used_weapon = src)
+		bonk.apply_damage(2, BRUTE, BP_HEAD, FALSE , FALSE, src)
 		bonk.visible_message(SPAN_DANGER("[src] falls from above and bonks [bonk.name] on \his head!"), SPAN_DANGER("[src] falls on your head and bounces to the side!"), "You hear a dull thud.", 5)
 		var/turf/random = pick(orange(1, dest))
 		forceMove(random)

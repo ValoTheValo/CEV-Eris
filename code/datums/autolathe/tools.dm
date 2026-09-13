@@ -61,12 +61,6 @@
 /datum/design/autolathe/tool/powered_hammer
 	build_path = /obj/item/tool/hammer/powered_hammer
 
-/datum/design/autolathe/tool/sledgehammer
-	build_path = /obj/item/tool/hammer/sledgehammer
-
-/datum/design/autolathe/tool/sledgehammer_advanced
-	build_path = /obj/item/tool/hammer/sledgehammer/advanced
-
 /datum/design/autolathe/tool/big_wrench
 	build_path = /obj/item/tool/wrench/big_wrench
 
@@ -84,10 +78,6 @@
 /datum/design/autolathe/tool/pickaxe_excavation
 	name = "excavation pick"
 	build_path = /obj/item/tool/pickaxe/excavation
-
-/datum/design/autolathe/tool/spatula
-	name = "spatula"
-	build_path = /obj/item/tool/shovel/spatula
 
 /datum/design/autolathe/tool/knife
 	name = "kitchen knife"
@@ -159,6 +149,3 @@
 /datum/design/autolathe/tool/rpd
 	name = "rapid piping device"
 	build_path = /obj/item/rpd
-
-/datum/design/autolathe/tool/superglue
-	build_path = /obj/item/tool/tape_roll/glue

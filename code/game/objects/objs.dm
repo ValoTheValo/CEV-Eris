@@ -10,7 +10,8 @@
 	var/edge = FALSE		// whether this object is more likely to dismember
 	var/in_use = 0 // If we have a user using us, this will be set on. We will check if the user has stopped using us, and thus stop updating and LAGGING EVERYTHING!
 	var/damtype = "brute"
-	var/armor_divisor = 1
+	var/armor_penetration = 0
+	var/style_damage = 30 // used for dealing damage to slickness
 	var/corporation
 	var/heat = 0
 
@@ -18,16 +19,14 @@
 /obj/proc/is_hot()
 	return heat
 
-/obj/get_fall_damage(turf/from, turf/dest)
+/obj/get_fall_damage()
 	return w_class * 2
 
 /obj/Destroy()
-	if(!ismachinery(src))
-		STOP_PROCESSING(SSobj, src) // TODO: Have a processing bitflag to reduce on unnecessary loops through the processing lists
-	SSnano.close_uis(src)
-	. = ..()
+	STOP_PROCESSING(SSobj, src)
+	return ..()
 
-/obj/Topic(href, href_list, var/datum/nano_topic_state/state = GLOB.default_state)
+/obj/Topic(href, href_list, var/datum/topic_state/state = GLOB.default_state)
 	if(..())
 		return 1
 
@@ -40,10 +39,10 @@
 	CouldNotUseTopic(usr)
 	return 1
 
-/obj/proc/OnTopic(mob/user, href_list, datum/nano_topic_state/state)
+/obj/proc/OnTopic(mob/user, href_list, datum/topic_state/state)
 	return TOPIC_NOACTION
 
-/obj/CanUseTopic(mob/user, datum/nano_topic_state/state)
+/obj/CanUseTopic(mob/user, datum/topic_state/state)
 	if(user.CanUseObjTopic(src))
 		return ..()
 	return STATUS_CLOSE
@@ -74,6 +73,10 @@
 	// Nada
 
 /obj/item/proc/is_used_on(obj/O, mob/user)
+
+/obj/Process()
+	STOP_PROCESSING(SSobj, src)
+	return 0
 
 /obj/assume_air(datum/gas_mixture/giver)
 	if(loc)
@@ -132,8 +135,11 @@
 			in_use = 0
 
 /obj/attack_ghost(mob/user)
-	nano_ui_interact(user)
+	ui_interact(user)
 	..()
+
+/obj/proc/interact(mob/user)
+	return
 
 /mob/proc/unset_machine()
 	src.machine = null
@@ -152,7 +158,7 @@
 
 /obj/proc/hide(hide)
 	invisibility = hide ? INVISIBILITY_MAXIMUM : initial(invisibility)
-	SEND_SIGNAL_OLD(src, COMSIG_OBJ_HIDE, hide)
+	SEND_SIGNAL(src, COMSIG_OBJ_HIDE, hide)
 
 /obj/proc/hides_under_flooring()
 	return level == BELOW_PLATING_LEVEL
@@ -175,12 +181,10 @@
 	return
 
 /obj/proc/add_hearing()
-	InitiateHearerTracking()
-	//GLOB.hearing_objects |= src
+	GLOB.hearing_objects |= src
 
 /obj/proc/remove_hearing()
-	chunkHearerClearSelf()
-	//GLOB.hearing_objects.Remove(src)
+	GLOB.hearing_objects.Remove(src)
 
 /obj/proc/eject_item(obj/item/I, mob/living/user)
 	if(!I || !user.IsAdvancedToolUser() || user.stat || !user.Adjacent(I))
@@ -216,16 +220,13 @@
 
 //Returns the list of matter in this object
 //You can override it to customise exactly what is returned.
-/atom/proc/get_matter()
-	return list()
-
-/obj/get_matter()
-	return matter ? matter.Copy() : list()
+/obj/proc/get_matter()
+	return matter ? matter : list()
 
 //Drops the materials in matter list on into target location
 //Use for deconstrction
 // Dropper is whoever is handling these materials if any , causes them to leave fingerprints on the sheets.
-/atom/proc/drop_materials(target_loc, mob/living/dropper)
+/obj/proc/drop_materials(target_loc, mob/living/dropper)
 	var/list/materials = get_matter()
 
 	for(var/mat_name in materials)
@@ -252,8 +253,11 @@
 	throwforce = initial(throwforce) * newmult
 
 //Same for AP
-/obj/proc/add_projectile_penetration(newmult)
-	armor_divisor = initial(armor_divisor) + newmult
+/obj/proc/multiply_projectile_penetration(newmult)
+	armor_penetration = initial(armor_penetration) * newmult
+
+/obj/proc/multiply_projectile_style_damage(newmult)
+	style_damage = initial(style_damage) * newmult
 
 /obj/proc/multiply_pierce_penetration(newmult)
 
@@ -261,4 +265,4 @@
 
 /obj/proc/multiply_projectile_step_delay(newmult)
 
-/obj/proc/multiply_projectile_halloss(newmult)
+/obj/proc/multiply_projectile_agony(newmult)

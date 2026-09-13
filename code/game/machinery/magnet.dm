@@ -150,10 +150,10 @@
 
 		// Update power usage:
 		if(on)
+			use_power = ACTIVE_POWER_USE
 			active_power_usage = electricity_level*15
-			set_power_use(ACTIVE_POWER_USE)
 		else
-			set_power_use(NO_POWER_USE)
+			use_power = NO_POWER_USE
 
 
 		// Overload conditions:
@@ -253,9 +253,9 @@
 		var/dat = "<B>Magnetic Control Console</B><BR><BR>"
 		if(!autolink)
 			dat += {"
-			Frequency: <a href='byond://?src=\ref[src];operation=setfreq'>[frequency]</a><br>
-			Code: <a href='byond://?src=\ref[src];operation=setfreq'>[code]</a><br>
-			<a href='byond://?src=\ref[src];operation=probe'>Probe Generators</a><br>
+			Frequency: <a href='?src=\ref[src];operation=setfreq'>[frequency]</a><br>
+			Code: <a href='?src=\ref[src];operation=setfreq'>[code]</a><br>
+			<a href='?src=\ref[src];operation=probe'>Probe Generators</a><br>
 			"}
 
 		if(magnets.len >= 1)
@@ -264,11 +264,11 @@
 			var/i = 0
 			for(var/obj/machinery/magnetic_module/M in magnets)
 				i++
-				dat += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;< \[[i]\] (<a href='byond://?src=\ref[src];radio-op=togglepower'>[M.on ? "On":"Off"]</a>) | Electricity level: <a href='byond://?src=\ref[src];radio-op=minuselec'>-</a> [M.electricity_level] <a href='byond://?src=\ref[src];radio-op=pluselec'>+</a>; Magnetic field: <a href='byond://?src=\ref[src];radio-op=minusmag'>-</a> [M.magnetic_field] <a href='byond://?src=\ref[src];radio-op=plusmag'>+</a><br>"
+				dat += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;< \[[i]\] (<a href='?src=\ref[src];radio-op=togglepower'>[M.on ? "On":"Off"]</a>) | Electricity level: <a href='?src=\ref[src];radio-op=minuselec'>-</a> [M.electricity_level] <a href='?src=\ref[src];radio-op=pluselec'>+</a>; Magnetic field: <a href='?src=\ref[src];radio-op=minusmag'>-</a> [M.magnetic_field] <a href='?src=\ref[src];radio-op=plusmag'>+</a><br>"
 
-		dat += "<br>Speed: <a href='byond://?src=\ref[src];operation=minusspeed'>-</a> [speed] <a href='byond://?src=\ref[src];operation=plusspeed'>+</a><br>"
-		dat += "Path: {<a href='byond://?src=\ref[src];operation=setpath'>[path]</a>}<br>"
-		dat += "Moving: <a href='byond://?src=\ref[src];operation=togglemoving'>[moving ? "Enabled":"Disabled"]</a>"
+		dat += "<br>Speed: <a href='?src=\ref[src];operation=minusspeed'>-</a> [speed] <a href='?src=\ref[src];operation=plusspeed'>+</a><br>"
+		dat += "Path: {<a href='?src=\ref[src];operation=setpath'>[path]</a>}<br>"
+		dat += "Moving: <a href='?src=\ref[src];operation=togglemoving'>[moving ? "Enabled":"Disabled"]</a>"
 
 
 		user << browse(dat, "window=magnet;size=400x500")

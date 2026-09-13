@@ -12,4 +12,13 @@ GLOBAL_DATUM_INIT(logged_out_event, /decl/observ/logged_out, new)
 /decl/observ/logged_out
 	name = "Logged Out"
 	expected_type = /mob
-// moved to the apropriate mob/logout.dm
+
+/******************
+* Logout Handling *
+******************/
+
+/mob/Logout()
+// TODO: enable after baymed
+	//GLOB.logged_out_event.raise_event(src, my_client)
+
+	..()

@@ -33,13 +33,12 @@
 	. = ..()
 	set_state(1)
 
-/obj/machinery/power/breakerbox/examine(mob/user, extra_description = "")
-	extra_description += "\nLarge machine with heavy duty switching circuits used for advanced grid control"
+/obj/machinery/power/breakerbox/examine(mob/user)
+	to_chat(user, "Large machine with heavy duty switching circuits used for advanced grid control")
 	if(on)
-		extra_description += "\n\green It seems to be online."
+		to_chat(user, "\green It seems to be online.")
 	else
-		extra_description += SPAN_WARNING("\nIt seems to be offline.")
-	..(user, extra_description)
+		to_chat(user, SPAN_WARNING("It seems to be offline."))
 
 /obj/machinery/power/breakerbox/attack_ai(mob/user)
 	if(update_locked)
@@ -71,13 +70,14 @@
 		return
 
 	busy = 1
-	user.visible_message(SPAN_DANGER("[user] started reprogramming [src]!"))
+	for(var/mob/O in viewers(user))
+		O.show_message(text("\red [user] started reprogramming [src]!"), 1)
 
 	if(do_after(user, 50,src))
 		set_state(!on)
 		user.visible_message(\
-		SPAN_NOTICE("[user.name] [on ? "enabled" : "disabled"] the breaker box!<"),\
-		SPAN_NOTICE("You [on ? "enabled" : "disabled"] the breaker box!"))
+		"<span class='notice'>[user.name] [on ? "enabled" : "disabled"] the breaker box!</span>",\
+		"<span class='notice'>You [on ? "enabled" : "disabled"] the breaker box!</span>")
 		update_locked = 1
 		spawn(600)
 			update_locked = 0

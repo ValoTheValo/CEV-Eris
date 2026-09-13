@@ -62,7 +62,7 @@
 	failmsg = "The [name]'s refill light blinks red."
 	..()
 
-/obj/item/device/lightreplacer/examine(mob/user, extra_description = "")
+/obj/item/device/lightreplacer/examine(mob/user)
 	if(..(user, 2))
 		to_chat(user, "It has [uses] lights remaining.")
 

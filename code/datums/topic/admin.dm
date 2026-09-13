@@ -196,7 +196,7 @@
 		if(!D)
 			return
 		var/list/permissionlist = list()
-		for(var/i = R_FUN, i <= R_ADMIN, i = (i<<1)) // Here 'i' matches one of admin permissions on each cycle, from R_FUN(1<<0) to R_ADMIN(1<<6)
+		for(var/i=1, i<=R_MAXPERMISSION, i<<=1)		//that <<= is shorthand for i = i << 1. Which is a left bitshift
 			permissionlist[rights2text(i)] = i
 		var/new_permission = input("Select a permission to turn on/off", "Permission toggle", null, null) as null|anything in permissionlist
 		if(!new_permission)
@@ -387,8 +387,8 @@
 	body += source.formatJobGroup(M, "Church Positions", "ecd37d", "churchdept", church_positions)
 	//Civilian (Grey)
 	body += source.formatJobGroup(M, "Civilian Positions", "dddddd", "civiliandept", civilian_positions)
-	//Silicon (Green)
-	body += source.formatJobGroup(M, "Non-human Positions", "ccffcc", "silicondept", silicon_positions + "Antag HUD")
+	//Non-Human (Green)
+	body += source.formatJobGroup(M, "Non-human Positions", "ccffcc", "nonhumandept", nonhuman_positions + "Antag HUD")
 	//Antagonist (Orange)
 
 	var/jobban_list = list()
@@ -459,9 +459,9 @@
 				var/datum/job/temp = SSjob.GetJob(jobPos)
 				if(!temp) continue
 				joblist += temp.title
-		if("silicondept")
+		if("nonhumandept")
 			joblist += "pAI"
-			for(var/jobPos in silicon_positions)
+			for(var/jobPos in nonhuman_positions)
 				if(!jobPos)	continue
 				var/datum/job/temp = SSjob.GetJob(jobPos)
 				if(!temp) continue
@@ -739,7 +739,7 @@
 /datum/admin_topic/c_mode/Run(list/input)
 	var/dat = {"<B>What storyteller do you wish to install?</B><HR>"}
 	for(var/mode in config.storytellers)
-		dat += {"<a href='byond://?src=\ref[source];c_mode2=[mode]'>[config.storyteller_names[mode]]</A><br>"}
+		dat += {"<A href='?src=\ref[source];c_mode2=[mode]'>[config.storyteller_names[mode]]</A><br>"}
 	dat += {"Now: [master_storyteller]"}
 	usr << browse(dat, "window=c_mode")
 
@@ -757,6 +757,37 @@
 	world.save_storyteller(master_storyteller)
 	source.Topic(source, list("c_mode"=1))
 
+
+/datum/admin_topic/monkeyone
+	keyword = "monkeyone"
+	require_perms = list(R_FUN)
+
+/datum/admin_topic/monkeyone/Run(list/input)
+	var/mob/living/carbon/human/H = locate(input["monkeyone"])
+	if(!istype(H))
+		to_chat(usr, "This can only be used on instances of type /mob/living/carbon/human")
+		return
+
+	log_admin("[key_name(usr)] attempting to monkeyize [key_name(H)]")
+	message_admins("\blue [key_name_admin(usr)] attempting to monkeyize [key_name_admin(H)]", 1)
+	H.monkeyize()
+
+
+/datum/admin_topic/corgione
+	keyword = "corgione"
+	require_perms = list(R_FUN)
+
+/datum/admin_topic/corgione/Run(list/input)
+	var/mob/L= locate(input["corgione"])
+	if(!istype(L))
+		to_chat(usr, "This can only be used on instances of type /mob")
+		return
+
+	log_admin("[key_name(usr)] attempting to corgize [key_name(L)]")
+	message_admins("\blue [key_name_admin(usr)] attempting to corgize [key_name_admin(L)]", 1)
+	L.corgize()
+
+
 /datum/admin_topic/forcespeech
 	keyword = "forcespeech"
 	require_perms = list(R_FUN)
@@ -766,7 +797,7 @@
 	if(!ismob(M))
 		to_chat(usr, "this can only be used on instances of type /mob")
 
-	var/speech = input("What will [key_name(M)] say?", "Force speech", "")// Don't need to sanitize, since it does that in say(), we also trust our admins. //don't trust your admins.
+	var/speech = input("What will [key_name(M)] say?.", "Force speech", "")// Don't need to sanitize, since it does that in say(), we also trust our admins. //don't trust your admins.
 	if(!speech)
 		return
 	M.say(speech)
@@ -966,7 +997,7 @@
 	to_chat(source.owner, "Name = <b>[M.name]</b>; Real_name = [M.real_name]; Mind_name = [M.mind?"[M.mind.name]":""]; Key = <b>[M.key]</b>;")
 	to_chat(source.owner, "Location = [location_description];")
 	to_chat(source.owner, "[special_role_description]")
-	to_chat(source.owner, "(<a href='byond://?src=\ref[usr];priv_msg=\ref[M]'>PM</a>) (<a href='byond://?src=\ref[source];adminplayeropts=\ref[M]'>PP</A>) (<a href='byond://?_src_=vars;Vars=\ref[M]'>VV</A>) (<a href='byond://?src=\ref[source];subtlemessage=\ref[M]'>SM</A>) ([admin_jump_link(M, source)]) (<a href='byond://?src=\ref[source];secretsadmin=check_antagonist'>CA</A>)")
+	to_chat(source.owner, "(<a href='?src=\ref[usr];priv_msg=\ref[M]'>PM</a>) (<A HREF='?src=\ref[source];adminplayeropts=\ref[M]'>PP</A>) (<A HREF='?_src_=vars;Vars=\ref[M]'>VV</A>) (<A HREF='?src=\ref[source];subtlemessage=\ref[M]'>SM</A>) ([admin_jump_link(M, source)]) (<A HREF='?src=\ref[source];secretsadmin=check_antagonist'>CA</A>)")
 
 
 /datum/admin_topic/adminspawncookie
@@ -1021,7 +1052,7 @@
 	S.loc = M.loc
 	QDEL_IN(S, 20)
 
-	var/turf/floor/T = get_turf(M)
+	var/turf/simulated/floor/T = get_turf(M)
 	if(istype(T))
 		if(prob(80))
 			T.break_tile_to_plating()
@@ -1057,7 +1088,7 @@
 
 		for (var/page = 1, page <= B.pages.len, page++)
 			var/obj/pageobj = B.pages[page]
-			data += "<a href='byond://?src=\ref[source];AdminFaxViewPage=[page];paper_bundle=\ref[B]'>Page [page] - [pageobj.name]</A><BR>"
+			data += "<A href='?src=\ref[source];AdminFaxViewPage=[page];paper_bundle=\ref[B]'>Page [page] - [pageobj.name]</A><BR>"
 
 		usr << browse(data, "window=[B.name]")
 	else
@@ -1079,6 +1110,46 @@
 	else if (istype(bundle.pages[page], /obj/item/photo))
 		var/obj/item/photo/H = bundle.pages[page]
 		H.show(source.owner)
+
+
+/datum/admin_topic/centcomfaxreply
+	keyword = "CentcomFaxReply"
+
+/datum/admin_topic/centcomfaxreply/Run(list/input)
+	var/mob/sender = locate(input["CentcomFaxReply"])
+	var/obj/machinery/photocopier/faxmachine/fax = locate(input["originfax"])
+
+	//todo: sanitize
+	var/msg = input(source.owner, "Please enter a message to reply to [key_name(sender)] via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Centcom", "") as message|null
+	if(!msg)
+		return
+
+	var/customname = input(source.owner, "Pick a title for the report", "Title") as text|null
+
+	// Create the reply message
+	var/obj/item/paper/P = new /obj/item/paper( null ) //hopefully the null loc won't cause trouble for us
+	P.name = "[command_name()]- [customname]"
+	P.info = msg
+	P.update_icon()
+
+	// Stamps
+	var/image/stampoverlay = image('icons/obj/bureaucracy.dmi')
+	stampoverlay.icon_state = "paper_stamp-cent"
+	if(!P.stamped)
+		P.stamped = new
+	P.stamped += /obj/item/stamp
+	P.overlays += stampoverlay
+	P.stamps += "<HR><i>This paper has been stamped by the [boss_name] Quantum Relay.</i>"
+
+	if(fax.recievefax(P))
+		to_chat(source.owner, "\blue Message reply to transmitted successfully.")
+		log_admin("[key_name(source.owner)] replied to a fax message from [key_name(sender)]: [msg]")
+		message_admins("[key_name_admin(source.owner)] replied to a fax message from [key_name_admin(sender)]", 1)
+	else
+		to_chat(source.owner, "\red Message reply failed.")
+
+	QDEL_IN(P, 100)
+
 
 /datum/admin_topic/jumpto
 	keyword = "jumpto"
@@ -1305,6 +1376,15 @@
 	var/datum/admin_secret_item/item = locate(input["admin_secrets"]) in admin_secrets.items
 	item.execute(usr)
 
+
+/datum/admin_topic/populate_inactive_customitems
+	keyword = "populate_inactive_customitems"
+	require_perms = list(R_ADMIN|R_SERVER)
+
+/datum/admin_topic/populate_inactive_customitems/Run(list/input)
+	populate_inactive_customitems_list(source.owner)
+
+
 /datum/admin_topic/vsc
 	keyword = "vsc"
 	require_perms = list(R_ADMIN|R_SERVER)
@@ -1353,24 +1433,6 @@
 	else
 		error_viewer.showTo(usr, null, input["viewruntime_linear"])
 
-/datum/admin_topic/slowquery
-	keyword = "slowquery"
-	require_perms = list(R_ADMIN)
-
-/datum/admin_topic/viewruntime/Run(list/input)
-	if(!check_rights(R_ADMIN))
-		return
-
-	var/data = list("key" = usr.key)
-	var/answer = input["slowquery"]
-	if(answer == "yes")
-		if(alert(usr, "Did you just press any admin buttons?", "Query server hang report", list("Yes", "No")) == "Yes")
-			var/response = input(usr,"What were you just doing?","Query server hang report") as null|text
-			if(response)
-				data["response"] = response
-		log_misc("SQL: server hang - [json_encode(data)]")
-	else if(answer == "no")
-		log_misc("SQL: no server hang - [json_encode(data)]")
 
 /datum/admin_topic/admincaster
 	keyword = "admincaster"
@@ -1478,7 +1540,7 @@
 						WANTED.backup_author = source.admincaster_signature                  //Submitted by
 						WANTED.is_admin_message = 1
 						news_network.wanted_issue = WANTED
-						for(var/obj/machinery/newscaster/NEWSCASTER in GLOB.allCasters)
+						for(var/obj/machinery/newscaster/NEWSCASTER in allCasters)
 							NEWSCASTER.newsAlert()
 							NEWSCASTER.update_icon()
 						source.admincaster_screen = 15
@@ -1494,7 +1556,7 @@
 			var/choice = alert("Please confirm Wanted Issue removal","Network Security Handler","Confirm","Cancel")
 			if(choice=="Confirm")
 				news_network.wanted_issue = null
-				for(var/obj/machinery/newscaster/NEWSCASTER in GLOB.allCasters)
+				for(var/obj/machinery/newscaster/NEWSCASTER in allCasters)
 					NEWSCASTER.update_icon()
 				source.admincaster_screen=17
 			source.access_news_network()

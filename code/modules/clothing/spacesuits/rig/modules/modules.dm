@@ -51,7 +51,7 @@
 	var/suit_overlay_mob_only           // Set to 1 for overlay to only display on mob and not on icon
 
 	//Display fluff
-	var/interface_name = "Hardsuit upgrade"
+	var/interface_name = "hardsuit upgrade"
 	var/interface_desc = "A generic hardsuit upgrade."
 	var/engage_string = "Engage"
 	var/activate_string = "Activate"
@@ -73,15 +73,15 @@
 
 
 
-/obj/item/rig_module/examine(mob/user, extra_description = "")
+/obj/item/rig_module/examine()
+	..()
 	switch(damage)
 		if(0)
-			extra_description += "It is undamaged."
+			to_chat(usr, "It is undamaged.")
 		if(1)
-			extra_description += "It is badly damaged."
+			to_chat(usr, "It is badly damaged.")
 		if(2)
-			extra_description += "It is almost completely destroyed."
-	..(user, extra_description)
+			to_chat(usr, "It is almost completely destroyed.")
 
 /obj/item/rig_module/attackby(obj/item/W, mob/user)
 
@@ -256,8 +256,26 @@
 
 // Called by holder rigsuit attackby()
 // Checks if an item is usable with this module and handles it if it is
-/obj/item/rig_module/proc/accepts_item(obj/item/input_device)
-	return FALSE
+/obj/item/rig_module/proc/accepts_item(var/obj/item/input_device)
+	return 0
+
+/mob/living/carbon/human/Stat()
+	. = ..()
+
+	if(. && istype(back,/obj/item/rig))
+		var/obj/item/rig/R = back
+		SetupStat(R)
+
+/mob/proc/SetupStat(var/obj/item/rig/R)
+	if(R && !R.canremove && R.installed_modules.len && statpanel("Hardsuit Modules"))
+		var/cell_status = R.cell ? "[R.cell.charge]/[R.cell.maxcharge]" : "ERROR"
+		stat("Suit charge", cell_status)
+		for(var/obj/item/rig_module/module in R.installed_modules)
+		{
+			for(var/stat_rig_module/SRM in module.stat_modules)
+				if(SRM.CanUse())
+					stat(SRM.module.interface_name,SRM)
+		}
 
 /stat_rig_module
 	parent_type = /atom/movable

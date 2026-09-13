@@ -148,7 +148,7 @@ var/bomb_set
 		if (panel_open)
 			wires.Interact(user)
 		else
-			nano_ui_interact(user)
+			ui_interact(user)
 	else if (deployable)
 		if(removal_stage < 5)
 			src.anchored = TRUE
@@ -161,7 +161,7 @@ var/bomb_set
 			update_icon()
 	return
 
-/obj/machinery/nuclearbomb/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/nuclearbomb/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data[0]
 	data["hacking"] = 0
 	data["auth"] = is_auth(user)
@@ -251,7 +251,7 @@ var/bomb_set
 					lastentered = text("[]", href_list["type"])
 					if (text2num(lastentered) == null)
 						var/turf/LOC = get_turf(usr)
-						message_admins("[key_name_admin(usr)] tried to exploit a nuclear bomb by entering non-numerical codes: <a href='byond://?_src_=vars;Vars=\ref[src]'>[lastentered]</a>! ([LOC ? "<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[LOC.x];Y=[LOC.y];Z=[LOC.z]'>JMP</a>" : "null"])", 0)
+						message_admins("[key_name_admin(usr)] tried to exploit a nuclear bomb by entering non-numerical codes: <a href='?_src_=vars;Vars=\ref[src]'>[lastentered]</a>! ([LOC ? "<a href='?_src_=holder;adminplayerobservecoodjump=1;X=[LOC.x];Y=[LOC.y];Z=[LOC.z]'>JMP</a>" : "null"])", 0)
 						log_admin("EXPLOIT: [key_name(usr)] tried to exploit a nuclear bomb by entering non-numerical codes: [lastentered]!")
 					else
 						code += lastentered
@@ -284,7 +284,7 @@ var/bomb_set
 					log_and_message_admins("engaged a nuclear bomb")
 					bomb_set++ //There can still be issues with this resetting when there are multiple bombs. Not a big deal though for Nuke/N
 					if(eris_ship_bomb)
-						var/decl/security_state/security_state = decls_repository.get_decl(SSmapping.security_state)
+						var/decl/security_state/security_state = decls_repository.get_decl(GLOB.maps_data.security_state)
 						previous_level = security_state.current_security_level
 						security_state.set_security_level(security_state.severe_security_level)
 					update_icon()
@@ -324,12 +324,12 @@ var/bomb_set
 	bomb_set--
 	timing = 0
 	timeleft = CLAMP(timeleft, 120, 600)
-	var/decl/security_state/security_state = decls_repository.get_decl(SSmapping.security_state)
+	var/decl/security_state/security_state = decls_repository.get_decl(GLOB.maps_data.security_state)
 	security_state.set_security_level(previous_level)
 	update_icon()
 
-/obj/machinery/nuclearbomb/explosion_act(target_power, explosion_handler/handler)
-	return 0
+/obj/machinery/nuclearbomb/ex_act(severity)
+	return
 
 #define NUKERANGE 80
 /obj/machinery/nuclearbomb/proc/explode()
@@ -346,7 +346,7 @@ var/bomb_set
 
 	var/off_station = 0
 	var/turf/bomb_location = get_turf(src)
-	if(bomb_location && IS_SHIP_LEVEL(bomb_location.z))
+	if(bomb_location && isStationLevel(bomb_location.z))
 		if( (bomb_location.x < (128-NUKERANGE)) || (bomb_location.x > (128+NUKERANGE)) || (bomb_location.y < (128-NUKERANGE)) || (bomb_location.y > (128+NUKERANGE)) )
 			off_station = 1
 	else

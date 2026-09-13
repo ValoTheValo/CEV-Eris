@@ -65,7 +65,7 @@
 
 	//pref.skills_allocated = pref.sanitize_skills(pref.skills_allocated)		//this proc also automatically computes and updates points_by_job
 
-	var/jobs_by_type = decls_repository.get_decls(allowed_jobs)
+	var/jobs_by_type = decls_repository.get_decls(GLOB.maps_data.allowed_jobs)
 	for(var/job_type in jobs_by_type)
 		var/datum/job/job = jobs_by_type[job_type]
 		var/alt_title = pref.player_alt_titles[job.title]
@@ -121,16 +121,12 @@
 		. += "<tr bgcolor='[job.selection_color]'><td width='40%' align='right'>"
 		var/rank = job.title
 		lastJob = job
-		. += "<a href='byond://?src=\ref[src];job_info=[rank]'>\[?\]</a>"
+		. += "<a href='?src=\ref[src];job_info=[rank]'>\[?\]</a>"
 		var/bad_message = ""
-		if(job.total_positions == 0)
+		if(job.total_positions == 0 && job.spawn_positions == 0)
 			bad_message = "<b> \[UNAVAILABLE]</b>"
 		else if(jobban_isbanned(user, rank))
 			bad_message = "<b> \[BANNED]</b>"
-		else if(IsGuestKey(user.key) && SSjob.job_to_playtime_requirement[job.title])
-			bad_message = "<b> \[ACCOUNT REQUIRED] </b>"
-		else if(SSjob.ckey_to_job_to_can_play[user.client.ckey] && !SSjob.ckey_to_job_to_can_play[user.client.ckey][job.title])
-			bad_message = "\[PLAYTIME REQUIRED : [SSjob.job_to_playtime_requirement[job.title]] Minutes as [job.department]]"
 		/*else if(!job.player_old_enough(user.client))
 			var/available_in_days = job.available_in_days(user.client)
 			bad_message = "\[IN [(available_in_days)] DAYS]"*/
@@ -140,14 +136,14 @@
 			bad_message = "\[SETUP RESTRICTED]"
 
 		if((ASSISTANT_TITLE in pref.job_low) && (rank != ASSISTANT_TITLE))
-			. += "<a href='byond://?src=\ref[src];set_skills=[rank]'><font color=grey>[rank]</font></a></td><td></td></tr>"
+			. += "<a href='?src=\ref[src];set_skills=[rank]'><font color=grey>[rank]</font></a></td><td></td></tr>"
 			continue
 		if(bad_message)
-			. += "<a href='byond://?src=\ref[src];set_skills=[rank]'><del>[rank]</del></a></td><td><font color=black>[bad_message]</font></td></tr>"
+			. += "<a href='?src=\ref[src];set_skills=[rank]'><del>[rank]</del></a></td><td><font color=black>[bad_message]</font></td></tr>"
 			continue
 
-		//. += (unspent && (current_level != JOB_LEVEL_NEVER) ? "<a class='Points' href='?src=\ref[src];set_skills=[rank]'>" : "<a href='byond://?src=\ref[src];set_skills=[rank]'>")
-		. += (current_level != JOB_LEVEL_NEVER ? "<a class='Points' href='?src=\ref[src];set_skills=[rank]'>" : "<a href='byond://?src=\ref[src];set_skills=[rank]'>")
+		//. += (unspent && (current_level != JOB_LEVEL_NEVER) ? "<a class='Points' href='?src=\ref[src];set_skills=[rank]'>" : "<a href='?src=\ref[src];set_skills=[rank]'>")
+		. += (current_level != JOB_LEVEL_NEVER ? "<a class='Points' href='?src=\ref[src];set_skills=[rank]'>" : "<a href='?src=\ref[src];set_skills=[rank]'>")
 		if((rank in command_positions) || (rank == "AI"))//Bold head jobs
 			. += "<b>[rank]</b>"
 		else
@@ -156,34 +152,34 @@
 		. += "</a></td><td width='40%'>"
 
 		if(rank == ASSISTANT_TITLE)//Assistant is special
-			. += "<a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_LOW]'>"
+			. += "<a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_LOW]'>"
 			. += "[(rank in pref.job_low) ? "<font color=#55cc55>" : ""]\[Yes\][(rank in pref.job_low) ? "</font>" : ""]"
 			//. += "\[Yes\]"
 			. += "</a>"
-			. += "<a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_NEVER]'>"
+			. += "<a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_NEVER]'>"
 			. += "[!(rank in pref.job_low) ? "<font color=black>" : ""]\[No\][!(rank in pref.job_low) ? "</font>" : ""]"
 			. += "</a>"
 		else
-			. += " <a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_HIGH]'>[current_level == JOB_LEVEL_HIGH ? "<font color=55cc55>" : ""]\[High][current_level == JOB_LEVEL_HIGH ? "</font>" : ""]</a>"
-			. += " <a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_MEDIUM]'>[current_level == JOB_LEVEL_MEDIUM ? "<font color=eecc22>" : ""]\[Medium][current_level == JOB_LEVEL_MEDIUM ? "</font>" : ""]</a>"
-			. += " <a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_LOW]'>[current_level == JOB_LEVEL_LOW ? "<font color=cc5555>" : ""]\[Low][current_level == JOB_LEVEL_LOW ? "</font>" : ""]</a>"
-			. += " <a href='byond://?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_NEVER]'>[current_level == JOB_LEVEL_NEVER ? "<font color=black>" : ""]\[NEVER][current_level == JOB_LEVEL_NEVER ? "</font>" : ""]</a>"
+			. += " <a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_HIGH]'>[current_level == JOB_LEVEL_HIGH ? "<font color=55cc55>" : ""]\[High][current_level == JOB_LEVEL_HIGH ? "</font>" : ""]</a>"
+			. += " <a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_MEDIUM]'>[current_level == JOB_LEVEL_MEDIUM ? "<font color=eecc22>" : ""]\[Medium][current_level == JOB_LEVEL_MEDIUM ? "</font>" : ""]</a>"
+			. += " <a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_LOW]'>[current_level == JOB_LEVEL_LOW ? "<font color=cc5555>" : ""]\[Low][current_level == JOB_LEVEL_LOW ? "</font>" : ""]</a>"
+			. += " <a href='?src=\ref[src];set_job=[rank];set_level=[JOB_LEVEL_NEVER]'>[current_level == JOB_LEVEL_NEVER ? "<font color=black>" : ""]\[NEVER][current_level == JOB_LEVEL_NEVER ? "</font>" : ""]</a>"
 
 		if(job.alt_titles)
-			. += "</td></tr><tr bgcolor='[lastJob.selection_color]'><td width='40%' align='center'>&nbsp</td><td><a href='byond://?src=\ref[src];select_alt_title=\ref[job]'>\[[pref.GetPlayerAltTitle(job)]\]</a></td></tr>"
+			. += "</td></tr><tr bgcolor='[lastJob.selection_color]'><td width='40%' align='center'>&nbsp</td><td><a href='?src=\ref[src];select_alt_title=\ref[job]'>\[[pref.GetPlayerAltTitle(job)]\]</a></td></tr>"
 		. += "</td></tr>"
 	. += "</td'></tr></table>"
 	. += "</center></table><center>"
 
 	switch(pref.alternate_option)
 		if(GET_RANDOM_JOB)
-			. += "<u><a href='byond://?src=\ref[src];job_alternative=1'>Get random job if preferences unavailable</a></u>"
+			. += "<u><a href='?src=\ref[src];job_alternative=1'>Get random job if preferences unavailable</a></u>"
 		if(BE_ASSISTANT)
-			. += "<u><a href='byond://?src=\ref[src];job_alternative=1'>Be assistant if preference unavailable</a></u>"
+			. += "<u><a href='?src=\ref[src];job_alternative=1'>Be assistant if preference unavailable</a></u>"
 		if(RETURN_TO_LOBBY)
-			. += "<u><a href='byond://?src=\ref[src];job_alternative=1'>Return to lobby if preference unavailable</a></u>"
+			. += "<u><a href='?src=\ref[src];job_alternative=1'>Return to lobby if preference unavailable</a></u>"
 
-	. += "<a href='byond://?src=\ref[src];reset_jobs=1'>\[Reset\]</a></center>"
+	. += "<a href='?src=\ref[src];reset_jobs=1'>\[Reset\]</a></center>"
 	. += "</tt><br>"
 	//. += "Jobs that <span class='Points'>look like this</span> have unspent skill points remaining."
 	. = jointext(.,null)
@@ -305,7 +301,7 @@
 	job_icon.Scale(job_icon.Width() * 2.5, job_icon.Height() * 2.5)
 	send_rsc(user, job_icon, "job_icon_[job_icon_dir].png")
 	job_desc += "<table style='float:left; height = 270px; table-layout: fixed; vertical-align:top' cellpadding='0' cellspacing='0'><tr><td><img src=job_icon_[job_icon_dir].png width=220 height=220 style='float:left;'></td></tr>"
-	job_desc += "<tr><td><center><a href='byond://?src=\ref[src];rotate=right'>&lt;&lt;</a> <a href='byond://?src=\ref[src];rotate=left'>&gt;&gt;</a></center></td></tr></table>"
+	job_desc += "<tr><td><center><a href='?src=\ref[src];rotate=right'>&lt;&lt;</a> <a href='?src=\ref[src];rotate=left'>&gt;&gt;</a></center></td></tr></table>"
 
 	job_desc += "</td>"
 
@@ -362,7 +358,7 @@
 
 
 	if(config.wikiurl)
-		job_desc += "<a href='byond://?src=\ref[src];job_info_selected_rank_wiki=[job_info_selected_rank]'>Open wiki page in browser</a>"
+		job_desc += "<a href='?src=\ref[src];job_info_selected_rank_wiki=[job_info_selected_rank]'>Open wiki page in browser</a>"
 	var/description = job.get_description_blurb()
 	/*if(job.required_education)
 	description = "[description ? "[description]\n\n" : ""]"*/
@@ -445,7 +441,7 @@
  */
 /datum/category_item/player_setup_item/proc/prune_job_prefs()
 	var/allowed_titles = list()
-	var/jobs_by_type = decls_repository.get_decls(allowed_jobs)
+	var/jobs_by_type = decls_repository.get_decls(GLOB.maps_data.allowed_jobs)
 	for(var/job_type in jobs_by_type)
 		var/datum/job/job = jobs_by_type[job_type]
 		allowed_titles += job.title

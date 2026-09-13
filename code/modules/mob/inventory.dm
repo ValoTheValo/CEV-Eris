@@ -25,15 +25,15 @@
 
 //Declarations. Overrided in human/robots subtypes
 //Puts the Item into your l_hand/r_hand if possible and calls all necessary triggers/updates. returns TRUE on success.
-/mob/proc/put_in_l_hand(obj/item/Item)
-/mob/proc/put_in_r_hand(obj/item/Item)
+/mob/proc/put_in_l_hand(var/obj/item/Item)
+/mob/proc/put_in_r_hand(var/obj/item/Item)
 
 //Puts the item into our active hand if possible. returns 1 on success.
-/mob/proc/put_in_active_hand(obj/item/W)
+/mob/proc/put_in_active_hand(var/obj/item/W)
 	return FALSE // Moved to human procs because only they need to use hands.
 
 //Puts the item into our inactive hand if possible. returns 1 on success.
-/mob/proc/put_in_inactive_hand(obj/item/W)
+/mob/proc/put_in_inactive_hand(var/obj/item/W)
 	return FALSE // As above.
 
 //Puts the item our active hand if possible. Failing that it tries our inactive hand. Returns 1 on success.
@@ -44,11 +44,11 @@
 		W.forceMove(get_turf(src))
 		W.layer = initial(W.layer)
 		W.set_plane(initial(W.plane))
-		W.dropped(src)
+		W.dropped(usr)
 
 // Removes an item from inventory and places it in the target atom.
 // If canremove or other conditions need to be checked then use unEquip instead.
-/mob/proc/drop_from_inventory(obj/item/W, atom/Target, drop_flag)
+/mob/proc/drop_from_inventory(var/obj/item/W, var/atom/Target = null, drop_flag = null)
 	if(W)
 		if(W.wielded)
 			W.unwield(src)
@@ -67,21 +67,17 @@
 	return FALSE
 
 //Drops the item in our left hand
-/mob/proc/drop_l_hand(atom/Target)
+/mob/proc/drop_l_hand(var/atom/Target)
 	return unEquip(l_hand, Target)
 
 //Drops the item in our right hand
-/mob/proc/drop_r_hand(atom/Target)
+/mob/proc/drop_r_hand(var/atom/Target)
 	return unEquip(r_hand, Target)
 
 //Drops the item in our active hand. TODO: rename this to drop_active_hand or something
-/mob/proc/drop_item(atom/Target)
+/mob/proc/drop_item(var/atom/Target)
 	var/obj/item/I = get_active_hand()
-	unEquip(I = I, Target = Target, force = TRUE)
-
-/mob/proc/drop_offhand(atom/Target)
-	var/obj/item/I = get_inactive_hand()
-	unEquip(I = I, Target = Target, force = TRUE)
+	unEquip(I, Target, MOVED_DROP)
 
 /*
 	Removes the object from any slots the mob might have, calling the appropriate icon update proc.
@@ -130,13 +126,13 @@
 /mob/proc/unEquip(obj/item/I, var/atom/Target = null, force = 0) //Force overrides NODROP for things like wizarditis and admin undress.
 	if(!canUnEquip(I))
 		return
-	SEND_SIGNAL_OLD(src, COMSIG_CLOTH_DROPPED, I)
+	SEND_SIGNAL(src, COMSIG_CLOTH_DROPPED, I)
 	if(I)
-		SEND_SIGNAL_OLD(I, COMSIG_CLOTH_DROPPED, src)
+		SEND_SIGNAL(I, COMSIG_CLOTH_DROPPED, src)
 	return drop_from_inventory(I,Target)
 
 //Attemps to remove an object on a mob.
-/mob/proc/remove_from_mob(obj/O, drop = TRUE)
+/mob/proc/remove_from_mob(var/obj/O)
 	u_equip(O)
 	if (client)
 		client.screen -= O
@@ -145,11 +141,9 @@
 	O.screen_loc = null
 	if(istype(O, /obj/item))
 		var/obj/item/I = O
-		if(drop && !QDELING(O))
-			I.forceMove(destination = get_turf(src), special_event = TRUE)
+		I.forceMove(get_turf(src), MOVED_DROP)
 		I.dropped(src)
 	return TRUE
-
 
 //This function is an unsafe proc used to prepare an item for being moved to a slot, or from a mob to a container
 //It should be equipped to a new slot or forcemoved somewhere immediately after this is called
@@ -165,7 +159,7 @@
 
 
 //Returns the item equipped to the specified slot, if any.
-/mob/proc/get_equipped_item(slot)
+/mob/proc/get_equipped_item(var/slot)
 	switch(slot)
 		if(slot_l_hand) return l_hand
 		if(slot_r_hand) return r_hand
@@ -189,7 +183,7 @@
 		return slot_l_hand
 	return slot_r_hand
 
-/mob/proc/delete_inventory(include_carried = FALSE)
+/mob/proc/delete_inventory(var/include_carried = FALSE)
 	for(var/entry in get_equipped_items(include_carried))
 		drop_from_inventory(entry)
 		qdel(entry)
@@ -207,7 +201,7 @@
 	return stored
 
 // Returns all items which covers any given body part
-/mob/proc/get_covering_equipped_items(body_parts)
+/mob/proc/get_covering_equipped_items(var/body_parts)
 	. = list()
 	for(var/entry in get_equipped_items())
 		var/obj/item/I = entry

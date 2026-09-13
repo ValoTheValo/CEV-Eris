@@ -2,16 +2,15 @@
 
 //Jobs depatment lists for use in constant expressions
 #define JOBS_SECURITY "Ironhammer Commander","Ironhammer Gunnery Sergeant","Ironhammer Inspector","Ironhammer Medical Specialist","Ironhammer Operative"
-#define JOBS_ARMORY "Captain","First Officer","Ironhammer Commander","Ironhammer Gunnery Sergeant"
 #define JOBS_COMMAND "Captain","First Officer","Ironhammer Commander","Guild Merchant","Technomancer Exultant","Moebius Biolab Officer","Moebius Expedition Overseer","NeoTheology Preacher"
 #define JOBS_ENGINEERING "Technomancer Exultant","Technomancer"
-#define JOBS_MEDICAL "Moebius Biolab Officer","Moebius Doctor","Moebius Psychiatrist","Moebius Chemist","Moebius Paramedic","Moebius Bio-Engineer"
+#define JOBS_MEDICAL "Moebius Biolab Officer","Moebius Doctor","Moebius Psychiatrist","Moebius Chemist","Moebius Paramedic"
 #define JOBS_SCIENCE "Moebius Expedition Overseer","Moebius Scientist","Moebius Roboticist"
-#define JOBS_MOEBIUS "Moebius Biolab Officer","Moebius Doctor","Moebius Psychiatrist","Moebius Chemist","Moebius Paramedic","Moebius Bio-Engineer","Moebius Expedition Overseer","Moebius Scientist","Moebius Roboticist"
-#define JOBS_GUILD "Guild Merchant","Guild Technician","Guild Miner",
-#define JOBS_CIVILIAN "Club Manager","Club Worker","Club Artist",ASSISTANT_TITLE
+#define JOBS_MOEBIUS "Moebius Biolab Officer","Moebius Doctor","Moebius Psychiatrist","Moebius Chemist","Moebius Paramedic","Moebius Expedition Overseer","Moebius Scientist","Moebius Roboticist"
+#define JOBS_CARGO "Guild Merchant","Guild Technician","Guild Miner","Guild Artist"
+#define JOBS_CIVILIAN "Club Manager","Club Worker",ASSISTANT_TITLE
 #define JOBS_CHURCH	"NeoTheology Preacher","NeoTheology Acolyte","NeoTheology Agrolyte","NeoTheology Custodian"
-#define JOBS_SILICON "AI","Robot","pAI"
+#define JOBS_NONHUMAN "AI","Robot","pAI"
 #define CREDITS "&cent;"
 #define CREDS "&cent;"
 
@@ -25,7 +24,6 @@
 #define DEPARTMENT_CIVILIAN	"Civilian"
 #define DEPARTMENT_CHURCH	"Church"
 #define DEPARTMENT_OFFSHIP "Offship"
-#define DEPARTMENT_SILICON "Silicon"
 
 #define ALL_DEPARTMENTS list(DEPARTMENT_COMMAND, DEPARTMENT_MEDICAL, DEPARTMENT_ENGINEERING, DEPARTMENT_SCIENCE, DEPARTMENT_SECURITY, DEPARTMENT_GUILD, DEPARTMENT_CIVILIAN, DEPARTMENT_CHURCH)
 #define ASTER_DEPARTMENTS list(DEPARTMENT_COMMAND, DEPARTMENT_GUILD)

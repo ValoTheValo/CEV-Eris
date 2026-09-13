@@ -13,9 +13,9 @@
 		)
 	permeability_coefficient = 0.01
 	armor = list(
-		melee = 2,
-		bullet = 2,
-		energy = 2,
+		melee = 10,
+		bullet = 10,
+		energy = 10,
 		bomb = 0,
 		bio = 100,
 		rad = 50
@@ -67,10 +67,9 @@
 		else
 			to_chat(usr, SPAN_NOTICE("Camera deactivated."))
 
-/obj/item/clothing/head/space/examine(mob/user, extra_description = "")
-	if((get_dist(user, src) < 2) && camera_networks && LAZYLEN(camera_networks))
-		extra_description += "This helmet has a built-in camera. It's [camera && camera.status ? "" : "in"]active."
-	..(user, extra_description)
+/obj/item/clothing/head/space/examine(var/mob/user)
+	if(..(user, 1) && camera_networks && camera_networks.len)
+		to_chat(user, "This helmet has a built-in camera. It's [camera && camera.status ? "" : "in"]active.")
 
 /obj/item/clothing/suit/space
 	name = "space suit"
@@ -80,13 +79,13 @@
 	w_class = ITEM_SIZE_BULKY
 	gas_transfer_coefficient = 0.01
 	permeability_coefficient = 0.02
-	item_flags = STOPPRESSUREDAMAGE|THICKMATERIAL|COVER_PREVENT_MANIPULATION|DRAG_AND_DROP_UNEQUIP
+	item_flags = STOPPRESSUREDAMAGE|THICKMATERIAL|COVER_PREVENT_MANIPULATION
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|LEGS|ARMS
 	matter = list(MATERIAL_PLASTIC = 30, MATERIAL_STEEL = 10)
 	armor = list(
-		melee = 2,
-		bullet = 2,
-		energy = 2,
+		melee = 10,
+		bullet = 10,
+		energy = 10,
 		bomb = 0,
 		bio = 100,
 		rad = 50
@@ -100,8 +99,9 @@
 	bad_type = /obj/item/clothing/suit/space
 	style = STYLE_NEG_HIGH
 	style_coverage = COVERS_WHOLE_TORSO_AND_LIMBS
-	var/list/supporting_limbs //If not-null, automatically splints breaks. Checked when removing the suit
+	var/list/supporting_limbs //If not-null, automatically splints breaks. Checked when removing the suit.
 	slowdown = HEAVY_SLOWDOWN * 0.5
+	stiffness = HEAVY_STIFFNESS
 
 /obj/item/clothing/suit/space/equipped(mob/M)
 	check_limb_support()

@@ -168,6 +168,7 @@
 	hard_drive.store_file(new/datum/computer_file/program/nttransfer())
 	hard_drive.store_file(new/datum/computer_file/program/crew_manifest())
 	hard_drive.store_file(new/datum/computer_file/program/camera_monitor())
+	//hard_drive.store_file(new/datum/computer_file/program/supply())
 
 
 // Civilian Offices
@@ -190,18 +191,17 @@
 /obj/item/modular_computer/console/preset/trade/install_default_hardware()
 	..()
 	card_slot = new/obj/item/computer_hardware/card_slot(src)
-	printer = new/obj/item/computer_hardware/printer(src)
 
 /obj/item/modular_computer/console/preset/trade/install_default_programs()
 	..()
 	hard_drive.store_file(new /datum/computer_file/program/trade())
 	set_autorun("trade")
 
-// Trade Ordering Console
-/obj/item/modular_computer/console/preset/trade_orders/install_default_programs()
+// Trade Catalog Console
+/obj/item/modular_computer/console/preset/trade_catalog/install_default_programs()
 	..()
-	hard_drive.store_file(new /datum/computer_file/program/trade/order())
-	set_autorun("trade_orders")
+	hard_drive.store_file(new /datum/computer_file/program/trade_catalog())
+	set_autorun("trade_catalog")
 
 //Dock control
 /*

@@ -23,4 +23,5 @@
 	hard_drive.store_file(new/datum/computer_file/program/alarm_monitor())
 	hard_drive.store_file(new/datum/computer_file/program/camera_monitor())
 	hard_drive.store_file(new/datum/computer_file/program/shield_control())
+	hard_drive.store_file(new/datum/computer_file/program/supermatter_monitor())
 	set_autorun("alarmmonitor")

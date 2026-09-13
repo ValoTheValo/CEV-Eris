@@ -28,18 +28,19 @@
 // Claim machine ID
 /obj/machinery/cash_register/New()
 	. = ..()
-	machine_id = "[station_name] RETAIL #[num_financial_terminals++]"
+	machine_id = "[station_name()] RETAIL #[num_financial_terminals++]"
 	cash_stored = rand(10, 70)*10
 	transaction_devices += src // Global reference list to be properly set up by /proc/setup_economy()
 
 
-/obj/machinery/cash_register/examine(mob/user, extra_description = "")
+/obj/machinery/cash_register/examine(mob/user)
+	..(user)
 	if(cash_open)
 		if(cash_stored)
-			extra_description += "It holds [cash_stored] Credit\s of money."
+			to_chat(user, "It holds [cash_stored] Credit\s of money.")
 		else
-			extra_description += "It's completely empty."
-	..(user, extra_description)
+			to_chat(user, "It's completely empty.")
+
 
 /obj/machinery/cash_register/attack_hand(mob/user as mob)
 	// Don't be accessible from the wrong side of the machine
@@ -64,14 +65,14 @@
 /obj/machinery/cash_register/interact(mob/user as mob)
 	var/dat = "<h2>Cash Register<hr></h2>"
 	if (locked)
-		dat += "<a href='byond://?src=\ref[src];choice=toggle_lock'>Unlock</a><br>"
+		dat += "<a href='?src=\ref[src];choice=toggle_lock'>Unlock</a><br>"
 		dat += "Linked account: <b>[linked_account ? linked_account.owner_name : "None"]</b><br>"
 		dat += "<b>[cash_locked? "Unlock" : "Lock"] Cash Box</b> | "
 	else
-		dat += "<a href='byond://?src=\ref[src];choice=toggle_lock'>Lock</a><br>"
-		dat += "Linked account: <a href='byond://?src=\ref[src];choice=link_account'>[linked_account ? linked_account.owner_name : "None"]</a><br>"
-		dat += "<a href='byond://?src=\ref[src];choice=toggle_cash_lock'>[cash_locked? "Unlock" : "Lock"] Cash Box</a> | "
-	dat += "<a href='byond://?src=\ref[src];choice=custom_order'>Custom Order</a><hr>"
+		dat += "<a href='?src=\ref[src];choice=toggle_lock'>Lock</a><br>"
+		dat += "Linked account: <a href='?src=\ref[src];choice=link_account'>[linked_account ? linked_account.owner_name : "None"]</a><br>"
+		dat += "<a href='?src=\ref[src];choice=toggle_cash_lock'>[cash_locked? "Unlock" : "Lock"] Cash Box</a> | "
+	dat += "<a href='?src=\ref[src];choice=custom_order'>Custom Order</a><hr>"
 
 	if(item_list.len)
 		dat += get_current_transaction()
@@ -81,7 +82,7 @@
 		dat += "[transaction_logs[i]]<br>"
 
 	if(transaction_logs.len)
-		dat += locked ? "<br>" : "<a href='byond://?src=\ref[src];choice=reset_log'>Reset Log</a><br>"
+		dat += locked ? "<br>" : "<a href='?src=\ref[src];choice=reset_log'>Reset Log</a><br>"
 		dat += "<br>"
 	dat += "<i>Device ID:</i> [machine_id]"
 	user << browse(dat, "window=cash_register;size=350x500")
@@ -257,7 +258,13 @@
 					linked_account.money += transaction_amount
 
 					// Create log entry in client's account
-					var/datum/transaction/T = new(transaction_amount, linked_account.owner_name, transaction_purpose, machine_id, current_date_string, stationtime2text())
+					var/datum/transaction/T = new()
+					T.target_name = "[linked_account.owner_name]"
+					T.purpose = transaction_purpose
+					T.amount = "([transaction_amount])"
+					T.source_terminal = machine_id
+					T.date = current_date_string
+					T.time = stationtime2text()
 					D.transaction_log.Add(T)
 
 					// Create log entry in owner's account
@@ -299,7 +306,13 @@
 			linked_account.money += transaction_amount
 
 			// Create log entry in owner's account
-			var/datum/transaction/T = new(transaction_amount, E.owner_name, transaction_purpose, machine_id, current_date_string, stationtime2text())
+			var/datum/transaction/T = new()
+			T.target_name = E.owner_name
+			T.purpose = transaction_purpose
+			T.amount = "[transaction_amount]"
+			T.source_terminal = machine_id
+			T.date = current_date_string
+			T.time = stationtime2text()
 			linked_account.transaction_log.Add(T)
 
 			// Save log
@@ -390,9 +403,9 @@
 	var/item_name
 	for(var/i=1, i<=item_list.len, i++)
 		item_name = item_list[i]
-		dat += "<tr><td class=\"tx-name-r\">[item_list[item_name] ? "<a href='byond://?src=\ref[src];choice=subtract;item=\ref[item_name]'>-</a> <a href='byond://?src=\ref[src];choice=set_amount;item=\ref[item_name]'>Set</a> <a href='byond://?src=\ref[src];choice=add;item=\ref[item_name]'>+</a> [item_list[item_name]] x " : ""][item_name] <a href='byond://?src=\ref[src];choice=clear;item=\ref[item_name]'>Remove</a></td><td class=\"tx-data-r\" width=50>[price_list[item_name] * item_list[item_name]] &thorn</td></tr>"
+		dat += "<tr><td class=\"tx-name-r\">[item_list[item_name] ? "<a href='?src=\ref[src];choice=subtract;item=\ref[item_name]'>-</a> <a href='?src=\ref[src];choice=set_amount;item=\ref[item_name]'>Set</a> <a href='?src=\ref[src];choice=add;item=\ref[item_name]'>+</a> [item_list[item_name]] x " : ""][item_name] <a href='?src=\ref[src];choice=clear;item=\ref[item_name]'>Remove</a></td><td class=\"tx-data-r\" width=50>[price_list[item_name] * item_list[item_name]] &thorn</td></tr>"
 	dat += "</table><table width=300>"
-	dat += "<tr><td class=\"tx-name-r\"><a href='byond://?src=\ref[src];choice=clear'>Clear Entry</a></td><td class=\"tx-name-r\" style='text-align: right'><b>Total Amount: [transaction_amount] &thorn</b></td></tr>"
+	dat += "<tr><td class=\"tx-name-r\"><a href='?src=\ref[src];choice=clear'>Clear Entry</a></td><td class=\"tx-name-r\" style='text-align: right'><b>Total Amount: [transaction_amount] &thorn</b></td></tr>"
 	dat += "</table></html>"
 	return dat
 
@@ -409,7 +422,7 @@
 	<tr></tr>
 	<tr><td class="tx-name">Customer</td><td class="tx-data">[c_name]</td></tr>
 	<tr><td class="tx-name">Pay Method</td><td class="tx-data">[p_method]</td></tr>
-	<tr><td class="tx-name">Ship Time</td><td class="tx-data">[stationtime2text()]</td></tr>
+	<tr><td class="tx-name">Station Time</td><td class="tx-data">[stationtime2text()]</td></tr>
 	</table>
 	<table width=300>
 	"}

@@ -42,7 +42,7 @@
 
 /obj/item/material/proc/update_force()
 	if(edge || sharp)
-		force = material.hardness
+		force = material.get_edge_damage()
 	else
 		force = material.get_blunt_damage()
 	force = min(25, round(force*force_divisor))

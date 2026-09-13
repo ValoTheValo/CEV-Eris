@@ -111,7 +111,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	src.set_dir(turn(src.dir, 90))
 	return 1
 
-/obj/structure/particle_accelerator/examine(mob/user, extra_description = "")
+/obj/structure/particle_accelerator/examine(mob/user)
 	switch(src.construction_state)
 		if(0)
 			src.desc = text("A [name]. It's not attached to the floor.")
@@ -123,7 +123,9 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			src.desc = text("The [name] is assembled.")
 			if(powered)
 				src.desc = src.desc_holder
-	..(user, extra_description)
+	..()
+	return
+
 
 /obj/structure/particle_accelerator/attackby(obj/item/I, mob/user)
 
@@ -204,6 +206,22 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 	if(master && master.active)
 		master.toggle_power()
 		investigate_log("was moved whilst active; it <font color='red'>powered down</font>.","singulo")
+
+/obj/structure/particle_accelerator/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+			return
+		if(2)
+			if (prob(50))
+				qdel(src)
+				return
+		if(3)
+			if (prob(25))
+				qdel(src)
+				return
+		else
+	return
 
 /obj/structure/particle_accelerator/update_icon()
 	switch(construction_state)
@@ -287,7 +305,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 /obj/machinery/particle_accelerator/update_icon()
 	return
 
-/obj/machinery/particle_accelerator/examine(mob/user, extra_description = "")
+/obj/machinery/particle_accelerator/examine(mob/user)
 	switch(src.construction_state)
 		if(0)
 			src.desc = text("A [name], looks like it's not attached to the flooring")
@@ -299,7 +317,9 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 			src.desc = text("The [name] is assembled")
 			if(powered)
 				src.desc = src.desc_holder
-	..(user, extra_description)
+	..()
+	return
+
 
 /obj/machinery/particle_accelerator/attackby(obj/item/I, mob/user)
 
@@ -349,7 +369,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 					user.visible_message("[user.name] closes the [src.name]'s access panel.", \
 						"You close the access panel.")
 					construction_state = 3
-					set_power_use(IDLE_POWER_USE)
+					use_power = IDLE_POWER_USE
 					update_icon()
 					return
 			if(construction_state == 3)
@@ -357,7 +377,7 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 					user.visible_message("[user.name] closes the [src.name]'s access panel.", \
 						"You close the access panel.")
 					construction_state = 2
-					set_power_use(NO_POWER_USE)
+					use_power = NO_POWER_USE
 					update_state()
 					update_icon()
 					return
@@ -375,6 +395,23 @@ So, hopefully this is helpful if any more icons are to be added/changed/wonderin
 
 	..()
 	return
+
+/obj/machinery/particle_accelerator/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+			return
+		if(2)
+			if (prob(50))
+				qdel(src)
+				return
+		if(3)
+			if (prob(25))
+				qdel(src)
+				return
+		else
+	return
+
 
 /obj/machinery/particle_accelerator/proc/update_state()
 	return 0

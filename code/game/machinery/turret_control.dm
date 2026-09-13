@@ -1,3 +1,11 @@
+////////////////////////
+//Turret Control Panel//
+////////////////////////
+
+/area
+	// Turrets use this list to see if individual power/lethal settings are allowed
+	var/list/turret_controls = list()
+
 /obj/machinery/turretid
 	name = "turret control panel"
 	desc = "Used to control a room's automated defenses."
@@ -41,7 +49,7 @@
 	if(!control_area)
 		control_area = get_area(src)
 	else if(istext(control_area))
-		for(var/area/A in SSmapping.all_areas)
+		for(var/area/A in GLOB.map_areas)
 			if(A.name && A.name==control_area)
 				control_area = A
 				break
@@ -100,15 +108,15 @@
 	if(isLocked(user))
 		return
 
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/turretid/attack_hand(mob/user as mob)
 	if(isLocked(user))
 		return
 
-	nano_ui_interact(user)
+	ui_interact(user)
 
-/obj/machinery/turretid/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/turretid/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data[0]
 	data["access"] = !isLocked(user)
 	data["locked"] = locked

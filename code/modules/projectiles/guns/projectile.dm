@@ -48,7 +48,6 @@
 /obj/item/gun/projectile/Destroy()
 	QDEL_NULL(chambered)
 	QDEL_NULL(ammo_magazine)
-	QDEL_LIST(loaded)
 	return ..()
 
 /obj/item/gun/projectile/proc/cock_gun(mob/user)
@@ -56,7 +55,6 @@
 	if(cocked_sound)
 		sleep(3)
 		if(user && loc) playsound(src.loc, cocked_sound, 75, 1)
-	set_item_state()
 
 /obj/item/gun/projectile/consume_next_projectile()
 	//get the next casing
@@ -105,7 +103,7 @@
 			for(var/obj/item/ammo_casing/temp_casing in chambered.loc)
 				if(temp_casing == chambered)
 					continue
-				if((temp_casing.type == chambered.type) && !temp_casing.BB)
+				if((temp_casing.desc == chambered.desc) && !temp_casing.BB)
 					var/temp_amount = temp_casing.amount + chambered.amount
 					if(temp_amount > chambered.maxamount)
 						temp_casing.amount -= (chambered.maxamount - chambered.amount)
@@ -132,7 +130,6 @@
 /obj/item/gun/projectile/proc/load_ammo(obj/item/A, mob/user)
 	if(istype(A, /obj/item/ammo_magazine))
 		var/obj/item/ammo_magazine/AM = A
-		update_wear_icon()
 		if(!(load_method & AM.mag_type) || caliber != AM.caliber)
 			to_chat(user, SPAN_WARNING("[AM] won't fit into the magwell. This mag and ammunition inside it is incompatible with [src]."))
 			return //incompatible
@@ -198,8 +195,6 @@
 					cock_gun(user)
 					. = 1
 				update_firemode()
-				update_icon()
-				set_item_state()
 		AM.update_icon()
 	else if(istype(A, /obj/item/ammo_casing))
 		var/obj/item/ammo_casing/C = A
@@ -217,9 +212,36 @@
 
 		if(C.amount > 1)
 			C.amount -= 1
-			var/obj/item/ammo_casing/inserted_casing = new C.type(C)	//Couldn't make it seperate, so it must be cloned
+			var/obj/item/ammo_casing/inserted_casing = new /obj/item/ammo_casing(src)	//Couldn't make it seperate, so it must be cloned
+			inserted_casing.name = C.name
+			inserted_casing.desc = C.desc
+			inserted_casing.caliber = C.caliber
+			inserted_casing.projectile_type = C.projectile_type
+			inserted_casing.icon_state = C.icon_state
+			inserted_casing.spent_icon = C.spent_icon
+			inserted_casing.maxamount = C.maxamount
+			if(ispath(inserted_casing.projectile_type) && C.BB)
+				inserted_casing.BB = new inserted_casing.projectile_type(inserted_casing)
+
+			inserted_casing.sprite_use_small = C.sprite_use_small
+			inserted_casing.sprite_max_rotate = C.sprite_max_rotate
+			inserted_casing.sprite_scale = C.sprite_scale
+			inserted_casing.sprite_update_spawn = C.sprite_update_spawn
+
+			if(inserted_casing.sprite_update_spawn)
+				var/matrix/rotation_matrix = matrix()
+				rotation_matrix.Turn(round(45 * rand(0, inserted_casing.sprite_max_rotate) / 2))
+				if(inserted_casing.sprite_use_small)
+					inserted_casing.transform = rotation_matrix * inserted_casing.sprite_scale
+				else
+					inserted_casing.transform = rotation_matrix
+
+			inserted_casing.is_caseless = C.is_caseless	//How did someone forget this before!?!?!?
+			inserted_casing.shell_color = C.shell_color
+
+			C.update_icon()
+			inserted_casing.update_icon()
 			loaded.Insert(1, inserted_casing)
-			inserted_casing.forceMove(src)
 		else
 			user.remove_from_mob(C)
 			C.forceMove(src)
@@ -230,7 +252,6 @@
 		if(bulletinsert_sound) playsound(src.loc, bulletinsert_sound, 75, 1)
 
 	update_icon()
-	update_held_icon()
 
 //attempts to unload src. If allow_dump is set to 0, the speedloader unloading method will be disabled
 /obj/item/gun/projectile/proc/unload_ammo(mob/user, var/allow_dump=1)
@@ -263,9 +284,7 @@
 	else
 		to_chat(user, SPAN_WARNING("[src] is empty."))
 	update_icon()
-	update_held_icon()
 
-// Modular guns overwrite this
 /obj/item/gun/projectile/attackby(var/obj/item/A as obj, mob/user as mob)
 	.=..()
 	if(QUALITY_SAWING in A.tool_qualities)
@@ -286,13 +305,11 @@
 			user.visible_message(SPAN_DANGER("The [src] goes off!"), SPAN_DANGER("The [src] goes off in your face!"))
 			return
 		if(saw_off && A.use_tool(user, src, WORKTIME_LONG, QUALITY_SAWING, FAILCHANCE_NORMAL, required_stat = STAT_MEC))
-			var/obj/item/gun/projectile/sawnoff = new sawn(usr.loc)
-			sawnoff.caliber = caliber
-			to_chat(user, SPAN_WARNING("You cut down the stock, barrel, and anything else nice from \the [src], ruining a perfectly good weapon."))
 			qdel(src)
+			new sawn(usr.loc)
+			to_chat(user, SPAN_WARNING("You cut down the stock, barrel, and anything else nice from \the [src], ruining a perfectly good weapon."))
 	if (!.) //Parent returns true if attackby is handled
 		load_ammo(A, user)
-		update_held_icon()
 
 /obj/item/gun/projectile/attack_self(mob/user as mob)
 	if(firemodes.len > 1)
@@ -324,13 +341,13 @@
 		ammo_magazine.update_icon()
 		ammo_magazine = null
 		update_icon() //make sure to do this after unsetting ammo_magazine
-		set_item_state()
 
-/obj/item/gun/projectile/examine(mob/user, extra_description = "")
+/obj/item/gun/projectile/examine(mob/user)
+	..(user)
 	if(ammo_magazine)
-		extra_description += "It has \a [ammo_magazine] loaded.\n"
-	extra_description += "Has [get_ammo()] round\s remaining."
-	..(user, extra_description)
+		to_chat(user, "It has \a [ammo_magazine] loaded.")
+	to_chat(user, "Has [get_ammo()] round\s remaining.")
+	return
 
 /obj/item/gun/projectile/proc/get_ammo()
 	var/bullets = 0
@@ -363,7 +380,7 @@
 	unload_ammo(usr)
 */
 
-/obj/item/gun/projectile/nano_ui_data(mob/user)
+/obj/item/gun/projectile/ui_data(mob/user)
 	var/list/data = ..()
 	data["caliber"] = caliber
 	data["current_ammo"] = get_ammo()

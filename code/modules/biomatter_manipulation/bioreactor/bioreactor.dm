@@ -5,7 +5,7 @@
 //There are six various machines where multistructure datum is just a holder, each part proccess almost independently
 
 #define CLEANING_TIME 2 SECONDS
-#define BIOREACTOR_DAMAGE_PER_TICK 20
+#define CLONE_DAMAGE_PER_TICK 5
 
 
 /datum/multistructure/bioreactor
@@ -105,10 +105,9 @@
 	chamber_closed = !chamber_closed
 
 
-/datum/multistructure/bioreactor/proc/pump_solution(forced)
-	if(!forced)
-		if(!chamber_closed || !is_operational())
-			return
+/datum/multistructure/bioreactor/proc/pump_solution()
+	if(!chamber_closed || !is_operational())
+		return
 	if(chamber_solution)
 		solution.icon_state = ""
 		flick("solution_pump_out", solution)
@@ -129,7 +128,6 @@
 	icon_state = "biomassconsole1"
 	anchored = TRUE
 	density = TRUE
-	panel_open = -1
 	MS_type = /datum/multistructure/bioreactor
 	var/datum/multistructure/bioreactor/MS_bioreactor
 
@@ -140,8 +138,6 @@
 /obj/structure/reagent_dispensers/biomatter
 	name = "medium biomatter canister"
 	desc = "A biomatter canister. It is used to store high amounts of biomatter."
-	description_info = "Can hold 400 units"
-	description_antag = "With a beaker, raw biomatter can be pulled out. When spilled on the floor, the puddles are highly lethal to anyone without protection. Killing them in several minutes if they do not receive treatment"
 	icon = 'icons/obj/bioreactor_misc.dmi'
 	icon_state = "biomatter_tank_medium"
 	amount_per_transfer_from_this = 50
@@ -152,8 +148,6 @@
 /obj/structure/reagent_dispensers/biomatter/large
 	name = "large biomatter canister"
 	icon_state = "biomatter_tank_large"
-	description_info = "Can hold 800 units"
-	description_antag = "With a beaker, raw biomatter can be pulled out. When spilled on the floor, the puddles are highly lethal to anyone without protection. Killing them in several minutes if they do not receive treatment"
 	volume = 800
 
 

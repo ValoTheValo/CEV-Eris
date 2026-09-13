@@ -105,7 +105,10 @@
 	required_technologies = list(/datum/technology/basic_bluespace)
 	cost = 800
 
-	unlocks_designs = list(/datum/design/research/item/gps)
+	unlocks_designs = list(	/datum/design/research/item/ano_scanner,
+							/datum/design/research/item/beacon_locator,
+							/datum/design/research/item/gps
+							)
 
 /datum/technology/bluespace_shield
 	name = "Bluespace Shields"
@@ -120,8 +123,7 @@
 	required_tech_levels = list()
 	cost = 1500
 
-	unlocks_designs = list( /datum/design/research/circuit/shield/hull,
-							/datum/design/research/circuit/shield/conduit)
+	unlocks_designs = list(/datum/design/research/circuit/shield/hull)
 
 /datum/technology/teleportation
 	name = "Teleportation"
@@ -136,7 +138,8 @@
 	required_tech_levels = list()
 	cost = 1500
 
-	unlocks_designs = list( /datum/design/research/circuit/teleconsole)
+	unlocks_designs = list(/datum/design/research/circuit/teleconsole,
+	                       /datum/design/research/circuit/lrange_scanner/hull)
 
 /datum/technology/adv_spatial_scan
 	name = "Advanced Spatial Analyzing"
@@ -157,9 +160,7 @@
 							/datum/design/research/circuit/bssilk/console,
 							/datum/design/research/item/bs_snare,
 							/datum/design/research/circuit/teleporter/station,
-							/datum/design/research/circuit/teleporter/hub,
-							/datum/design/research/circuit/lrange_scanner/hull,
-							/datum/design/research/circuit/lrange_scanner/conduit
+							/datum/design/research/circuit/teleporter/hub
 							)
 
 /datum/technology/bluespace_tools
@@ -200,7 +201,7 @@
 							/datum/design/research/item/trashbag_holding,
 							/datum/design/research/item/oresatchel_holding
 						    )
-
+	
 /*
 /datum/technology/bluespace_rped
 	name = "Bluespace RPED"

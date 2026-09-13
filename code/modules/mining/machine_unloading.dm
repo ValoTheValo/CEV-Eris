@@ -7,18 +7,22 @@
 	icon_state = "unloader"
 	density = TRUE
 	anchored = TRUE
-	var/unload_amt = 20
+	var/unload_amt = 10
 	var/input_dir = null
 	var/output_dir = null
 
 
-/obj/machinery/mineral/unloading_machine/LateInitialize()
-	. = ..()
+/obj/machinery/mineral/unloading_machine/New()
+	..()
 	spawn()
-		if(!input_dir)
-			input_dir = turn(dir, 180)
-		if(!output_dir)
-			output_dir = dir
+		//Locate our output and input machinery.
+		var/obj/marker = null
+		marker = locate(/obj/landmark/machinery/input) in range(1, loc)
+		if(marker)
+			input_dir = get_dir(src, marker)
+		marker = locate(/obj/landmark/machinery/output) in range(1, loc)
+		if(marker)
+			output_dir = get_dir(src, marker)
 
 /obj/machinery/mineral/unloading_machine/Process()
 	if(output_dir && input_dir)

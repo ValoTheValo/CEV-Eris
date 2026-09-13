@@ -8,7 +8,6 @@
 	throw_range = 3
 	max_amount = 120
 	bad_type = /obj/item/stack/material
-	automerge = TRUE
 
 	var/default_type = MATERIAL_STEEL
 	var/material/material
@@ -91,6 +90,7 @@
 	..()
 	update_strings()
 
+
 /obj/item/stack/material/iron
 	name = "iron"
 	icon_state = "sheet-iron"
@@ -112,13 +112,11 @@
 	icon_state = "sheet-sandstone"
 	default_type = MATERIAL_SANDSTONE
 	price_tag = 1
-	novariants = FALSE
 
 /obj/item/stack/material/marble
 	name = "marble brick"
 	icon_state = "sheet-marble"
 	default_type = MATERIAL_MARBLE
-	novariants = FALSE
 
 /obj/item/stack/material/diamond
 	name = "diamond"
@@ -258,7 +256,6 @@
 	default_type = MATERIAL_TRITIUM
 	apply_colour = 1
 	price_tag = 50
-	novariants = FALSE
 
 /obj/item/stack/material/tritium/full
 	amount = 120
@@ -270,8 +267,6 @@
 	default_type = MATERIAL_OSMIUM
 	apply_colour = 1
 	price_tag = 50
-	novariants = FALSE
-	fall_damage_per_amount = 0.5
 
 /obj/item/stack/material/osmium/full
 	amount = 120
@@ -292,7 +287,7 @@
 	rand_min = 3
 	rand_max = 30
 	spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_BULDING
-	rarity_value = 10
+	rarity_value = 18
 
 /obj/item/stack/material/plasteel
 	name = "plasteel"
@@ -306,7 +301,7 @@
 	rand_min = 3
 	rand_max = 20
 	spawn_tags = SPAWN_TAG_MATERIAL_BUILDING
-	rarity_value = 18
+	rarity_value = 10
 
 /obj/item/stack/material/plasteel/full
 	amount = 120
@@ -316,7 +311,6 @@
 	icon_state = "sheet-wood"
 	default_type = MATERIAL_WOOD
 	price_tag = 20
-	novariants = FALSE
 
 /obj/item/stack/material/wood/random
 	rand_min = 3
@@ -332,7 +326,6 @@
 	icon_state = "sheet-cloth"
 	default_type = MATERIAL_CLOTH
 	price_tag = 20
-	novariants = FALSE
 
 /obj/item/stack/material/cardboard
 	name = "cardboard"
@@ -341,7 +334,6 @@
 	price_tag = 5
 	rarity_value = 6.66
 	spawn_tags = SPAWN_TAG_JUNK
-	novariants = FALSE
 
 /obj/item/stack/material/cardboard/random
 	rand_min = 5
@@ -369,8 +361,8 @@
 /obj/item/stack/material/glass/random
 	rand_min = 3
 	rand_max = 30
-	spawn_tags = SPAWN_TAG_MATERIAL_BUILDING
-	rarity_value = 12.5
+	spawn_tags = SPAWN_TAG_MATERIAL_RESOURCES_BULDING
+	rarity_value = 22.5
 
 /obj/item/stack/material/glass/full
 	amount = 120

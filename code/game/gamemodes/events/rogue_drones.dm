@@ -28,7 +28,7 @@
 		//And thusly, places where they might fire into the ship
 	var/area/spess = locate(/area/space) in world
 	for (var/turf/T in spess)
-		if (!IS_SHIP_LEVEL(T.z))
+		if (!(T.z in GLOB.maps_data.station_levels))
 			continue
 
 		if (locate(/obj/effect/shield) in T)
@@ -80,7 +80,7 @@
 		var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
 		sparks.set_up(3, 0, D.loc)
 		sparks.start()
-		D.loc = null
+		D.z = GLOB.maps_data.admin_levels[1]
 		D.has_loot = 0
 
 		qdel(D)

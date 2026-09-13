@@ -1,14 +1,11 @@
 #define OBELISK_UPDATE_TIME 5 SECONDS
 
 var/list/disciples = list()
-var/list/lost_cruciforms = list()
 
 /obj/item/implant/core_implant/cruciform
 	name = "cruciform"
 	icon_state = "cruciform_green"
 	desc = "Soul holder for every disciple. With the proper rituals, this can be implanted to induct a new believer into NeoTheology."
-	description_info = "The cruciform ensures genetic purity, it will purge any cybernetic attachments, or mutation that are not part of the standard human genome"
-	matter = list(MATERIAL_BIOMATTER = 10, MATERIAL_PLASTEEL = 5, MATERIAL_GOLD = 2)
 	allowed_organs = list(BP_CHEST)
 	implant_type = /obj/item/implant/core_implant/cruciform
 	layer = ABOVE_MOB_LAYER
@@ -17,7 +14,6 @@ var/list/lost_cruciforms = list()
 	max_power = 50
 	power_regen = 20/(1 MINUTES)
 	price_tag = 500
-	unacidable = 1
 	var/obj/item/cruciform_upgrade/upgrade
 
 	var/righteous_life = 0
@@ -30,28 +26,26 @@ var/list/lost_cruciforms = list()
 	var/true_power_regen = power_regen
 	true_power_regen += max(round(wearer.stats.getStat(STAT_COG) / 4), 0) * power_regen * 0.05
 	true_power_regen += power_regen * 1.5 * righteous_life / max_righteous_life
-	if(wearer && wearer.stats?.getPerk(PERK_CHANNELING))
+	if(wearer && wearer.stats?.getPerk(/datum/perk/channeling))
 		true_power_regen += power_regen * disciples.len / 5 // Proportional to the number of cruciformed people on board
 
 	restore_power(true_power_regen)
 
 /obj/item/implant/core_implant/cruciform/proc/register_wearer()
-	RegisterSignal(wearer, COMSIG_CARBON_HAPPY, PROC_REF(on_happy), TRUE)
-	RegisterSignal(wearer, COMSIG_GROUP_RITUAL, PROC_REF(on_ritual), TRUE)
+	RegisterSignal(wearer, COMSIG_CARBON_HAPPY, .proc/on_happy, TRUE)
+	RegisterSignal(wearer, COMSIG_GROUP_RITUAL, .proc/on_ritual, TRUE)
 
 /obj/item/implant/core_implant/cruciform/proc/unregister_wearer()
 	UnregisterSignal(wearer, COMSIG_CARBON_HAPPY)
 	UnregisterSignal(wearer, COMSIG_GROUP_RITUAL)
 
 /obj/item/implant/core_implant/cruciform/proc/on_happy(datum/reagent/happy, signal)
-	SIGNAL_HANDLER
 	if(istype(happy, /datum/reagent/ethanol) && happy.id != "ntcahors")
 		righteous_life = max(righteous_life - 0.1, 0)
 	else if(istype(happy, /datum/reagent/drug))
 		righteous_life = max(righteous_life - 0.5, 0)
 
 /obj/item/implant/core_implant/cruciform/proc/on_ritual()
-	SIGNAL_HANDLER
 	righteous_life = min(righteous_life + 25, max_righteous_life)
 
 
@@ -65,11 +59,6 @@ var/list/lost_cruciforms = list()
 	unregister_wearer()
 	wearer.stats.removePerk(/datum/perk/sanityboost)
 	wearer.stats.removePerk(/datum/perk/active_sanityboost)
-	lost_cruciforms |= src
-	return ..()
-
-/obj/item/implant/core_implant/cruciform/Destroy()
-	lost_cruciforms -= src
 	return ..()
 
 /obj/item/implant/core_implant/cruciform/get_mob_overlay(gender)
@@ -98,7 +87,7 @@ var/list/lost_cruciforms = list()
 	if(get_active_mutation(wearer, MUTATION_GODBLOOD))
 		spawn(2 MINUTES)
 		for(var/mob/living/carbon/human/H in (disciples - wearer))
-			to_chat(H, SPAN_WARNING("A distant scream pierced your mind. You feel that a vile mutant sneaked among the faithful."))
+			to_chat(H, SPAN_WARNING("A distand scream pierced your mind. You feel that a vile mutant sneaked among the faithful."))
 			playsound(wearer.loc, 'sound/hallucinations/veryfar_noise.ogg', 55, 1)
 	else if(wearer.get_species() != SPECIES_HUMAN || is_carrion(wearer))
 		if(wearer.get_species() == SPECIES_MONKEY)
@@ -112,7 +101,6 @@ var/list/lost_cruciforms = list()
 	add_module(new CRUCIFORM_COMMON)
 	update_data()
 	disciples |= wearer
-	name = "[wearer]'s Cruciform"
 	var/datum/core_module/cruciform/cloning/M = get_module(CRUCIFORM_CLONING)
 	if(M)
 		M.write_wearer(wearer) //writes all needed data to cloning module
@@ -120,18 +108,21 @@ var/list/lost_cruciforms = list()
 		eotp.addObservation(observation_points*0.25)
 	return TRUE
 
-/obj/item/implant/core_implant/cruciform/examine(mob/user, extra_description = "")
+/obj/item/implant/core_implant/cruciform/examine(mob/user)
+	..()
 	var/datum/core_module/cruciform/cloning/data = get_module(CRUCIFORM_CLONING)
-	if(data && data.mind) // if there is cloning data and it has a mind
-		extra_description += SPAN_NOTICE("This cruciform has been activated.")
+	if(data?.mind) // if there is cloning data and it has a mind
+		to_chat(user, SPAN_NOTICE("This cruciform has been activated."))
 		if(isghost(user) || (user in disciples))
-			if(data.mind.name) // if there is a mind and it also has a name
-				extra_description += SPAN_NOTICE("It contains <b>[data.mind.name]</b>'s soul.")
+			var/datum/mind/MN = data.mind
+			if(MN.name) // if there is a mind and it also has a name
+				to_chat(user, SPAN_NOTICE("It contains <b>[MN.name]</b>'s soul."))
 			else
-				extra_description += SPAN_DANGER("Something terrible has happened with this soul. Please notify somebody in charge.")
+				to_chat(user, SPAN_DANGER("Something terrible has happened with this soul. Please notify somebody in charge."))
 	else // no cloning data
-		extra_description += "This cruciform has not yet been activated."
-	..(user, extra_description)
+		to_chat(user, "This cruciform has not yet been activated.")
+
+
 
 /obj/item/implant/core_implant/cruciform/deactivate()
 	if(!active || !wearer)
@@ -148,7 +139,7 @@ var/list/lost_cruciforms = list()
 		if(wearer.mutation_index)
 			var/datum/mutation/M = pick(wearer.active_mutations)
 			M.cleanse(wearer)
-			wearer.adjustFireLoss(rand(5,25))
+			wearer.adjustToxLoss(rand(5, 25))
 
 	if(wearer.stat == DEAD)
 		deactivate()
@@ -200,19 +191,6 @@ var/list/lost_cruciforms = list()
 			R.part.take_damage(rand(20,40))
 			R.uninstall()
 			R.malfunction = MALFUNCTION_PERMANENT
-		if(istype(O, /obj/item/organ/internal))
-			var/obj/item/organ/internal/I = O
-			if(!I.item_upgrades.len)
-				continue
-			if(I.owner != wearer)
-				continue
-			for(var/mod in I.item_upgrades)
-				var/atom/movable/AM = mod
-				SEND_SIGNAL_OLD(AM, COMSIG_REMOVE, I)
-				I.take_damage(rand(6,12), BRUTE)
-				if(I.parent)
-					I.parent.take_damage(rand(2,5))
-				wearer.visible_message(SPAN_NOTICE("<b>\The [AM]</b> rips through \the [wearer]'s flesh."), SPAN_NOTICE("<b>\The [AM]</b> rips through your flesh. Your [I.name] hurts."))
 	if(ishuman(wearer))
 		var/mob/living/carbon/human/H = wearer
 		H.update_implants()
@@ -222,6 +200,7 @@ var/list/lost_cruciforms = list()
 		return
 
 	add_module(new CRUCIFORM_CLONING)
+
 
 //////////////////////////
 //////////////////////////

@@ -23,7 +23,7 @@
 
 	var/list/mixing_inputs = list()
 
-/obj/machinery/atmospherics/omni/mixer/LateInitialize()
+/obj/machinery/atmospherics/omni/mixer/New()
 	..()
 	if(mapper_set())
 		var/con = 0
@@ -123,7 +123,7 @@
 
 	return 1
 
-/obj/machinery/atmospherics/omni/mixer/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/atmospherics/omni/mixer/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	usr.set_machine(src)
 
 	var/list/data = new()
@@ -298,10 +298,3 @@
 	for(var/datum/omni_port/P in inputs)
 		if(P.dir == port)
 			P.con_lock = !P.con_lock
-
-/obj/machinery/atmospherics/omni/mixer/thrusterfuel
-	name = "Fuel Mixer"
-	desc = "Looks like North connects to Oxygen, and West to Plasma, with South going into the chamber. Just gotta find the perfect mix."
-	tag_north = 1
-	tag_west = 1
-	tag_south = 2

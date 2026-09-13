@@ -88,40 +88,40 @@ var/global/list/valid_bloodtypes = list("A+", "A-", "B+", "B-", "AB+", "AB-", "O
 	. += "<style>span.color_holder_box{display: inline-block; width: 20px; height: 8px; border:1px solid #000; padding: 0px;}</style>"
 	. += "<hr>"
 	. += "<table><tr style='vertical-align:top; width: 100%'><td width=65%><b>Body</b> "
-	. += "(<a href='byond://?src=\ref[src];random=1'>&reg;</A>)"
+	. += "(<a href='?src=\ref[src];random=1'>&reg;</A>)"
 	. += "<br>"
 
-	. += "Blood Type: <a href='byond://?src=\ref[src];blood_type=1'>[pref.b_type]</a><br>"
+	. += "Blood Type: <a href='?src=\ref[src];blood_type=1'>[pref.b_type]</a><br>"
 
-	. += "Base Colour: <a href='byond://?src=\ref[src];base_skin=1'>[pref.s_base]</a><br>"
+	. += "Base Colour: <a href='?src=\ref[src];base_skin=1'>[pref.s_base]</a><br>"
 
-	. += "Skin Tone: <a href='byond://?src=\ref[src];skin_tone=1'>[-pref.s_tone + 35]/220</a><br>"
+	. += "Skin Tone: <a href='?src=\ref[src];skin_tone=1'>[-pref.s_tone + 35]/220</a><br>"
 
-	. += "Needs Glasses: <a href='byond://?src=\ref[src];disabilities=[NEARSIGHTED]'><b>[pref.disabilities & NEARSIGHTED ? "Yes" : "No"]</b></a><br><br>"
+	. += "Needs Glasses: <a href='?src=\ref[src];disabilities=[NEARSIGHTED]'><b>[pref.disabilities & NEARSIGHTED ? "Yes" : "No"]</b></a><br><br>"
 
 	. += "<b>Hair:</b><br>"
-	. += " Style: <a href='byond://?src=\ref[src];cycle_hair=right'>&lt;&lt;</a><a href='byond://?src=\ref[src];cycle_hair=left'>&gt;&gt;</a><a href='byond://?src=\ref[src];hair_style=1'>[pref.h_style]</a>"
+	. += " Style: <a href='?src=\ref[src];cycle_hair=right'>&lt;&lt;</a><a href='?src=\ref[src];cycle_hair=left'>&gt;&gt;</a><a href='?src=\ref[src];hair_style=1'>[pref.h_style]</a>"
 	if(has_flag(mob_species, HAS_HAIR_COLOR))
-		. += "<a href='byond://?src=\ref[src];hair_color=1'><span class='color_holder_box' style='background-color:[pref.hair_color]'></span></a><br>"
+		. += "<a href='?src=\ref[src];hair_color=1'><span class='color_holder_box' style='background-color:[pref.hair_color]'></span></a><br>"
 
 	. += "<br><b>Facial:</b><br>"
-	. += " Style: <a href='byond://?src=\ref[src];cycle_facial_hair=right'>&lt;&lt;</a><a href='byond://?src=\ref[src];cycle_facial_hair=left'>&gt;&gt;</a><a href='byond://?src=\ref[src];facial_style=1'>[pref.f_style]</a>"
+	. += " Style: <a href='?src=\ref[src];cycle_facial_hair=right'>&lt;&lt;</a><a href='?src=\ref[src];cycle_facial_hair=left'>&gt;&gt;</a><a href='?src=\ref[src];facial_style=1'>[pref.f_style]</a>"
 	if(has_flag(mob_species, HAS_HAIR_COLOR))
-		. += "<a href='byond://?src=\ref[src];facial_color=1'><span class='color_holder_box' style='background-color:[pref.facial_color]'></span></a><br>"
+		. += "<a href='?src=\ref[src];facial_color=1'><span class='color_holder_box' style='background-color:[pref.facial_color]'></span></a><br>"
 
 	if(has_flag(mob_species, HAS_EYE_COLOR))
 		. += "<br><b>Eyes: </b>"
-		. += "<a href='byond://?src=\ref[src];eye_color=1'><span class='color_holder_box' style='background-color:[pref.eyes_color]'></span></a><br>"
+		. += "<a href='?src=\ref[src];eye_color=1'><span class='color_holder_box' style='background-color:[pref.eyes_color]'></span></a><br>"
 
 	if(has_flag(mob_species, HAS_SKIN_COLOR))
 		. += "<br><b>Body Color: </b>"
-		. += "<a href='byond://?src=\ref[src];skin_color=1'><span class='color_holder_box' style='background-color:[pref.skin_color]'></span></a><br>"
+		. += "<a href='?src=\ref[src];skin_color=1'><span class='color_holder_box' style='background-color:[pref.skin_color]'></span></a><br>"
 
 	. += "</td><td style = 'text-align:center;' width = 35%><b>Preview</b><br>"
 	. += "<div style ='padding-bottom:-2px;' class='statusDisplay'><img src=previewicon.png width=[pref.preview_icon.Width()] height=[pref.preview_icon.Height()]></div>"
-	. += "<br><a href='byond://?src=\ref[src];cycle_bg=1'>Cycle background</a>"
-	. += "<br><a href='byond://?src=\ref[src];toggle_preview_value=[EQUIP_PREVIEW_LOADOUT]'>[pref.equip_preview_mob & EQUIP_PREVIEW_LOADOUT ? "Hide loadout" : "Show loadout"]</a>"
-	. += "<br><a href='byond://?src=\ref[src];toggle_preview_value=[EQUIP_PREVIEW_JOB]'>[pref.equip_preview_mob & EQUIP_PREVIEW_JOB ? "Hide job gear" : "Show job gear"]</a>"
+	. += "<br><a href='?src=\ref[src];cycle_bg=1'>Cycle background</a>"
+	. += "<br><a href='?src=\ref[src];toggle_preview_value=[EQUIP_PREVIEW_LOADOUT]'>[pref.equip_preview_mob & EQUIP_PREVIEW_LOADOUT ? "Hide loadout" : "Show loadout"]</a>"
+	. += "<br><a href='?src=\ref[src];toggle_preview_value=[EQUIP_PREVIEW_JOB]'>[pref.equip_preview_mob & EQUIP_PREVIEW_JOB ? "Hide job gear" : "Show job gear"]</a>"
 	. += "</td></tr></table>"
 
 
@@ -141,12 +141,72 @@ var/global/list/valid_bloodtypes = list("A+", "A-", "B+", "B-", "AB+", "AB-", "O
 		pref.randomize_appearance_and_body_for()
 		return TOPIC_REFRESH_UPDATE_PREVIEW
 
+	/*else if(href_list["change_descriptor"])
+		if(mob_species.descriptors)
+			var/desc_id = href_list["change_descriptor"]
+			if(pref.body_descriptors[desc_id])
+				var/datum/mob_descriptor/descriptor = mob_species.descriptors[desc_id]
+				var/choice = input("Please select a descriptor.", "Descriptor") as null|anything in descriptor.chargen_value_descriptors
+				if(choice && mob_species.descriptors[desc_id]) // Check in case they sneakily changed species.
+					pref.body_descriptors[desc_id] = descriptor.chargen_value_descriptors[choice]
+					return TOPIC_REFRESH
+	*/
+
 	else if(href_list["blood_type"])
 		var/new_b_type = input(user, "Choose your character's blood-type:", CHARACTER_PREFERENCE_INPUT_TITLE) as null|anything in valid_bloodtypes
 		if(new_b_type && CanUseTopic(user))
 			pref.b_type = new_b_type
 			return TOPIC_REFRESH
 
+	/*else if(href_list["show_species"])
+		var/choice = input("Which species would you like to look at?") as null|anything in playable_species
+		if(choice)
+			var/datum/species/current_species = all_species[choice]
+			user << browse(current_species.get_description(), "window=species;size=700x400")
+			return TOPIC_HANDLED
+
+	else if(href_list["set_species"])
+
+		var/list/species_to_pick = list()
+		for(var/species in playable_species)
+			if(!check_rights(R_ADMIN, 0) && config.usealienwhitelist)
+				var/datum/species/current_species = all_species[species]
+				if(!(current_species.spawn_flags & SPECIES_CAN_JOIN))
+					continue
+				else if((current_species.spawn_flags & SPECIES_IS_WHITELISTED) && !is_alien_whitelisted(preference_mob(),current_species))
+					continue
+			species_to_pick += species
+
+		var/choice = input("Select a species to play as.") as null|anything in species_to_pick
+		if(!choice || !(choice in all_species))
+			return
+
+		var/prev_species = pref.species
+		pref.species = choice
+		if(prev_species != pref.species)
+			mob_species = all_species[pref.species]
+			if(!(pref.gender in mob_species.genders))
+				pref.gender = mob_species.genders[1]
+
+			ResetAllHair()
+
+			//reset hair colour and skin colour
+			pref.r_hair = 0//hex2num(copytext(new_hair, 2, 4))
+			pref.g_hair = 0//hex2num(copytext(new_hair, 4, 6))
+			pref.b_hair = 0//hex2num(copytext(new_hair, 6, 8))
+			pref.s_tone = 0
+			pref.age = max(min(pref.age, mob_species.max_age), mob_species.min_age)
+
+			reset_limbs() // Safety for species with incompatible manufacturers; easier than trying to do it case by case.
+			pref.body_markings.Cut() // Basically same as above.
+
+			//prune_occupation_prefs()
+			pref.skills_allocated = pref.sanitize_skills(pref.skills_allocated)
+
+			pref.cultural_info = mob_species.default_cultural_info.Copy()
+
+			return TOPIC_REFRESH_UPDATE_PREVIEW
+	*/
 	else if(href_list["hair_color"])
 		if(!has_flag(mob_species, HAS_HAIR_COLOR))
 			return TOPIC_NOACTION
@@ -181,16 +241,18 @@ var/global/list/valid_bloodtypes = list("A+", "A-", "B+", "B-", "AB+", "AB-", "O
 			return TOPIC_REFRESH_UPDATE_PREVIEW
 
 	else if(href_list["base_skin"])
-		var/new_s_base = input(user, "Choose your character's base colour:", CHARACTER_PREFERENCE_INPUT_TITLE) as null
+		var/new_s_base = input(user, "Choose your character's base colour:", CHARACTER_PREFERENCE_INPUT_TITLE) as null//|anything in mob_species.base_skin_colours
 		if(new_s_base && CanUseTopic(user))
 			pref.s_base = new_s_base
 			return TOPIC_REFRESH_UPDATE_PREVIEW
 
 	else if(href_list["skin_tone"])
+		//var/new_s_tone = input(user, "Choose your character's skin-tone. Lower numbers are lighter, higher are darker. Range: 1 to [mob_species.max_skin_tone()]", CHARACTER_PREFERENCE_INPUT_TITLE, (-pref.s_tone) + 35) as num|null
 		var/new_s_tone = input(user, "Choose your character's skin-tone. Lower numbers are lighter, higher are darker. Range: 1 to 225", CHARACTER_PREFERENCE_INPUT_TITLE, (-pref.s_tone) + 35) as num|null
 
 		mob_species = all_species[pref.species]
 		if(new_s_tone && CanUseTopic(user))
+			//pref.s_tone = 35 - max(min(round(new_s_tone), mob_species.max_skin_tone()), 1)
 			pref.s_tone = 35 - max(min(round(new_s_tone), 220), 1)
 		return TOPIC_REFRESH_UPDATE_PREVIEW
 

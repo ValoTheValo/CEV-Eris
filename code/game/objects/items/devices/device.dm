@@ -1,6 +1,6 @@
 /obj/item/device
 	icon = 'icons/obj/device.dmi'
-	spawn_tags = SPAWN_TAG_DEVICE
+	spawn_tags = SPAWN_TAG_DIVICE
 	bad_type = /obj/item/device
 	var/starting_cell = TRUE
 	var/obj/item/cell/cell
@@ -34,7 +34,6 @@
 /obj/item/device/MouseDrop(over_object)
 	if((loc == usr) && suitable_cell && istype(over_object, /obj/screen/inventory/hand) && eject_item(cell, usr))
 		cell = null
-		update_icon()
 		return
 	. = ..()
 
@@ -48,13 +47,13 @@
 		return
 	. = ..()
 
-/obj/item/device/examine(mob/user, extra_description = "")
+/obj/item/device/examine(mob/user)
+	. = ..()
 	if(suitable_cell)
 		if(cell)
-			extra_description += SPAN_NOTICE("\The [src]'s cell reads \"[round(cell.percent(),0.1)]%\"")
+			to_chat(user, SPAN_NOTICE("\The [src]'s cell reads \"[round(cell.percent(),0.1)]%\""))
 		else
-			extra_description += SPAN_WARNING("\The [src] has no cell installed.")
-	..(user, extra_description)
+			to_chat(user, SPAN_WARNING("\The [src] has no cell installed."))
 
 /obj/item/device/proc/cell_use_check(charge, mob/user)
 	. = TRUE

@@ -8,7 +8,7 @@
 
 	Otherwise pretty standard.
 */
-/mob/living/carbon/human/UnarmedAttack(var/atom/A, var/proximity, params)
+/mob/living/carbon/human/UnarmedAttack(var/atom/A, var/proximity)
 
 	if(!..())
 		return
@@ -20,79 +20,16 @@
 	if(istype(G) && G.Touch(A, 1))
 		return
 
-	A.attack_hand(src, params)
+	A.attack_hand(src)
 
-/atom/proc/attack_hand(mob/user as mob, params)
-	. = FALSE
-	// if(!(interaction_flags_atom & INTERACT_ATOM_NO_FINGERPRINT_ATTACK_HAND))
-	// 	add_fingerprint(user)
-	// if(SEND_SIGNAL_OLD(src, COMSIG_ATOM_ATTACK_HAND, user, modifiers) & COMPONENT_CANCEL_ATTACK_CHAIN)
-	// 	. = TRUE
-	// if(interaction_flags_atom & INTERACT_ATOM_ATTACK_HAND)
-	. = _try_interact(user)
-
-//Return a non FALSE value to cancel whatever called this from propagating, if it respects it.
-/atom/proc/_try_interact(mob/user)
-	if(is_admin(user) && isghost(user)) //admin abuse
-		return interact(user)
-	if(can_interact(user))
-		return interact(user)
-	return FALSE
-
-/atom/proc/can_interact(mob/user, require_adjacent_turf = TRUE)
-	// if(!user.can_interact_with(src, interaction_flags_atom & INTERACT_ATOM_ALLOW_USER_LOCATION))
-	// 	return FALSE
-	// if((interaction_flags_atom & INTERACT_ATOM_REQUIRES_DEXTERITY) && !ISADVANCEDTOOLUSER(user))
-	// 	to_chat(user, span_warning("You don't have the dexterity to do this!"))
-	// 	return FALSE
-	// BANAID: advanced tool usrs can only interact uis
-	if(!user.IsAdvancedToolUser())
-		to_chat(user, span_warning("You don't have the dexterity to do this!"))
-		return FALSE
-
-	// if(!(interaction_flags_atom & INTERACT_ATOM_IGNORE_INCAPACITATED))
-	// 	var/ignore_flags = NONE
-	// 	if(interaction_flags_atom & INTERACT_ATOM_IGNORE_RESTRAINED)
-	// 		ignore_flags |= IGNORE_RESTRAINTS
-	// 	if(!(interaction_flags_atom & INTERACT_ATOM_CHECK_GRAB))
-	// 		ignore_flags |= IGNORE_GRAB
-
-	// 	if(user.incapacitated(ignore_flags))
-	// 		return FALSE
-	return TRUE
-
-/atom/ui_status(mob/user)
-	. = ..()
-	//Check if both user and atom are at the same location
-	if(!can_interact(user))
-		. = min(., UI_UPDATE)
-
-/atom/movable/can_interact(mob/user)
-	. = ..()
-	if(!.)
-		return
-	// if(!anchored && (interaction_flags_atom & INTERACT_ATOM_REQUIRES_ANCHORED))
-	// 	return FALSE
-
-/atom/proc/interact(mob/user)
-	// Eugh. Wont implement interaction_flags_atom yet so here u go.
-	add_fingerprint(user)
-	return ui_interact(user)
-
-	// if(interaction_flags_atom & INTERACT_ATOM_NO_FINGERPRINT_INTERACT)
-	// 	add_hiddenprint(user)
-	// else
-	// 	add_fingerprint(user)
-	// if(interaction_flags_atom & INTERACT_ATOM_UI_INTERACT)
-	// 	SEND_SIGNAL_OLD(src, COMSIG_ATOM_UI_INTERACT, user)
-	// 	return ui_interact(user)
-	// return FALSE
+/atom/proc/attack_hand(mob/user as mob)
+	return
 
 /mob/living/carbon/human/RestrainedClickOn(var/atom/A)
 	return
 
 /mob/living/carbon/human/RangedAttack(var/atom/A)
-	if((istype(A, /turf/floor) || istype(A, /obj/structure/catwalk)) && isturf(loc) && shadow && !is_physically_disabled()) //Climbing through openspace
+	if((istype(A, /turf/simulated/floor) || istype(A, /obj/structure/catwalk)) && isturf(loc) && shadow && !is_physically_disabled()) //Climbing through openspace
 		var/turf/T = get_turf(A)
 		if(T.Adjacent(shadow))
 			for(var/obj/structure/S in shadow.loc)

@@ -56,7 +56,7 @@
 	name = "infantryman's rations kit"
 	icon_state = "irp_box"
 	item_state = "irp_box"
-	desc = "A box of preserved, ready-to-eat, and medicinally enhanced food for soldiers and spacefarers on the go."
+	desc = "A box of preserved, ready-to-eat food for soldiers and spacefarers on the go."
 	initial_contents = list(/obj/item/storage/ration_pack = 7)
 
 
@@ -71,18 +71,13 @@
 /obj/item/storage/deferred/pouches
 	name = "uniform modification kit"
 	desc = "A box full of hard-wearing pouches designed for easy attachment to clothing and armor. Good for carrying extra ammo or tools in the field."
-	initial_contents = list(/obj/spawner/pouch = 8, /obj/item/storage/pouch/holster = 1)
+	initial_contents = list(/obj/spawner/pouch = 8, /obj/item/storage/pouch/pistol_holster = 1)
 	//One guaranteed holster and plenty of randoms
-
-/obj/item/storage/deferred/accarmors
-	name = "uniform accessory armor kit"
-	desc = "A box full of various armor plates and holsters designed to attach to uniforms for a bit extra cushion between user and death."
-	initial_contents = list(/obj/item/clothing/accessory/armor = 2, /obj/item/clothing/accessory/armor/bullet = 2, /obj/item/clothing/accessory/armor/platecarrier = 1, /obj/item/clothing/accessory/armor/riot = 1, /obj/item/clothing/accessory/armor/laser = 1, /obj/item/clothing/accessory/holster = 6)
 
 /obj/item/storage/deferred/comms
 	name = "communications kit"
-	desc = "A box full of radios"
-	initial_contents = list(/obj/item/device/radio = 6)
+	desc = "A box full of radios and beacons"
+	initial_contents = list(/obj/item/device/radio/beacon = 6, /obj/item/device/radio = 6)
 
 /obj/item/storage/deferred/lights
 	name = "illumination kit"
@@ -122,21 +117,13 @@
 		/obj/item/stack/medical/advanced/bruise_pack
 		)
 
-/obj/item/storage/deferred/cybernetics
-	name = "soldier cybernetic kit"
-	desc = "Contains various single use cybernetic applicators."
-	initial_contents = list(
-		/obj/item/implanter/installer/disposable/armor = 6,
-		/obj/item/implanter/installer/disposable/muscle = 12
-	)
 
 /obj/item/storage/deferred/meds
 	name = "combat medical kit"
 	desc = "Contains advanced medical treatments."
 	icon_state = "combat_medical_kit"
 	item_state = "combat_medical_kit"
-	initial_contents = list(
-	/obj/item/storage/pill_bottle/meralyne,
+	initial_contents = list(/obj/item/storage/pill_bottle/bicaridine,
 	/obj/item/storage/pill_bottle/dermaline,
 	/obj/item/storage/pill_bottle/dexalin_plus,
 	/obj/item/storage/pill_bottle/dylovene,
@@ -174,7 +161,7 @@
 	name = "rifleman crate"
 	desc = "A crate containing six SA AK-47 rifles, and plenty of magazines."
 	icon_state = "serbcrate_deferred_green"
-	initial_contents = list(/obj/item/gun/projectile/automatic/modular/ak/serbian_arms  = 6,
+	initial_contents = list(/obj/item/gun/projectile/automatic/ak47/sa  = 6,
 	/obj/item/ammo_magazine/lrifle = 12, /obj/item/ammo_magazine/lrifle/drum = 6)
 
 /obj/item/storage/deferred/crate/kovacs
@@ -182,7 +169,7 @@
 	desc = "A crate containing six \"Kovacs\" battle rifles, and plenty of mags."
 	icon_state = "serbcrate_deferred_green"
 	initial_contents = list(/obj/item/gun/projectile/kovacs = 6,
-	/obj/item/ammo_magazine/lrifle = 18)
+	/obj/item/ammo_magazine/srifle = 18)
 
 /obj/item/storage/deferred/crate/grenadier
 	name = "grenadier crate"
@@ -240,17 +227,6 @@
 		/obj/item/ammo_magazine/msmg = 16,
 		)
 
-/obj/item/storage/deferred/crate/shotgun
-	name = "pointman shotgun crate"
-	desc = "A crate containing 4 bojevic autoshotguns and 120 rounds of .50 buck and slug ammunition each. good to keep handy \
-			for close encounters."
-	icon_state = "serbcrate_deferred_black"
-	initial_contents = list(
-		/obj/item/gun/projectile/shotgun/bojevic = 4,
-		/obj/item/ammo_magazine/m12/pellet = 10,
-		/obj/item/ammo_magazine/m12 = 10
-		)
-
 /obj/item/storage/deferred/crate/cells
 	name = "power cell bin"
 	desc = "A moderately sized crate full of various power cells."
@@ -275,9 +251,9 @@
 	/obj/item/clothing/head/soft/green2soft = 1,
 	/obj/item/clothing/suit/armor/platecarrier/green = 1,
 	/obj/item/clothing/head/armor/faceshield/altyn = 1,
-	/obj/item/clothing/mask/balaclava = 1,
+	/obj/item/clothing/mask/balaclava/tactical = 1,
 	/obj/item/clothing/shoes/jackboots = 1,
-	/obj/item/clothing/gloves/security = 1)
+	/obj/item/clothing/gloves/fingerless = 1)
 
 /obj/item/storage/deferred/crate/uniform_brown
 	name = "brown uniform kit"
@@ -288,9 +264,8 @@
 	/obj/item/clothing/head/soft/tan2soft = 1,
 	/obj/item/clothing/suit/armor/platecarrier/tan = 1,
 	/obj/item/clothing/head/armor/faceshield/altyn/brown = 1,
-	/obj/item/clothing/mask/balaclava = 1,
+	/obj/item/clothing/mask/balaclava/tactical = 1,
 	/obj/item/clothing/shoes/jackboots = 1,
-	/obj/item/clothing/gloves/security = 1,
 	/obj/item/clothing/suit/storage/greatcoat/serbian_overcoat_brown = 1)
 
 /obj/item/storage/deferred/crate/uniform_black
@@ -301,9 +276,9 @@
 	/obj/item/clothing/under/serbiansuit/black = 1,
 	/obj/item/clothing/suit/armor/platecarrier = 1,
 	/obj/item/clothing/head/armor/faceshield/altyn/black = 1,
-	/obj/item/clothing/mask/balaclava = 1,
+	/obj/item/clothing/mask/balaclava/tactical = 1,
 	/obj/item/clothing/shoes/jackboots = 1,
-	/obj/item/clothing/gloves/security = 1,
+	/obj/item/clothing/gloves/fingerless = 1,
 	/obj/item/clothing/suit/storage/greatcoat/serbian_overcoat = 1)
 
 /obj/item/storage/deferred/crate/uniform_flak
@@ -314,9 +289,9 @@
 	/obj/item/clothing/under/serbiansuit = 1,
 	/obj/item/clothing/suit/armor/flak/green = 1,
 	/obj/item/clothing/head/armor/faceshield/altyn/maska = 1,
-	/obj/item/clothing/mask/balaclava = 1,
+	/obj/item/clothing/mask/balaclava/tactical = 1,
 	/obj/item/clothing/shoes/jackboots = 1,
-	/obj/item/clothing/gloves/security = 1,
+	/obj/item/clothing/gloves/fingerless = 1,
 	/obj/item/storage/fancy/cigarettes = 1)
 
 /obj/item/storage/deferred/crate/uniform_light
@@ -333,7 +308,7 @@
 	/obj/item/storage/fancy/cigarettes = 1)
 
 /obj/item/storage/deferred/crate/german_uniform
-	name = "oberthian uniform crate"
+	name = "german uniform crate"
 	desc = "A moderately sized crate full of clothes."
 	icon_state = "germancrate_deferred"
 	initial_contents = list(
@@ -344,91 +319,9 @@
 	/obj/item/clothing/suit/storage/greatcoat/german_overcoat = 1,
 	/obj/item/clothing/under/germansuit = 1)
 
-
-/obj/item/storage/deferred/crate/excel_conscript
-	name = "Excelsior conscript crate"
-	desc = "A supply kit for an aspiring conscript."
-	icon_state = "Excel_crate"
-	initial_contents = list(
-	/obj/item/clothing/gloves/thick = 1,
-	/obj/item/clothing/under/excelsior = 1,
-	/obj/item/clothing/head/armor/excel_sfera = 1,
-	/obj/item/clothing/mask/gas = 1,
-	/obj/item/clothing/suit/armor/gzhel = 1,
-	/obj/item/gun/projectile/boltgun = 1,
-	/obj/item/ammo_magazine/ammobox/lrifle_small = 1,
-	/obj/item/ammo_magazine/sllrifle = 7,
-	/obj/item/clothing/shoes/workboots/proletariat = 1
-	)
-
-/obj/item/storage/deferred/crate/excel_shock_kit
-	name = "Excelsior shock trooper kit"
-	desc = "Everything needed for an aspiring shock trooper."
-	icon_state = "Excel_crate"
-	initial_contents = list(
-	/obj/item/clothing/gloves/thick = 1,
-	/obj/item/clothing/under/excelsior = 1,
-	/obj/item/clothing/head/armor/excel_sfera = 1,
-	/obj/item/ammo_magazine/msmg = 4,
-	/obj/item/ammo_magazine/ammobox/magnum = 1,
-	/obj/item/clothing/mask/gas = 1,
-	/obj/item/gun/projectile/automatic/drozd = 1,
-	/obj/item/clothing/suit/armor/gzhel = 1,
-	/obj/item/clothing/shoes/workboots/proletariat = 1
-	)
-
-
-/obj/item/storage/deferred/crate/excel_eva
-	name = "Excelsior EVA trooper kit"
-	desc = "The start of a revolutionary career in Haven's space corps."
-	icon_state = "Excel_crate"
-	initial_contents = list(
-	/obj/item/gun/projectile/automatic/modular/ak/excelsior = 1,
-	/obj/item/clothing/under/excelsior = 1,
-	/obj/item/clothing/gloves/thick = 1,
-	/obj/item/ammo_magazine/lrifle = 4,
-	/obj/item/clothing/mask/gas = 1,
-	/obj/item/ammo_magazine/ammobox/lrifle_small = 1,
-	/obj/item/clothing/suit/space/void/excelsior = 1,
-	/obj/item/tank/emergency_oxygen/double = 1,
-	/obj/item/clothing/shoes/workboots/proletariat = 1
-	)
-
-/obj/item/storage/deferred/crate/excel_spetsnaz
-	name = "Excelsior special operative kit"
-	desc = "A kit for comrades quietly engaging at a distance."
-	icon_state = "Excel_crate"
-	initial_contents = list(
-	/obj/item/clothing/gloves/thick = 1,
-	/obj/item/clothing/under/excelsior = 1,
-	/obj/item/gun/projectile/automatic/vintorez = 1,
-	/obj/item/ammo_magazine/srifle = 5,
-	/obj/item/clothing/suit/armor/gzhel = 1,
-	/obj/item/clothing/mask/gas = 1,
-	/obj/item/ammo_magazine/ammobox/srifle_small = 1,
-	/obj/item/clothing/head/armor/excel_sfera = 1,
-	/obj/item/clothing/shoes/workboots/proletariat = 1
-	)
-
-/obj/item/storage/deferred/crate/excel_heavy
-	name = "Excelsior heavy trooper kit"
-	desc = "Equipment of Excelsior's heavy infantry."
-	icon_state = "Excel_crate"
-	initial_contents = list(
-	/obj/item/clothing/gloves/korund = 1,
-	/obj/item/clothing/under/excelsior = 1,
-	/obj/item/clothing/mask/gas = 1,
-	/obj/item/ammo_magazine/maxim = 4,
-	/obj/item/gun/projectile/automatic/maxim =1,
-	/obj/item/tank/emergency_oxygen/double = 1,
-	/obj/item/clothing/suit/armor/korund = 1,
-	/obj/item/clothing/head/armor/korund_helm = 1,
-	/obj/item/clothing/shoes/korund = 1
-	)
-
 /obj/item/storage/deferred/crate/clown_crime
 	name = "mastermind suit bag"
-	desc = "A duffelbag filled with clothing and... a second duffelbag?"
+	desc = "A duffelbag filled with clothing and... a second duffelbag?."
 	icon = 'icons/obj/storage/backpack.dmi'
 	icon_state = "lootbag"
 	spawn_blacklisted = TRUE
@@ -498,23 +391,16 @@
 	initial_contents = list(/obj/spawner/electronics = 7)
 
 // Kitchen supply
-/obj/item/storage/deferred/crate/kitchen
-	name = "bradhaanata kitchen tool supply box"
-	desc = "A collection of kitchen essentials, brought to you by Bradhaanata"
+/obj/item/storage/deferred/kitchen
+	name = "galley supply box"
+	desc = "A small collection of kitchen essentials"
 	initial_contents = list(
-		/obj/item/book/manual/chef_recipes = 1,
 		/obj/item/tool/knife = 1,
 		/obj/item/tool/knife/butch = 1,
 		/obj/item/material/kitchen/rollingpin = 1,
-		/obj/item/tool/shovel/spatula = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/board = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/oven = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/pan = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/pot = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/grill_grate = 1,
-		/obj/item/reagent_containers/cooking_with_jane/cooking_container/bowl = 1,
-		/obj/item/reagent_containers/food/condiment/saltshaker = 3,
-		/obj/item/reagent_containers/food/condiment/peppermill = 3
+		/obj/item/packageWrap = 1,
+		/obj/item/reagent_containers/food/condiment/saltshaker = 1,
+		/obj/item/reagent_containers/food/condiment/peppermill = 1
 	)
 
 // MoeSci supply

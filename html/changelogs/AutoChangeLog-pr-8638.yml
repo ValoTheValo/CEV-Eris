@@ -1,5 +1,0 @@
-author: Chickenish
-delete-after: true
-changes:
-  - bugfix: Holobar should be visible now
-  - bugfix: Holoconsole on-off switch should work now

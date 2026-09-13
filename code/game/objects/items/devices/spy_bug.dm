@@ -23,20 +23,17 @@
 	..()
 	radio = new(src)
 	camera = new(src)
+	add_hearing()
 
 /obj/item/device/spy_bug/Destroy()
 	remove_hearing()
 	. = ..()
 
-/obj/item/device/spy_bug/voice/LateInitialize()
-	. = ..()
-	add_hearing()
-
-/obj/item/device/spy_bug/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += "A tiny camera, microphone, and transmission device in a happy union."
-		extra_description += "Needs to be both configured and brought in contact with monitor device to be fully functional."
-	..(user, extra_description)
+/obj/item/device/spy_bug/examine(mob/user)
+	. = ..(user, 0)
+	if(.)
+		to_chat(user, "A tiny camera, microphone, and transmission device in a happy union.")
+		to_chat(user, "Needs to be both configured and brought in contact with monitor device to be fully functional.")
 
 /obj/item/device/spy_bug/attack_self(mob/user)
 	radio.attack_self(user)
@@ -71,19 +68,16 @@
 /obj/item/device/spy_monitor/New()
 	..()
 	radio = new(src)
-
-/obj/item/device/spy_monitor/LateInitialize()
-	. = ..()
 	add_hearing()
 
 /obj/item/device/spy_monitor/Destroy()
 	remove_hearing()
 	. = ..()
 
-/obj/item/device/spy_monitor/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += "The time '12:00' is blinking in the corner of the screen and \the [src] looks very cheaply made."
-	..(user, extra_description)
+/obj/item/device/spy_monitor/examine(mob/user)
+	. = ..(user, 1)
+	if(.)
+		to_chat(user, "The time '12:00' is blinking in the corner of the screen and \the [src] looks very cheaply made.")
 
 /obj/item/device/spy_monitor/attack_self(mob/user)
 	if(operating)
@@ -123,15 +117,15 @@
 	spawn(0)
 		while(selected_camera && Adjacent(user))
 			var/turf/T = get_turf(selected_camera)
-			if(selected_camera.can_use() && T && ((T.z != user.z) || (IS_SHIP_LEVEL(T.z) && IS_SHIP_LEVEL(user.z)))) // Located on the main ship or same Z-level
-				user.set_machine(selected_camera)
-				user.reset_view(selected_camera)
-			else
+			if(!T || !is_on_same_plane_or_station(T.z, user.z) || !selected_camera.can_use())
 				user.unset_machine()
 				user.reset_view(null)
 				to_chat(user, SPAN_NOTICE("[selected_camera] unavailable."))
-				sleep(9 SECONDS)
-			sleep(1 SECOND)
+				sleep(90)
+			else
+				user.set_machine(selected_camera)
+				user.reset_view(selected_camera)
+			sleep(10)
 		user.unset_machine()
 		user.reset_view(null)
 

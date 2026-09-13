@@ -2,7 +2,7 @@
 // .25 handguns
 
 /datum/design/autolathe/gun/mandella
-	name = "OR HG .25 CS \"Mandella\""
+	name = "OR HG .25 Auto \"Mandella\""
 	build_path = /obj/item/gun/projectile/mandella
 
 // .35 handguns
@@ -23,23 +23,14 @@
 	name = "Excelsior .35 \"Makarov\""
 	build_path = /obj/item/gun/projectile/selfload/makarov
 
-/datum/design/autolathe/gun/paco
-	name = "FS HG .35 \"Paco\""
-	build_path = /obj/item/gun/projectile/paco
-
 /datum/design/autolathe/gun/mk58
-	name = "NT HG .35 \"Mk-58 B\""
-	build_path = /obj/item/gun/projectile/automatic/modular/mk58/gray/stock
+	name = "NT HG .35 \"Mk58\""
+	build_path = /obj/item/gun/projectile/mk58
 	factions = list(FACTION_NEOTHEOLOGY)
 
 /datum/design/autolathe/gun/mk58_wood
-	name = "NT HG .35 \"Mk-58 C\""
-	build_path = /obj/item/gun/projectile/automatic/modular/mk58/gray/wood
-	factions = list(FACTION_NEOTHEOLOGY)
-
-/datum/design/autolathe/gun/mk58_army
-	name = "NT HG .35 \"Mk-58 e\""
-	build_path = /obj/item/gun/projectile/automatic/modular/mk58/black/army
+	name = "NT HG .35 \"Mk58\""
+	build_path = /obj/item/gun/projectile/mk58/wood
 	factions = list(FACTION_NEOTHEOLOGY)
 
 /datum/design/autolathe/gun/colt
@@ -91,11 +82,6 @@
 	build_path = /obj/item/gun/projectile/shotgun/pump/regulator
 	factions = list(FACTION_NEOTHEOLOGY)
 
-/datum/design/autolathe/gun/regulator/army
-	name = "NT SG \"Regulator M1000\""
-	build_path = /obj/item/gun/projectile/shotgun/pump/regulator/army
-	factions = list(FACTION_NEOTHEOLOGY)
-
 /datum/design/autolathe/gun/gladstone
 	name = "FS SG \"Gladstone\""
 	build_path = /obj/item/gun/projectile/shotgun/pump/gladstone
@@ -104,20 +90,19 @@
 	name = "SA SG \"Bojevic\""
 	build_path = /obj/item/gun/projectile/shotgun/bojevic
 
-/datum/design/autolathe/gun/ks23
-	name = "Excelsior SG KS-23"
-	build_path = /obj/item/gun/projectile/shotgun/pump/ks
-
 // SMGs
 
 /datum/design/autolathe/gun/zoric
 	name = "SA SMG .40 \"Zoric\""
 	build_path = /obj/item/gun/projectile/automatic/zoric
-	minimum_quality = 1
 
 /datum/design/autolathe/gun/atreides
 	name = "FS SMG .35 \"Atreides\""
 	build_path = /obj/item/gun/projectile/automatic/atreides
+
+/datum/design/autolathe/gun/paco
+	name = "FS HG .35 \"Paco\""
+	build_path = /obj/item/gun/projectile/paco
 
 /datum/design/autolathe/gun/straylight
 	name = "FS SMG .35 \"Straylight\""
@@ -130,7 +115,6 @@
 /datum/design/autolathe/gun/drozd
 	name = "Excelsior .40 \"Drozd\""
 	build_path = /obj/item/gun/projectile/automatic/drozd
-	minimum_quality = 1
 
 /datum/design/autolathe/gun/slaught_o_matic //alledgedly a handgun, but practically an SMG
 	name = "FS HG .35 \"Slaught-o-Matic\""
@@ -141,25 +125,19 @@
 /datum/design/autolathe/gun/vintorez
 	name = "Excelsior .20 \"Vintorez\""
 	build_path = /obj/item/gun/projectile/automatic/vintorez
-	minimum_quality = 2
 
 /datum/design/autolathe/gun/z8
 	name = "OR CAR .20 \"Z8 Bulldog\""
 	build_path = /obj/item/gun/projectile/automatic/z8
-	minimum_quality = 1
 
 /datum/design/autolathe/gun/wintermute
 	name = "FS AR .20 \"Wintermute\""
-	build_path = /obj/item/gun/projectile/automatic/modular/wintermute/finished
-	minimum_quality = 2
+	build_path = /obj/item/gun/projectile/automatic/wintermute
 
 /datum/design/autolathe/gun/kovacs
 	name = "SA BR .20 \"Kovacs\""
 	build_path = /obj/item/gun/projectile/kovacs
 
-/datum/design/autolathe/gun/boltgun_fs
-	name = "FS BR .20 \"Kadmin\""
-	build_path = /obj/item/gun/projectile/boltgun/fs
 
 // .25 Rifles
 
@@ -170,7 +148,6 @@
 /datum/design/autolathe/gun/dallas
 	name = "PAR .25 CS \"Dallas\""
 	build_path = /obj/item/gun/projectile/automatic/dallas
-	minimum_quality = 2
 
 // .30 Rifles
 
@@ -182,41 +159,42 @@
 	name = "SA BR .30 \"Novakovic\""
 	build_path = /obj/item/gun/projectile/boltgun/serbian
 
+/datum/design/autolathe/gun/boltgun_fs
+	name = "FS BR .20 \"Tosshin\""
+	build_path = /obj/item/gun/projectile/boltgun/fs
+
 /datum/design/autolathe/gun/ak47
-	name = "Excelsior Car .30 Kalashnikov"
-	build_path = /obj/item/gun/projectile/automatic/modular/ak/excelsior
-	minimum_quality = 2
+	name = "Excelsior .30 AK-47"
+	build_path = /obj/item/gun/projectile/automatic/ak47
 
 /datum/design/autolathe/gun/ak47_fs
 	name = "FS AR .30 \"Vipr\""
-	build_path = /obj/item/gun/projectile/automatic/modular/ak/frozen_star
+	build_path = /obj/item/gun/projectile/automatic/ak47/fs
 
 /datum/design/autolathe/gun/ak47_fs_ih
 	name = "FS AR .30 \"Venger\""
-	build_path = /obj/item/gun/projectile/automatic/modular/ak/ironhammer_securities
+	build_path = /obj/item/gun/projectile/automatic/ak47/fs/ih
 
 /datum/design/autolathe/gun/ak47_sa
-	name = "SA AR .30 \"Krinkov\""
-	build_path = /obj/item/gun/projectile/automatic/modular/ak/serbian_arms/printed
+	name = "SA CAR .30 \"Krinkov\""
+	build_path = /obj/item/gun/projectile/automatic/ak47/sa
 
 /datum/design/autolathe/gun/sts35
-	name = "OR SDF AR .30 \"STS-35\""
+	name = "OR SDF .30 \"STS-35\""
 	build_path = /obj/item/gun/projectile/automatic/sts35
-	minimum_quality = 2
 
 // Heavy
 
 /datum/design/autolathe/gun/heavysniper
 	name = "SA AMR .60 \"Hristov\""
 	build_path = /obj/item/gun/projectile/heavysniper
-	minimum_quality = 2
 
 /datum/design/autolathe/gun/mg_pk
 	name = "SA MG .30 \"Pulemyot Kalashnikova\""
 	build_path = /obj/item/gun/projectile/automatic/lmg/pk
 
 /datum/design/autolathe/gun/lmg_tk
-	name = "FS LMG .25 \"Takeshi\""
+	name = "FS LMG .30 \"Takeshi\""
 	build_path = /obj/item/gun/projectile/automatic/lmg/tk
 
 /datum/design/autolathe/gun/grenade_launcher
@@ -250,7 +228,6 @@
 /datum/design/autolathe/gun/nt_svalinn
 	name = "NT LP \"Svalinn\""
 	build_path = /obj/item/gun/energy/nt_svalinn
-	materials = list(MATERIAL_BIOMATTER = 5)
 	factions = list(FACTION_NEOTHEOLOGY)
 
 // Energy general

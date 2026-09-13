@@ -68,7 +68,7 @@
 /datum/access/genetics
 	id = access_genetics
 	desc = "Genetics Lab"
-	region = ACCESS_REGION_MEDBAY
+	region = ACCESS_REGION_RESEARCH
 
 /var/const/access_engine = 10
 /datum/access/engine
@@ -273,8 +273,8 @@
 /var/const/access_artist = 44
 /datum/access/artist_office
 	id = access_artist
-	desc = "Club Artist"
-	region = ACCESS_REGION_CLUB
+	desc = "Guild Artist"
+	region = ACCESS_REGION_SUPPLY
 
 /var/const/access_surgery = 45
 /datum/access/surgery
@@ -378,7 +378,7 @@
 /datum/access/psychiatrist
 	id = access_psychiatrist
 	desc = "Psychiatrist's Office"
-	region = ACCESS_REGION_RESEARCH
+	region = ACCESS_REGION_MEDBAY
 
 /var/const/access_xenoarch = 65
 /datum/access/xenoarch
@@ -559,10 +559,6 @@
 	id = access_mercenary
 	access_type = ACCESS_TYPE_SYNDICATE
 
-/var/const/access_pirate = 145 //Pirate ship and base
-/datum/access/pirate
-	id = access_pirate
-	access_type = ACCESS_TYPE_SYNDICATE
 
 /var/const/access_syndicate = 140//General Syndicate Access
 /datum/access/syndicate

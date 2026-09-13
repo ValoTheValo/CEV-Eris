@@ -1,4 +1,0 @@
-author: Chickenish
-delete-after: true
-changes:
-  - rscdel: Chem Dispenser no longer scales reagent list with parts.

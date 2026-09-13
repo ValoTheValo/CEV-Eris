@@ -80,14 +80,13 @@
 
 /obj/item/storage/pouch/medical_supply
 	name = "medical supply pouch"
-	desc = "A small pouch for holding medical supplies."
+	desc = "Can hold medical equipment. But only about three pieces of it."
 	icon_state = "medical_supply"
 	item_state = "medical_supply"
 	matter = list(MATERIAL_BIOMATTER = 9, MATERIAL_STEEL = 1 )
 	rarity_value = 33
 
-	storage_slots = null 
-	max_storage_space = DEFAULT_SMALL_STORAGE //Medkits typically hold 5 items in them, this is pocket medkit
+	storage_slots = 4
 	max_w_class = ITEM_SIZE_NORMAL
 
 	can_hold = list(
@@ -104,19 +103,18 @@
 		/obj/item/clothing/gloves/latex,
 		/obj/item/reagent_containers/hypospray,
 		/obj/item/clothing/glasses/hud/health,
-		/obj/item/stack/nanopaste
 		)
 
 /obj/item/storage/pouch/engineering_tools
 	name = "engineering tools pouch"
-	desc = "A pouch for holding engineering tools. Looks like there are pockets in it for 4 tools."
+	desc = "Can hold small engineering tools. But only about three pieces of them."
 	icon_state = "engineering_tool"
 	item_state = "engineering_tool"
 	matter = list(MATERIAL_BIOMATTER = 9, MATERIAL_STEEL = 1 )
 	rarity_value = 20
 
-	storage_slots = 4 
-	max_w_class = ITEM_SIZE_NORMAL
+	storage_slots = 3
+	max_w_class = ITEM_SIZE_SMALL
 
 	can_hold = list(
 		/obj/item/tool,
@@ -137,20 +135,18 @@
 		/obj/item/flame/lighter,
 		/obj/item/cell/small,
 		/obj/item/cell/medium,
-		/obj/item/gun/projectile/flare_gun,
-		/obj/item/stack/nanopaste
+		/obj/item/gun/projectile/flare_gun
 		)
 
 /obj/item/storage/pouch/engineering_supply
 	name = "engineering supply pouch"
-	desc = "A pouch for holding various engineering scanners, power cells and equipment."
+	desc = "Can hold engineering equipment. 12 pieces of hardware, cells, rods or cables."
 	icon_state = "engineering_supply"
 	item_state = "engineering_supply"
 	matter = list(MATERIAL_BIOMATTER = 9, MATERIAL_STEEL = 1 )
 	rarity_value = 33
 
-	storage_slots = null
-	max_storage_space = DEFAULT_NORMAL_STORAGE * 0.8 //Not as big as a large pouch, even though hyper-specialized
+	storage_slots = 12
 	w_class = ITEM_SIZE_NORMAL
 	max_w_class = ITEM_SIZE_NORMAL
 
@@ -171,14 +167,13 @@
 
 /obj/item/storage/pouch/engineering_material
 	name = "engineering material pouch"
-	desc = "A pouch for holding sheets, rods and cable coils."
+	desc = "Can hold sheets, rods and cable coil."
 	icon_state = "engineering_material"
 	item_state = "engineering_material"
 	matter = list(MATERIAL_BIOMATTER = 9, MATERIAL_STEEL = 1 )
 	rarity_value = 33
 
-	storage_slots = null
-	max_storage_space = DEFAULT_NORMAL_STORAGE * 0.6 //Enough space for 3 stacks
+	storage_slots = 2
 	w_class = ITEM_SIZE_NORMAL
 	max_w_class = ITEM_SIZE_NORMAL
 
@@ -186,7 +181,7 @@
 		/obj/item/stack/material,
 		/obj/item/material,
 		/obj/item/stack/cable_coil,
-		/obj/item/stack/rods
+		/obj/item/stack/rods,
 		)
 
 /obj/item/storage/pouch/ammo
@@ -204,17 +199,7 @@
 
 	can_hold = list(
 		/obj/item/ammo_magazine,
-		/obj/item/ammo_casing,
-		/obj/item/cell/small,
-		/obj/item/cell/medium
-		)
-
-	cant_hold = list(
-		/obj/item/ammo_magazine/ammobox,
-		/obj/item/ammo_magazine/srifle/drum,
-		/obj/item/ammo_magazine/lrifle/drum,
-		/obj/item/ammo_magazine/lrifle/pk,
-		/obj/item/ammo_magazine/maxim
+		/obj/item/ammo_casing
 		)
 
 /obj/item/storage/pouch/tubular
@@ -266,6 +251,76 @@
 	if(contents.len)
 		overlays += image('icons/inventory/pockets/icon.dmi', "flare_[contents.len]")
 
+/obj/item/storage/pouch/pistol_holster
+	name = "pistol holster"
+	desc = "Can hold a handgun in."
+	icon_state = "pistol_holster"
+	item_state = "pistol_holster"
+	rarity_value = 33
+
+	storage_slots = 1
+	w_class = ITEM_SIZE_NORMAL
+	max_w_class = ITEM_SIZE_NORMAL
+
+	can_hold = list(
+		/obj/item/gun/projectile/selfload,
+		/obj/item/gun/projectile/colt,
+		/obj/item/gun/projectile/avasarala,
+		/obj/item/gun/projectile/giskard,
+		/obj/item/gun/projectile/gyropistol,
+		/obj/item/gun/projectile/handmade_pistol,
+		/obj/item/gun/projectile/flare_gun,
+		/obj/item/gun/projectile/lamia,
+		/obj/item/gun/projectile/mk58,
+		/obj/item/gun/projectile/olivaw,
+		/obj/item/gun/projectile/mandella,
+		/obj/item/gun/energy/gun,
+		/obj/item/gun/energy/chameleon,
+		/obj/item/gun/energy/captain,
+		/obj/item/gun/energy/stunrevolver,
+		/obj/item/gun/projectile/revolver,
+		/obj/item/gun/projectile/automatic/molly,
+		/obj/item/gun/projectile/paco,
+		/obj/item/gun/projectile/shotgun/doublebarrel/sawn, //short enough to fit in
+		/obj/item/gun/launcher/syringe,
+		/obj/item/gun/energy/plasma/brigador,
+		/obj/item/gun/projectile/shotgun/pump/sawn,
+		/obj/item/gun/projectile/boltgun/obrez,
+		/obj/item/gun/energy/retro/sawn,
+		/obj/item/gun/projectile/automatic/luty
+		)
+
+	sliding_behavior = TRUE
+
+/obj/item/storage/pouch/pistol_holster/update_icon()
+	..()
+	cut_overlays()
+	if(contents.len)
+		overlays += image('icons/inventory/pockets/icon.dmi', "pistol_layer")
+
+/obj/item/storage/pouch/baton_holster
+	name = "baton sheath"
+	desc = "Can hold a baton, or indeed most weapon shafts."
+	icon_state = "baton_holster"
+	item_state = "baton_holster"
+	rarity_value = 33
+
+	storage_slots = 1
+	max_w_class = ITEM_SIZE_BULKY
+
+	can_hold = list(
+		/obj/item/melee,
+		/obj/item/tool/crowbar
+		)
+
+	sliding_behavior = TRUE
+
+/obj/item/storage/pouch/baton_holster/update_icon()
+	..()
+	cut_overlays()
+	if(contents.len)
+		overlays += image('icons/inventory/pockets/icon.dmi', "baton_layer")
+
 /obj/item/storage/pouch/holding
 	name = "pouch of holding"
 	desc = "If your pockets are not large enough to store all your belongings, you may want to use this high-tech pouch that opens into a localized pocket of bluespace (pun intended)."
@@ -284,18 +339,16 @@
 
 /obj/item/storage/pouch/gun_part
 	name = "part pouch"
-	desc = "A pouch for holding all sorts of small parts, upgrades and components."
+	desc = "Can hold gun parts and armor parts."
 	icon_state = "part_pouch"
 	item_state = "part_pouch"
 	rarity_value = 33
 
-	storage_slots = null
-	max_storage_space = DEFAULT_NORMAL_STORAGE * 0.8 //Actually smaller than previous but illusion of space with continuous holding space
+	storage_slots = 10
 	max_w_class = ITEM_SIZE_NORMAL
 
 	can_hold = list(
 		/obj/item/part,
 		/obj/item/stock_parts,
-		/obj/item/electronics,
-		/obj/item/tool_upgrade //Now holds tool upgrades!
+		/obj/item/electronics
 		)

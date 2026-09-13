@@ -43,9 +43,9 @@
 	if(..())
 		return 1
 
-	nano_ui_interact(user)
+	ui_interact(user)
 
-/obj/machinery/sleeper/nano_ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/nano_topic_state/state =GLOB.outside_state)
+/obj/machinery/sleeper/ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/topic_state/state =GLOB.outside_state)
 	var/data[0]
 
 	data["power"] = stat & (NOPOWER|BROKEN) ? 0 : 1
@@ -69,22 +69,14 @@
 				data["stat"] = "Unconscious"
 			if(DEAD)
 				data["stat"] = "<font color='red'>Dead</font>"
-		data["crit_health"] = round((occupant.health / occupant.maxHealth) * 100)
+		data["health"] = occupant.health
 		if(ishuman(occupant))
 			var/mob/living/carbon/human/H = occupant
 			data["pulse"] = H.get_pulse(GETPULSE_TOOL)
-			var/organ_health
-			var/organ_damage
-			for(var/obj/item/organ/external/E in H.organs)
-				organ_health += E.total_internal_health
-				organ_damage += E.severity_internal_wounds
-			data["internal_health"] = round((1 - (organ_health ? organ_damage / organ_health : 0)) * 100)
 		data["brute"] = occupant.getBruteLoss()
 		data["burn"] = occupant.getFireLoss()
 		data["oxy"] = occupant.getOxyLoss()
-
-		var/tox_content = occupant.chem_effects[CE_TOXIN] + occupant.chem_effects[CE_ALCOHOL_TOXIC]
-		data["tox"] = tox_content ? tox_content : "0"
+		data["tox"] = occupant.getToxLoss()
 	else
 		data["occupant"] = 0
 	if(beaker)
@@ -146,6 +138,7 @@
 	go_in(target, user)
 
 /obj/machinery/sleeper/relaymove(var/mob/user)
+	..()
 	go_out()
 
 /obj/machinery/sleeper/emp_act(var/severity)
@@ -188,8 +181,8 @@
 		if(M.client)
 			M.client.perspective = EYE_PERSPECTIVE
 			M.client.eye = src
-		M.forceMove(src)
-		set_power_use(ACTIVE_POWER_USE)
+		M.loc = src
+		update_use_power(2)
 		occupant = M
 		update_icon()
 
@@ -204,8 +197,8 @@
 	for(var/atom/movable/A in src) // In case an object was dropped inside or something
 		if(A == beaker)
 			continue
-		A.forceMove(loc)
-	set_power_use(IDLE_POWER_USE)
+		A.loc = loc
+	update_use_power(1)
 	update_icon()
 	toggle_filter()
 

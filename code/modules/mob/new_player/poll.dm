@@ -3,8 +3,9 @@
 	var/text
 
 /mob/new_player/proc/handle_player_polling()
-	if(SSdbcore.Connect())
-		var/datum/db_query/select_query = SSdbcore.NewQuery("SELECT id, question FROM [format_table_name("polls")] WHERE Now() BETWEEN start AND end")
+	establish_db_connection()
+	if(dbcon.IsConnected())
+		var/DBQuery/select_query = dbcon.NewQuery("SELECT id, question FROM polls WHERE Now() BETWEEN start AND end")
 		if(!select_query.Execute())
 			log_world("Failed to retrieve active player polls. Error message: [select_query.ErrorMsg()].")
 			return
@@ -35,12 +36,10 @@
 	if(poll_id == -1)
 		return
 
-	if(SSdbcore.Connect())
+	establish_db_connection()
+	if(dbcon.IsConnected())
 
-		var/datum/db_query/select_query = SSdbcore.NewQuery(
-			"SELECT start, end, question, type, FROM [format_table_name("polls")] WHERE id = :poll_id",
-			list("poll_id" = poll_id)
-		)
+		var/DBQuery/select_query = dbcon.NewQuery("SELECT start, end, question, type, FROM polls WHERE id = [poll_id]")
 		if(!select_query.Execute())
 			log_world("Failed to get poll with id [poll_id]. Error message: [select_query.ErrorMsg()].")
 			return
@@ -62,10 +61,7 @@
 		switch(type)
 			//Polls that have enumerated options
 			if("OPTION")
-				var/datum/db_query/voted_query = SSdbcore.NewQuery(
-					"SELECT option_id FROM [format_table_name("poll_votes")] WHERE poll_id = :poll_id AND ckey = :ckey",
-					list("ckey" = client.ckey, "poll_id" = poll_id)
-				)
+				var/DBQuery/voted_query = dbcon.NewQuery("SELECT option_id FROM poll_votes WHERE poll_id = [poll_id] AND player_id = [client.id]")
 				if(!voted_query.Execute())
 					log_world("Failed to retrieve votes from poll [poll_id] for player [client.id]. Error message: [voted_query.ErrorMsg()].")
 					return
@@ -79,9 +75,7 @@
 
 				var/list/datum/poll_option/options = list()
 
-				var/datum/db_query/options_query = SSdbcore.NewQuery(
-					"SELECT id, text FROM [format_table_name("poll_options")] WHERE poll_id = :poll_id",
-					list("poll_id" = poll_id))
+				var/DBQuery/options_query = dbcon.NewQuery("SELECT id, text FROM poll_options WHERE poll_id = [poll_id]")
 				if(!options_query.Execute())
 					log_world("Failed to get poll options for poll with id [poll_id]. Error message: [options_query.ErrorMsg()].")
 					return
@@ -124,10 +118,7 @@
 
 			//Polls with a text input
 			if("TEXT")
-				var/datum/db_query/voted_query = SSdbcore.NewQuery(
-					"SELECT text FROM [format_table_name("poll_text_replies")] WHERE poll_id = :poll_id AND ckey = :ckey",
-					list("poll_id" = poll_id, "ckey" = client.ckey)
-				)
+				var/DBQuery/voted_query = dbcon.NewQuery("SELECT text FROM poll_text_replies WHERE poll_id = [poll_id] AND player_id = [client.id]")
 				if(!voted_query.Execute())
 					log_world("Failed to get votes from text poll [poll_id] for user [client.id]. Error message: [voted_query.ErrorMsg()].")
 					return
@@ -176,12 +167,10 @@
 	if(!isnum(poll_id) || !isnum(option_id))
 		return
 
-	if(SSdbcore.Connect())
+	establish_db_connection()
+	if(dbcon.IsConnected())
 
-		var/datum/db_query/select_query = SSdbcore.NewQuery(
-			"SELECT start, end, question, type, FROM [format_table_name("polls")] WHERE id = :poll_id AND Now() BETWEEN start AND end",
-			list("poll_id" = poll_id)
-		)
+		var/DBQuery/select_query = dbcon.NewQuery("SELECT start, end, question, type, FROM polls WHERE id = [poll_id] AND Now() BETWEEN start AND end")
 		if(!select_query.Execute())
 			log_world("Failed to get poll [poll_id]. Error message: [select_query.ErrorMsg()].")
 			return
@@ -194,10 +183,7 @@
 			to_chat(usr, SPAN_DANGER("Poll not found."))
 			return
 
-		var/datum/db_query/select_query2 = SSdbcore.NewQuery(
-			"SELECT id FROM [format_table_name("poll_options")] WHERE id = :option_id AND poll_id = :poll_id",
-			list("option_id" = option_id, "poll_id" = poll_id)
-		)
+		var/DBQuery/select_query2 = dbcon.NewQuery("SELECT id FROM poll_options WHERE id = [option_id] AND poll_id = [poll_id]")
 		if(!select_query2.Execute())
 			log_world("Failed to get poll options for poll [poll_id]. Error message: [select_query2.ErrorMsg()].")
 			return
@@ -206,10 +192,7 @@
 			to_chat(usr, SPAN_WARNING("Invalid poll options."))
 			return
 
-		var/datum/db_query/voted_query = SSdbcore.NewQuery(
-			"SELECT id FROM [format_table_name("poll_votes")] WHERE poll_id = :poll_id AND ckey = :ckey",
-			list("poll_id" = poll_id, "ckey" = client.ckey)
-		)
+		var/DBQuery/voted_query = dbcon.NewQuery("SELECT id FROM poll_votes WHERE poll_id = [poll_id] AND player_id = [client.id]")
 		if(!voted_query.Execute())
 			log_world("Failed to get votes for poll [poll_id]. Error message: [voted_query.ErrorMsg()].")
 			return
@@ -218,10 +201,7 @@
 			to_chat(usr, SPAN_WARNING("You already voted in this poll."))
 			return
 
-		var/datum/db_query/insert_query = SSdbcore.NewQuery(
-			"INSERT INTO [format_table_name("poll_votes")] (time, option_id, poll_id, ckey) VALUES (Now(), :option_id, :poll_id, :ckey)",
-			list("option_id" = option_id, "poll_id" = poll_id, "ckey" = client.ckey)
-		)
+		var/DBQuery/insert_query = dbcon.NewQuery("INSERT INTO poll_votes (time, option_id, poll_id, player_id) VALUES (Now(), [option_id], [poll_id], [client.id])")
 		if(!insert_query.Execute())
 			log_world("Failed to insert vote from [client.id] for poll [poll_id]. Error message: [insert_query.ErrorMsg()].")
 			return
@@ -236,11 +216,10 @@
 
 	if(!isnum(poll_id) || !istext(reply_text))
 		return
-	if(SSdbcore.Connect())
+	establish_db_connection()
+	if(dbcon.IsConnected())
 
-		var/datum/db_query/select_query = SSdbcore.NewQuery(
-			"SELECT start, end, question, type FROM [format_table_name("polls")] WHERE id = :id AND Now() BETWEEN start AND end",
-			list("id" = poll_id))
+		var/DBQuery/select_query = dbcon.NewQuery("SELECT start, end, question, type FROM polls WHERE id = [poll_id] AND Now() BETWEEN start AND end")
 		if(!select_query.Execute())
 			log_world("Failed to get poll  [poll_id]. Error message: [select_query.ErrorMsg()].")
 			return
@@ -249,9 +228,7 @@
 			to_chat(usr, SPAN_WARNING("Invalid poll type."))
 			return
 
-		var/datum/db_query/voted_query = SSdbcore.NewQuery(
-			"SELECT id FROM [format_table_name("poll_text_replies")] WHERE poll_id = :id AND player_id = :player_id",
-			list("id" = poll_id, "player_id" = client.id))
+		var/DBQuery/voted_query = dbcon.NewQuery("SELECT id FROM poll_text_replies WHERE poll_id = [poll_id] AND player_id = [client.id]")
 		if(!voted_query.Execute())
 			log_world("Failed to get text replies for poll [poll_id] from user [client.id]. Error message: [voted_query.ErrorMsg()].")
 			return
@@ -269,15 +246,7 @@
 			to_chat(usr, SPAN_WARNING("The text you entered was blank, contained illegal characters or was too long. Please correct the text and submit again."))
 			return
 
-		var/datum/db_query/insert_query = SSdbcore.NewQuery(
-			"INSERT INTO [format_table_name("poll_text_replies")] (time, poll_id, player_id, text) VALUES (Now(), :poll_id, :player_id, :text)",
-			list(
-				"poll_id" = poll_id,
-				"player_id" = client.id,
-				"text" = reply_text
-			)
-		)
-
+		var/DBQuery/insert_query = dbcon.NewQuery("INSERT INTO poll_text_replies (time, poll_id, player_id, text) VALUES (Now(), [poll_id], [client.id], '[reply_text]')")
 		if(!insert_query.Execute())
 			log_world("Failed to insert text vote reply for [poll_id] from user [client.id]. Error message: [insert_query.ErrorMsg()].")
 			return

@@ -23,10 +23,6 @@
 
 /obj/item/implant/attackby(obj/item/I, mob/user)
 	..()
-	if(istype(I, /obj/item/implanter/installer))
-		to_chat(user, SPAN_NOTICE("You cannot insert implants into a cybernetic applicator."))
-		return
-
 	if(istype(I, /obj/item/implanter))
 		var/obj/item/implanter/M = I
 		if(is_external())
@@ -63,7 +59,7 @@
 		affected = H.organs_by_name[organ]
 
 		if(!affected)
-			to_chat(user, SPAN_WARNING("[H] is missing that body part!"))
+			to_chat(user, SPAN_WARNING("[H] is missing that body part!."))
 			return
 
 		if(allowed_organs && allowed_organs.len && !(organ in allowed_organs))
@@ -84,7 +80,7 @@
 	on_install(target, affected)
 	wearer.update_implants()
 	for(var/mob/living/carbon/human/H in viewers(target))
-		SEND_SIGNAL_OLD(H, COMSIG_HUMAN_INSTALL_IMPLANT, target, src)
+		SEND_SIGNAL(H, COMSIG_HUMAN_INSTALL_IMPLANT, target, src)
 	return TRUE
 
 /obj/item/implant/proc/can_install(var/mob/living/target, var/obj/item/organ/external/E)
@@ -113,8 +109,8 @@
 
 /obj/item/implant/proc/meltdown()	//breaks it down, making implant unrecongizible
 	to_chat(wearer, "<span class='warning'>You feel something melting inside [part ? "your [part.name]" : "you"]!</span>")
-	if(part)
-		part.take_damage(15, BURN, used_weapon = "Electronics meltdown")
+	if (part)
+		part.take_damage(burn = 15, used_weapon = "Electronics meltdown")
 	else
 		var/mob/living/M = wearer
 		M.apply_damage(15,BURN)

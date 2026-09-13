@@ -35,12 +35,13 @@
 	hitsound_wall = 'sound/weapons/guns/misc/laser_searwall.ogg'
 	damage_types = list(BRUTE = 60)
 	check_armour = ARMOR_ENERGY
-	armor_divisor = ARMOR_PEN_MAX
+	armor_penetration = 100
 	var/jet_range = 3 // Max range before it dissipates
 	penetrating = 5
 	can_ricochet = FALSE
 	hitscan = TRUE
 	invisibility = 101	//Works like beams
+	style_damage = 101 // Shouldn't have gotten hit by an RPG
 
 	muzzle_type = /obj/effect/projectile/xray/muzzle
 	tracer_type = /obj/effect/projectile/xray/tracer

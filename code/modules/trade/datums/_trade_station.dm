@@ -1,12 +1,23 @@
+#define good_data(nam, randList, price) list("name" = nam, "amount_range" = randList, "price" = price)
+#define custom_good_name(nam) good_data(nam, null, null)
+#define custom_good_amount_range(randList) good_data(null, randList, null)
+#define custom_good_price(price) good_data(null, null, price)
+
+#define offer_data(name, price, amount) list("name" = name, "price" = price, "amount" = amount)
+
+#define category_data(nam, listOfTags) list("name" = nam, "tags" = listOfTags)
+
+#define WHOLESALE_GOODS 1.2
+#define COMMON_GOODS 1.5
+#define UNCOMMON_GOODS 1.8
+#define RARE_GOODS 2.0
+
 /datum/trade_station
 	var/name
 	var/desc
-	var/list/icon_states = list("htu_station", "station")
+	var/list/icon_states = "htu_station"
 	var/initialized = FALSE
 	var/uid 						// Needed for unlocking via recommendations since names are selected from a pool
-
-	var/tree_x = 0.1				// Position on the trade tree map, 0 - left, 1 - right
-	var/tree_y = 0.1				// 0 - down, 1 - top
 
 	var/update_time = 0				// For displaying the time remaining on the UI
 	var/update_timer_start = 0		//
@@ -24,12 +35,12 @@
 	var/markup = WHOLESALE_GOODS
 
 	var/list/inventory = list()
-	var/list/offer_types = list()	// Defines offers
-	var/list/offer_limit = 10		// For limiting offer quantity. 0 is no cap. Offer data packet can set a good specific cap that overrides this.
+	var/list/offer_types = list()	// Defines special offers
+	var/list/offer_limit = 10		// For limiting sell offer quantity. 0 is no cap. Offer data packet can set a good specific cap that overrides this.
 
 	var/list/amounts_of_goods = list()
 	var/unique_good_count = 0
-	var/list/special_offers = list()	// The offer created using the data in offer_types()
+	var/list/special_offers = list()	// The special offer created using the data in offer_types()
 
 	var/base_income = 1600				// Lets stations restock without player interaction.
 	var/wealth = 0						// The abstract value of the goods sold to the station via offers + base income. Represents the station's ability to produce or purchase goods.
@@ -80,9 +91,9 @@
 		x = rand(forced_overmap_zone[1][1], forced_overmap_zone[1][2])
 		y = rand(forced_overmap_zone[2][1], forced_overmap_zone[2][2])
 	else
-		x = rand(OVERMAP_EDGE, OVERMAP_SIZE)
-		y = rand(OVERMAP_EDGE, OVERMAP_SIZE)
-	place_overmap(min(x, OVERMAP_SIZE - OVERMAP_EDGE), min(y, OVERMAP_SIZE - OVERMAP_EDGE))
+		x = rand(OVERMAP_EDGE, GLOB.maps_data.overmap_size)
+		y = rand(OVERMAP_EDGE, GLOB.maps_data.overmap_size)
+	place_overmap(min(x, GLOB.maps_data.overmap_size - OVERMAP_EDGE), min(y, GLOB.maps_data.overmap_size - OVERMAP_EDGE))
 
 	SStrade.all_stations += src
 	if(start_discovered)
@@ -116,7 +127,7 @@
 		if(islist(category))
 			for(var/good_path in category)
 				var/cost = SStrade.get_import_cost(good_path, src)
-				var/list/rand_args = list(5, 30 / max(cost/200, 1))
+				var/list/rand_args = list(1, 30 / max(cost/200, 1))
 				var/list/good_packet = category[good_path]
 				if(islist(good_packet))
 					if(islist(good_packet["amount_range"]))
@@ -135,7 +146,7 @@
 			var/offer_index = offer_types.Find(offer_path)
 			special_offers.Insert(offer_index, offer_path)
 			special_offers[offer_path] = offer_content
-			SStrade.add_to_offer_types(offer_path)			// For blacklisting offer goods from exports
+			SStrade.offer_types.Add(offer_path)				// For blacklisting offers from exports
 
 /datum/trade_station/proc/update_tick()
 	offer_tick()
@@ -143,8 +154,8 @@
 		goods_tick()
 	else
 		initialized = TRUE
-	update_time = rand(6,8) MINUTES
-	addtimer(CALLBACK(src, PROC_REF(update_tick)), update_time, TIMER_STOPPABLE)
+	update_time = rand(15,20) MINUTES
+	addtimer(CALLBACK(src, .proc/update_tick), update_time, TIMER_STOPPABLE)
 	update_timer_start = world.time
 
 // The station will restock based on base_income + wealth, then check unlockables.
@@ -196,7 +207,7 @@
 
 	if(!recommendation_unlocked)
 		try_recommendation()
-
+	
 /datum/trade_station/proc/try_unlock_hidden_inv()
 	if(favor >= hidden_inv_threshold)
 		hidden_inv_unlocked = TRUE
@@ -262,7 +273,7 @@
 	if(!isnum(income))
 		return
 	wealth += income
-	favor += income * (is_offer ? 1 : 0.25)
+	favor += income * (is_offer ? 1 : 0.125)
 
 	// Unlocks without needing to wait for update tick
 	if(!hidden_inv_unlocked)
@@ -290,7 +301,7 @@
 	qdel(overmap_location)
 	return ..()
 
-/datum/trade_station/proc/place_overmap(x, y, z = SSmapping.overmap_z)
+/datum/trade_station/proc/place_overmap(x, y, z = GLOB.maps_data.overmap_z)
 	overmap_location = locate(x, y, z)
 
 	overmap_object = new(overmap_location)
@@ -298,17 +309,17 @@
 	overmap_object.dir = pick(rand(1,2), 4, 8)
 
 	overmap_object.name_stages = list(name, "unknown station", "unknown spatial phenomenon")
-	overmap_object.icon_stages = list(icon_states[1], icon_states[2], "poi")
+	overmap_object.icon_stages = list(pick(icon_states), "station", "poi")
 
 	if(!start_discovered)
-		GLOB.entered_event.register(overmap_location, src, PROC_REF(discovered))
+		GLOB.entered_event.register(overmap_location, src, .proc/discovered)
 
 /datum/trade_station/proc/discovered(_, obj/effect/overmap/ship/ship)
-	if(!istype(ship))
+	if(!istype(ship) || !ship.base)
 		return
 
 	SStrade.discovered_stations |= src
-	GLOB.entered_event.unregister(overmap_location, src, PROC_REF(discovered))
+	GLOB.entered_event.unregister(overmap_location, src, .proc/discovered)
 
 /datum/trade_station/proc/generate_offer()
 	if(!length(offer_types))
@@ -318,8 +329,6 @@
 		var/name = "ERROR: no name found"	// Shouldn't see these anyway
 		var/base_price = 1					//
 		var/amount_cap = 0					//
-		var/list/components
-		var/component_count
 		if(offer_content?.len >= 3)
 			name = offer_content["name"]
 			base_price = text2num(offer_content["price"])
@@ -327,24 +336,26 @@
 		else
 			continue
 
-		if(offer_content?.len >= 5)
-			components = offer_content["attachments"]
-			component_count = offer_content["attach_count"]
+		var/min_amt = round(SPECIAL_OFFER_MIN_PRICE / max(1, base_price))
+		var/max_amt = round(SPECIAL_OFFER_MAX_PRICE / (max(1, base_price)))
 
-		var/max_amt = 1
+		if(min_amt < 1)
+			min_amt = 1
 
 		if(amount_cap > 0)
-			max_amt = amount_cap
+			if(max_amt > amount_cap)
+				max_amt = amount_cap
 		else if(offer_limit > 0)
-			max_amt = offer_limit
+			if(max_amt > offer_limit)
+				max_amt = offer_limit
 
-		var/new_amt = rand(1, max_amt)
-		var/new_price = new_amt * base_price
+		var/new_amt = rand(min_amt, max_amt)
 
-		if(offer_content?.len >= 5)
-			offer_content = offer_data_mods(name, new_price, new_amt, components, component_count)
-		else
-			offer_content = offer_data(name, new_price, new_amt)
+		var/min_price = clamp(new_amt * max(1, base_price), SPECIAL_OFFER_MIN_PRICE, SPECIAL_OFFER_MAX_PRICE)
+		var/max_price = clamp(new_amt * max(1, base_price), min_price, SPECIAL_OFFER_MAX_PRICE)
+		var/new_price = rand(min_price, max_price)
+
+		offer_content = offer_data(name, new_price, new_amt)
 		special_offers[offer_type] = offer_content
 
 /datum/trade_station/proc/offer_tick()

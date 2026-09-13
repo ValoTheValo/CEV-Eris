@@ -115,7 +115,7 @@
 /obj/item/spacecash/bundle/Initialize()
 	. = ..()
 	update_icon()
-	AddComponent(/datum/component/inspiration, CALLBACK(src, PROC_REF(return_stats)))
+	AddComponent(/datum/component/inspiration, CALLBACK(src, .proc/return_stats))
 
 /// Returns a list to use with inspirations. It can be empty if there's not enough money in the bundle. Important side-effects: converts worth to points, thus reducing worth.
 /obj/item/spacecash/bundle/proc/return_stats()
@@ -180,9 +180,9 @@
 	desc = "A card that holds an amount of money."
 	var/owner_name = "" // So the ATM can set it so the EFTPOS can put a valid name on transactions.
 
-/obj/item/spacecash/ewallet/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += SPAN_NOTICE("Charge card's owner: [owner_name]. Credits remaining: [worth].")
-	..(user, extra_description)
+/obj/item/spacecash/ewallet/examine(mob/user)
+	..(user)
+	if(user in view(2) || user == loc)
+		to_chat(user, span_blue("Charge card's owner: [owner_name]. Credits remaining: [worth]."))
 
 #undef CASH_PER_STAT

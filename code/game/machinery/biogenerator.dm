@@ -18,7 +18,6 @@
 	var/list/recipes = list(
 		"Food",
 			list(name="Milk, 30u", cost=60, reagent="milk"),
-			list(name="Stick of butter", cost=60, path=/obj/item/reagent_containers/food/snacks/sliceable/butterstick),
 			list(name="Slab of meat", cost=50, path=/obj/item/reagent_containers/food/snacks/meat),
 			list(name="Box of eggs", cost=200, path=/obj/item/storage/fancy/egg_box),
 		"Nutrient",
@@ -112,7 +111,7 @@
 	update_icon()
 	return
 
-/obj/machinery/biogenerator/nano_ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/nano_topic_state/state =GLOB.outside_state)
+/obj/machinery/biogenerator/ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/topic_state/state =GLOB.outside_state)
 	user.set_machine(src)
 	var/list/data = list()
 	data["points"] = points
@@ -158,7 +157,7 @@
 		return TRUE
 
 	user.set_machine(src)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/biogenerator/proc/activate()
 	if (usr.stat)

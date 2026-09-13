@@ -12,19 +12,9 @@
 	name = "Milk"
 	build_path = /obj/item/reagent_containers/food/drinks/milk
 
-/datum/design/bioprinter/butter
-	name = "Stick of Butter"
-	build_path = /obj/item/reagent_containers/food/snacks/sliceable/butterstick
-
 /datum/design/bioprinter/soap
 	name = "Soap"
 	build_path = /obj/item/soap/nanotrasen
-
-/datum/design/bioprinter/candles
-	name = "Box of Candles"
-	build_path = /obj/item/storage/fancy/candle_box
-	materials = list(MATERIAL_BIOMATTER = 15, MATERIAL_CARDBOARD = 1)
-
 
 //[NUTRIMENTS]
 /datum/design/bioprinter/ez
@@ -75,10 +65,6 @@
 	name = "NT Acolyte Jacket"
 	build_path = /obj/item/clothing/suit/storage/neotheology_jacket
 
-/datum/design/bioprinter/nt_clothes/acolyte_jacket/black
-	name = "NT Black Acolyte Jacket"
-	build_path = /obj/item/clothing/suit/storage/neotheology_jacket/black
-
 /datum/design/bioprinter/nt_clothes/sports_jacket
 	name = "NT Sports Jacket"
 	build_path = /obj/item/clothing/suit/storage/neotheosports
@@ -95,29 +81,17 @@
 	name = "NT Church Garment"
 	build_path = /obj/item/clothing/under/rank/church
 
-/datum/design/bioprinter/nt_clothes/ritual_robe
-	name = "NT Ritual Robe"
-	build_path = /obj/item/clothing/suit/storage/toggle/robe/ritual_robe
-
-/datum/design/bioprinter/nt/spacehelmet/medicus
-	name = "NT Medicus Helmet"
-	build_path = /obj/item/clothing/head/space/medicus
-
-/datum/design/bioprinter/nt/spacesuit/medicus
-	name = "NT Medicus Robes"
-	build_path = /obj/item/clothing/suit/space/medicus
-
 /datum/design/bioprinter/jackboots
 	name = "Custodian's jackboots"
 	build_path = /obj/item/clothing/shoes/jackboots/neotheology
 	materials = list(MATERIAL_BIOMATTER = 20)
 
 /datum/design/bioprinter/belt/utility
-	name = "Neotheology utility belt"
+	name = "Neotheologian utility belt"
 	build_path = /obj/item/storage/belt/utility/neotheology
 
 /datum/design/bioprinter/belt/security
-	name = "Neotheology tactical belt"
+	name = "Neotheologian tactical belt"
 	build_path = /obj/item/storage/belt/tactical/neotheology
 
 /datum/design/bioprinter/backpack
@@ -137,36 +111,20 @@
 	materials = list(MATERIAL_BIOMATTER = 10)
 
 /datum/design/bioprinter/leather/holster
-	name = "compact holster"
-	build_path = /obj/item/storage/pouch/holster
-
-/datum/design/bioprinter/leather/holster/baton
-	name = "baton holster"
-	build_path = /obj/item/storage/pouch/holster/baton
-
-/datum/design/bioprinter/leather/holster/belt
-	name = "belt holster"
-	build_path = /obj/item/storage/pouch/holster/belt
-
-/datum/design/bioprinter/leather/holster/sheath
-	name = "sheath"
-	build_path = /obj/item/storage/pouch/holster/belt/sheath
-
-/datum/design/bioprinter/leather/holster/knife
-	name = "throwing knife pouch"
-	build_path = /obj/item/storage/pouch/holster/belt/knife
-
-/datum/design/bioprinter/leather/holster/accessory
-	name = "concealed carry holster"
+	name = "shoulder holster"
 	build_path = /obj/item/clothing/accessory/holster
 
-/datum/design/bioprinter/leather/holster/accessory/scabbard
-	name = "uniform scabbard"
-	build_path = /obj/item/clothing/accessory/holster/scabbard
+/datum/design/bioprinter/leather/holster/armpit
+	name = "armpit holster"
+	build_path = /obj/item/clothing/accessory/holster/armpit
 
-/datum/design/bioprinter/leather/holster/accessory/knife
-	name = "throwing knife rig"
-	build_path = /obj/item/clothing/accessory/holster/knife
+/datum/design/bioprinter/leather/holster/waist
+	name = "waist holster"
+	build_path = /obj/item/clothing/accessory/holster/waist
+
+/datum/design/bioprinter/leather/holster/hip
+	name = "hip holster"
+	build_path = /obj/item/clothing/accessory/holster/hip
 
 /datum/design/bioprinter/belt
 	materials = list(MATERIAL_BIOMATTER = 30)
@@ -243,9 +201,44 @@
 //[/CLOTHES, ARMOR AND ACCESORIES]
 
 //[MISC]
+/datum/design/bioprinter/storage/sheath
+	name = "sheath"
+	build_path = /obj/item/storage/belt/sheath
+
 /datum/design/bioprinter/holyvacuum
 	name = "\"Tersus\" Vacuum Cleaner"
 	build_path = /obj/item/holyvacuum
+
+//[CELLS]
+/datum/design/bioprinter/nt_cells/large
+	name = "NT \"Spark 13000L\""
+	build_path = /obj/item/cell/large/neotheology
+	materials = list(MATERIAL_BIOMATTER = 15)
+
+/datum/design/bioprinter/nt_cells/large/plasma
+	name = "NT \"Radiance 20000L\""
+	build_path = /obj/item/cell/large/neotheology/plasma
+	materials = list(MATERIAL_PLASMA = 3)
+
+/datum/design/bioprinter/nt_cells/medium
+	name = "NT \"Spark 1000M\""
+	build_path = /obj/item/cell/medium/neotheology/
+	materials = list(MATERIAL_BIOMATTER = 10)
+
+/datum/design/bioprinter/nt_cells/medium/plasma
+	name = "NT \"Radiance 1500M\""
+	build_path = /obj/item/cell/medium/neotheology/plasma
+	materials = list(MATERIAL_PLASMA = 2)
+
+/datum/design/bioprinter/nt_cells/small
+	name = "NT \"Spark 300S\""
+	build_path = /obj/item/cell/small/neotheology/
+	materials = list(MATERIAL_BIOMATTER = 5)
+
+/datum/design/bioprinter/nt_cells/small/plasma
+	name = "NT \"Radiance 500S\""
+	build_path = /obj/item/cell/small/neotheology/plasma
+	materials = list(MATERIAL_PLASMA = 1)
 
 //[CELLS]
 /datum/design/bioprinter/nt_cells/large
@@ -283,7 +276,7 @@
 	factions = list(FACTION_NEOTHEOLOGY)
 
 /datum/design/autolathe/firstaid/nt
-	name = "NeoTheology Medkit"
+	name = "NeoTheologian Medkit"
 	build_path = /obj/item/storage/firstaid/nt
 	factions = list(FACTION_NEOTHEOLOGY)
 
@@ -354,16 +347,12 @@
 	build_path = /obj/item/tool/sword/nt/spear
 
 /datum/design/autolathe/nt/sword/nt_verutum
-	name = "NT Javelins (3)"
-	build_path = /obj/item/stack/thrown/nt/verutum/full
+	name = "NT Javelin"
+	build_path = /obj/item/stack/thrown/nt/verutum
 
 /datum/design/autolathe/nt/tool_upgrade/sanctifier
 	name = "sanctifier"
 	build_path = /obj/item/tool_upgrade/augment/sanctifier
-
-/datum/design/autolathe/nt/staff/nt_staff
-	name = "NT Crosier"
-	build_path = /obj/item/tool/hammer/staff/nt
 
 //[GRENADES]
 /datum/design/autolathe/nt/grenade/nt_smokebomb
@@ -423,5 +412,35 @@
 /datum/design/bioprinter/medical/advanced/ointment
 	name = "Advanced burn kit"
 	build_path = /obj/item/stack/medical/advanced/ointment
+
+/datum/design/bioprinter/lungs
+	name = "Long lungs"
+	materials = list(MATERIAL_BIOMATTER = 30)
+	build_path = /obj/item/organ/internal/lungs/long
+
+/datum/design/bioprinter/heart
+	name = "Five chamber heart"
+	materials = list(MATERIAL_BIOMATTER = 45)
+	build_path = /obj/item/organ/internal/heart/huge
+
+/datum/design/bioprinter/liver
+	name = "Gargantuan liver"
+	materials = list(MATERIAL_BIOMATTER = 30)
+	build_path = /obj/item/organ/internal/liver/big
+
+/datum/design/bioprinter/nerves
+	name = "Hypersensitive nerves"
+	materials = list(MATERIAL_BIOMATTER = 15, MATERIAL_GOLD = 1)
+	build_path = /obj/item/organ/internal/nerve/sensitive_nerve
+
+/datum/design/bioprinter/muscle
+	name = "Super-strength muscle"
+	materials = list(MATERIAL_BIOMATTER = 30)
+	build_path = /obj/item/organ/internal/muscle/super_muscle
+
+/datum/design/bioprinter/blood_vessel
+	name = "Extensive blood vessels"
+	materials = list(MATERIAL_BIOMATTER = 30, MATERIAL_PLASTIC = 2)
+	build_path = /obj/item/organ/internal/blood_vessel/extensive
 
 //[/MED]

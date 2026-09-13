@@ -8,27 +8,14 @@
 	price_tag = 200
 	bad_type = /obj/item/clothing/glasses/hud
 	var/list/icon/current = list() //the current hud icons
-	var/malfunctioning = FALSE
 
-/obj/item/clothing/glasses/hud/proc/repair_self()
-	malfunctioning = FALSE
+/obj/item/clothing/glasses/proc/process_hud(mob/M)
+	if(hud)
+		hud.process_hud(M)
 
 /obj/item/clothing/glasses/hud/process_hud(mob/M)
-	if(malfunctioning)
-		process_broken_hud(M, 1)
-		return TRUE
+	return
 
-/obj/item/clothing/glasses/hud/emp_act(severity)
-	. = ..()
-	malfunctioning = TRUE
-	var/timer
-	switch(severity)
-		if(1)
-			timer = 1 MINUTES
-		if(2)
-			timer = 3 MINUTES
-	addtimer(CALLBACK(src, PROC_REF(repair_self)), timer)
-	
 /obj/item/clothing/glasses/hud/health
 	name = "Health Scanner HUD"
 	desc = "A heads-up display that scans the humans in view and provides accurate data about their health status."
@@ -37,13 +24,11 @@
 
 
 /obj/item/clothing/glasses/hud/health/process_hud(mob/M)
-	if(..())
-		return
 	process_med_hud(M, 1)
 
 /obj/item/clothing/glasses/sunglasses/medhud
 	name = "Ironhammer medical HUD"
-	desc = "Goggles with inbuilt medical information. They provide minor flash resistance."
+	desc = "Flash-resistant goggles with inbuilt medical information."
 	icon_state = "healthhud"
 	prescription = TRUE
 
@@ -69,8 +54,6 @@
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/glasses/hud/security/process_hud(mob/M)
-	if(..())
-		return
 	process_sec_hud(M, 1)
 
 /obj/item/clothing/glasses/sunglasses/sechud
@@ -86,7 +69,7 @@
 
 /obj/item/clothing/glasses/sunglasses/sechud/tactical
 	name = "Ironhammer tactical HUD"
-	desc = "Goggles with inbuilt combat and security information. They provide minor flash resistance."
+	desc = "Flash-resistant goggles with inbuilt combat and security information."
 	icon_state = "swatgoggles"
 
 /obj/item/clothing/glasses/hud/broken
@@ -104,8 +87,6 @@
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/glasses/hud/excelsior/process_hud(mob/M)
-	if(..())
-		return
 	if(is_excelsior(M))
 		process_excel_hud(M)
 

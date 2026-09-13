@@ -1,38 +1,38 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "b" = (
 /obj/crawler/crawler_wallbreaker,
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "c" = (
-/turf/mineral/random/high_chance,
+/turf/simulated/mineral/random/high_chance,
 /area/crawler)
 "d" = (
-/turf/floor/tiled/derelict/white_small_edges,
+/turf/simulated/floor/tiled/derelict/white_small_edges,
 /area/crawler)
 "e" = (
 /obj/machinery/light/floor,
-/turf/floor/tiled/derelict/white_small_edges,
+/turf/simulated/floor/tiled/derelict/white_small_edges,
 /area/crawler)
 "f" = (
 /obj/crawler/crawler_wallbreaker/vertical,
-/turf/wall/untinted/onestar_reinforced,
+/turf/simulated/wall/untinted/onestar_reinforced,
 /area/crawler)
 "g" = (
-/turf/floor/bluegrid,
+/turf/simulated/floor/bluegrid,
 /area/crawler)
 "h" = (
-/turf/floor/tiled/derelict,
+/turf/simulated/floor/tiled/derelict,
 /area/crawler)
 "i" = (
 /obj/crawler/crawler_wallbreaker/vertical,
-/turf/floor/bluegrid,
+/turf/simulated/floor/bluegrid,
 /area/crawler)
 "k" = (
 /obj/crawler/crawler_wallbreaker,
-/turf/floor/bluegrid,
+/turf/simulated/floor/bluegrid,
 /area/crawler)
 
 (1,1,1) = {"

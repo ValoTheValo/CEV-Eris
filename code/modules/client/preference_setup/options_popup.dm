@@ -2,16 +2,6 @@
 	var/datum/category_item/setup_option/selected_option
 	var/datum/category_group/setup_option_category/option_category
 	var/topic_onset = TOPIC_REFRESH
-	var/allowed_jobs = list(/datum/job/captain, /datum/job/rd, /datum/job/hop, /datum/job/cmo, /datum/job/chief_engineer, /datum/job/ihc,
-					/datum/job/gunserg, /datum/job/inspector, /datum/job/medspec, /datum/job/ihoper,
-					/datum/job/doctor, /datum/job/chemist, /datum/job/paramedic, /datum/job/bioengineer,
-					/datum/job/technomancer,
-					/datum/job/cargo_tech, /datum/job/mining, /datum/job/merchant,
-					/datum/job/clubworker, /datum/job/clubmanager, /datum/job/artist,
-					/datum/job/chaplain, /datum/job/acolyte, /datum/job/janitor, /datum/job/hydro,
-					/datum/job/scientist, /datum/job/roboticist, /datum/job/psychiatrist,
-					/datum/job/ai, /datum/job/cyborg,
-					/datum/job/assistant)
 
 /datum/category_item/player_setup_item/proc/get_options()
 	return option_category.items
@@ -41,7 +31,7 @@
 
 /datum/category_item/player_setup_item/content(mob/user)
 	if(option_category)
-		return "<b>[option_category]:</b><a href='byond://?src=\ref[src];options_popup=1'>[get_pref()]</a><br>"
+		return "<b>[option_category]:</b><a href='?src=\ref[src];options_popup=1'>[get_pref()]</a><br>"
 	return ..()
 
 /datum/category_item/player_setup_item/OnTopic(href, list/href_list, mob/user)
@@ -79,7 +69,7 @@
 		if(option == selected_option)
 			dat += "<a class='white [img && "icon"]'>[img][option]</a><br>"
 		else
-			dat += "<a href='byond://?src=[REF(src)];option_select=[option]' class='[option == get_pref_option() && "linkOn"] [img && "icon"]'>[img][option]</a><br>"
+			dat += "<a href='?src=\ref[src];option_select=[option]' class='[option == get_pref_option() && "linkOn"] [img && "icon"]'>[img][option]</a><br>"
 
 	dat += "</td><td>"
 
@@ -112,7 +102,8 @@
 		for(var/perk in selected_option.perks)
 			var/datum/perk/P = perk
 			if(initial(P.icon))
-				dat += "<img style='vertical-align: middle;width=18px;height=18px;' src='[SSassets.transport.get_asset_url(sanitizeFileName("[P].png"))]'/>"
+				preference_mob() << browse_rsc(icon(initial(P.icon),initial(P.icon_state)), "perk_[initial(P.name)].png")
+				dat += "<img style='vertical-align: middle;width=18px;height=18px;' src='perk_[initial(P.name)].png'/>"
 			dat += " [initial(P.name)]<br>"
 		dat += "<br>"
 
@@ -123,17 +114,9 @@
 	if(get_pref_option() == selected_option)
 		dat += "<a class='linkOff'>Selected</a>"
 	else
-		dat += "<a href='byond://?src=\ref[src];option_set=[selected_option]'>Select</a>"
+		dat += "<a href='?src=\ref[src];option_set=[selected_option]'>Select</a>"
 
 	dat += "</td></tr></table>"
-
-	var/client/C = pref.client
-
-	if (C)
-		var/datum/asset/simple/perkasset = get_asset_datum(/datum/asset/simple/perks)
-		if (perkasset.send(C))
-			C.browse_queue_flush() // stall loading nanoui until assets actualy gets sent
-
 	var/datum/browser/popup = new(preference_mob(), name, get_title(), 640, 480, src)
 	popup.set_content(dat)
 	//popup.open() does not move the window to top if the window is already open so close it first

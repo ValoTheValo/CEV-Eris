@@ -1,5 +1,8 @@
 #define PLANES_PER_Z_LEVEL 32
 
+/atom
+	var/original_plane = null
+
 /atom/proc/init_plane()	//Set initial original plane
 	if(!original_plane)
 		original_plane = plane
@@ -8,18 +11,14 @@
 	original_plane = new_plane
 	update_plane()
 
-/proc/calculate_plane(current_z, original_plane)
-	if(current_z <= 0 || world.maxz < current_z)
+/proc/calculate_plane(var/z,var/original_plane)
+	if(z <= 0 || z_levels.len < z)
 		return
 
-	var/list/decoded_json = SSmapping.z_level_info_decoded[current_z]
-	var/lowest_connected_z = decoded_json["bottom_z"]
+	var/datum/level_data/LD = z_levels[z]
 
-	var/z_diff = current_z - lowest_connected_z + 1
-	var/plane1 = z_diff * PLANES_PER_Z_LEVEL
-	var/plane2 = plane1 + original_plane
-
-	return min(32767, plane2)
+	if(LD != null)
+		return min(32767,((z-LD.original_level)*PLANES_PER_Z_LEVEL) + original_plane)
 
 /atom/proc/update_plane()	//Updates plane using local z-coordinate
 	if(z > 0)

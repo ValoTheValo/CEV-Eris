@@ -2,7 +2,6 @@
 	name = "rock"
 	icon = 'icons/obj/mining.dmi'
 	icon_state = "ore2"
-	layer = OBJ_LAYER - 0.05 //slightly below other items so that ore piles don't bury anything on the same tile
 	w_class = ITEM_SIZE_SMALL
 	rarity_value = 25
 	bad_type = /obj/item/ore
@@ -15,7 +14,7 @@
 	name = "pitchblende"
 	icon_state = "ore_uranium"
 	origin_tech = list(TECH_MATERIAL = 5)
-	material = ORE_URANIUM
+	material = MATERIAL_URANIUM
 	rarity_value = 100
 	price_tag = 10
 
@@ -23,21 +22,21 @@
 	name = "hematite"
 	icon_state = "ore_iron"
 	origin_tech = list(TECH_MATERIAL = 1)
-	material = ORE_IRON
+	material = "hematite"
 	price_tag = 2
 
 /obj/item/ore/coal
 	name = "raw carbon"
 	icon_state = "ore_coal"
 	origin_tech = list(TECH_MATERIAL = 1)
-	material = ORE_CARBON
+	material = "carbon"
 	price_tag = 2
 
 /obj/item/ore/glass
 	name = "sand"
 	icon_state = "ore_glass"
 	origin_tech = list(TECH_MATERIAL = 1)
-	material = ORE_SAND
+	material = "sand"
 	slot_flags = SLOT_HOLSTER
 	rarity_value = 20
 	spawn_tags = SPAWN_TAG_ORE_TAG_JUNK
@@ -59,7 +58,7 @@
 	name = "plasma crystals"
 	icon_state = "ore_plasma"
 	origin_tech = list(TECH_MATERIAL = 2)
-	material = ORE_PLASMA
+	material = MATERIAL_PLASMA
 	rarity_value = 33.33
 	price_tag = 5
 
@@ -67,7 +66,7 @@
 	name = "native silver ore"
 	icon_state = "ore_silver"
 	origin_tech = list(TECH_MATERIAL = 3)
-	material = ORE_SILVER
+	material = MATERIAL_SILVER
 	rarity_value = 50
 	price_tag = 5
 
@@ -75,7 +74,7 @@
 	name = "native gold ore"
 	icon_state = "ore_gold"
 	origin_tech = list(TECH_MATERIAL = 4)
-	material = ORE_GOLD
+	material = MATERIAL_GOLD
 	rarity_value = 33.33
 	price_tag = 5
 
@@ -83,21 +82,21 @@
 	name = "diamonds"
 	icon_state = "ore_diamond"
 	origin_tech = list(TECH_MATERIAL = 6)
-	material = ORE_DIAMOND
+	material = MATERIAL_DIAMOND
 	rarity_value = 100
 	price_tag = 20
 
 /obj/item/ore/osmium
 	name = "raw platinum"
 	icon_state = "ore_platinum"
-	material = ORE_PLATINUM
+	material = MATERIAL_PLATINUM
 	rarity_value = 50
 	price_tag = 5
 
 /obj/item/ore/hydrogen
 	name = "raw hydrogen"
 	icon_state = "ore_hydrogen"
-	material = ORE_HYDROGEN
+	material = MATERIAL_MHYDROGEN
 	rarity_value = 50
 	spawn_blacklisted = TRUE
 	price_tag = 5
@@ -115,3 +114,10 @@
 	. = ..()
 	pixel_x = rand(0,16)-8
 	pixel_y = rand(0,8)-8
+
+/obj/item/ore/attackby(obj/item/W, mob/user)
+	if(istype(W,/obj/item/device/core_sampler))
+		var/obj/item/device/core_sampler/C = W
+		C.sample_item(src, user)
+	else
+		return ..()

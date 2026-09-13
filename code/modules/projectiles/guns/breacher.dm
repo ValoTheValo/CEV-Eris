@@ -241,17 +241,21 @@
 
 
 /mob/hatton_act()
-	explosion_act(120, null)
+	if(ishuman(src))
+		var/mob/living/carbon/human/H = src
+		H.take_overall_damage(35, 10)
+	else
+		ex_act(2)
 //turfs
 
-/turf/wall/hatton_act()
-	src.ChangeTurf("/turf/floor")
+/turf/simulated/wall/hatton_act()
+	src.ChangeTurf("/turf/simulated/floor")
 
-/turf/wall/reinforced/hatton_act()
+/turf/simulated/wall/r_wall/hatton_act()
 	take_damage(1000)
 
-/turf/mineral/hatton_act()
-	explosion_act(1000, null)
+/turf/simulated/mineral/hatton_act()
+	ex_act(1)
 
 
 
@@ -262,7 +266,7 @@
 	Dismantle()*/
 
 /obj/structure/hatton_act()
-	explosion_act(1000, null)
+	ex_act(1)
 
 /obj/machinery/deployable/barrier/hatton_act()
 	visible_message(SPAN_DANGER("The [src] is blown apart!"))
@@ -274,7 +278,7 @@
 //machines
 
 /obj/machinery/hatton_act()
-	explosion_act(500, null)
+	ex_act(2)
 
 /obj/machinery/computer/hatton_act()
 	..()
@@ -282,7 +286,7 @@
 	return
 
 /obj/machinery/door/hatton_act()
-	explosion_act(500, null)
+	ex_act(1)
 
 
 //ignore

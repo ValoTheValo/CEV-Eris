@@ -175,16 +175,16 @@
 
 /obj/machinery/multistructure/biogenerator_part/console/attack_hand(mob/user as mob)
 	if(MS)
-		return nano_ui_interact(user)
+		return ui_interact(user)
 
 //UI
 
-/obj/machinery/multistructure/biogenerator_part/console/nano_ui_data()
+/obj/machinery/multistructure/biogenerator_part/console/ui_data()
 	return metrics
 
 
-/obj/machinery/multistructure/biogenerator_part/console/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, datum/nano_topic_state/state = GLOB.default_state)
-	var/list/data = nano_ui_data()
+/obj/machinery/multistructure/biogenerator_part/console/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, datum/topic_state/state = GLOB.default_state)
+	var/list/data = ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
@@ -219,13 +219,14 @@
 				overlays += "port_dirty_full"
 
 
-/obj/machinery/multistructure/biogenerator_part/port/examine(mob/user, extra_description = "")
+/obj/machinery/multistructure/biogenerator_part/port/examine(mob/user)
+	. = ..()
 	if(panel_open)
 		if(pipes_dirtiness)
-			extra_description += SPAN_WARNING("You see a layers of a solid biomass here.")
+			to_chat(user, SPAN_WARNING("You see a layers of a solid biomass here."))
 		else
-			extra_description += SPAN_NOTICE("You didn't see any signs of biomass here. Pipes are clear.")
-	..(user, extra_description)
+			to_chat(user, SPAN_NOTICE("You didn't see any signs of biomass here. Pipes are clear."))
+
 
 /obj/machinery/multistructure/biogenerator_part/port/attackby(obj/item/I, mob/user)
 	var/tool_type = I.get_tool_type(user, list(QUALITY_BOLT_TURNING, QUALITY_SCREW_DRIVING, QUALITY_PRYING), src)
@@ -342,21 +343,22 @@
 		icon_state = initial(icon_state)
 
 
-/obj/machinery/atmospherics/binary/biogen_chamber/examine(mob/user, extra_description = "")
+/obj/machinery/atmospherics/binary/biogen_chamber/examine(mob/user)
+	. = ..()
 	if(panel_open)
 		if(wires)
 			if(!wires_integrity)
-				extra_description += SPAN_WARNING("All wiring is damaged and not functional.")
+				to_chat(user, SPAN_WARNING("All wiring is damaged and not functional."))
 			else if(wires_integrity < 30)
-				extra_description += SPAN_WARNING("Wiring is completly burnt. But somehow it's still functional.")
+				to_chat(user, SPAN_WARNING("Wiring is completly burnt. But somehow it's still functional."))
 			else if(wires_integrity < 50)
-				extra_description += SPAN_WARNING("Wiring is damaged, most of cables are burnt.")
+				to_chat(user, SPAN_WARNING("Wiring is damaged, most of cables are burnt."))
 			else if(wires_integrity < 80)
-				extra_description += SPAN_NOTICE("Wiring is slightly damaged and some of them are burnt.")
+				to_chat(user, SPAN_NOTICE("Wiring is slightly damaged and some of them are burnt."))
 			else
-				extra_description += SPAN_NOTICE("Wiring looks like new.")
+				to_chat(user, SPAN_NOTICE("Wiring looks like new."))
 		else
-			extra_description += SPAN_WARNING("There are no wires here.")
+			to_chat(user, SPAN_WARNING("There are no wires here."))
 
 
 /obj/machinery/atmospherics/binary/biogen_chamber/attackby(obj/item/I, mob/user)
@@ -447,19 +449,19 @@
 		overlays += "core-coil"
 
 
-/obj/machinery/power/biogenerator_core/examine(mob/user, extra_description = "")
+/obj/machinery/power/biogenerator_core/examine(mob/user)
+	. = ..()
 	if(!coil_frame)
 		if(!coil_condition)
-			extra_description += SPAN_WARNING("Coil is completly burnt.")
+			to_chat(user, SPAN_WARNING("Coil is completly burnt."))
 		else if(coil_condition < 30)
-			extra_description += SPAN_WARNING("Most of coil's sectors are burnt, but it's still functional.")
+			to_chat(user, SPAN_WARNING("Most of coil's sectors are burnt, but it's still functional."))
 		else if(coil_condition < 50)
-			extra_description += SPAN_WARNING("Half of coil's sectors are damaged.")
+			to_chat(user, SPAN_WARNING("Half of coil's sectors are damaged."))
 		else if(coil_condition < 80)
-			extra_description += SPAN_NOTICE("You can see damaged sectors at [src]'s coil.")
+			to_chat(user, SPAN_NOTICE("You can see damaged sectors at [src]'s coil."))
 		else
-			extra_description += SPAN_NOTICE("Coil looks like new.")
-	..(user, extra_description)
+			to_chat(user, SPAN_NOTICE("Coil looks like new."))
 
 
 /obj/machinery/power/biogenerator_core/attackby(obj/item/I, mob/user)

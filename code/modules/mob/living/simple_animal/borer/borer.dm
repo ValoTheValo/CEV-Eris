@@ -28,25 +28,21 @@
 	hunger_enabled = FALSE
 	pass_flags = PASSTABLE
 	universal_understand = 1
-	faction = "borers"
-	can_pull_size = ITEM_SIZE_TINY
-	can_pull_mobs = MOB_PULL_NONE
-	density = FALSE
-
-	var/borer_level = 0
-	var/borer_exp = 0
-	var/used_dominate						// Time of last domination use for cooldown.
-	var/max_chemicals = 50					// Max chemicals produce without a host.
-	var/max_chemicals_inhost = 250          // Max chemicals produce within a host.
+	//holder_type = /obj/item/holder/borer //Theres no inhand sprites for holding borers, it turns you into a pink square
+	var/borer_level = 0                           // Level of borer.
+	var/borer_exp = 0                             // Borer experience.
+	var/last_request
+	var/used_dominate
+	var/max_chemicals = 50					// Max chemicals produce without a host
+	var/max_chemicals_inhost = 250          // Max chemicals produce within a host
 	var/chemicals = 50                      // Chemicals used for reproduction and spitting neurotoxin.
 	var/mob/living/carbon/human/host        // Human host for the brain worm.
 	var/truename                            // Name used for brainworm-speak.
 	var/mob/living/captive_brain/host_brain // Used for swapping control of the body back and forth.
 	var/controlling = FALSE					// Used in human death check.
-	var/docile = FALSE                      // Sugar can stop borers from acting.
+	var/docile = 0                          // Sugar can stop borers from acting.
 	var/has_reproduced
 	var/roundstart
-	var/invisibility_cost = 5
 
 	// Abilities borer can use when outside the host
 	var/list/abilities_standalone = list(
@@ -83,24 +79,13 @@
 		)
 
 /mob/living/simple_animal/borer/roundstart
-	roundstart = TRUE
-
-/mob/living/simple_animal/borer/Destroy()
-	if(ishuman(host))
-		var/mob/living/carbon/human/H = host
-		var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
-		head.implants.Remove(src) // This should be safe.
-	if(controlling)
-		detach()
-	return ..()
+	roundstart = 1
 
 /mob/living/simple_animal/borer/Login()
 	..()
 	if(!roundstart && mind && !mind.antagonist.len)
 		var/datum/antagonist/A = create_antag_instance(ROLE_BORER_REPRODUCED)
 		A.create_antagonist(mind,update = FALSE)
-	if(client)
-		client.init_verbs()
 
 /mob/living/simple_animal/borer/New()
 	..()
@@ -132,45 +117,52 @@
 
 /mob/living/simple_animal/borer/proc/update_abilities(force_host=FALSE)
 	// Remove all abilities
-	remove_verb(src, abilities_standalone)
-	remove_verb(src, abilities_in_host)
-	if(host)
-		remove_verb(host, abilities_in_control)
+	verbs -= abilities_standalone
+	verbs -= abilities_in_host
+	host?.verbs -= abilities_in_control
+
+	// Borer gets host abilities before actually getting inside the host
+	// Workaround for a BYOND bug: http://www.byond.com/forum/post/1833666
+	/*if(force_host)
+		if(ishuman(host))
+			verbs += abilities_in_host
+			return
+		for(var/ability in abilities_in_host)
+			if(istype(ability, /mob/living/carbon/human))
+				continue
+			verbs += ability
+		return*/
 
 	// Re-grant some of the abilities, depending on the situation
 	if(!host)
-		add_verb(src, abilities_standalone)
+		verbs += abilities_standalone
 	else if(!controlling)
-		add_verb(src, abilities_in_host)
-		return
+		if(ishuman(host))
+			verbs += abilities_in_host
+			Stat()
+			return
 	else
-		add_verb(host, abilities_in_control)
+		host.verbs += abilities_in_control
+	Stat()
 
 // If borer is controlling a host directly, send messages to host instead of borer
 /mob/living/simple_animal/borer/proc/get_borer_control()
 	return (host && controlling) ? host : src
 
-/mob/living/simple_animal/borer/proc/process_outer_chemical_regen()
+/mob/living/simple_animal/borer/Life()
+	..()
+
 	if((chemicals < max_chemicals) && !invisibility)
 		chemicals++
 
-/mob/living/simple_animal/borer/proc/process_invisibility()
 	if(invisibility)
-		chemicals -= invisibility_cost
-		if(chemicals <= max_chemicals/2 && (max_chemicals/2) - invisibility_cost <= chemicals)
-			to_chat(src, to_chat(src, "\red <B>Your invisibility will run out soon!</B>"))
-		if(chemicals <= invisibility_cost + 1)
-			invisible() // Disable invisibility
+		if(chemicals <= 2)
+			invisible()
 			chemicals = 0
+		else
+			chemicals -= 1
 
-/mob/living/simple_animal/borer/proc/host_death()
-	to_chat(host, SPAN_DANGER("You feel your control over your host suddenly stop."))
-	update_abilities()
-	spawn(1)
-		detach()
-
-/mob/living/simple_animal/borer/proc/process_host()
-	if(host && !stat)
+	if(host && !stat && !(host.stat == 2))
 		// Regenerate if within a host
 		if(health < maxHealth)
 			adjustBruteLoss(-1)
@@ -191,34 +183,41 @@
 			if(docile)
 				to_chat(host, SPAN_DANGER("You are feeling far too docile to continue controlling your host..."))
 				host.release_control()
-				return FALSE
+				return
+
 			if(prob(5))
 				host.adjustBrainLoss(0.1)
+
 			if(prob(host.brainloss/20))
 				host.say("*[pick(list("blink","blink_r","choke","aflap","drool","twitch","twitch_s","gasp"))]")
-	return TRUE
 
-/mob/living/simple_animal/borer/Life()
-	..()
+	for(var/mob/living/L in view(7)) //Sucks to put this here, but otherwise mobs will ignore them
+		L.try_activate_ai()
 
-	process_outer_chemical_regen()
-
-	process_invisibility()
-
-	// Keep at the end
-	process_host()
-
-/mob/living/simple_animal/borer/get_status_tab_items()
+/mob/living/simple_animal/borer/Stat()
 	. = ..()
-	. += list(list("Evolution Level: borer_level"))
-	. += list(list("Chemicals [host ? (chemicals/max_chemicals_inhost) : (chemicals/max_chemicals)]"))
-	if(host)
-		. += list(list("Host health [host.stat == DEAD ? "Deceased" : host.health]"))
-		. += list(list("Host brain damage: [host.getBrainLoss()]"))
+	statpanel("Status")
 
-/mob/living/simple_animal/borer/proc/detach()
+	if(evacuation_controller)
+		var/eta_status = evacuation_controller.get_status_panel_eta()
+		if(eta_status)
+			stat(null, eta_status)
+
+	if (client?.statpanel == "Status")
+		stat("Evolution Level", borer_level)
+		stat("Chemicals", host ? "[chemicals] / [max_chemicals_inhost]" : "[chemicals] / [max_chemicals]")
+		if(host)
+			stat("Host health", host.stat == DEAD ? "Deceased" : host.health)
+			stat("Host brain damage", host.getBrainLoss())
+
+/mob/living/simple_animal/borer/proc/detatch()
 
 	if(!host || !controlling) return
+
+	if(ishuman(host))
+		var/mob/living/carbon/human/H = host
+		var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
+		head.implants -= src
 
 	controlling = FALSE
 
@@ -266,12 +265,7 @@
 	if(host.mind)
 		clear_antagonist_type(host.mind, ROLE_BORER)
 
-	if(ishuman(host))
-		var/mob/living/carbon/human/H = host
-		var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
-		head.implants.Remove(src)
-
-	loc = get_turf(host)
+	src.loc = get_turf(host)
 
 	reset_view(null)
 	machine = null
@@ -279,10 +273,10 @@
 	host.reset_view(null)
 	host.machine = null
 
-	host.status_flags &= ~PASSEMOTES
+	var/mob/living/H = host
+	H.status_flags &= ~PASSEMOTES
 	host = null
 	update_abilities()
-
 
 //Procs for grabbing players.
 /mob/living/simple_animal/borer/proc/request_player()
@@ -355,9 +349,6 @@
 	if(invisibility)
 		alpha = 255
 		invisibility = 0
-	if(controlling || host)
-		detach()
-		leave_host()
 
 /mob/living/simple_animal/borer/update_sight()
 	if(stat == DEAD || eyeobj)
@@ -368,4 +359,3 @@
 		else
 			//sight = initial(sight)
 			see_in_dark = initial(see_in_dark)
-

@@ -1,6 +1,7 @@
 /turf/proc/ReplaceWithLattice()
 	src.ChangeTurf(get_base_turf_by_area(src))
-	new /obj/structure/lattice(locate(src.x, src.y, src.z))
+	spawn()
+		new /obj/structure/lattice( locate(src.x, src.y, src.z) )
 
 // Removes all signs of lattice on the pos of the turf -Donkieyo
 /turf/proc/RemoveLattice()
@@ -9,19 +10,20 @@
 		qdel(L)
 
 //Creates a new turf
-/turf/proc/ChangeTurf(new_turf_type, force_lighting_update)
-	ASSERT(new_turf_type)
+/turf/proc/ChangeTurf(var/turf/N, var/tell_universe=1, var/force_lighting_update = 0)
+	if (!N)
+		return
 
-	var/old_density = density
-	var/old_opacity = opacity
+	var/turf/T = null
 
 	// This makes sure that turfs are not changed to space when one side is part of a zone
-	if(new_turf_type == /turf/space)
-		force_lighting_update = TRUE
-		var/turf/below = SSmapping.GetBelow(src)
+	if(N == /turf/space)
+		var/turf/below = GetBelow(src)
 		if(istype(below) && (TURF_HAS_VALID_ZONE(below) || TURF_HAS_VALID_ZONE(src)))
-			new_turf_type = /turf/open
+			N = /turf/simulated/open
 
+	var/obj/fire/old_fire = fire
+	var/old_opacity = opacity
 	var/old_dynamic_lighting = dynamic_lighting
 	var/list/old_affecting_lights = affecting_lights
 	var/old_lighting_overlay = lighting_overlay
@@ -30,46 +32,69 @@
 	if(connections)
 		connections.erase_all()
 
+	if(istype(src,/turf/simulated))
 		//Yeah, we're just going to rebuild the whole thing.
 		//Despite this being called a bunch during explosions,
 		//the zone will only really do heavy lifting once.
-		var/turf/S = src
-		if(S.zone) // Remove the 'S.' ? --KIROV
+		var/turf/simulated/S = src
+		if(S.zone)
 			S.zone.rebuild()
 
-	var/turf/new_turf = new new_turf_type(src)
-	if(istype(new_turf, /turf/floor))
-		new_turf.RemoveLattice()
-		new_turf.fire = fire
-		fire = null
-	else if(fire)
-		fire.RemoveFire()
+	if(ispath(N, /turf/simulated/floor))
+		var/turf/simulated/W = new N( locate(src.x, src.y, src.z) )
+		T = W
+		if(old_fire)
+			fire = old_fire
 
-	if(new_turf.is_simulated)
+		if (istype(W,/turf/simulated/floor))
+			W.RemoveLattice()
+
+		if(tell_universe)
+			universe.OnTurfChange(W)
+
+		SSair.mark_for_update(src) //handle the addition of the new turf.
+
+		W.levelupdate()
+		. = W
+
+	else
+
+		T = new N( locate(src.x, src.y, src.z) )
+
+		if(old_fire)
+			old_fire.RemoveFire()
+
+		if(tell_universe)
+			universe.OnTurfChange(T)
+
 		SSair.mark_for_update(src)
 
-	new_turf.levelupdate()
-	. =  new_turf
+		T.levelupdate()
+		. =  T
 
 	for(var/turf/neighbour in RANGE_TURFS(1, src))
-		if(istype(neighbour, /turf/space))
+		if (istype(neighbour, /turf/space))
 			var/turf/space/SP = neighbour
 			SP.update_starlight()
-		else if(neighbour.is_simulated)
+
+		if (istype(neighbour, /turf/simulated/))
 			neighbour.update_icon()
-	if(SSlighting && SSlighting.initialized)
+
+	if (SSlighting && SSlighting.initialized)
 		lighting_overlay = old_lighting_overlay
 		affecting_lights = old_affecting_lights
 		corners = old_lighting_corners
+
 		if((old_opacity != opacity) || (dynamic_lighting != old_dynamic_lighting) || force_lighting_update)
 			reconsider_lights()
+
 		if(dynamic_lighting != old_dynamic_lighting)
 			if(dynamic_lighting)
 				lighting_build_overlay()
 			else
 				lighting_clear_overlay()
-	new_turf.update_openspace()
-	GLOB.turf_changed_event.raise_event(src, old_density, density, old_opacity, opacity)
+
+	T.update_openspace()
 
 /turf/proc/transport_properties_from(turf/other)
 	if(!istype(other, src.type))
@@ -88,7 +113,7 @@
 	return 1
 
 //I would name this copy_from() but we remove the other turf from their air zone for some reason
-/turf/transport_properties_from(turf/other)
+/turf/simulated/transport_properties_from(turf/simulated/other)
 	if(!..())
 		return 0
 

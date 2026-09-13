@@ -14,10 +14,6 @@
 	name = "black shoes"
 	icon_state = "black"
 
-/obj/item/clothing/shoes/color/grey
-	name = "grey shoes"
-	icon_state = "grey"
-
 /obj/item/clothing/shoes/color/white
 	name = "white shoes"
 	icon_state = "white"

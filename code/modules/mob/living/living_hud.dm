@@ -90,7 +90,6 @@
 /mob/living/proc/create_HUDtech()
 
 /mob/living/proc/reset_HUD()
-	hide_HUD()
 	destroy_HUD()
 	create_HUD()
 	update_hud()

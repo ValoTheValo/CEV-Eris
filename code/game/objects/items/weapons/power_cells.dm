@@ -34,7 +34,6 @@
 	desc = "Moebius Laboratories branded rechargeable L-standardized power cell. This one is cheap, yet better than Aster model for same price."
 	icon_state = "meb_b_st"
 	maxcharge = 2000
-	spawn_tags = SPAWN_TAG_POWERCELL_MOEBIUS_LARGE
 
 /obj/item/cell/large/moebius/high
 	name = "Moebius \"Power-Geyser 7000L\""
@@ -83,7 +82,6 @@
 	maxcharge = 13000
 	max_chargerate = 0
 	spawn_charged = 1
-	spawn_tags = SPAWN_TAG_POWERCELL_NEOTHEOLOGY_LARGE
 
 /obj/item/cell/large/neotheology/plasma
 	name = "NeoTheology \"Radiance 20000L\""
@@ -157,7 +155,6 @@
 	desc = "Moebius Laboratories branded rechargeable M-standardized power cell. This one is cheap, yet better than Aster model for same price."
 	icon_state = "meb_m_st"
 	maxcharge = 700
-	spawn_tags = SPAWN_TAG_POWERCELL_MOEBIUS_MEDIUM
 
 /obj/item/cell/medium/moebius/high
 	name = "Moebius \"Power-Geyser 900M\""
@@ -206,7 +203,6 @@
 	maxcharge = 1000
 	max_chargerate = 0
 	spawn_charged = 1
-	spawn_tags = SPAWN_TAG_POWERCELL_NEOTHEOLOGY_MEDIUM
 
 /obj/item/cell/medium/neotheology/plasma
 	name = "NeoTheology \"Radiance 1500M\""
@@ -255,7 +251,6 @@
 	desc = "Moebius Laboratories branded rechargeable S-standardized power cell. This one is cheap, yet better than Aster model for same price."
 	icon_state = "meb_s_st"
 	maxcharge = 120
-	spawn_tags = SPAWN_TAG_POWERCELL_MOEBIUS_SMALL
 
 /obj/item/cell/small/moebius/high
 	name = "Moebius \"Power-Geyser 250S\""
@@ -318,7 +313,6 @@
 	maxcharge = 300
 	max_chargerate = 0
 	spawn_charged = 1
-	spawn_tags = SPAWN_TAG_POWERCELL_NEOTHEOLOGY_SMALL
 
 /obj/item/cell/small/neotheology/plasma
 	name = "NeoTheology \"Radiance 500S\""
@@ -379,3 +373,4 @@
 	maxcharge = 700
 	bad_type = /obj/item/cell/medium/mech
 	matter = list()
+	spawn_blacklisted = TRUE

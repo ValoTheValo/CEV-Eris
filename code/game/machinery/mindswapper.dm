@@ -45,10 +45,11 @@
 			if(I.use_tool(user, src, WORKTIME_FAST, tool_type, FAILCHANCE_VERY_EASY,  required_stat = STAT_MEC))
 				anchored = anchored ? FALSE : TRUE
 
-/obj/machinery/mindswapper/examine(mob/user, extra_description = "")
-	..(user, "The safety is [emagged ? SPAN_DANGER("disabled") : "enabled"].")
+/obj/machinery/mindswapper/examine()
+	..()
+	to_chat(usr, "The safety is [emagged ? SPAN_DANGER("disabled") : "enabled"].")
 
-/obj/machinery/mindswapper/emag_act(remaining_charges, mob/user)
+/obj/machinery/mindswapper/emag_act(var/remaining_charges, var/mob/user)
 	emagged = !emagged
 	to_chat(user, SPAN_DANGER("You [emagged ? "disable" : "enable"] the mind swapper safety."))
 	if(emagged)
@@ -67,9 +68,9 @@
 	update_icon()
 
 	user.attack_log += "\[[time_stamp()]\] Triggered the mind swapper</b>"
-	msg_admin_attack("[user.name] ([user.ckey]) triggered the mind swapper (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+	msg_admin_attack("[user.name] ([user.ckey]) triggered the mind swapper (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
-	addtimer(CALLBACK(src, PROC_REF(performswapping)), swap_time, TIMER_STOPPABLE)
+	addtimer(CALLBACK(src, .proc/performswapping), swap_time, TIMER_STOPPABLE)
 
 /obj/machinery/mindswapper/proc/performswapping(mob/user as mob)
 	operating = FALSE

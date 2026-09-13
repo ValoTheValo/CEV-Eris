@@ -10,7 +10,6 @@ GLOBAL_LIST_EMPTY(ships) // List of ships in the game.
 
 GLOBAL_LIST_EMPTY(mob_list)					//EVERY single mob, dead or alive
 GLOBAL_LIST_EMPTY(player_list)				//List of all mobs **with clients attached**. Excludes /mob/new_player
-GLOBAL_LIST_EMPTY(player_ghost_list)		// List of all ghosts with an connected client.
 GLOBAL_LIST_EMPTY(human_mob_list)				//List of all human mobs and sub-types, including clientless
 GLOBAL_LIST_EMPTY(silicon_mob_list)			//List of all silicon mobs, including clientless
 GLOBAL_LIST_EMPTY(living_mob_list)			//List of all alive mobs, including clientless. Excludes /mob/new_player
@@ -24,15 +23,12 @@ GLOBAL_LIST_EMPTY(chemical_reactions_list)				//list of all /datum/chemical_reac
 GLOBAL_LIST_EMPTY(chemical_reactions_list_by_result)					//list of all /datum/chemical_reaction datums. But this one indexed by chemical result instead of reagents
 GLOBAL_LIST_EMPTY(chemical_reagents_list)				//list of all /datum/reagent datums indexed by reagent id. Used by chemistry stuff
 GLOBAL_LIST_EMPTY(landmarks_list)				//list of all landmarks created
+GLOBAL_LIST_EMPTY(shuttle_landmarks_list)		//list of all /obj/effect/shuttle_landmark.
 GLOBAL_LIST_EMPTY(old_surgery_steps)			//list of all old-style (not bound to organs) surgery steps
 GLOBAL_LIST_EMPTY(surgery_steps)					//list of all new organ-based surgery steps
 GLOBAL_LIST_EMPTY(mechas_list)				//list of all mechs. Used by hostile mobs target tracking. Not sure this is used anymore
 GLOBAL_LIST_EMPTY(all_burrows)				//list of all burrows
 GLOBAL_LIST_EMPTY(all_maintshrooms)			//list of all maintshrooms
-
-// Associated list where key is shared between /obj/structure/barrier/four_way and /obj/item/device/assembly/signaler, linking them together
-// Value is a list of 'code' and 'frequency' variables which are assigned to both linked objects on Initialize()
-GLOBAL_LIST_EMPTY(roundstart_barrier_groups)
 
 //Machinery lists
 GLOBAL_LIST_EMPTY(alarm_list) //List of fire alarms
@@ -72,7 +68,6 @@ var/global/list/playable_species = list(SPECIES_HUMAN)    // A list of ALL playa
 
 // Posters
 GLOBAL_LIST_EMPTY(poster_designs)
-GLOBAL_LIST_EMPTY(poster_designs_asters)
 
 // Uplinks
 var/list/obj/item/device/uplink/world_uplinks = list()
@@ -105,26 +100,6 @@ GLOBAL_LIST_EMPTY(global_ritual_cooldowns) // internal lists. Use ritual's coold
 GLOBAL_LIST_EMPTY(hair_styles_list)        //stores /datum/sprite_accessory/hair indexed by name
 GLOBAL_LIST_EMPTY(facial_hair_styles_list) //stores /datum/sprite_accessory/facial_hair indexed by name
 
-//Cooking
-//A dictionary of unique step ids that point to other step IDs that should be EXCLUDED if it is present in a recipe_pointer's list of possible steps.
-GLOBAL_LIST_EMPTY(cwj_optional_step_exclusion_dictionary)
-
-//A dictionary of all recipes by the basic ingredient
-//Format: {base_ingedient_type:{unique_id:recipe}}
-GLOBAL_LIST_EMPTY(cwj_recipe_dictionary)
-
-//A dictionary of all recipes full_stop. Used later for assembling the HTML list.
-//Format: {recipe_type:{unique_id:recipe}}
-GLOBAL_LIST_EMPTY(cwj_recipe_list)
-
-//A dictionary of all steps held within all recipes
-//Format: {unique_id:step}
-GLOBAL_LIST_EMPTY(cwj_step_dictionary)
-
-//An organized heap of recipes by class and grouping.
-//Format: {class_of_step:{step_group_identifier:{unique_id:step}}}
-GLOBAL_LIST_EMPTY(cwj_step_dictionary_ordered)
-
 GLOBAL_DATUM_INIT(underwear, /datum/category_collection/underwear, new())
 
 var/global/list/exclude_jobs = list(/datum/job/ai,/datum/job/cyborg)
@@ -146,8 +121,7 @@ var/global/list/organ_tag_to_name = list(
 	groin = "groin",l_leg = "left leg",
 	chest2= "back", heart = "heart",
 	lungs  = "lungs", liver = "liver",
-	"left kidney" = "left kidney",
-	"right kidney" = "right kidney",
+	"left kidney" = "left kidney", "right kidney" = "right kidney",
 	stomach = "stomach", brain = "brain"
 	)
 
@@ -263,16 +237,10 @@ GLOBAL_LIST_EMPTY(ignore_health_alerts_from)
 			whitelisted_species += S.name
 
 	//Posters
-	paths = subtypesof(/datum/poster) - /datum/poster/wanted - /datum/poster/asters
+	paths = subtypesof(/datum/poster) - /datum/poster/wanted
 	for(var/T in paths)
-		var/datum/poster/poster = new T
-		GLOB.poster_designs += poster
-
-	// Aster posters
-	paths = subtypesof(/datum/poster/asters) - /datum/poster/wanted
-	for(var/T in paths)
-		var/datum/poster/asters/poster = new T
-		GLOB.poster_designs_asters += poster
+		var/datum/poster/P = new T
+		GLOB.poster_designs += P
 
 	paths = subtypesof(/datum/hud)
 	for(var/T in paths)

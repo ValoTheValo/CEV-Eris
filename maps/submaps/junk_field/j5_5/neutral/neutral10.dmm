@@ -10,11 +10,11 @@
 "b" = (
 /obj/structure/catwalk,
 /obj/spawner/junk,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "c" = (
 /obj/structure/catwalk,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "d" = (
 /obj/structure/railing{
@@ -22,18 +22,18 @@
 	tag = "icon-railing0 (WEST)"
 	},
 /obj/spawner/junkfood/rotten,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "e" = (
 /obj/spawner/traps,
-/turf/floor/tiled/techmaint/airless,
+/turf/simulated/floor/tiled/techmaint/airless,
 /area/template_noop)
 "f" = (
 /obj/structure/girder,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "g" = (
-/turf/wall/reinforced,
+/turf/simulated/wall/r_wall,
 /area/template_noop)
 "h" = (
 /obj/machinery/door/firedoor,
@@ -41,14 +41,14 @@
 	name = "Service Maintenance";
 	req_access = list(12)
 	},
-/turf/floor/tiled/techmaint_cargo/airless,
+/turf/simulated/floor/tiled/techmaint_cargo/airless,
 /area/template_noop)
 "k" = (
 /obj/spawner/scrap/dense,
-/turf/floor/tiled/techmaint/airless,
+/turf/simulated/floor/tiled/techmaint/airless,
 /area/template_noop)
 "l" = (
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "J" = (
 /obj/structure/lattice,

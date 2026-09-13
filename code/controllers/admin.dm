@@ -10,14 +10,14 @@ INITIALIZE_IMMEDIATE(/obj/effect/statclick)
 	name = text
 	src.target = target
 	if(istype(target, /datum)) //Harddel man bad
-		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(cleanup))
+		RegisterSignal(target, COMSIG_PARENT_QDELETING, .proc/cleanup)
 
 /obj/effect/statclick/Destroy()
 	target = null
 	return ..()
 
 /obj/effect/statclick/proc/cleanup()
-	SIGNAL_HANDLER
+	//SIGNAL_HANDLER
 	qdel(src)
 
 /obj/effect/statclick/proc/update(text)
@@ -43,6 +43,8 @@ INITIALIZE_IMMEDIATE(/obj/effect/statclick)
 	usr.client.debug_variables(target)
 	message_admins("Admin [key_name_admin(usr)] is debugging the [target] [class].")
 
+
+ADMIN_VERB_ADD(/client/proc/restart_controller, R_DEBUG, null)
 // Debug verbs.
 /client/proc/restart_controller(controller in list("Master", "Failsafe"))
 	set category = "Debug"
@@ -59,7 +61,7 @@ INITIALIZE_IMMEDIATE(/obj/effect/statclick)
 
 	message_admins("Admin [key_name_admin(usr)] has restarted the [controller] controller.")
 
-
+ADMIN_VERB_ADD(/client/proc/debug_controller, R_DEBUG, null)
 /client/proc/debug_controller()
 	set category = "Debug"
 	set name = "Debug Controller"

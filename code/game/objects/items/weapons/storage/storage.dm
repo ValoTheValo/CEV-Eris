@@ -22,19 +22,6 @@
 	var/collection_mode = TRUE //0 = pick one at a time, 1 = pick all on tile
 	var/use_sound = "rustle" //sound played when used. null for no sound.
 	var/is_tray_hidden = FALSE //hides from even t-rays
-	var/prespawned_content_amount // Number of items storage should initially contain
-	var/prespawned_content_type // Type of items storage should contain, takes effect if variable above is at least 1
-	health = 500
-	maxHealth = 500
-
-/obj/item/storage/Initialize(mapload, ...)
-	. = ..()
-	RegisterSignal(src, COMSIG_ATOM_CONTAINERED, PROC_REF(RelayContainerization))
-
-/obj/item/storage/proc/RelayContainerization(atom/source, highestContainer, oldContainer)
-	SIGNAL_HANDLER
-	for(var/atom/thing as anything in contents)
-		SEND_SIGNAL(thing, COMSIG_ATOM_CONTAINERED, highestContainer, oldContainer)
 
 /obj/item/storage/New()
 	can_hold |= can_hold_extra
@@ -44,13 +31,11 @@
 	start_icon = icon("icons/HUD/storage_start.png")
 	middle_icon = icon("icons/HUD/storage_middle.png")
 	end_icon = icon("icons/HUD/storage_end.png")
-	appearance_flags = NO_CLIENT_COLOR
 
 /HUD_element/threePartBox/storedItemBackground
 	start_icon = icon("icons/HUD/stored_start.png")
 	middle_icon = icon("icons/HUD/stored_middle.png")
 	end_icon = icon("icons/HUD/stored_end.png")
-	appearance_flags = NO_CLIENT_COLOR
 
 /HUD_element/slottedItemBackground
 	icon = 'icons/HUD/block.png'
@@ -73,7 +58,7 @@
 		S.close(clientMob)
 
 /obj/item/storage/proc/setupItemBackground(var/HUD_element/itemBackground, atom/item, itemCount)
-	itemBackground.setClickProc(TYPE_PROC_REF(/obj/item/storage, itemBackgroundClick), src)
+	itemBackground.setClickProc(.proc/itemBackgroundClick)
 	itemBackground.setData("item", item)
 
 	var/HUD_element/itemIcon = itemBackground.add(new/HUD_element())
@@ -103,9 +88,8 @@
 	closeButton.setName("HUD Storage Close Button")
 	closeButton.setIcon(icon("icons/mob/screen1.dmi","x"))
 	closeButton.setHideParentOnClick(TRUE)
-	closeButton.setClickProc(TYPE_PROC_REF(/obj/item/storage, closeButtonClick), src)
+	closeButton.setClickProc(.proc/closeButtonClick)
 	closeButton.setData("item", src)
-	closeButton.appearance_flags = NO_CLIENT_COLOR
 
 	//storage space based items
 	if((storage_slots == null) && !display_contents_with_number)
@@ -118,7 +102,7 @@
 		storageBackground.setName("HUD Storage Background")
 		storageBackground.setHideParentOnHide(TRUE)
 
-		storageBackground.setClickProc(TYPE_PROC_REF(/obj/item/storage, storageBackgroundClick), src)
+		storageBackground.setClickProc(.proc/storageBackgroundClick)
 		storageBackground.setData("item", src)
 
 		var/paddingSides = 2 //in pixels
@@ -202,7 +186,7 @@
 
 				currentItemNumber++
 			else //empty slots
-				itemBackground.setClickProc(TYPE_PROC_REF(/obj/item/storage, storageBackgroundClick), src)
+				itemBackground.setClickProc(.proc/storageBackgroundClick)
 				itemBackground.setData("item", src)
 
 			totalWidth += itemBackground.getWidth() + spacingBetweenSlots
@@ -216,7 +200,7 @@
 				totalHeight = (currentSlot/maxColumnCount) * (itemBackground.getHeight() + spacingBetweenSlots)
 
 	main.setPosition(data.StorageData["Xspace"],data.StorageData["Yspace"])
-	. = main
+	return main
 
 /obj/item/storage/Destroy()
 	close_all()
@@ -225,7 +209,7 @@
 /obj/item/storage/MouseDrop(obj/over_object)
 	if(ishuman(usr) && usr == over_object && !usr.incapacitated() && Adjacent(usr))
 		return src.open(usr)
-	. = ..()
+	return ..()
 
 /obj/item/storage/proc/return_inv()
 	var/list/L = list()
@@ -238,7 +222,7 @@
 		L += G.gift
 		if (istype(G.gift, /obj/item/storage))
 			L += G.gift:return_inv()
-	. = L
+	return L
 
 /obj/item/storage/proc/show_to(mob/user)
 	if(!user.client)
@@ -257,8 +241,8 @@
 		generateHUD(data).show(user.client)
 		is_seeing |= user
 		user.s_active = src
-	SEND_SIGNAL_OLD(src, COMSIG_STORAGE_OPENED, user)
-	SEND_SIGNAL_OLD(user, COMSIG_STORAGE_OPENED, src)
+	SEND_SIGNAL(src, COMSIG_STORAGE_OPENED, user)
+	SEND_SIGNAL(user, COMSIG_STORAGE_OPENED, src)
 
 /obj/item/storage/proc/hide_from(mob/user)
 	is_seeing -= user
@@ -305,38 +289,38 @@
 	if(!istype(W)) return //Not an item
 
 	if(usr && usr.isEquipped(W) && !usr.canUnEquip(W))
-		return FALSE
+		return 0
 
 	if(src.loc == W)
-		return FALSE //Means the item is already in the storage item
+		return 0 //Means the item is already in the storage item
 	if(storage_slots != null && contents.len >= storage_slots)
 		if(!stop_messages)
 			to_chat(usr, SPAN_NOTICE("[src] is full, make some space."))
-		return FALSE //Storage item is full
+		return 0 //Storage item is full
 
 	if(W.anchored)
-		return FALSE
+		return 0
 
 	if(can_hold.len)
 		if(!is_type_in_list(W, can_hold))
 			if(!stop_messages && ! istype(W, /obj/item/hand_labeler))
 				to_chat(usr, SPAN_NOTICE("[src] cannot hold \the [W]."))
-			return FALSE
+			return 0
 		var/max_instances = can_hold[W.type]
 		if(max_instances && instances_of_type_in_list(W, contents) >= max_instances)
 			if(!stop_messages && !istype(W, /obj/item/hand_labeler))
 				to_chat(usr, SPAN_NOTICE("[src] has no more space specifically for \the [W]."))
-			return FALSE
+			return 0
 
 	if(cant_hold.len && is_type_in_list(W, cant_hold))
 		if(!stop_messages)
 			to_chat(usr, SPAN_NOTICE("[src] cannot hold [W]."))
-		return FALSE
+		return 0
 
 	if (max_w_class != null && W.w_class > max_w_class)
 		if(!stop_messages)
 			to_chat(usr, SPAN_NOTICE("[W] is too long for this [src]."))
-		return FALSE
+		return 0
 
 	//Slot based storage overrides space-based storage
 	if(storage_slots == null)
@@ -347,14 +331,14 @@
 		if(total_storage_space > max_storage_space)
 			if(!stop_messages)
 				to_chat(usr, SPAN_NOTICE("[src] is too full, make some space."))
-			return FALSE
+			return 0
 
 	if(W.w_class >= src.w_class && (istype(W, /obj/item/storage)))
 		if(!stop_messages)
 			to_chat(usr, SPAN_NOTICE("[src] cannot hold [W] as it's a storage item of the same size."))
-		return FALSE //To prevent the stacking of same sized storage items.
+		return 0 //To prevent the stacking of same sized storage items.
 
-	. = TRUE
+	return 1
 
 //This proc handles items being inserted. It does not perform any checks of whether an item can or can't be inserted. That's done by can_be_inserted()
 //The stop_warning parameter will stop the insertion message from being displayed. It is intended for cases where you are inserting multiple items at once,
@@ -365,8 +349,7 @@
 		usr.prepare_for_slotmove(W)
 		usr.update_icons() //update our overlays
 
-	//W.loc = src
-	W.forceMove(src)
+	W.loc = src
 	W.on_enter_storage(src)
 
 	if(usr)
@@ -387,7 +370,7 @@
 	refresh_all()
 
 	update_icon()
-	. = TRUE
+	return 1
 
 //Call this proc to handle the removal of an item from the storage item. The item will be moved to the atom sent as new_target
 /obj/item/storage/proc/remove_from_storage(obj/item/W, atom/new_location)
@@ -397,6 +380,9 @@
 	if (istype(src, /obj/item/storage/fancy)) //todo: why
 		var/obj/item/storage/fancy/F = src
 		F.update_icon(1)
+
+	W.layer = initial(W.layer)
+	W.set_plane(initial(W.plane))
 
 	if (new_location)
 		W.loc = new_location
@@ -409,8 +395,6 @@
 		W.maptext = ""
 
 	W.on_exit_storage(src)
-	W.layer = initial(W.layer)
-	W.set_plane(initial(W.plane))
 	update_icon()
 
 //This proc is called when you want to place an item into the storage item.
@@ -421,7 +405,7 @@
 		var/amt_inserted = 0
 		var/turf/T = get_turf(user)
 		for(var/obj/item/light/L in src.contents)
-			if(L.status == 0) // LIGHT_OK, don't try using it though as it is undefined earlier in the dme
+			if(L.status == 0)
 				if(LP.uses < LP.max_uses)
 					LP.AddUses(1)
 					amt_inserted++
@@ -448,19 +432,32 @@
 				to_chat(user, SPAN_WARNING("God damnit!"))
 
 	W.add_fingerprint(user)
-	. = handle_item_insertion(W)
+	return handle_item_insertion(W)
 
 /obj/item/storage/dropped(mob/user)
 	return
 
 /obj/item/storage/attack_hand(mob/user)
+	// v Why does that exist? ~Luduk
+	/*if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(H.l_store == src && !H.get_active_hand())	//Prevents opening if it's in a pocket.
+			H.put_in_hands(src)
+			H.l_store = null
+			return
+		if(H.r_store == src && !H.get_active_hand())
+			H.put_in_hands(src)
+			H.r_store = null
+			return*/
+
 	if(loc == user)
 		open(user)
 	else
 		close_all()
 		..()
 
-	add_fingerprint(user)
+	src.add_fingerprint(user)
+	return
 
 /obj/item/storage/verb/toggle_gathering_mode()
 	set name = "Switch Gathering Method"
@@ -476,8 +473,10 @@
 /obj/item/storage/proc/collectItems(turf/target, mob/user)
 	ASSERT(istype(target))
 	. = FALSE
-
+	var/limiter = 15
 	for(var/obj/item/I in target)
+		if(--limiter < 0)
+			break
 		if(can_be_inserted(I, TRUE))
 			. |= TRUE
 			handle_item_insertion(I, TRUE)
@@ -501,7 +500,7 @@
 		if(isturf(A) && !A.density)
 			dump_it(A)
 			return TRUE
-	. = ..()
+	return ..()
 
 /obj/item/storage/verb/quick_empty()
 	set name = "Empty Contents"
@@ -551,9 +550,7 @@
 
 // Override in subtypes
 /obj/item/storage/proc/populate_contents()
-	if(prespawned_content_type && prespawned_content_amount)
-		for(var/i in 1 to prespawned_content_amount)
-			new prespawned_content_type(src)
+	return
 
 /obj/item/storage/emp_act(severity)
 	if(!isliving(loc))
@@ -565,7 +562,7 @@
 	if(user.get_active_hand() == src && user.get_inactive_hand() == null)
 		if(user.swap_hand())
 			open(user)
-			. = TRUE
+			return TRUE
 
 /obj/item/storage/proc/make_exact_fit()
 	storage_slots = contents.len
@@ -612,7 +609,7 @@
 	if (!cur_atom)
 		return -1	//inside something with a null loc.
 
-	. = depth
+	return depth
 
 //Like storage depth, but returns the depth to the nearest turf
 //Returns -1 if no top level turf (a loc was null somewhere, or a non-turf atom's loc was an area somehow).
@@ -630,10 +627,10 @@
 	if (!cur_atom)
 		return -1	//inside something with a null loc.
 
-	. = depth
+	return depth
 
 /obj/item/proc/get_storage_cost()
-	. = BASE_STORAGE_COST(w_class) //If you want to prevent stuff above a certain w_class from being stored, use max_w_class
+	return BASE_STORAGE_COST(w_class) //If you want to prevent stuff above a certain w_class from being stored, use max_w_class
 
 
 //Useful for spilling the contents of containers all over the floor
@@ -646,4 +643,4 @@
 		O.tumble(2)
 
 /obj/item/storage/AllowDrop()
-	. = TRUE
+	return TRUE

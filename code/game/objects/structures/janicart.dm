@@ -29,14 +29,13 @@
 	QDEL_NULL(mybucket)
 	return ..()
 
-/obj/structure/janitorialcart/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		if(mybucket)
+/obj/structure/janitorialcart/examine(mob/user)
+	if(..(user, 1))
+		if (mybucket)
 			var/contains = mybucket.reagents.total_volume
 			to_chat(user, "\icon[src] The bucket contains [contains] unit\s of liquid!")
 		else
 			to_chat(user, "\icon[src] There is no bucket mounted on it!")
-	..(user, extra_description)
 
 /obj/structure/janitorialcart/MouseDrop_T(atom/movable/O as mob|obj, mob/living/user as mob)
 	if (istype(O, /obj/structure/mopbucket) && !mybucket)
@@ -140,10 +139,10 @@
 
 
 /obj/structure/janitorialcart/attack_hand(mob/user)
-	nano_ui_interact(user)
+	ui_interact(user)
 	return
 
-/obj/structure/janitorialcart/nano_ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/structure/janitorialcart/ui_interact(var/mob/user, var/ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data[0]
 	data["name"] = capitalize(name)
 	data["bag"] = mybag ? capitalize(mybag.name) : null
@@ -288,9 +287,13 @@
 		dismantled = 1
 		qdel(src)
 
-/obj/structure/janitorialcart/take_damage(damage)
-	spill(100 / (damage / 100))
-	. = ..()
+
+/obj/structure/janitorialcart/ex_act(severity)
+	spill(100 / severity)
+	..()
+
+
+
 
 //old style retardo-cart
 /obj/structure/bed/chair/janicart
@@ -312,10 +315,13 @@
 	create_reagents(100)
 
 
-/obj/structure/bed/chair/janicart/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2 && mybag)
-		extra_description += "\A [mybag] is hanging on the [callme]."
-	..(user, extra_description)
+/obj/structure/bed/chair/janicart/examine(mob/user)
+	if(!..(user, 1))
+		return
+
+	if(mybag)
+		to_chat(user, "\A [mybag] is hanging on the [callme].")
+
 
 /obj/structure/bed/chair/janicart/attackby(obj/item/I, mob/user)
 	if(istype(I, /obj/item/key))

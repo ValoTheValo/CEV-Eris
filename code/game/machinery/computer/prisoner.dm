@@ -16,35 +16,35 @@
 	var/dat
 	dat += "<B>Prisoner Implant Manager System</B><BR>"
 	if(locked)
-		dat += "<HR><a href='byond://?src=\ref[src];lock=1'>Unlock Console</A>"
+		dat += "<HR><A href='?src=\ref[src];lock=1'>Unlock Console</A>"
 	else
 		dat += "<HR>Chemical Implants<BR>"
 		var/turf/Tr = null
 		for(var/obj/item/implant/chem/C in world)
 			Tr = get_turf(C)
-			if((Tr) && !IS_SHIP_LEVEL(Tr.z)) continue //Out of range
+			if((Tr) && isNotStationLevel(Tr.z)) continue //Out of range
 			if(!C.implanted) continue
 			dat += "[C.wearer.name] | Remaining Units: [C.reagents.total_volume] | Inject: "
-			dat += "<a href='byond://?src=\ref[src];inject=\ref[C];amount=1'>(<font color=red>(1)</font>)</A>"
-			dat += "<a href='byond://?src=\ref[src];inject=\ref[C];amount=5'>(<font color=red>(5)</font>)</A>"
-			dat += "<a href='byond://?src=\ref[src];inject=\ref[C];amount=10'>(<font color=red>(10)</font>)</A><BR>"
+			dat += "<A href='?src=\ref[src];inject=\ref[C];amount=1'>(<font color=red>(1)</font>)</A>"
+			dat += "<A href='?src=\ref[src];inject=\ref[C];amount=5'>(<font color=red>(5)</font>)</A>"
+			dat += "<A href='?src=\ref[src];inject=\ref[C];amount=10'>(<font color=red>(10)</font>)</A><BR>"
 			dat += "********************************<BR>"
 		dat += "<HR>Tracking Implants<BR>"
 		for(var/obj/item/implant/tracking/T in world)
 			Tr = get_turf(T)
-			if((Tr) && !IS_SHIP_LEVEL(Tr.z)) continue //Out of range
+			if((Tr) && isNotStationLevel(Tr.z)) continue //Out of range
 			if(!T.implanted) continue
 			var/loc_display = "Unknown"
 			var/mob/living/carbon/M = T.wearer
-			if(IS_SHIP_LEVEL(M.z) && !istype(M.loc, /turf/space))
+			if(isStationLevel(M.z) && !istype(M.loc, /turf/space))
 				var/turf/mob_loc = get_turf(M)
 				loc_display = mob_loc.loc
 			if(T.malfunction)
-				loc_display = pick(SSmapping.main_ship_areas_by_name)
+				loc_display = pick(SSmapping.teleportlocs)
 			dat += "ID: [T.gps.serial_number] | Location: [loc_display]<BR>"
-			dat += "<a href='byond://?src=\ref[src];warn=\ref[T]'>(<font color=red><i>Message Holder</i></font>)</A> |<BR>"
+			dat += "<A href='?src=\ref[src];warn=\ref[T]'>(<font color=red><i>Message Holder</i></font>)</A> |<BR>"
 			dat += "********************************<BR>"
-		dat += "<HR><a href='byond://?src=\ref[src];lock=1'>Lock Console</A>"
+		dat += "<HR><A href='?src=\ref[src];lock=1'>Lock Console</A>"
 
 	user << browse(dat, "window=computer;size=400x500")
 	onclose(user, "computer")

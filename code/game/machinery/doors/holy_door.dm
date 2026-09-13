@@ -16,11 +16,6 @@
 	icon = 'icons/obj/doors/Door_holy_preacher.dmi'
 	minimal_holiness = CLEARANCE_CLERGY
 
-/obj/machinery/door/holy/public
-	name = "NeoTheology public door"
-	icon = 'icons/obj/doors/Door_holy_public.dmi'
-	minimal_holiness = CLEARANCE_NONE
-
 /obj/item/clothing/accessory/cross // It belongs here
 	name = "Tau Cross necklace"
 	desc = "Heavy necklace resembling a Tau Cross - symbol of NeoTheology. Used as a key to NeoTheology doors."
@@ -28,6 +23,7 @@
 	icon_state = "cross"
 	item_state = ""	// No inhands
 	slot_flags = SLOT_ACCESSORY_BUFFER | SLOT_MASK
+	w_class = ITEM_SIZE_NORMAL // Chonky cross
 	spawn_blacklisted = TRUE
 
 /obj/machinery/door/holy/New()
@@ -282,7 +278,7 @@
 		for(var/atom/movable/AM in turf)
 			if(AM.blocks_airlock())
 				if(tryingToLock)
-					addtimer(CALLBACK(src, PROC_REF(close)), 30 SECONDS)
+					addtimer(CALLBACK(src, .proc/close), 30 SECONDS)
 				if(world.time > next_beep_at)
 					playsound(loc, 'sound/machines/buzz-two.ogg', 30, 1, -1)
 					next_beep_at = world.time + SecondsToTicks(10)
@@ -408,7 +404,7 @@
 	var/cache_string = "[wedged_item.icon]||[wedged_item.icon_state]||[wedged_item.overlays.len]||[wedged_item.underlays.len]"
 
 	if(!GLOB.wedge_icon_cache[cache_string])
-		var/icon/I = getFlatIcon(wedged_item, SOUTH)
+		var/icon/I = getFlatIcon(wedged_item, SOUTH, always_use_defdir = TRUE)
 
 		I.Shift(SOUTH, 6)
 		I.Shift(EAST, 14)
@@ -419,7 +415,7 @@
 	else
 		underlays += GLOB.wedge_icon_cache[cache_string]
 
-/obj/machinery/door/holy/examine(mob/user, extra_description = "")
+/obj/machinery/door/holy/examine(mob/user)
+	..()
 	if(wedged_item)
-		extra_description += "You can see \icon[wedged_item] [wedged_item] wedged into it."
-	..(user, extra_description)
+		to_chat(user, "You can see \icon[wedged_item] [wedged_item] wedged into it.")

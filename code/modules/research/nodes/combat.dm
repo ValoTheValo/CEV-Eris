@@ -94,8 +94,7 @@
 
 	unlocks_designs = list(
 							/datum/design/research/item/weapon/large_grenade,
-							/datum/design/research/item/weapon/clarissa,
-							/datum/design/research/item/weapon/clarrisa_ammo
+							/datum/design/research/item/weapon/clarissa
 						)
 
 /datum/technology/exotic_weaponry

@@ -98,8 +98,9 @@
 				SPAN_WARNING("You [emagged? "disable" : "enable"] the safety guard of [name] with multitool")
 				)
 
-/obj/machinery/gibber/examine(mob/user, extra_description = "")
-	..(user, "The safety guard is [emagged ? SPAN_DANGER("disabled") : "enabled"].")
+/obj/machinery/gibber/examine()
+	..()
+	to_chat(usr, "The safety guard is [emagged ? SPAN_DANGER("disabled") : "enabled"].")
 
 /obj/machinery/gibber/emag_act(remaining_charges, mob/user)
 	emagged = !emagged
@@ -192,8 +193,6 @@
 	else if(iscarbon(occupant))
 		var/mob/living/carbon/C = occupant
 		meat_type = C.species.meat_type
-		if(occupant.stats.getPerk(PERK_SURVIVOR))
-			meat_type = /obj/item/reagent_containers/food/snacks/meat/pork
 	else if(isanimal(occupant))
 		var/mob/living/simple_animal/A = occupant
 		meat_type = A.meat_type
@@ -205,7 +204,7 @@
 
 	occupant.attack_log += "\[[time_stamp()]\] Was gibbed by <b>[user]/[user.ckey]</b>" //One shall not simply gib a mob unnoticed!
 	user.attack_log += "\[[time_stamp()]\] Gibbed <b>[occupant]/[occupant.ckey]</b>"
-	msg_admin_attack("[user.name] ([user.ckey]) gibbed [occupant] ([occupant.ckey]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+	msg_admin_attack("[user.name] ([user.ckey]) gibbed [occupant] ([occupant.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 	occupant.ghostize()
 
 	spawn(4 SECONDS)

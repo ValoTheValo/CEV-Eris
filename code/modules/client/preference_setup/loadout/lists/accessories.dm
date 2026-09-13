@@ -1,9 +1,8 @@
-/*
 /datum/gear/accessory
 	sort_category = "Accessories"
 	category = /datum/gear/accessory
 	slot = slot_accessory_buffer
-
+/*
 /datum/gear/accessory/tie
 	display_name = "tie selection"
 	path = /obj/item/clothing/accessory
@@ -40,13 +39,18 @@
 	slot = slot_accessory_buffer
 	sort_category = "Accessories"
 
-/datum/gear/accessory/guild
-	display_name = "armband, Aster's Guild"
+/datum/gear/accessory/cargo
+	display_name = "armband, cargo"
 	path = /obj/item/clothing/accessory/armband/cargo
-	allowed_roles = list(JOBS_GUILD)
+	allowed_roles = list(JOBS_CARGO)
+
+/datum/gear/accessory/emt
+	display_name = "armband, EMT"
+	path = /obj/item/clothing/accessory/armband/medgreen
+	allowed_roles = list(JOBS_MEDICAL)
 
 /datum/gear/accessory/engineering
-	display_name = "armband, Technomancer League"
+	display_name = "armband, engineering"
 	path = /obj/item/clothing/accessory/armband/engine
 	allowed_roles = list(JOBS_ENGINEERING)
 
@@ -55,52 +59,28 @@
 	path = /obj/item/clothing/accessory/armband/hydro
 
 /datum/gear/accessory/medical
-	display_name = "armband, white"
+	display_name = "armband, medical"
 	path = /obj/item/clothing/accessory/armband/med
+	allowed_roles = list(JOBS_MEDICAL)
 
-/datum/gear/accessory/moebius
-	display_name = "Moebius armband selection"
+/datum/gear/accessory/science
+	display_name = "armband, science"
 	path = /obj/item/clothing/accessory/armband/science
-	allowed_roles = list(JOBS_SCIENCE, JOBS_MEDICAL)
-
-/datum/gear/accessory/moebius/New()
-    ..()
-    var/moebius_armband = list(
-        "Moebius armband, research purple"	 	=	 /obj/item/clothing/accessory/armband/science,
-		"Moebius armband, corporate colors" 	=	 /obj/item/clothing/accessory/armband/moebius,
-        "Moebius armband, biomedical blue" 		=	 /obj/item/clothing/accessory/armband/medgreen
-    )
-    gear_tweaks += new /datum/gear_tweak/path(moebius_armband)
+	allowed_roles = list(JOBS_SCIENCE)
 
 /datum/gear/accessory/holster
-	display_name = "holster, selection"
-	path = /obj/item/storage/pouch/holster
+	display_name = "holster"
+	path = /obj/item/clothing/accessory/holster/armpit
+	cost = 3
 
 /datum/gear/accessory/holster/New()
 	..()
-	var/holsters = list(
-		"Compact"				=	/obj/item/storage/pouch/holster,
-		"Baton"					=	/obj/item/storage/pouch/holster/baton,
-		"Belt"					=	/obj/item/storage/pouch/holster/belt,
-		"Throwing knife pouch"	=	/obj/item/storage/pouch/holster/belt/knife,
-		"Sheath"				=	/obj/item/storage/pouch/holster/belt/sheath
+	var/ties = list(
+		"Armpit"	=	/obj/item/clothing/accessory/holster/armpit,
+		"Hip"		=	/obj/item/clothing/accessory/holster/hip,
+		"Waist"		=	/obj/item/clothing/accessory/holster/waist,
 	)
-	gear_tweaks += new/datum/gear_tweak/path(holsters)
-
-/datum/gear/accessory/concealed_carry_holster
-	display_name = "uniform holster, selection"
-	path = /obj/item/clothing/accessory/holster
-	cost = 3
-
-/datum/gear/accessory/concealed_carry_holster/New()
-	..()
-	var/accs = list(
-		"Concealed carry"		=	/obj/item/clothing/accessory/holster,
-		"Scabbard"				=	/obj/item/clothing/accessory/holster/scabbard,
-		"Throwing knife rig"	=	/obj/item/clothing/accessory/holster/knife,
-		"Ring sheath" 			= 	/obj/item/clothing/accessory/holster/scabbard/ring
-	)
-	gear_tweaks += new/datum/gear_tweak/path(accs)
+	gear_tweaks += new/datum/gear_tweak/path(ties)
 
 /datum/gear/accessory/tie/blue
 	display_name = "tie, blue"
@@ -129,10 +109,4 @@
 	display_name = "bandana selection"
 	path = /obj/item/clothing/mask/bandana
 	slot = slot_wear_mask
-	flags = GEAR_HAS_TYPE_SELECTION
-
-/datum/gear/accessory/cloak
-	display_name = "poncho selection"
-	path = /obj/item/clothing/accessory/cloak
-	slot = slot_accessory_buffer
 	flags = GEAR_HAS_TYPE_SELECTION

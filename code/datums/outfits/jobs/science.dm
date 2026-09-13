@@ -31,17 +31,12 @@
 	name = OUTFIT_JOB_NAME("Moebius Roboticist")
 	uniform = /obj/item/clothing/under/rank/roboticist
 	suit = /obj/item/clothing/suit/storage/robotech_jacket
-	belt = /obj/item/storage/belt/utility/roboticist
+	belt = /obj/item/storage/belt/utility/full
 	pda_slot = slot_r_store
 	id_type = /obj/item/card/id/dkgrey
 	pda_type = /obj/item/modular_computer/pda/moebius/roboticist
+	l_hand = /obj/item/storage/toolbox/mechanical
 
 /decl/hierarchy/outfit/job/science/roboticist/New()
 	..()
 	backpack_overrides.Cut()
-
-/decl/hierarchy/outfit/job/science/psychiatrist
-	name = OUTFIT_JOB_NAME("Moebius Psychiatrist")
-	uniform = /obj/item/clothing/under/rank/psych
-	belt = /obj/item/storage/belt/medical
-	l_pocket = /obj/item/reagent_containers/glass/beaker/vial/psilocybin

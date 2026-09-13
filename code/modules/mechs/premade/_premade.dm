@@ -18,6 +18,7 @@
 
 	var/exosuit_color
 	var/decal
+	var/installed_armor = /obj/item/robot_parts/robot_component/armour/exosuit
 	var/list/installed_software_boards = list()
 	var/list/installed_systems = list(
 		HARDPOINT_HEAD = /obj/item/mech_equipment/light
@@ -25,14 +26,10 @@
 
 
 /mob/living/exosuit/premade/Initialize()
-	if(arms)
-		arms = new arms(src)
-	if(body)
-		body = new body(src)
-	if(head)
-		head = new head(src)
-	if(legs)
-		legs = new legs(src)
+	arms = new arms(src)
+	body = new body(src)
+	head = new head(src)
+	legs = new legs(src)
 
 	for(var/obj/item/mech_component/C in list(arms, legs, head, body))
 		if(decal)
@@ -45,6 +42,10 @@
 		for(var/board_path in installed_software_boards)
 			new board_path(body.computer)
 		body.computer.update_software()
+
+	if(body && body.armor?.type != installed_armor)
+		QDEL_NULL(body.armor) // Delete old armor, if any
+		body.armor_plate = new installed_armor(src)
 
 	..()
 
@@ -165,6 +166,12 @@
 		MATERIAL_URANIUM = 7,
 		MATERIAL_GOLD = 2,
 		MATERIAL_DIAMOND = 1
+	))
+
+	installed_armor = pickweight(list(
+		/obj/item/robot_parts/robot_component/armour/exosuit/plain = 75,
+		/obj/item/robot_parts/robot_component/armour/exosuit/combat = 5,
+		/obj/item/robot_parts/robot_component/armour/exosuit/ablative = 20
 	))
 
 	..()

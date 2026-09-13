@@ -78,7 +78,7 @@ GLOBAL_LIST_EMPTY(ghost_trap_users)
 			continue
 
 		if(O.client)
-			to_chat(O, "[request_string] <a href='byond://?src=\ref[src];candidate=\ref[O];target=\ref[target]'>(Occupy)</a> ([ghost_follow_link(target, O)])")
+			to_chat(O, "[request_string] <a href='?src=\ref[src];candidate=\ref[O];target=\ref[target]'>(Occupy)</a> ([ghost_follow_link(target, O)])")
 
 /datum/ghosttrap/proc/target_destroyed(var/destroyed_target)
 	request_timeouts -= destroyed_target
@@ -90,7 +90,7 @@ GLOBAL_LIST_EMPTY(ghost_trap_users)
 	if(href_list["candidate"] && href_list["target"])
 		var/mob/observer/ghost/candidate = locate(href_list["candidate"]) // BYOND magic.
 		var/mob/target = locate(href_list["target"])                     // So much BYOND magic.
-		if(!target || !candidate || !ismob(target) || !isghost(candidate))
+		if(!target || !candidate)
 			return
 		if(candidate != usr)
 			return
@@ -100,7 +100,7 @@ GLOBAL_LIST_EMPTY(ghost_trap_users)
 		if(target.key)
 			to_chat(candidate, "The target is already occupied.")
 			return
-		if(assess_candidate(candidate, target) && target.can_be_possessed_by(candidate, FALSE))
+		if(assess_candidate(candidate, target))
 			transfer_personality(candidate,target)
 		return 1
 
@@ -126,7 +126,7 @@ GLOBAL_LIST_EMPTY(ghost_trap_users)
 
 // Fluff!
 /datum/ghosttrap/proc/welcome_candidate(var/mob/target)
-	to_chat(target, "<b>You are a positronic brain, brought into existence on [station_name].</b>")
+	to_chat(target, "<b>You are a positronic brain, brought into existence on [station_name()].</b>")
 	to_chat(target, "<b>As a synthetic intelligence, you answer to all crewmembers, as well as the AI.</b>")
 	to_chat(target, "<b>Remember, the purpose of your existence is to serve the crew and the ship. Above all else, do no harm.</b>")
 	to_chat(target, "<b>Use say [target.get_language_prefix()]b to speak to other artificial intelligences.</b>")

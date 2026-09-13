@@ -21,11 +21,11 @@ Has ability of every roach.
 
 	var/datum/reagents/gas_sac
 
-	melee_damage_lower = 13
-	melee_damage_upper = 23
-	armor_divisor = ARMOR_PEN_MODERATE
+	melee_damage_lower = 20
+	melee_damage_upper = 35
+	armor_penetration = 40
 
-	move_to_delay = 8
+	move_to_delay = 7
 	mob_size = MOB_GIGANTIC
 	status_flags = 0
 	mouse_opacity = MOUSE_OPACITY_OPAQUE // Easier to click on in melee, they're giant targets anyway
@@ -48,9 +48,9 @@ Has ability of every roach.
 
 	// Armor related variables
 	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 15,
+		melee = 40,
+		bullet = 40,
+		energy = 60,
 		bomb = 0,
 		bio = 25,
 		rad = 50
@@ -70,8 +70,8 @@ Has ability of every roach.
 	if(can_call_reinforcements())
 		distress_call()
 
-	gas_sac.add_reagent("blattedin", 2)
-	if(prob(7) && !(/obj/effect/effect/smoke/chem/roach in loc)) // even kaiser shouldn't overdo it passively
+	gas_sac.add_reagent("blattedin", 1)
+	if(prob(7))
 		gas_attack()
 
 
@@ -94,7 +94,7 @@ Has ability of every roach.
 		return
 
 	var/location = get_turf(src)
-	var/datum/effect/effect/system/smoke_spread/chem/roach/S = new
+	var/datum/effect/effect/system/smoke_spread/chem/S = new
 
 	S.attach(location)
 	S.set_up(gas_sac, gas_sac.total_volume, 0, location)
@@ -106,31 +106,10 @@ Has ability of every roach.
 	gas_sac.clear_reagents()
 	return TRUE
 
-/mob/living/carbon/superior_animal/roach/kaiser/leaveOvermind()
-	var/mob/living/carbon/superior_animal/roach/backup
-	overseer.removeHarrier(src)
-	for(var/mob/living/carbon/superior_animal/roach/tocheck in overseer.members)
-		if(istype(tocheck, /mob/living/carbon/superior_animal/roach/kaiser))
-			overseer.leader = tocheck
-			overseer?.casualties.Remove(src)
-			overseer = null
-			return
-		else if(istype(tocheck, /mob/living/carbon/superior_animal/roach/fuhrer))
-			backup = tocheck
-	for(var/datum/overmind/roachmind/subordinate in overseer.subordinates) //by this point if there even is a new leader, it is a "mere fuhrer".
-		subordinate.superior = null
-	overseer.subordinates.Cut()
-	overseer.leader = backup
-	if(!backup && !QDELETED(overseer)) // kaiser is always the leader
-		qdel(overseer) // disband
-	overseer = null
-
-/mob/living/carbon/superior_animal/roach/kaiser/findTarget()
+/mob/living/carbon/superior_animal/roach/support/findTarget()
 	. = ..()
 	if(. && gas_attack())
 		visible_emote("charges at [.] in clouds of poison!")
-	if(overseer && .)
-		overseer.targetEnemy(.)
 
 // FUHRER ABILITIES
 /mob/living/carbon/superior_animal/roach/kaiser/proc/distress_call()
@@ -148,7 +127,7 @@ Has ability of every roach.
 			playsound(src.loc, 'sound/voice/shriek1.ogg', 100, 1, 8, 8)
 		visible_message(SPAN_DANGER("[src] emits a horrifying wail as nearby burrows stir to life!"))
 		for (var/obj/structure/burrow/B in find_nearby_burrows(src))
-			B.distress(TRUE, src)
+			B.distress(TRUE)
 
 
 /mob/living/carbon/superior_animal/roach/kaiser/proc/can_call_reinforcements()
@@ -159,17 +138,6 @@ Has ability of every roach.
 	if(health_marker_3 >= health && health > 0 && distress_call_stage == 1)
 		return TRUE
 	return FALSE
-
-/mob/living/carbon/superior_animal/roach/kaiser/updatehealth()
-	. = ..()
-	if(health < maxHealth/2)
-		if(overseer)
-			overseer.casualties |= src
-			overseer.updateHealing()
-	else if(health >= maxHealth * 0.75)
-		if(overseer)
-			overseer.casualties.Remove(src)
-
 
 /mob/living/carbon/superior_animal/roach/kaiser/slip(var/slipped_on)
 	return FALSE

@@ -7,7 +7,7 @@ RSF
 /obj/item/rsf
 	name = "\improper Rapid-Service-Fabricator"
 	desc = "A device used to rapidly deploy service items."
-	icon = 'icons/obj/tools.dmi'
+	icon = 'icons/obj/items.dmi'
 	icon_state = "rcd"
 	opacity = 0
 	density = FALSE
@@ -17,10 +17,9 @@ RSF
 	var/mode = 1
 	w_class = ITEM_SIZE_NORMAL
 
-/obj/item/rsf/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += "It holds [stored_matter] out of [max_stored_matter] charges."
-	..(user, extra_description)
+/obj/item/rsf/examine(mob/user)
+	if(..(user, 0))
+		to_chat(user, "It currently holds [stored_matter]/30 Compressed Matter.")
 
 /obj/item/rsf/attackby(obj/item/W as obj, mob/user as mob)
 	var/obj/item/stack/material/M = W
@@ -67,7 +66,7 @@ RSF
 		if(stored_matter <= 0)
 			return
 
-	if(!istype(A, /obj/structure/table) && !istype(A, /turf/floor))
+	if(!istype(A, /obj/structure/table) && !istype(A, /turf/simulated/floor))
 		return
 
 	playsound(src.loc, 'sound/machines/click.ogg', 10, 1)
@@ -88,7 +87,7 @@ RSF
 			product = new /obj/item/pen()
 			used_energy = 50
 		if(5)
-			product = new /obj/item/storage/box/dice()
+			product = new /obj/item/storage/pill_bottle/dice()
 			used_energy = 200
 
 	to_chat(user, "Dispensing [product ? product : "product"]...")

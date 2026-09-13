@@ -55,7 +55,6 @@
 	var/list/content = history.Copy()
 	content += "<form action='byond://'><input type='hidden' name='src' value='\ref[src]'>> <input type='text' size='40' name='input'><input type='submit' value='Enter'></form>"
 	panel.set_content(jointext(content, "<br>"))
-	panel.update()
 
 /datum/terminal/Topic(href, href_list)
 	if(..())
@@ -68,12 +67,13 @@
 		history += "> [input]"
 		var/output = parse(input, usr)
 		if(QDELETED(src)) // Check for exit.
-			return TRUE
+			return 1
 		history += output
 		if(length(history) > history_max_length)
 			history.Cut(1, length(history) - history_max_length + 1)
 		update_content()
-		return TRUE
+		panel.update()
+		return 1
 
 /datum/terminal/proc/parse(text, mob/user)
 	if(user.stat_check(STAT_COG, STAT_LEVEL_BASIC))

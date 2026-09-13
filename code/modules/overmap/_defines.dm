@@ -3,23 +3,20 @@ var/global/list/map_sectors = list()
 /area/overmap
 	name = "System Map"
 	icon_state = "start"
-	requires_power = FALSE
-	base_turf = /turf/map
+	requires_power = 0
+	base_turf = /turf/unsimulated/map
 
-/turf/map
+/turf/unsimulated/map
 	icon = 'icons/obj/overmap.dmi'
 	icon_state = "grid"
 	dynamic_lighting = 0
 	plane = OVER_OPENSPACE_PLANE
-	oxygen = MOLES_O2STANDARD
-	nitrogen = MOLES_N2STANDARD
-	is_simulated = FALSE
 
-/turf/map/edge
+/turf/unsimulated/map/edge
 	opacity = 1
 	density = TRUE
 
-/turf/map/New()
+/turf/unsimulated/map/New()
 	..()
 	name = "[x]-[y]"
 

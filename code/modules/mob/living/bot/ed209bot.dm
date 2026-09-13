@@ -158,7 +158,7 @@
 				icon_state = "ed209_hat"
 
 		if(5)
-			if(isproxsensor(I))
+			if(is_proximity_sensor(I))
 				user.drop_item()
 				qdel(I)
 				build_step++

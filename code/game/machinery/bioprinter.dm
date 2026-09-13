@@ -17,19 +17,17 @@
 	var/max_matter = 300
 	var/loaded_dna //Blood sample for DNA hashing.
 	var/list/products = list(
-		OP_HEART =   list(/obj/item/organ/internal/vital/heart,  50),
-		OP_LUNGS =   list(/obj/item/organ/internal/vital/lungs,  40),
-		OP_KIDNEY_LEFT = list(/obj/item/organ/internal/kidney/left, 20),
-		OP_KIDNEY_RIGHT = list(/obj/item/organ/internal/kidney/right, 20),
+		OP_HEART =   list(/obj/item/organ/internal/heart,  50),
+		OP_LUNGS =   list(/obj/item/organ/internal/lungs,  40),
+		OP_KIDNEYS = list(/obj/item/organ/internal/kidney, 20),
 		OP_EYES =    list(/obj/item/organ/internal/eyes,   30),
-		OP_LIVER =   list(/obj/item/organ/internal/liver,  50),
-		OP_STOMACH = list(/obj/item/organ/internal/stomach,  40)
+		OP_LIVER =   list(/obj/item/organ/internal/liver,  50)
 		)
 
 /obj/machinery/bioprinter/prosthetics
 	name = "prosthetics fabricator"
 	desc = "A machine that prints prosthetic organs."
-	prints_prosthetics = TRUE
+	prints_prosthetics = 1
 
 /obj/machinery/bioprinter/New()
 	..()
@@ -51,8 +49,6 @@
 
 		if(prints_prosthetics)
 			O.nature = MODIFICATION_SILICON
-			O.icon_state = "[O.icon_state]_robotic"
-			O.name = "robotic [O.name]"
 		else if(loaded_dna)
 			visible_message("<span class='notice'>The printer injects the stored DNA into the biomass.</span>.")
 			O.transplant_data = list()

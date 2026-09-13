@@ -3,12 +3,10 @@
 	var/is_hacking = 0
 	var/max_known_targets
 
-	description_antag = "Use a screwdriver to activate. Its hacking time is 30 seconds, but gets sped the more skilled you are with computers"
-
 	var/in_hack_mode = 0
 	var/list/known_targets
 	var/list/supported_types
-	var/datum/nano_topic_state/default/must_hack/hack_state
+	var/datum/topic_state/default/must_hack/hack_state
 
 /obj/item/tool/multitool/hacktool/New()
 	..()
@@ -43,7 +41,7 @@
 	if(!attempt_hack(user, A))
 		return 0
 
-	A.nano_ui_interact(user, state = hack_state)
+	A.ui_interact(user, state = hack_state)
 	return 1
 
 /obj/item/tool/multitool/hacktool/proc/attempt_hack(var/mob/user, var/atom/target)
@@ -87,18 +85,18 @@
 /obj/item/tool/multitool/hacktool/proc/on_target_destroy(var/target)
 	known_targets -= target
 
-/datum/nano_topic_state/default/must_hack
+/datum/topic_state/default/must_hack
 	var/obj/item/tool/multitool/hacktool/hacktool
 
-/datum/nano_topic_state/default/must_hack/New(var/hacktool)
+/datum/topic_state/default/must_hack/New(var/hacktool)
 	src.hacktool = hacktool
 	..()
 
-/datum/nano_topic_state/default/must_hack/Destroy()
+/datum/topic_state/default/must_hack/Destroy()
 	hacktool = null
 	return ..()
 
-/datum/nano_topic_state/default/must_hack/can_use_topic(var/src_object, var/mob/user)
+/datum/topic_state/default/must_hack/can_use_topic(var/src_object, var/mob/user)
 	if(!hacktool || !hacktool.in_hack_mode || !(src_object in hacktool.known_targets))
 		return STATUS_CLOSE
 	return ..()

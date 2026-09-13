@@ -1,4 +1,0 @@
-author: ''
-delete-after: true
-changes:
-  - refactor: shields use QDEL_IN instead of spawn

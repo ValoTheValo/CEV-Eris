@@ -1,17 +1,18 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/wall/reinforced,
+/turf/simulated/wall/r_wall,
 /area/template_noop)
 "d" = (
 /obj/spawner/junkfood/rotten/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "e" = (
 /obj/spawner/junk/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "f" = (
-/turf/wall/low/with_glass/smart,
+/obj/effect/window_lwall_spawn/smartspawn,
+/turf/simulated/floor/plating/airless,
 /area/template_noop)
 "h" = (
 /obj/structure/lattice,
@@ -22,32 +23,32 @@
 /obj/spawner/junk,
 /obj/spawner/junk,
 /obj/spawner/traps/wire_splicing/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "j" = (
 /obj/spawner/scrap/dense,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "k" = (
 /obj/spawner/junk,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "l" = (
 /obj/spawner/traps/wire_splicing/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "n" = (
 /mob/living/simple_animal/hostile/carp,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "o" = (
 /obj/structure/railing,
 /obj/spawner/traps/wire_splicing/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "p" = (
 /obj/structure/girder,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 
 (1,1,1) = {"

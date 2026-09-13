@@ -7,10 +7,6 @@
 	price_tag = 50
 	var/inflamed = 0 //Counter, not boolean
 
-	max_damage = IORGAN_SMALL_HEALTH
-	min_bruised_damage = IORGAN_SMALL_BRUISE
-	min_broken_damage = IORGAN_SMALL_BREAK
-
 /obj/item/organ/internal/appendix/update_icon()
 	..()
 	if(inflamed)
@@ -26,11 +22,12 @@
 			owner.emote("me",1,"winces slightly.")
 		if(inflamed > 200)
 			if(prob(3))
-				take_damage(10, BRUTE)
+				take_damage(0.1)
 				owner.emote("me",1,"winces painfully.")
-				owner.adjustHalLoss(1)
+				owner.adjustToxLoss(1)
 		if(inflamed > 400)
 			if(prob(1))
+				germ_level += rand(2,6)
 				if (owner.nutrition > 100)
 					owner.vomit()
 				else
@@ -40,6 +37,6 @@
 			if(prob(1))
 				to_chat(owner, SPAN_DANGER("Your abdomen is a world of pain!"))
 				owner.Weaken(10)
-				owner.adjustHalLoss(25)
+				owner.adjustToxLoss(25)
 				removed()
 				qdel(src)

@@ -1,6 +1,6 @@
 /obj/item/organ/external/stump
 	name = "limb stump"
-	nerve_struck = -1
+	dislocated = -1
 
 /obj/item/organ/external/stump/New(var/mob/living/carbon/holder, var/OD, var/obj/item/organ/external/limb)
 	if(istype(limb))

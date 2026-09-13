@@ -1,16 +1,16 @@
 // Returns the atom sitting on the turf.
 // For example, using this on a disk, which is in a bag, on a mob, will return the mob because it's on the turf.
-/proc/get_atom_on_turf(atom/movable/M)
+/proc/get_atom_on_turf(var/atom/movable/M)
 	var/atom/mloc = M
 	while(mloc && mloc.loc && !istype(mloc.loc, /turf/))
 		mloc = mloc.loc
 	return mloc
 
 /proc/iswall(turf/T)
-	return (istype(T, /turf/wall) || istype(T, /turf/shuttle/wall))
+	return (istype(T, /turf/simulated/wall) || istype(T, /turf/unsimulated/wall) || istype(T, /turf/simulated/shuttle/wall))
 
 /proc/isfloor(turf/T)
-	return (istype(T, /turf/floor) || istype(T, /turf/shuttle/floor))
+	return (istype(T, /turf/simulated/floor) || istype(T, /turf/unsimulated/floor) || istype(T, /turf/simulated/shuttle/floor))
 
 //Edit by Nanako
 //This proc is used in only two places, ive changed it to make more sense
@@ -28,32 +28,14 @@
 			return FALSE
 	return TRUE
 
-//A coppy of a proc above because sometimes you actually need to check if turf is clear no matter if it has wires or pipes
-/proc/turf_clear_ignore_cables(turf/T)
-	if (T.density)
-		return FALSE
-	for(var/atom/A in T)
-		if(A.density)
-			return FALSE
-	return TRUE
-
-//A copy of a proc above because sometimes you actually need to check if turf is clear no matter if it has wires or pipes or mobs
-/proc/turf_clear_ignore_cables_and_mobs(turf/T)
-	if (T.density)
-		return FALSE
-	for(var/atom/A in T)
-		if(A.density && !istype(A, /mob/living))
-			return FALSE
-	return TRUE
-
-/proc/clear_interior(turf/T)
+/proc/clear_interior(var/turf/T)
 	if (turf_clear(T))
 		if (!turf_is_external(T))
 			return TRUE
 
 // Picks a turf without a mob from the given list of turfs, if one exists.
 // If no such turf exists, picks any random turf from the given list of turfs.
-/proc/pick_mobless_turf_if_exists(list/start_turfs)
+/proc/pick_mobless_turf_if_exists(var/list/start_turfs)
 	if(!start_turfs.len)
 		return null
 
@@ -66,14 +48,14 @@
 		available_turfs = start_turfs
 	return pick(available_turfs)
 
-/proc/turf_contains_dense_objects(turf/T)
+/proc/turf_contains_dense_objects(var/turf/T)
 	return T.contains_dense_objects()
 
-/proc/not_turf_contains_dense_objects(turf/T)
+/proc/not_turf_contains_dense_objects(var/turf/T)
 	return !turf_contains_dense_objects(T)
 
-/proc/is_station_turf(turf/T)
-	return T && IS_SHIP_LEVEL(T.z)
+/proc/is_station_turf(var/turf/T)
+	return T && isStationLevel(T.z)
 
 /*
 	Turf manipulation
@@ -96,7 +78,7 @@
 	return turf_map
 
 
-/proc/translate_turfs(list/translation, area/base_area, turf/base_turf)
+/proc/translate_turfs(var/list/translation, var/area/base_area = null, var/turf/base_turf)
 	for(var/turf/source in translation)
 
 		var/turf/target = translation[source]
@@ -129,7 +111,7 @@
 	return new_turf
 
 
-/proc/is_turf_near_space(turf/T)
+/proc/is_turf_near_space(var/turf/T)
 	var/area/A = get_area(T)
 	if (A.flags & AREA_FLAG_EXTERNAL)
 		return TRUE
@@ -140,13 +122,13 @@
 		if (A.flags & AREA_FLAG_EXTERNAL)
 			return TRUE
 
-		else if (istype(U, /turf/space) || istype(U, /turf/floor/hull))
+		else if (istype(U, /turf/space) || istype(U, /turf/simulated/floor/hull))
 			return TRUE
 
 	return FALSE
 
 
-/proc/cardinal_turfs(atom/A)
+/proc/cardinal_turfs(var/atom/A)
 	var/list/turf/turfs = list()
 	var/turf/origin = get_turf(A)
 	for (var/a in cardinal)
@@ -157,7 +139,7 @@
 
 
 //This fuzzy proc attempts to determine whether or not this tile is outside the ship
-/proc/turf_is_external(turf/T)
+/proc/turf_is_external(var/turf/T)
 	if (istype(T, /turf/space))
 		return TRUE
 
@@ -173,8 +155,8 @@
 
 
 //Returns true if this tile is an upper hull tile of the ship. IE, a roof
-/proc/turf_is_upper_hull(turf/T)
-	var/turf/B = SSmapping.GetBelow(T)
+/proc/turf_is_upper_hull(var/turf/T)
+	var/turf/B = GetBelow(T)
 	if (!B)
 		//Gotta be something below us if we're a roof
 		return FALSE
@@ -190,12 +172,12 @@
 	return TRUE
 
 //Returns true if this is a lower hull of the ship. IE,a floor that has space underneath
-/proc/turf_is_lower_hull(turf/T)
+/proc/turf_is_lower_hull(var/turf/T)
 	if (turf_is_external(T))
 		//We must be indoors
 		return FALSE
 
-	var/turf/B = SSmapping.GetBelow(T)
+	var/turf/B = GetBelow(T)
 	if (!B)
 		//If we're on the lowest zlevel, return true
 		return TRUE
@@ -210,11 +192,18 @@
 
 
 
+/proc/isOnShipLevel(var/atom/A)
+	if (A && istype(A))
+		if (A.z in GLOB.maps_data.station_levels)
+			return TRUE
+	return FALSE
+
+
 //This is used when you want to check a turf which is a Z transition. For example, an openspace or stairs
 //If this turf conencts to another in that manner, it will return the destination. If not, it will return the input
-/proc/get_connecting_turf(turf/T, turf/from)
+/proc/get_connecting_turf(var/turf/T, var/turf/from = null)
 	if (T.is_hole)
-		var/turf/U = SSmapping.GetBelow(T)
+		var/turf/U = GetBelow(T)
 		if (U)
 			return U
 
@@ -234,7 +223,7 @@
 
 	return FALSE
 
-/proc/is_turf_atmos_unsafe(turf/T)
+/proc/is_turf_atmos_unsafe(var/turf/T)
 	if(istype(T, /turf/space)) // Space tiles
 		return "Spawn location is open to space."
 	var/datum/gas_mixture/air = T.return_air()
@@ -245,7 +234,7 @@
 
 //Used for border objects. This returns true if this atom is on the border between the two specified turfs
 //This assumes that the atom is located inside the target turf
-/atom/proc/is_between_turfs(turf/origin, turf/target)
+/atom/proc/is_between_turfs(var/turf/origin, var/turf/target)
 	if (flags & ON_BORDER)
 		var/testdir = get_dir(target, origin)
 		return (dir & testdir)

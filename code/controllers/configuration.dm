@@ -115,6 +115,7 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 	var/forbid_singulo_possession = 0
 
 	var/organs_decay
+	var/default_brain_health = 400
 
 	//Paincrit knocks someone down once they hit 60 shock_stage, so by default make it so that close to 100 additional damage needs to be dealt,
 	//so that it's similar to HALLOSS. Lowered it a bit since hitting paincrit takes much longer to wear off than a halloss stun.
@@ -130,8 +131,8 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 	var/use_loyalty_implants = 0
 
 	var/welder_vision = 1
+	var/generate_asteroid = 0
 	var/no_click_cooldown = 0
-	var/z_level_shooting = TRUE
 
 	var/admin_legacy_system = 0	//Defines whether the server uses the legacy admin system with admins.txt or the SQL system. Config option in config.txt
 	var/ban_legacy_system = 0	//Defines whether the server uses the legacy banning system with the files in /data or the SQL system. Config option in config.txt
@@ -161,6 +162,7 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 	var/announce_shuttle_dock_to_irc = FALSE
 	var/python_path = "" //Path to the python executable.  Defaults to "python" on windows and "/usr/bin/env python2" on unix
 	var/use_lib_nudge = 0 //Use the C library nudge instead of the python nudge.
+	var/use_overmap = 0
 
 	var/start_location = "asteroid" // Start location defaults to asteroid.
 
@@ -221,15 +223,13 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 	var/webhook_url
 	var/webhook_key
 
-	var/tts_key // Login and password that we use to generate tts_bearer
-	var/tts_enabled // Global switch
-	var/tts_cache // Store generated tts files and reuse them, instead of always requesting new
-
 	var/static/regex/ic_filter_regex //For the cringe filter.
 
 	var/generate_loot_data = FALSE //for loot rework
 
 	var/profiler_permission = R_DEBUG | R_SERVER
+
+	var/allow_ic_printing = TRUE
 
 /datum/configuration/New()
 	fill_storyevents_list()
@@ -346,6 +346,9 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 						world.log << "Now logging runtimes to data/logs/runtimes/runtime-[time2text(world.realtime, "YYYY-MM-DD")].log"
 						runtime_diary = newlog
 
+				if ("generate_asteroid")
+					config.generate_asteroid = 1
+
 				if ("no_click_cooldown")
 					config.no_click_cooldown = 1
 
@@ -366,6 +369,9 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 
 				if ("vote_delay")
 					config.vote_delay = text2num(value)
+
+				if ("disable_ic_printing")
+					config.allow_ic_printing = FALSE
 
 				if ("vote_period")
 					config.vote_period = text2num(value)
@@ -533,6 +539,9 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 				if("popup_admin_pm")
 					config.popup_admin_pm = 1
 
+				if("allow_holidays")
+					Holiday = 1
+
 				if("use_irc_bot")
 					use_irc_bot = 1
 
@@ -625,6 +634,9 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 				if("max_maint_drones")
 					config.max_maint_drones = text2num(value)
 
+				if("use_overmap")
+					config.use_overmap = 1
+
 				if("expected_round_length")
 					config.expected_round_length = MinutesToTicks(text2num(value))
 
@@ -710,14 +722,6 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 				if("webhook_url")
 					config.webhook_url = value
 
-				if("tts_key")
-					config.tts_key = value
-
-				if("tts_enabled")
-					config.tts_enabled = config.tts_key ? value : FALSE
-
-				if("tts_cache")
-					config.tts_cache = value
 
 				if("random_start")
 					var/list/startlist = list(
@@ -761,6 +765,10 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 					config.organ_damage_spillover_multiplier = value / 100
 				if("organs_can_decay")
 					config.organs_decay = 1
+				if("default_brain_health")
+					config.default_brain_health = text2num(value)
+					if(!config.default_brain_health || config.default_brain_health < 1)
+						config.default_brain_health = initial(config.default_brain_health)
 				if("bones_can_break")
 					config.bones_can_break = value
 				if("limbs_can_break")
@@ -805,25 +813,13 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 			if ("address")
 				sqladdress = value
 			if ("port")
-				sqlport = text2num(value)
+				sqlport = value
 			if ("database")
 				sqldb = value
 			if ("login")
 				sqllogin = value
 			if ("password")
 				sqlpass = value
-			if ("sql_tableprefix")
-				sql_tableprefix = value
-			if ("async_query_timeout")
-				sql_async_query_timeout = text2num(value)
-			if ("blocking_query_timeout")
-				sql_blocking_query_timeout = text2num(value)
-			if ("pooling_min_sql_connections")
-				sql_pooling_min_sql_connections = text2num(value)
-			if ("pooling_max_sql_connections")
-				sql_pooling_max_sql_connections = text2num(value)
-			if ("max_concurrent_queries")
-				sql_max_concurrent_queries = text2num(value)
 			else
 				log_misc("Unknown setting in configuration: '[name]'")
 
@@ -853,7 +849,7 @@ GLOBAL_LIST_EMPTY(storyteller_cache)
 		else //probably windows, if not this should work anyway
 			config.python_path = "python"
 
-	world.name = station_name
+	world.name = station_name()
 
 
 /datum/configuration/proc/LoadChatFilter()

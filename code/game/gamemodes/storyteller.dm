@@ -69,6 +69,7 @@ GLOBAL_VAR_INIT(chaos_level, 1) //Works as global multiplier for all storyteller
 	//whether or not the players can vote for it. If this is set to false, it can only be activated by being forced by admins.
 
 
+
 /********************************
 	ROUNDSTART AND SETUP
 *********************************/
@@ -200,7 +201,7 @@ GLOBAL_VAR_INIT(chaos_level, 1) //Works as global multiplier for all storyteller
 
 /proc/storyteller_button()
 	if(GLOB.storyteller)
-		return "<a href='byond://?src=\ref[GLOB.storyteller];panel=1'>\[STORY\]</a>"
+		return "<a href='?src=\ref[GLOB.storyteller];panel=1'>\[STORY\]</a>"
 	else
 		return "<s>\[STORY\]</s>"
 
@@ -310,7 +311,7 @@ The actual fire event proc is located in storyteller_meta*/
 		delay = 1 //Basically no delay on these to reduce bugginess
 	else
 		delay = rand(1, event_schedule_delay)
-	var/handle = addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(fire_event), C, event_type), delay, TIMER_STOPPABLE)
+	var/handle = addtimer(CALLBACK(GLOBAL_PROC, .proc/fire_event, C, event_type), delay, TIMER_STOPPABLE)
 	scheduled_events.Add(list(C), type, handle)
 
 
@@ -333,6 +334,10 @@ The actual fire event proc is located in storyteller_meta*/
 			new_weight = 0
 		else
 			new_weight = calculate_event_weight(a)
+			//Reduce the weight based on number of ocurrences.
+			//This is mostly for the sake of midround handovers
+			if (a.ocurrences >= 1)
+				new_weight *= repetition_multiplier ** a.ocurrences
 
 		//We setup the event pools as an associative list in preparation for a pickweight call
 		if (EVENT_LEVEL_MUNDANE in a.event_pools)
@@ -353,5 +358,9 @@ The actual fire event proc is located in storyteller_meta*/
 
 /datum/storyteller/proc/update_pool_weights(var/list/pool)
 	for(var/datum/storyevent/a in pool)
-		pool[a] = calculate_event_weight(a)
+		var/new_weight = calculate_event_weight(a)
+		if (a.ocurrences >= 1)
+			new_weight *= repetition_multiplier ** a.ocurrences
+
+		pool[a] = new_weight
 	return pool

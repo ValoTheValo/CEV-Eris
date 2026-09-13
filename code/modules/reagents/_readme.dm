@@ -78,6 +78,9 @@ About the Holder:
 		get_data(var/id)
 			Returns get_data() of the reagent.
 
+		get_reagents()
+			Returns a string containing all reagent ids and volumes, e.g. "carbon(4),nittrogen(5)".
+
 		remove_any(var/amount = 1)
 			Removes up to [amount] of reagents from [src]. Returns actual amount removed.
 
@@ -102,10 +105,10 @@ About the Holder:
 			Calls each reagent's touch_obj(target).
 
 		trans_to(var/atom/target, var/amount = 1, var/multiplier = 1, var/copy = 0)
-			The general proc for applying reagents to things externally (as opposed to directly injected into the contents).
+			The general proc for applying reagents to things externally (as opposed to directly injected into the contents). 
 			It first calls touch, then the appropriate trans_to_*() or splash_mob().
 			If for some reason you want touch effects to be bypassed (e.g. injecting stuff directly into a reagent container or person), call the appropriate trans_to_*() proc.
-
+			
 			Calls touch() before checking the type of [target], calling splash_mob(target, amount), trans_to_turf(target, amount, multiplier, copy), or trans_to_obj(target, amount, multiplier, copy).
 
 		trans_id_to(var/atom/target, var/id, var/amount = 1)
@@ -195,7 +198,7 @@ About Reagents:
 			"#RRGGBB" or "#RRGGBBAA" where A is alpha channel.
 
 		color_weight
-			How much reagent affects color of holder. Used by (no longer existing) paint.
+			How much reagent affects color of holder. Used by paint.
 
 	Procs:
 
@@ -230,7 +233,7 @@ About Reagents:
 			Called when reagent is created. Defaults to setting [data] to [newdata].
 
 		mix_data(var/newdata, var/newamount)
-			Called when [newamount] of reagent with [newdata] data is added to the current reagent. Used by (now removed) paint.
+			Called when [newamount] of reagent with [newdata] data is added to the current reagent. Used by paint.
 
 		get_data()
 			Returns data. Can be overriden.
@@ -275,7 +278,7 @@ About Recipes:
 			Called when reaction happens. Used by explosives.
 
 		send_data(var/datum/reagents/T)
-			Sets resulting reagent's data. Used by (also removed) blood paint.
+			Sets resulting reagent's data. Used by blood paint.
 
 About the Tools:
 

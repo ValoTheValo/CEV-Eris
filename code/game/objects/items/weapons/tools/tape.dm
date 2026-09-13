@@ -2,8 +2,6 @@
 	name = "duct tape"
 	desc = "The technomancer's eternal friend. Fixes just about anything, for a while at least."
 	icon = 'icons/obj/tools.dmi'
-	description_info = "Can be used for crafting or to repair tools"
-	description_antag = "Can be used to make makeshift mouthwraps and to tape cameras silently"
 	icon_state = "taperoll"
 	w_class = ITEM_SIZE_SMALL
 	tool_qualities = list(QUALITY_ADHESIVE = 30, QUALITY_SEALING = 30)
@@ -38,19 +36,13 @@
 	rarity_value = 24
 	spawn_tags = SPAWN_TAG_TOOL_ADVANCED
 
-/obj/item/tool/tape_roll/fiber/medical
-	name = "osseous tape"
-	desc = "A roll of flexible adhesive bioadaptive tape. Used for sealing minor damage to bones."
-	tool_qualities = list(QUALITY_ADHESIVE = 30, QUALITY_SEALING = 30)
-	spawn_blacklisted = TRUE	// Don't want these spawning
-
 /obj/item/tool/tape_roll/glue
 	name = "superglue"
 	desc = "A bucket of milky white fluid. Can be used to stick things together, but unlike tape, it cannot be used to seal things."
 	icon = 'icons/obj/tools.dmi'
 	icon_state = "glue"
-	tool_qualities = list(QUALITY_ADHESIVE = 50, QUALITY_CAUTERIZING = 5) // Better than duct tape, but can't seal things and is mostly used in crafting - also, it's glue, so it can be used as an extremely shitty way of sealing wounds
-	matter = list(MATERIAL_PLASTIC = 20)
+	tool_qualities = list(QUALITY_ADHESIVE = 40, QUALITY_CAUTERIZING = 5) // Better than duct tape, but can't seal things and is mostly used in crafting - also, it's glue, so it can be used as an extremely shitty way of sealing wounds
+	matter = list(MATERIAL_BIOMATTER = 30)
 	worksound = NO_WORKSOUND
 
 /obj/item/tool/tape_roll/attack(mob/living/carbon/human/H, mob/user)
@@ -143,18 +135,20 @@
 	anchored = TRUE //it's sticky, no you cant move it
 	spawn_frequency = 0
 	bad_type = /obj/item/ducttape
-	flags = NOBLUDGEON
+
 	var/obj/item/stuck
+
+/obj/item/ducttape/New()
+	..()
+	flags |= NOBLUDGEON
 
 /obj/item/ducttape/update_plane()
 	..()
 	update_icon()
 
-/obj/item/ducttape/examine(mob/user, extra_description = "")
-	if(stuck)
-		stuck.examine(user)
-	else
-		..(user, extra_description)
+
+/obj/item/ducttape/examine(mob/user)
+	return stuck.examine(user)
 
 /obj/item/ducttape/proc/attach(obj/item/W)
 	stuck = W

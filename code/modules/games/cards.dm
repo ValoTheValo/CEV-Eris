@@ -247,12 +247,12 @@
 	update_icon()
 	user.visible_message("\The [user] [concealed ? "conceals" : "reveals"] their hand.")
 
-/obj/item/hand/examine(mob/user, extra_description = "")
-	if((!concealed || loc == user) && LAZYLEN(cards))
-		extra_description += "It contains: "
+/obj/item/hand/examine(mob/user)
+	..(user)
+	if((!concealed || src.loc == user) && cards.len)
+		to_chat(user, "It contains: ")
 		for(var/datum/playingcard/P in cards)
-			extra_description += "\nThe [P.name]."
-	..(user, extra_description)
+			to_chat(user, "The [P.name].")
 
 /obj/item/hand/update_icon(var/direction = 0)
 

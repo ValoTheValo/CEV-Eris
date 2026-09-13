@@ -118,19 +118,21 @@
 	ram_cost = 5
 	id = "manifest"
 	toggle = 0
-	var/datum/nano_module/crew_manifest/manifestmodule
-	var/datum/topic_manager/program/mandatorymanager
 
-	New()
-		mandatorymanager = new()
-		manifestmodule = new(src, mandatorymanager)
-	
-	Destroy()
-		. = ..()
-		QDEL_NULL(manifestmodule)
+	on_ui_interact(mob/living/silicon/pai/user, datum/nanoui/ui=null, force_open=1)
+		data_core.get_manifest_json()
 
-	on_ui_interact(mob/living/silicon/pai/user, datum/nanoui/ui=null, force_open=NANOUI_REINITIALIZE)
-		manifestmodule.nano_ui_interact(user, ui, "main", force_open) // transfers applicable vars to manifestmodule
+		var/data[0]
+		// This is dumb, but NanoUI breaks if it has no data to send
+		data["manifest"] = list("__json_cache" = ManifestJSON)
+
+		ui = SSnano.try_update_ui(user, user, id, ui, data, force_open)
+		if(!ui)
+			// Don't copy-paste this unless you're making a pAI software module!
+			ui = new(user, user, id, "pai_manifest.tmpl", "Crew Manifest", 450, 600)
+			ui.set_initial_data(data)
+			ui.open()
+			ui.set_auto_update(1)
 
 /datum/pai_software/med_records
 	name = "Medical Records"
@@ -142,23 +144,18 @@
 		var/data[0]
 
 		var/records[0]
-		for(var/datum/computer_file/report/crew_record/general in GLOB.all_crew_records)
+		for(var/datum/data/record/general in sortRecord(data_core.general))
 			var/record[0]
-			record["name"] = general.get_name()
+			record["name"] = general.fields["name"]
 			record["ref"] = "\ref[general]"
 			records[++records.len] = record
 
 		data["records"] = records
 
-		var/datum/computer_file/report/crew_record/G = user.securityActive
-		var/datum/report_field/arrayclump/M = G?.get_linkage_medRecord()
-		data["general"] = G ? list("name" = G.get_name(), "sex" = G.get_sex(), "species" = G.get_species(), "age" = G.get_age(), \
-	"job" = G.get_job(), "fingerprint" = G.get_fingerprint(), "status" = G.get_status(), "bloodtype" = G.get_bloodtype()) : null
-		data["prosthetics"] = M ? M.value["prosthetics"] : null
-		data["wounds"] = M ? M.value["wounds"] : null
-		data["Body state"] = M ? M.value["body state"] : null
-		data["chemhistory"] = M ? M.value["chemhistory"] : null
-		data["psychological"] = M ? M.value["psychological"] : null
+		var/datum/data/record/G = user.medicalActive1
+		var/datum/data/record/M = user.medicalActive2
+		data["general"] = G ? G.fields : null
+		data["medical"] = M ? M.fields : null
 		data["could_not_find"] = user.medical_cannotfind
 
 		ui = SSnano.try_update_ui(user, user, id, ui, data, force_open)
@@ -172,15 +169,24 @@
 	Topic(href, href_list)
 		var/mob/living/silicon/pai/P = usr
 		if(!istype(P)) return
-	
+
 		if(href_list["select"])
-			var/datum/computer_file/report/crew_record/record = locate(href_list["select"])
-			if(istype(record))
-				P.medical_cannotfind = 0
-				P.medicalActive = record
+			var/datum/data/record/record = locate(href_list["select"])
+			if(record)
+				var/datum/data/record/R = record
+				var/datum/data/record/M = null
+				if (!( data_core.general.Find(R) ))
+					P.medical_cannotfind = 1
+				else
+					P.medical_cannotfind = 0
+					for(var/datum/data/record/E in data_core.medical)
+						if ((E.fields["name"] == R.fields["name"] || E.fields["id"] == R.fields["id"]))
+							M = E
+					P.medicalActive1 = R
+					P.medicalActive2 = M
 			else
 				P.medical_cannotfind = 1
-			return TRUE
+			return 1
 
 /datum/pai_software/sec_records
 	name = "Security Records"
@@ -192,18 +198,18 @@
 		var/data[0]
 
 		var/records[0]
-		for(var/datum/computer_file/report/crew_record/general in GLOB.all_crew_records)
+		for(var/datum/data/record/general in sortRecord(data_core.general))
 			var/record[0]
-			record["name"] = general.get_name()
+			record["name"] = general.fields["name"]
 			record["ref"] = "\ref[general]"
 			records[++records.len] = record
 
 		data["records"] = records
 
-		var/datum/computer_file/report/crew_record/G = user.securityActive
-		data["general"] = G ? list("name" = G.get_name(), "sex" = G.get_sex(), "species" = G.get_species(), "age" = G.get_age(), \
-		"job" = G.get_job(), "fingerprint" = G.get_fingerprint(), "status" = G.get_status(), "criminalStatus" = G.get_criminalStatus(), \
-		"secNotes" = G.get_linkage_secNotes()) : null
+		var/datum/data/record/G = user.securityActive1
+		var/datum/data/record/S = user.securityActive2
+		data["general"] = G ? G.fields : null
+		data["security"] = S ? S.fields : null
 		data["could_not_find"] = user.security_cannotfind
 
 		ui = SSnano.try_update_ui(user, user, id, ui, data, force_open)
@@ -219,14 +225,26 @@
 		if(!istype(P)) return
 
 		if(href_list["select"])
-			var/datum/computer_file/report/crew_record/record = locate(href_list["select"])
-			if(istype(record))
-				P.security_cannotfind = 0
-				P.securityActive = record
+			var/datum/data/record/record = locate(href_list["select"])
+			if(record)
+				var/datum/data/record/R = record
+				var/datum/data/record/S = null
+				if (!( data_core.general.Find(R) ))
+					P.securityActive1 = null
+					P.securityActive2 = null
+					P.security_cannotfind = 1
+				else
+					P.security_cannotfind = 0
+					for(var/datum/data/record/E in data_core.security)
+						if ((E.fields["name"] == R.fields["name"] || E.fields["id"] == R.fields["id"]))
+							S = E
+					P.securityActive1 = R
+					P.securityActive2 = S
 			else
-				P.securityActive = null
+				P.securityActive1 = null
+				P.securityActive2 = null
 				P.security_cannotfind = 1
-			return TRUE
+			return 1
 
 /datum/pai_software/door_jack
 	name = "Door Jack"
@@ -376,3 +394,45 @@
 	is_active(mob/living/silicon/pai/user)
 		return user.translator_on
 
+/datum/pai_software/signaller
+	name = "Remote Signaller"
+	ram_cost = 5
+	id = "signaller"
+	toggle = 0
+
+	on_ui_interact(mob/living/silicon/pai/user, datum/nanoui/ui=null, force_open=1)
+		var/data[0]
+
+		data["frequency"] = format_frequency(user.sradio.frequency)
+		data["code"] = user.sradio.code
+
+		ui = SSnano.try_update_ui(user, user, id, ui, data, force_open)
+		if(!ui)
+			// Don't copy-paste this unless you're making a pAI software module!
+			ui = new(user, user, id, "pai_signaller.tmpl", "Signaller", 320, 150)
+			ui.set_initial_data(data)
+			ui.open()
+
+	Topic(href, href_list)
+		var/mob/living/silicon/pai/P = usr
+		if(!istype(P)) return
+
+		if(href_list["send"])
+			P.sradio.send_signal("ACTIVATE")
+			for(var/mob/O in hearers(1, P.loc))
+				O.show_message("\icon[P] *beep* *beep*", 3, "*beep* *beep*", 2)
+			return 1
+
+		else if(href_list["freq"])
+			var/new_frequency = (P.sradio.frequency + text2num(href_list["freq"]))
+			if(new_frequency < PUBLIC_LOW_FREQ || new_frequency > PUBLIC_HIGH_FREQ)
+				new_frequency = sanitize_frequency(new_frequency)
+			P.sradio.set_frequency(new_frequency)
+			return 1
+
+		else if(href_list["code"])
+			P.sradio.code += text2num(href_list["code"])
+			P.sradio.code = round(P.sradio.code)
+			P.sradio.code = min(100, P.sradio.code)
+			P.sradio.code = max(1, P.sradio.code)
+			return 1

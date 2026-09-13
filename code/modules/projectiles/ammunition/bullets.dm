@@ -12,7 +12,6 @@
 	sprite_update_spawn = TRUE
 	sprite_max_rotate = 32
 	sprite_scale = 0.5
-	matter = list(MATERIAL_STEEL = 0.05)
 
 /obj/item/ammo_casing/pistol/hv
 	desc = "A .35 Auto high-velocity bullet casing."
@@ -58,12 +57,11 @@
 	spent_icon = "magnum_c_l-spent"
 	shell_color = "l"
 	projectile_type = /obj/item/projectile/bullet/magnum
-	maxamount = 10
+	maxamount = 6
 
 	sprite_update_spawn = TRUE
 	sprite_max_rotate = 32
 	sprite_scale = 0.5
-	matter = list(MATERIAL_STEEL = 0.15)
 
 /obj/item/ammo_casing/magnum/practice
 	desc = "A .40 Magnum practice bullet casing."
@@ -98,7 +96,7 @@
 	projectile_type = /obj/item/projectile/bullet/magnum/scrap
 
 /obj/item/ammo_casing/magnum/scrap/prespawned
-	amount = 10
+	amount = 6
 
 //// .20 ////
 
@@ -114,7 +112,6 @@
 	sprite_update_spawn = TRUE
 	sprite_max_rotate = 32
 	sprite_scale = 0.5
-	matter = list(MATERIAL_STEEL = 0.1)
 
 /obj/item/ammo_casing/srifle/practice
 	desc = "A .20 Rifle practice bullet casing."
@@ -160,7 +157,7 @@
 	shell_color = "l"
 	caliber = CAL_CLRIFLE
 	projectile_type = /obj/item/projectile/bullet/clrifle
-	is_caseless = TRUE // as it is caseless, the casing costs nothing.
+	is_caseless = TRUE
 	maxamount = 10
 
 	sprite_update_spawn = TRUE
@@ -219,7 +216,6 @@
 	sprite_update_spawn = TRUE
 	sprite_max_rotate = 32
 	sprite_scale = 0.5
-	matter = list(MATERIAL_STEEL = 0.15)
 
 /obj/item/ammo_casing/lrifle/practice
 	desc = "A .30 rifle practice bullet casing."
@@ -265,7 +261,7 @@
 	spent_icon = "atmr-spent"
 	caliber = CAL_ANTIM
 	projectile_type = /obj/item/projectile/bullet/antim
-	matter = list(MATERIAL_PLASTEEL = 1)
+	matter = list(MATERIAL_PLASTEEL = 2)
 	maxamount = 5
 
 	sprite_update_spawn = TRUE
@@ -281,7 +277,7 @@
 	icon_state = "atmr-emp"
 	spent_icon = "atmr-emp-spent"
 	projectile_type = /obj/item/projectile/bullet/antim/emp
-	// bullet contains the iron and uranium
+	matter = list(MATERIAL_STEEL = 1, MATERIAL_IRON = 1, MATERIAL_URANIUM = 1)
 
 /obj/item/ammo_casing/antim/emp/prespawned
 	amount = 5
@@ -292,7 +288,7 @@
 	icon_state = "atmr-DU"
 	spent_icon = "atmr-DU-spent"
 	projectile_type = /obj/item/projectile/bullet/antim/uranium
-	// bullet contains the uranium
+	matter = list(MATERIAL_STEEL = 1, MATERIAL_URANIUM = 1)
 
 /obj/item/ammo_casing/antim/uranium/prespawned
 	amount = 5
@@ -303,6 +299,7 @@
 	icon_state = "atmr-HE"
 	spent_icon = "atmr-HE-spent"
 	projectile_type = /obj/item/projectile/bullet/antim/breach
+	matter = list(MATERIAL_PLASTEEL = 1, MATERIAL_URANIUM = 1)
 
 /obj/item/ammo_casing/antim/breach/prespawned
 	amount = 5
@@ -329,7 +326,7 @@
 	shell_color = "hv"
 	caliber = CAL_SHOTGUN
 	projectile_type = /obj/item/projectile/bullet/shotgun
-	matter = list(MATERIAL_STEEL = 0.5)
+	matter = list(MATERIAL_STEEL = 1)
 	maxamount = 5
 
 	price_tag = 1
@@ -361,6 +358,7 @@
 	spent_icon = "s-shell_r-spent"
 	shell_color = "r"
 	projectile_type = /obj/item/projectile/bullet/shotgun/beanbag
+	matter = list(MATERIAL_STEEL = 1)
 
 /obj/item/ammo_casing/shotgun/beanbag/prespawned
 	amount = 5
@@ -372,6 +370,7 @@
 	spent_icon = "s-shell_rs-spent"
 	shell_color = "scrap_r"
 	projectile_type = /obj/item/projectile/bullet/shotgun/beanbag/scrap
+	matter = list(MATERIAL_STEEL = 1)
 
 /obj/item/ammo_casing/shotgun/beanbag/scrap/prespawned
 	amount = 5
@@ -383,6 +382,7 @@
 	spent_icon = "s-shell_l-spent"
 	shell_color = "l"
 	projectile_type = /obj/item/projectile/bullet/pellet/shotgun
+	matter = list(MATERIAL_STEEL = 1)
 
 /obj/item/ammo_casing/shotgun/pellet/prespawned
 	amount = 5
@@ -405,6 +405,7 @@
 	spent_icon = "s-shell_b-spent"
 	shell_color = "b"
 	projectile_type = /obj/item/projectile/bullet/blank
+	matter = list(MATERIAL_STEEL = 1)
 
 /obj/item/ammo_casing/shotgun/blank/prespawned
 	amount = 5
@@ -416,6 +417,7 @@
 	spent_icon = "s-shell_p-spent"
 	shell_color = "p"
 	projectile_type = /obj/item/projectile/bullet/shotgun/practice
+	matter = list(MATERIAL_STEEL = 1)
 
 /obj/item/ammo_casing/shotgun/practice/prespawned
 	amount = 5
@@ -428,8 +430,7 @@
 	spent_icon = "s-shell_f-spent"
 	shell_color = "f"
 	projectile_type = /obj/item/projectile/energy/flash/flare
-	matter = list(MATERIAL_STEEL = 0.5)// silver is inside projectile
-
+	matter = list(MATERIAL_STEEL = 1, MATERIAL_SILVER = 0.5)
 
 /obj/item/ammo_casing/shotgun/flash/prespawned
 	amount = 5
@@ -441,7 +442,7 @@
 	spent_icon = "s-shell_i-spent"
 	shell_color = "i"
 	projectile_type = /obj/item/projectile/bullet/shotgun/incendiary
-	matter = list(MATERIAL_STEEL = 0.5) // plasma cost is inside projectile
+	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASMA = 0.5)
 
 /obj/item/ammo_casing/shotgun/incendiary/prespawned
 	amount = 5
@@ -454,68 +455,17 @@
 	icon_state = "baton-round"
 	spent_icon = "grenadeshell"
 	projectile_type = /obj/item/projectile/bullet/grenade/frag/sting
-	matter = list(MATERIAL_STEEL = 3, MATERIAL_PLASTEEL = 2)
 	w_class = ITEM_SIZE_SMALL
 	caliber = CAL_GRENADE
 	is_caseless = TRUE
 	maxamount = 1
 	spawn_tags = SPAWN_TAG_AMMO
 	rarity_value = 15
-
-/obj/item/ammo_casing/grenade/teargas
-	name = "FS TGR \"Murphy\""
-	desc = "A riot-grade Frozen Star tear gas round, for use against unruly crowds."
-	icon_state = "teargas"
-	projectile_type = /obj/item/projectile/bullet/grenade/handgrenade/teargas
-	w_class = ITEM_SIZE_SMALL
-	caliber = CAL_GRENADE
-	is_caseless = TRUE
-	maxamount = 1
-	spawn_tags = SPAWN_TAG_AMMO
-	rarity_value = 15
-
-/obj/item/ammo_casing/grenade/flash
-	name = "FS FBR \"Stallone\""
-	desc = "A standard-issue Frozen Star flash round, for clearing out criminal hideouts."
-	icon_state = "flash"
-	projectile_type = /obj/item/projectile/bullet/grenade/handgrenade/flash
-	w_class = ITEM_SIZE_SMALL
-	caliber = CAL_GRENADE
-	is_caseless = TRUE
-	maxamount = 1
-	spawn_tags = SPAWN_TAG_AMMO
-	rarity_value = 15
-
-
-/obj/item/ammo_casing/grenade/smoke
-	name = "FS SGR \"Dalton\""
-	desc = "A standard-issue Frozen Star smoke round, for hiding troop movements."
-	icon_state = "grenade"
-	projectile_type = /obj/item/projectile/bullet/grenade/smoke
-	w_class = ITEM_SIZE_SMALL
-	caliber = CAL_GRENADE
-	is_caseless = TRUE
-	maxamount = 1
-	spawn_tags = SPAWN_TAG_AMMO
-	rarity_value = 15
-
-/obj/item/ammo_casing/grenade/white_phosphorous
-	name = "SA WPR \"Gornja\""
-	desc = "An incendiary grenade shell, intended for clearing out tight spaces such as ship interiors and village houses. With love from Serbia."
-	icon_state = "high_incendiary "
-	projectile_type = /obj/item/projectile/bullet/grenade/handgrenade/white_phosphorous
-	w_class = ITEM_SIZE_SMALL
-	caliber = CAL_GRENADE
-	is_caseless = TRUE
-	maxamount = 1
-	spawn_tags = SPAWN_TAG_AMMO
-	rarity_value = 25
 
 /obj/item/ammo_casing/grenade/weak
 	name = "NT SR \"Dard\""
 	desc = "A standard-issue sting round for use against unruly crowds. The abbreviation \"NT\" marks its producer, but the lack of details makes it ubiquitous."
 	projectile_type = /obj/item/projectile/bullet/grenade/frag/sting/weak
-	matter = list(MATERIAL_STEEL = 5)
 	rarity_value = 10
 
 /obj/item/ammo_casing/grenade/blast
@@ -541,20 +491,12 @@
 	projectile_type = /obj/item/projectile/bullet/grenade/emp // gonna keep this from being maint-lootable for now
 	matter = list(MATERIAL_STEEL = 3, MATERIAL_IRON = 2, MATERIAL_URANIUM = 2)
 
-/obj/item/ammo_casing/grenade/emp/low_yield
-	name = "FS EMPR \"Short Circuit\""
-	desc = "An EMP grenade shell configured with a lower radius for use on ships and stations, designed to be fired from grenade launchers. The abbreviation \"FS\" marks its producer,"
-	icon_state = "emp_low"
-	projectile_type = /obj/item/projectile/bullet/grenade/emp/low_yield // gonna keep this from being maint-lootable for now
-	matter = list(MATERIAL_STEEL = 3, MATERIAL_IRON = 2, MATERIAL_URANIUM = 2)
-
 /obj/item/ammo_casing/grenade/heatwave
 	name = "NT HG \"Purifico\""
 	desc = "A military-grade offensive heatwave grenade shell, designed to be fired from grenade launchers. \
 			There\'s an inscription along the sides. \'For those who disbelieve, for them are cut out garments of fire, boiling water shall be poured over their heads.\'"
-	icon_state = "incendiary"
+	icon_state = "blast"
 	projectile_type = /obj/item/projectile/bullet/grenade/heatwave
-	matter = list(MATERIAL_STEEL = 3, MATERIAL_BIOMATTER = 20, MATERIAL_PLASMA = 1)
 	rarity_value = 40 // Neotheology
 
 //// Other ////
@@ -565,10 +507,11 @@
 	description_info = "Relying purely on explosive power, HE shells provide the biggest boom on the best budget."
 	icon_state = "rocketshell"
 	projectile_type = /obj/item/projectile/bullet/rocket
+	matter = list(MATERIAL_STEEL = 3, MATERIAL_PLASTEEL = 3, MATERIAL_PLASMA = 2)
 	caliber = CAL_ROCKET
 	maxamount = 1
 	reload_delay = 15
-	is_caseless = TRUE // as it is caseless, the casing costs nothing.
+	is_caseless = TRUE
 	w_class = ITEM_SIZE_NORMAL
 
 /obj/item/ammo_casing/rocket/scrap
@@ -576,6 +519,7 @@
 	desc = "An old improvised rocket shell for the RPG-7 launcher. Has a tubular shape."
 	icon_state = "old_rocketshell"
 	projectile_type = /obj/item/projectile/bullet/rocket/scrap
+	matter = list(MATERIAL_STEEL = 2, MATERIAL_PLASMA = 2)
 
 /obj/item/ammo_casing/rocket/hesh
 	name = "PG-7V2 HESH grenade"
@@ -627,43 +571,6 @@
 	icon_state = "f-shell"
 	spent_icon = "f-shell-spent"
 	projectile_type = /obj/item/projectile/bullet/flare
-	matter = list(MATERIAL_PLASTIC = 0.5) // plasma cost is inside projectile, which does not embed.
+	matter = list(MATERIAL_PLASTIC = 1, MATERIAL_PLASMA = 1)
 	matter_reagents = list("phosphorus" = 3)
 	rarity_value = 8
-
-/obj/item/ammo_casing/crossbow/bolt
-	name = "steel bolt"
-	desc = "A steel rod worked into the shape of a crossbow bolt."
-	icon_state = "CrossbowBolt"
-	spent_icon = "CrossbowBolt"
-	caliber = CAL_CBOLT
-	projectile_type = /obj/item/projectile/bullet/bolt
-	matter = list(MATERIAL_STEEL = 1)
-	is_caseless = TRUE
-	maxamount = 5
-	sharp = TRUE
-
-	sprite_update_spawn = TRUE
-	sprite_max_rotate = 32
-	sprite_scale = 1
-
-/obj/item/ammo_casing/crossbow/bolt/prespawned
-	amount = 5
-
-/obj/item/ammo_casing/crossbow/foam
-	name = "foam dart"
-	desc = "It's nerf or nothing! Ages 8 and up."
-	icon = 'icons/obj/toy.dmi'
-	icon_state = "foamdart"
-	projectile_type = /obj/item/projectile/foam_dart
-	is_caseless = TRUE
-	caliber = CAL_DART
-	maxamount = 5
-
-/obj/item/ammo_casing/crossbow/foam/prespawned
-	name = "foam dart stack"
-	amount = 5
-/obj/item/ammo_casing/crossbow/foam/prespawned/Initialize()
-	. = ..()
-	name = "foam dart"
-

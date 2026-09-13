@@ -24,7 +24,7 @@
 		to_chat(usr, "Your module is not installed in a hardsuit.")
 		return
 
-	module.holder.nano_ui_interact(usr, nano_state = GLOB.contained_state)
+	module.holder.ui_interact(usr, nano_state = GLOB.contained_state)
 
 /obj/item/rig_module/ai_container
 	name = "IIS module"
@@ -41,7 +41,7 @@
 	activate_string = "Enable Dataspike"
 	deactivate_string = "Disable Dataspike"
 
-	interface_name = "Integrated intelligence system"
+	interface_name = "integrated intelligence system"
 	interface_desc = "A socket that supports a range of artificial intelligence systems."
 
 	var/mob/integrated_ai // Direct reference to the actual mob held in the suit.
@@ -58,6 +58,13 @@
 			integrated_ai.get_rig_stats = 1
 		else
 			integrated_ai.get_rig_stats = 0
+
+/mob/living/Stat()
+	. = ..()
+	if(. && get_rig_stats)
+		var/obj/item/rig/rig = get_rig()
+		if(rig)
+			SetupStat(rig)
 
 /obj/item/rig_module/ai_container/proc/update_verb_holder()
 	if(!verb_holder)
@@ -140,7 +147,7 @@
 	if(!target)
 		if(ai_card)
 			if(istype(ai_card,/obj/item/device/aicard))
-				ai_card.nano_ui_interact(H, state =GLOB.deep_inventory_state)
+				ai_card.ui_interact(H, state =GLOB.deep_inventory_state)
 			else
 				eject_ai(H)
 		update_verb_holder()
@@ -233,7 +240,7 @@
 	activate_string = "Enable Datajack"
 	deactivate_string = "Disable Datajack"
 
-	interface_name = "Contact datajack"
+	interface_name = "contact datajack"
 	interface_desc = "An induction-powered high-throughput datalink suitable for hacking encrypted networks."
 	rarity_value = 3.5
 	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
@@ -306,7 +313,7 @@
 	activate_string = "Enable Countermeasures"
 	deactivate_string = "Disable Countermeasures"
 
-	interface_name = "Electrowarfare system"
+	interface_name = "electrowarfare system"
 	interface_desc = "An active counter-electronic warfare suite that disrupts AI tracking."
 	rarity_value = 10
 
@@ -339,7 +346,7 @@
 	activate_string = "Enable Power Sink"
 	deactivate_string = "Disable Power Sink"
 
-	interface_name = "Niling d-sink"
+	interface_name = "niling d-sink"
 	interface_desc = "Colloquially known as a power siphon, this module drains power through the suit hands into the suit battery."
 	rarity_value = 3.5
 	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
@@ -465,7 +472,7 @@
 	activate_string = "Enable active EMP shielding"
 	deactivate_string = "Disable active EMP shielding"
 
-	interface_name = "Active EMP shielding system"
+	interface_name = "active EMP shielding system"
 	interface_desc = "A highly experimental system that augments the hardsuit's existing EM shielding."
 	var/protection_amount = 20
 

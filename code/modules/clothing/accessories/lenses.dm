@@ -2,7 +2,6 @@
 	name = "thermal lenses"
 	desc = "Lenses for glasses, you can see red people through walls with them."
 	icon_state = "thermal_lens"
-	description_antag = "These let you see through walls, but make you highly susceptible to flashbangs."
 	body_parts_covered = FALSE
 	slot_flags = FALSE
 	see_invisible = FALSE
@@ -32,7 +31,7 @@
 		lenses.saved_last_overlay = FALSE
 		to_chat(usr, "You detach \the [have_lenses] from \the [src]");
 		usr.put_in_hands(have_lenses)
-		SEND_SIGNAL_OLD(src, COMSIG_GLASS_LENSES_REMOVED, usr, src)
+		SEND_SIGNAL(src, COMSIG_GLASS_LENSES_REMOVED, usr, src)
 		have_lenses = FALSE
 		if(ishuman(usr))
 			var/mob/living/carbon/human/beingofeyes = usr
@@ -79,8 +78,8 @@
 
 /obj/item/clothing/glasses/attachable_lenses/explosive/handle_insertion(obj/item/clothing/glasses/target, mob/living/carbon/human/inserter)
 	..()
-	RegisterSignal(target, COMSIG_CLOTH_EQUIPPED, PROC_REF(handle_boom))
-	RegisterSignal(target, COMSIG_GLASS_LENSES_REMOVED, PROC_REF(handle_removal))
+	RegisterSignal(target, COMSIG_CLOTH_EQUIPPED, .proc/handle_boom)
+	RegisterSignal(target, COMSIG_GLASS_LENSES_REMOVED, .proc/handle_removal)
 	if(target.is_worn()) // Sucks to be you.
 		handle_boom(inserter)
 

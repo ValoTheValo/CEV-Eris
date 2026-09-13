@@ -6,6 +6,7 @@
 	department_flag = SCIENCE | COMMAND
 	faction = "CEV Eris"
 	total_positions = 1
+	spawn_positions = 1
 	supervisors = "Moebius Corporation"
 	selection_color = "#b39aaf"
 	req_admin_notify = 1
@@ -64,7 +65,8 @@ Your second loyalty is to moebius corp. In order to ensure it can continue its m
 	department = DEPARTMENT_SCIENCE
 	department_flag = SCIENCE
 	faction = "CEV Eris"
-	total_positions = 2
+	total_positions = 5
+	spawn_positions = 5
 	supervisors = "the Moebius Expedition Overseer"
 	selection_color = "#bdb1bb"
 	wage = WAGE_PROFESSIONAL
@@ -76,7 +78,8 @@ Your second loyalty is to moebius corp. In order to ensure it can continue its m
 	software_on_spawn = list(/datum/computer_file/program/signaller, /datum/computer_file/program/chem_catalog)
 
 	access = list(
-		access_robotics, access_tox, access_tox_storage, access_moebius, access_maint_tunnels, access_xenobiology, access_xenoarch, access_research_equipment
+		access_robotics, access_tox, access_tox_storage, access_moebius, access_maint_tunnels, access_xenobiology, access_xenoarch, access_research_equipment,
+		access_genetics
 	)
 
 	stat_modifiers = list(
@@ -122,7 +125,8 @@ Your second loyalty is to moebius corp. In order to ensure it can continue its m
 	department = DEPARTMENT_SCIENCE
 	department_flag = SCIENCE
 	faction = "CEV Eris"
-	total_positions = 1
+	total_positions = 3
+	spawn_positions = 3
 	supervisors = "the Moebius Expedition Overseer"
 	selection_color = "#bdb1bb"
 	wage = WAGE_PROFESSIONAL
@@ -164,39 +168,3 @@ Lastly, though they're not commonly used, you have the facilities to construct m
 	name = "Moebius Roboticist"
 	icon_state = "player-purple"
 	join_tag = /datum/job/roboticist
-
-/datum/job/psychiatrist
-	title = "Moebius Psychiatrist"
-	flag = PSYCHIATRIST
-	department = DEPARTMENT_SCIENCE
-	department_flag = SCIENCE
-	faction = "CEV Eris"
-	total_positions = 1
-	wage = WAGE_PROFESSIONAL
-	supervisors = "the Moebius Expedition Overseer"
-	selection_color = "#bdb1bb"
-	also_known_languages = list(LANGUAGE_CYRILLIC = 10)
-
-	outfit_type = /decl/hierarchy/outfit/job/science/psychiatrist
-
-	access = list(
-		access_robotics, access_tox, access_tox_storage, access_moebius, access_maint_tunnels, access_research_equipment, access_psychiatrist, access_medical_equip
-	)
-
-	stat_modifiers = list(
-		STAT_BIO = 25,
-		STAT_COG = 15,
-		STAT_VIG = 15
-	)
-
-	perks = list(/datum/perk/selfmedicated)
-
-	software_on_spawn = list(/datum/computer_file/program/suit_sensors,
-							/datum/computer_file/program/chem_catalog,
-							/datum/computer_file/program/camera_monitor)
-
-
-/obj/landmark/join/start/psychiatrist
-	name = "Moebius Psychiatrist"
-	icon_state = "player-purple"
-	join_tag = /datum/job/psychiatrist

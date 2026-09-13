@@ -17,7 +17,7 @@
 //He gets a snazzy beret
 /decl/hierarchy/outfit/antagonist/mercenary/commander
 	name = "Serbian Mercenary Commander"
-	head = /obj/item/clothing/head/beret/merc
+	head = /obj/item/clothing/head/beret/sec/navy/hos
 
 
 
@@ -28,7 +28,8 @@
 
 	suit = /obj/item/clothing/suit/space/void/SCAF
 	suit_store = /obj/item/tank/jetpack/oxygen
-	back = /obj/item/storage/backpack/satchel/military
+	back = /obj/item/storage/backpack/military
+
 
 
 

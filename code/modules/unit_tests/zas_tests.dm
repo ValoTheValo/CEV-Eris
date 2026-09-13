@@ -15,6 +15,7 @@
 
 /datum/unit_test/zas_area_test/Run()
 	var/list/normal_test = list(
+		/area/supply/dock,
 		/area/shuttle/escape/centcom,
 		/area/turret_protected/ai,
 		/area/shuttle/mining/station,
@@ -35,8 +36,8 @@
 	TEST_ASSERT(istype(A, test_area), "Unable to get [test_area]")
 
 	var/list/GM_checked = list()
-	for(var/turf/T in A)
-		if(!istype(T) || isnull(T.zone) || istype(T, /turf/floor/airless))
+	for(var/turf/simulated/T in A)
+		if(!istype(T) || isnull(T.zone) || istype(T, /turf/simulated/floor/airless))
 			continue
 		if(T.zone.air in GM_checked)
 			continue

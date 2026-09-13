@@ -5,7 +5,6 @@
 	icon_state = "sheater0"
 	name = "space heater"
 	desc = "Made by Space Amish using traditional space techniques, this heater is guaranteed not to set the ship on fire."
-	description_info = "Can have its temperature adjusted by opening the panel with a screwdriver and clicking."
 	var/obj/item/cell/large/cell
 	var/on = FALSE
 	var/set_temperature = T0C + 50	//K
@@ -32,13 +31,15 @@
 	if(panel_open)
 		overlays  += "sheater-open"
 
-/obj/machinery/space_heater/examine(mob/user, extra_description = "")
-	extra_description += "The heater is [on ? "on" : "off"] and the hatch is [panel_open ? "open" : "closed"]."
+/obj/machinery/space_heater/examine(mob/user)
+	..(user)
+
+	to_chat(user, "The heater is [on ? "on" : "off"] and the hatch is [panel_open ? "open" : "closed"].")
 	if(panel_open)
-		extra_description += "\nThe power cell is [cell ? "installed" : "missing"]."
+		to_chat(user, "The power cell is [cell ? "installed" : "missing"].")
 	else
-		extra_description += "\nThe charge meter reads [cell ? round(cell.percent(),1) : 0]%"
-	..(user, extra_description)
+		to_chat(user, "The charge meter reads [cell ? round(cell.percent(),1) : 0]%")
+	return
 
 /obj/machinery/space_heater/powered()
 	if(cell && cell.charge)
@@ -95,18 +96,18 @@
 		var/dat
 		dat = "Power cell: "
 		if(cell)
-			dat += "<a href='byond://?src=\ref[src];op=cellremove'>Installed</A><BR>"
+			dat += "<A href='byond://?src=\ref[src];op=cellremove'>Installed</A><BR>"
 		else
-			dat += "<a href='byond://?src=\ref[src];op=cellinstall'>Removed</A><BR>"
+			dat += "<A href='byond://?src=\ref[src];op=cellinstall'>Removed</A><BR>"
 
 		dat += "Power Level: [cell ? round(cell.percent(),1) : 0]%<BR><BR>"
 
 		dat += "Set Temperature: "
 
-		dat += "<a href='byond://?src=\ref[src];op=temp;val=-5'>-</A>"
+		dat += "<A href='?src=\ref[src];op=temp;val=-5'>-</A>"
 
 		dat += " [set_temperature]K ([set_temperature-T0C]&deg;C)"
-		dat += "<a href='byond://?src=\ref[src];op=temp;val=5'>+</A><BR>"
+		dat += "<A href='?src=\ref[src];op=temp;val=5'>+</A><BR>"
 
 		user.set_machine(src)
 		user << browse("<HEAD><TITLE>Space Heater Control Panel</TITLE></HEAD><TT>[dat]</TT>", "window=spaceheater")

@@ -49,12 +49,12 @@
 		if(prob(33))
 			src.add_blood(H)
 			var/turf/location = H.loc
-			if (istype(location, /turf))
+			if (istype(location, /turf/simulated))
 				location.add_blood(H)     ///Plik plik, the sound of blood
 
 		M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been attacked with [src.name] by [user.name] ([user.ckey])</font>")
 		user.attack_log += text("\[[time_stamp()]\] <font color='red'>Used the [src.name] to attack [M.name] ([M.ckey])</font>")
-		msg_admin_attack("[user.name] ([user.ckey]) used the [src.name] to attack [M.name] ([M.ckey]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+		msg_admin_attack("[user.name] ([user.ckey]) used the [src.name] to attack [M.name] ([M.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
 		if(prob(15))
 			M.Weaken(3)
@@ -63,10 +63,14 @@
 			M.take_organ_damage(5)
 		if(prob(50))
 			playsound(M, 'sound/items/trayhit1.ogg', 50, 1)
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
+			return
 		else
 			playsound(M, 'sound/items/trayhit2.ogg', 50, 1)  //we applied the damage, we played the sound, we showed the appropriate messages. Time to return and stop the proc
-		M.visible_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
-		return
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
+			return
 
 
 	var/protected = 0
@@ -87,14 +91,17 @@
 			if (H.glasses && prob(33))
 				H.glasses.add_blood(H)
 			var/turf/location = H.loc
-			if (istype(location, /turf))     //Addin' blood! At least on the floor and item :v
+			if (istype(location, /turf/simulated))     //Addin' blood! At least on the floor and item :v
 				location.add_blood(H)
 
 		if(prob(50))
 			playsound(M, 'sound/items/trayhit1.ogg', 50, 1)
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
 		else
 			playsound(M, 'sound/items/trayhit2.ogg', 50, 1)  //sound playin'
-		M.visible_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] with the tray!"), 1)
 		if(prob(10))
 			M.Stun(rand(1,3))
 			M.take_organ_damage(3)
@@ -108,14 +115,17 @@
 		if(prob(33))
 			src.add_blood(M)
 			var/turf/location = H.loc
-			if (istype(location, /turf))
+			if (istype(location, /turf/simulated))
 				location.add_blood(H)
 
 		if(prob(50))
 			playsound(M, 'sound/items/trayhit1.ogg', 50, 1)
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] in the face with the tray!"), 1)
 		else
 			playsound(M, 'sound/items/trayhit2.ogg', 50, 1)  //sound playin' again
-		M.visible_message(SPAN_DANGER("[user] slams [M] in the face with the tray!"), 1)
+			for(var/mob/O in viewers(M, null))
+				O.show_message(SPAN_DANGER("[user] slams [M] in the face with the tray!"), 1)
 		if(prob(30))
 			M.Stun(rand(2,4))
 			M.take_organ_damage(4)

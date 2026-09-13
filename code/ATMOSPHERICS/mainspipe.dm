@@ -68,7 +68,7 @@
 		aux.nodes.len = nodes.len
 
 	hide(var/i)
-		if(level == BELOW_PLATING_LEVEL && istype(loc, /turf))
+		if(level == BELOW_PLATING_LEVEL && istype(loc, /turf/simulated))
 			invisibility = i ? 101 : 0
 		update_icon()
 
@@ -119,9 +119,9 @@
 		nodes.len = 2
 		..()
 		switch(dir)
-			if(SOUTH, NORTH)
+			if(SOUTH || NORTH)
 				initialize_mains_directions = SOUTH|NORTH
-			if(EAST, WEST)
+			if(EAST || WEST)
 				initialize_mains_directions = EAST|WEST
 			if(NORTHEAST)
 				initialize_mains_directions = NORTH|EAST
@@ -554,7 +554,7 @@ obj/machinery/atmospherics/mains_pipe/valve
 		initialize_mains_directions = dir | turn(dir, 180)
 
 	update_icon(animation)
-		var/turf/floor = loc
+		var/turf/simulated/floor = loc
 		var/hide = istype(floor) ? floor.intact : 0
 		level = BELOW_PLATING_LEVEL
 		for(var/obj/machinery/atmospherics/mains_pipe/node in nodes)
@@ -671,7 +671,7 @@ obj/machinery/atmospherics/mains_pipe/valve
 				set_frequency(frequency)
 
 		update_icon(animation)
-			var/turf/floor = loc
+			var/turf/simulated/floor = loc
 			var/hide = istype(floor) ? floor.intact : 0
 			level = BELOW_PLATING_LEVEL
 			for(var/obj/machinery/atmospherics/mains_pipe/node in nodes)

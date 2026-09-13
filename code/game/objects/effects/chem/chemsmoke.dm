@@ -61,7 +61,7 @@
 			if(!istype(AM, /obj/effect/effect/smoke/chem))
 				reagents.splash(AM, splash_amount, copy = 1)
 
-/obj/effect/effect/smoke/chem/roach // made by a roach, used for chemsmoke IFF
+
 
 /////////////////////////////////////////////
 // Chem Smoke Effect System
@@ -85,8 +85,6 @@
 	if(!seed)
 		qdel(src)
 	..()
-
-/datum/effect/effect/system/smoke_spread/chem/roach
 
 /datum/effect/effect/system/smoke_spread/chem/New()
 	..()
@@ -129,14 +127,14 @@
 	var/area/A = get_area(location)
 
 	var/where = "[A.name] | [location.x], [location.y]"
-	var/whereLink = "<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>[where]</a>"
+	var/whereLink = "<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>[where]</a>"
 
 	if(show_log)
 		if(carry.my_atom.fingerprintslast)
 			var/mob/M = get_mob_by_key(carry.my_atom.fingerprintslast)
 			var/more = ""
 			if(M)
-				more = "(<a href='byond://?_src_=holder;adminmoreinfo=\ref[M]'>?</a>)"
+				more = "(<A HREF='?_src_=holder;adminmoreinfo=\ref[M]'>?</a>)"
 			message_admins("A chemical smoke reaction has taken place in ([whereLink])[contained]. Last associated key is [carry.my_atom.fingerprintslast][more].", 0, 1)
 			log_game("A chemical smoke reaction has taken place in ([where])[contained]. Last associated key is [carry.my_atom.fingerprintslast].")
 		else
@@ -171,8 +169,8 @@
 						if(H.wear_mask)
 							gasmask = H.wear_mask.item_flags & BLOCK_GAS_SMOKE_EFFECT			
 						if(!internals && !gasmask)
-							chemholder.reagents.trans_to_mob(H, 5, CHEM_INGEST, copy = TRUE)
-							chemholder.reagents.trans_to_mob(H, 5, CHEM_BLOOD, copy = TRUE)
+							chemholder.reagents.trans_to_mob(H, 5, CHEM_INGEST, copy = FALSE)
+							chemholder.reagents.trans_to_mob(H, 5, CHEM_BLOOD, copy = FALSE)
 				else if(isobj(A) && !A.simulated)
 					chemholder.reagents.touch_obj(A)
 
@@ -244,10 +242,6 @@
 	spores.name = "cloud of [seed.seed_name] [seed.seed_noun]"
 	..(T, I, smoke_duration, dist, spores)
 
-/datum/effect/effect/system/smoke_spread/chem/roach/spawnSmoke(turf/T, icon/I, smoke_duration, dist)
-	var/obj/effect/effect/smoke/chem/roach/roachy = new(location, smoke_duration + rand(0, 20), T, I)
-	..(T, I, smoke_duration, dist, roachy)
-	
 
 /datum/effect/effect/system/smoke_spread/chem/proc/smokeFlow() // Smoke pathfinder. Uses a flood fill method based on zones to quickly check what turfs the smoke (airflow) can actually reach.
 
@@ -261,7 +255,7 @@
 			for(var/D in cardinal)
 				var/turf/target = get_step(current, D)
 				if(wallList)
-					if(istype(target, /turf/wall))
+					if(istype(target, /turf/simulated/wall))
 						if(!(target in wallList))
 							wallList += target
 						continue

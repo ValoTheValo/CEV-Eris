@@ -22,8 +22,9 @@
 	var/repair_rate = 5 //How much HP we restore per second
 	var/repair_complexity = REPAIR_HULL //How complex we get regarding repairing things
 
-/obj/machinery/repair_station/examine(mob/user, extra_description = "")
-	..(user, "It has [SPAN_NOTICE("[repair_amount]")] repair points remaining.")
+/obj/machinery/repair_station/examine(mob/user)
+	..()
+	to_chat(user, "It has [SPAN_NOTICE("[repair_amount]")] repair points remaining.")
 
 /obj/machinery/repair_station/Crossed(var/mob/living/silicon/robot/R)
 	. = ..()
@@ -97,14 +98,14 @@
 
 	to_chat(R, SPAN_NOTICE("Commencing repairs. Please stand by."))
 	repairing = R
-	set_power_use(ACTIVE_POWER_USE)
+	update_use_power(ACTIVE_POWER_USE)
 
 /obj/machinery/repair_station/proc/stop_repairing()
 	if(!repairing)
 		return
 
 	repairing = null
-	set_power_use(IDLE_POWER_USE)
+	update_use_power(IDLE_POWER_USE)
 
 /obj/machinery/repair_station/attackby(var/obj/item/O, var/mob/user)
 	.=..()

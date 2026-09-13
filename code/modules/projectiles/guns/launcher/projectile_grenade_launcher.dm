@@ -15,22 +15,18 @@
 	ammo_type = /obj/item/ammo_casing/grenade
 	fire_sound = 'sound/weapons/guns/fire/grenadelauncher_fire.ogg'
 	fire_sound_text = "a metallic thunk"
-	bulletinsert_sound = 'sound/weapons/guns/interact/grenadelauncher_magin.ogg'
+	bulletinsert_sound = 'sound/weapons/guns/interact/batrifle_magin.ogg'	//Placeholder, could use a new sound
 	saw_off = FALSE
 	matter = list(MATERIAL_PLASTEEL = 30, MATERIAL_WOOD = 10)
 	origin_tech = list(TECH_COMBAT = 6, TECH_MATERIAL = 2)
 	price_tag = 3000
-	gun_parts = list(/obj/item/part/gun = 2, /obj/item/part/gun/modular/grip/wood = 1, /obj/item/part/gun/modular/mechanism/shotgun = 1)
+	gun_parts = list(/obj/item/part/gun = 2, /obj/item/part/gun/grip/wood = 1, /obj/item/part/gun/mechanism/shotgun = 1)
 	serial_type = "NT"
-	move_delay = 3
 
-/obj/item/gun/projectile/shotgun/pump/grenade/update_icon()
-	wielded_item_state = "_doble"
-
-/obj/item/gun/projectile/shotgun/pump/grenade/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2 && chambered)
-		extra_description += "\n\A [chambered] is chambered."
-	..(user, extra_description)
+/obj/item/gun/projectile/shotgun/pump/grenade/examine(mob/user)
+	if(..(user, 2))
+		if(chambered)
+			to_chat(user, "\A [chambered] is chambered.")
 
 /obj/item/gun/projectile/shotgun/pump/grenade/handle_post_fire(mob/user)
 	log_and_message_admins("fired a grenade ([chambered]) from ([src]).")
@@ -63,7 +59,6 @@
 	max_shells = 0
 	safety = FALSE
 	twohanded = FALSE
-	bad_type = /obj/item/gun/projectile/shotgun/pump/grenade/underslung
 
 /obj/item/gun/projectile/shotgun/pump/grenade/lenar
 	name = "FS GL \"Lenar\""
@@ -76,7 +71,7 @@
 	slot_flags = SLOT_BACK
 	matter = list(MATERIAL_PLASTEEL = 30, MATERIAL_PLASTIC = 10)
 	fire_sound = 'sound/weapons/empty.ogg'
-	gun_parts = list(/obj/item/part/gun = 2, /obj/item/part/gun/modular/grip/rubber = 1, /obj/item/part/gun/modular/mechanism/shotgun = 1)
+	gun_parts = list(/obj/item/part/gun = 2, /obj/item/part/gun/grip/rubber = 1, /obj/item/part/gun/mechanism/shotgun = 1)
 	serial_type = "FS"
 
 /obj/item/gun/projectile/shotgun/pump/grenade/lenar/proc/update_charge()
@@ -87,15 +82,12 @@
 	overlays += "grenademag_[ratio]"
 
 /obj/item/gun/projectile/shotgun/pump/grenade/lenar/update_icon()
-	..()
-	wielded_item_state = "_doble"
-	set_item_state()
 	cut_overlays()
 	update_charge()
 
 /obj/item/gun/projectile/shotgun/pump/grenade/makeshift
-	name = "HM GL \"Civil Disobedience\""
-	desc = "Your own homemade China Lake. Best used to inform the powers that be of your displeasure with the system."
+	name = "makeshift grenade launcher"
+	desc = "Your own, homemade, China Lake."
 	icon = 'icons/obj/guns/launcher/makeshift.dmi'
 	icon_state = "makeshift"
 	item_state = "makeshift"

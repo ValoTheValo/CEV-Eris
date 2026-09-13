@@ -12,8 +12,6 @@
 
 /datum/stat_holder/Destroy()
 	holder = null
-	QDEL_LIST(perks)
-	QDEL_LIST(perk_stats)
 	return ..()
 
 /datum/stat_holder/proc/check_for_shared_perk(ability_bitflag)
@@ -32,7 +30,7 @@
 /datum/stat_holder/proc/addTempStat(statName, Value, timeDelay, id = null)
 	var/datum/stat/S = stat_list[statName]
 	S.addModif(timeDelay, Value, id)
-	SEND_SIGNAL_OLD(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
+	SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
 
 
 /datum/stat_holder/proc/removeTempStat(statName, id)
@@ -50,7 +48,7 @@
 /datum/stat_holder/proc/changeStat(statName, Value)
 	var/datum/stat/S = stat_list[statName]
 	S.changeValue(Value)
-	SEND_SIGNAL_OLD(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
+	SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
 
 /datum/stat_holder/proc/setStat(statName, Value)
 	var/datum/stat/S = stat_list[statName]
@@ -60,7 +58,7 @@
 	if (!islist(statName))
 		var/datum/stat/S = stat_list[statName]
 		if(holder)
-			SEND_SIGNAL_OLD(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
+			SEND_SIGNAL(holder, COMSIG_STAT, S.name, S.getValue(), S.getValue(TRUE))
 		return S ? S.getValue(pure) : 0
 	else
 		log_debug("passed list to getStat()")
@@ -194,10 +192,7 @@
 			return SM
 
 /datum/stat/proc/changeValue(affect)
-	if(value + affect > STAT_VALUE_MAXIMUM)
-		value = STAT_VALUE_MAXIMUM
-	else
-		value = value + affect
+	value = value + affect
 
 /datum/stat/proc/getValue(pure = FALSE)
 	if(pure)
@@ -213,10 +208,7 @@
 			. += SM.value
 
 /datum/stat/proc/setValue(value)
-	if(value > STAT_VALUE_MAXIMUM)
-		src.value = STAT_VALUE_MAXIMUM
-	else
-		src.value = value
+	src.value = value
 
 /datum/stat/proc/copyTo(var/datum/stat/recipient)
 	recipient.value = getValue(TRUE)

@@ -9,7 +9,7 @@
 	anchored = TRUE
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 5
-	active_power_usage = 250
+	active_power_usage = 100
 	reagent_flags = NO_REACT
 	var/global/max_n_of_items = 999 // Sorry but the BYOND infinite loop detector doesn't look things over 1000.
 	var/icon_on = "smartfridge"
@@ -36,24 +36,6 @@
 
 
 /*******************
-*   Disk Storage
-********************/
-/obj/machinery/smartfridge/disks
-	name = "\improper Disks Storage"
-	desc = "When you need disks fast!"
-	icon_state = "smartfridge"
-	icon_fill10 = "diskfridge-fill10"
-	icon_fill20 = "diskfridge-fill20"
-	icon_fill30 = "diskfridge-fill30"
-
-/obj/machinery/smartfridge/disks/accept_check(var/obj/item/O as obj)
-	if(istype(O,/obj/item/computer_hardware/hard_drive/portable))
-		return 1
-	return 0
-
-
-
-/*******************
 *   Seed Storage
 ********************/
 /obj/machinery/smartfridge/seeds
@@ -67,53 +49,10 @@
 
 /obj/machinery/smartfridge/kitchen
 	name = "\improper Agro-Club Fridge"
-	desc = "The panel says it won't allow anyone without access to the kitchen or hydroponics. Holds your seeds, produce, and basic ingredients."
+	desc = "The panel says it won't allow anyone without access to the kitchen or hydroponics."
 	req_one_access = list(access_hydroponics,access_kitchen)
-//Going to be a mess till I make different type paths between produce, ingredients, and finished meals. Or rebuild how smartfridges create an accept list like vendors. -Mycah
-/obj/machinery/smartfridge/kitchen/accept_check(var/obj/item/O as obj)
-	if(istype(O,/obj/item/seeds/))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/grown/))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/cheesewedge))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/sliceable/cheesewheel))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/meatball))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/rawmeatball))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/bacon))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/rawbacon))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/cutlet))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/rawcutlet))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/dough))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/doughslice))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/sliceable/flatdough))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/flatdoughslice))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/bun))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/tortilla))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/spaghetti))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/rawsticks))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/patty))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/patty_raw))
-		return 1
-	if(istype(O,/obj/item/reagent_containers/food/snacks/meat/))
-		return 1
-	return 0
+
+
 
 /*******************
 *   Xenobio Slime Fridge
@@ -147,6 +86,25 @@
 		return 1
 	return 0
 
+
+/*******************
+*   Virus Storage
+********************/
+/obj/machinery/smartfridge/secure/virology
+	name = "\improper Refrigerated Virus Storage"
+	desc = "A refrigerated storage unit for storing viral material."
+	req_access = list(access_virology)
+	icon_state = "smartfridge_virology"
+	icon_on = "smartfridge_virology"
+	icon_off = "smartfridge_virology-off"
+
+/obj/machinery/smartfridge/secure/virology/accept_check(var/obj/item/O as obj)
+	if(istype(O,/obj/item/reagent_containers/glass/beaker/vial/))
+		return 1
+	if(istype(O,/obj/item/virusdish/))
+		return 1
+	return 0
+
 /obj/machinery/smartfridge/chemistry
 	name = "\improper Smart Chemical Storage"
 	desc = "A refrigerated storage unit for medicine and chemical storage."
@@ -155,6 +113,11 @@
 	if(istype(O,/obj/item/storage/pill_bottle) || istype(O,/obj/item/reagent_containers))
 		return 1
 	return 0
+
+/obj/machinery/smartfridge/chemistry/virology
+	name = "\improper Smart Virus Storage"
+	desc = "A refrigerated storage unit for volatile sample storage."
+
 
 
 /*************************
@@ -292,10 +255,6 @@
 /obj/machinery/smartfridge/power_change()
 	var/old_stat = stat
 	..()
-	if(powered())
-		set_power_use(ACTIVE_POWER_USE)
-	else
-		set_power_use(IDLE_POWER_USE)
 	if(old_stat != stat)
 		update_icon()
 
@@ -385,7 +344,7 @@
 	if(stat & (NOPOWER|BROKEN))
 		return
 	wires.Interact(user)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 
 /obj/machinery/smartfridge/proc/update_contents()
@@ -396,7 +355,7 @@
 *   SmartFridge Menu
 ********************/
 
-/obj/machinery/smartfridge/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/smartfridge/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	user.set_machine(src)
 
 	var/data[0]

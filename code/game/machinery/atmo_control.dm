@@ -11,7 +11,7 @@
 
 	var/on = TRUE
 	var/output = 3
-	//Flags: (For multiple readings, add outputs. Example: Air with Pressure and Temp would be output = 7)
+	//Flags:
 	// 1 for pressure
 	// 2 for temperature
 	// Output >= 4 includes gas composition
@@ -19,8 +19,7 @@
 	// 8 for plasma concentration
 	// 16 for nitrogen concentration
 	// 32 for carbon dioxide concentration
-	// 63 for All The Above
-	// N2O currently doesn't have a flag, or I don't know it, so mixing it with others ends up with Gas Comp different from analyzer -Mycah
+
 	var/datum/radio_frequency/radio_connection
 
 /obj/machinery/air_sensor/update_icon()
@@ -66,8 +65,8 @@
 	radio_connection = SSradio.add_object(src, frequency, RADIO_ATMOSIA)
 
 /obj/machinery/air_sensor/Initialize()
-	set_frequency(frequency)
 	. = ..()
+	set_frequency(frequency)
 
 obj/machinery/air_sensor/Destroy()
 	SSradio.remove_object(src,frequency)
@@ -123,7 +122,7 @@ obj/machinery/computer/general_air_control/Destroy()
 					sensor_part += "   <B>Pressure:</B> [data["pressure"]] kPa<BR>"
 				if(data["temperature"])
 					sensor_part += "   <B>Temperature:</B> [data["temperature"]] K<BR>"
-				if(data["oxygen"] || data["plasma"] || data["nitrogen"] || data["carbon_dioxide"])
+				if(data["oxygen"]||data["plasma"]||data["nitrogen"]||data["carbon_dioxide"])
 					sensor_part += "   <B>Gas Composition :</B>"
 					if(data["oxygen"])
 						sensor_part += "[data["oxygen"]]% O2; "
@@ -182,27 +181,27 @@ obj/machinery/computer/general_air_control/Destroy()
 	if(input_info)
 		var/power = (input_info["power"])
 		var/volume_rate = round(input_info["volume_rate"], 0.1)
-		output += "<B>Input</B>: [power?("Injecting"):("On Hold")] <a href='byond://?src=\ref[src];in_refresh_status=1'>Refresh</A><BR>Flow Rate Limit: [volume_rate] L/s<BR>"
-		output += "Command: <a href='byond://?src=\ref[src];in_toggle_injector=1'>Toggle Power</A> <a href='byond://?src=\ref[src];in_set_flowrate=1'>Set Flow Rate</A><BR>"
+		output += "<B>Input</B>: [power?("Injecting"):("On Hold")] <A href='?src=\ref[src];in_refresh_status=1'>Refresh</A><BR>Flow Rate Limit: [volume_rate] L/s<BR>"
+		output += "Command: <A href='?src=\ref[src];in_toggle_injector=1'>Toggle Power</A> <A href='?src=\ref[src];in_set_flowrate=1'>Set Flow Rate</A><BR>"
 
 	else
-		output += "<FONT color='red'>ERROR: Can not find input port</FONT> <a href='byond://?src=\ref[src];in_refresh_status=1'>Search</A><BR>"
+		output += "<FONT color='red'>ERROR: Can not find input port</FONT> <A href='?src=\ref[src];in_refresh_status=1'>Search</A><BR>"
 
-	output += "Flow Rate Limit: <a href='byond://?src=\ref[src];adj_input_flow_rate=-100'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-10'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-1'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-0.1'>-</A> [round(input_flow_setting, 0.1)] L/s <a href='byond://?src=\ref[src];adj_input_flow_rate=0.1'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=1'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=10'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=100'>+</A><BR>"
+	output += "Flow Rate Limit: <A href='?src=\ref[src];adj_input_flow_rate=-100'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-10'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-1'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-0.1'>-</A> [round(input_flow_setting, 0.1)] L/s <A href='?src=\ref[src];adj_input_flow_rate=0.1'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=1'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=10'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=100'>+</A><BR>"
 
 	output += "<BR>"
 
 	if(output_info)
 		var/power = (output_info["power"])
 		var/output_pressure = output_info["internal"]
-		output += {"<B>Output</B>: [power?("Open"):("On Hold")] <a href='byond://?src=\ref[src];out_refresh_status=1'>Refresh</A><BR>
+		output += {"<B>Output</B>: [power?("Open"):("On Hold")] <A href='?src=\ref[src];out_refresh_status=1'>Refresh</A><BR>
 Max Output Pressure: [output_pressure] kPa<BR>"}
-		output += "Command: <a href='byond://?src=\ref[src];out_toggle_power=1'>Toggle Power</A> <a href='byond://?src=\ref[src];out_set_pressure=1'>Set Pressure</A><BR>"
+		output += "Command: <A href='?src=\ref[src];out_toggle_power=1'>Toggle Power</A> <A href='?src=\ref[src];out_set_pressure=1'>Set Pressure</A><BR>"
 
 	else
-		output += "<FONT color='red'>ERROR: Can not find output port</FONT> <a href='byond://?src=\ref[src];out_refresh_status=1'>Search</A><BR>"
+		output += "<FONT color='red'>ERROR: Can not find output port</FONT> <A href='?src=\ref[src];out_refresh_status=1'>Search</A><BR>"
 
-	output += "Max Output Pressure Set: <a href='byond://?src=\ref[src];adj_pressure=-1000'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-100'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-10'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-1'>-</A> [pressure_setting] kPa <a href='byond://?src=\ref[src];adj_pressure=1'>+</A> <a href='byond://?src=\ref[src];adj_pressure=10'>+</A> <a href='byond://?src=\ref[src];adj_pressure=100'>+</A> <a href='byond://?src=\ref[src];adj_pressure=1000'>+</A><BR>"
+	output += "Max Output Pressure Set: <A href='?src=\ref[src];adj_pressure=-1000'>-</A> <A href='?src=\ref[src];adj_pressure=-100'>-</A> <A href='?src=\ref[src];adj_pressure=-10'>-</A> <A href='?src=\ref[src];adj_pressure=-1'>-</A> [pressure_setting] kPa <A href='?src=\ref[src];adj_pressure=1'>+</A> <A href='?src=\ref[src];adj_pressure=10'>+</A> <A href='?src=\ref[src];adj_pressure=100'>+</A> <A href='?src=\ref[src];adj_pressure=1000'>+</A><BR>"
 
 	return output
 
@@ -301,27 +300,27 @@ Max Output Pressure: [output_pressure] kPa<BR>"}
 	if(input_info)
 		var/power = (input_info["power"])
 		var/volume_rate = round(input_info["volume_rate"], 0.1)
-		output += "<B>Coolant Input</B>: [power?("Injecting"):("On Hold")] <a href='byond://?src=\ref[src];in_refresh_status=1'>Refresh</A><BR>Flow Rate Limit: [volume_rate] L/s<BR>"
-		output += "Command: <a href='byond://?src=\ref[src];in_toggle_injector=1'>Toggle Power</A> <a href='byond://?src=\ref[src];in_set_flowrate=1'>Set Flow Rate</A><BR>"
+		output += "<B>Coolant Input</B>: [power?("Injecting"):("On Hold")] <A href='?src=\ref[src];in_refresh_status=1'>Refresh</A><BR>Flow Rate Limit: [volume_rate] L/s<BR>"
+		output += "Command: <A href='?src=\ref[src];in_toggle_injector=1'>Toggle Power</A> <A href='?src=\ref[src];in_set_flowrate=1'>Set Flow Rate</A><BR>"
 
 	else
-		output += "<FONT color='red'>ERROR: Can not find input port</FONT> <a href='byond://?src=\ref[src];in_refresh_status=1'>Search</A><BR>"
+		output += "<FONT color='red'>ERROR: Can not find input port</FONT> <A href='?src=\ref[src];in_refresh_status=1'>Search</A><BR>"
 
-	output += "Flow Rate Limit: <a href='byond://?src=\ref[src];adj_input_flow_rate=-100'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-10'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-1'>-</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=-0.1'>-</A> [round(input_flow_setting, 0.1)] L/s <a href='byond://?src=\ref[src];adj_input_flow_rate=0.1'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=1'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=10'>+</A> <a href='byond://?src=\ref[src];adj_input_flow_rate=100'>+</A><BR>"
+	output += "Flow Rate Limit: <A href='?src=\ref[src];adj_input_flow_rate=-100'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-10'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-1'>-</A> <A href='?src=\ref[src];adj_input_flow_rate=-0.1'>-</A> [round(input_flow_setting, 0.1)] L/s <A href='?src=\ref[src];adj_input_flow_rate=0.1'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=1'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=10'>+</A> <A href='?src=\ref[src];adj_input_flow_rate=100'>+</A><BR>"
 
 	output += "<BR>"
 
 	if(output_info)
 		var/power = (output_info["power"])
 		var/pressure_limit = output_info["external"]
-		output += {"<B>Core Outpump</B>: [power?("Open"):("On Hold")] <a href='byond://?src=\ref[src];out_refresh_status=1'>Refresh</A><BR>
+		output += {"<B>Core Outpump</B>: [power?("Open"):("On Hold")] <A href='?src=\ref[src];out_refresh_status=1'>Refresh</A><BR>
 Min Core Pressure: [pressure_limit] kPa<BR>"}
-		output += "Command: <a href='byond://?src=\ref[src];out_toggle_power=1'>Toggle Power</A> <a href='byond://?src=\ref[src];out_set_pressure=1'>Set Pressure</A><BR>"
+		output += "Command: <A href='?src=\ref[src];out_toggle_power=1'>Toggle Power</A> <A href='?src=\ref[src];out_set_pressure=1'>Set Pressure</A><BR>"
 
 	else
-		output += "<FONT color='red'>ERROR: Can not find output port</FONT> <a href='byond://?src=\ref[src];out_refresh_status=1'>Search</A><BR>"
+		output += "<FONT color='red'>ERROR: Can not find output port</FONT> <A href='?src=\ref[src];out_refresh_status=1'>Search</A><BR>"
 
-	output += "Min Core Pressure Set: <a href='byond://?src=\ref[src];adj_pressure=-100'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-50'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-10'>-</A> <a href='byond://?src=\ref[src];adj_pressure=-1'>-</A> [pressure_setting] kPa <a href='byond://?src=\ref[src];adj_pressure=1'>+</A> <a href='byond://?src=\ref[src];adj_pressure=10'>+</A> <a href='byond://?src=\ref[src];adj_pressure=50'>+</A> <a href='byond://?src=\ref[src];adj_pressure=100'>+</A><BR>"
+	output += "Min Core Pressure Set: <A href='?src=\ref[src];adj_pressure=-100'>-</A> <A href='?src=\ref[src];adj_pressure=-50'>-</A> <A href='?src=\ref[src];adj_pressure=-10'>-</A> <A href='?src=\ref[src];adj_pressure=-1'>-</A> [pressure_setting] kPa <A href='?src=\ref[src];adj_pressure=1'>+</A> <A href='?src=\ref[src];adj_pressure=10'>+</A> <A href='?src=\ref[src];adj_pressure=50'>+</A> <A href='?src=\ref[src];adj_pressure=100'>+</A><BR>"
 
 	return output
 
@@ -445,18 +444,18 @@ Min Core Pressure: [pressure_limit] kPa<BR>"}
 	if(device_info)
 		var/power = device_info["power"]
 		var/volume_rate = device_info["volume_rate"]
-		output += {"Status: [power?("Injecting"):("On Hold")] <a href='byond://?src=\ref[src];refresh_status=1'>Refresh</A><BR>
+		output += {"Status: [power?("Injecting"):("On Hold")] <A href='?src=\ref[src];refresh_status=1'>Refresh</A><BR>
 Rate: [volume_rate] L/sec<BR>"}
 
 		if(automation)
-			output += "Automated Fuel Injection: <a href='byond://?src=\ref[src];toggle_automation=1'>Engaged</A><BR>"
+			output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Engaged</A><BR>"
 			output += "Injector Controls Locked Out<BR>"
 		else
-			output += "Automated Fuel Injection: <a href='byond://?src=\ref[src];toggle_automation=1'>Disengaged</A><BR>"
-			output += "Injector: <a href='byond://?src=\ref[src];toggle_injector=1'>Toggle Power</A> <a href='byond://?src=\ref[src];injection=1'>Inject (1 Cycle)</A><BR>"
+			output += "Automated Fuel Injection: <A href='?src=\ref[src];toggle_automation=1'>Disengaged</A><BR>"
+			output += "Injector: <A href='?src=\ref[src];toggle_injector=1'>Toggle Power</A> <A href='?src=\ref[src];injection=1'>Inject (1 Cycle)</A><BR>"
 
 	else
-		output += "<FONT color='red'>ERROR: Can not find device</FONT> <a href='byond://?src=\ref[src];refresh_status=1'>Search</A><BR>"
+		output += "<FONT color='red'>ERROR: Can not find device</FONT> <A href='?src=\ref[src];refresh_status=1'>Search</A><BR>"
 
 	return output
 

@@ -51,21 +51,22 @@
 	//This is useful for spawning, you dont want people to see things pop into existence
 //If filter_maintenance is true, maintenance areas won't be chosen
 	//Since eris maintenance is a labyrinth and people dont hang around there, this defaults true
-/proc/random_ship_area(filter_players = FALSE, filter_maintenance = TRUE, filter_critical = FALSE, need_apc = FALSE)
+/proc/random_ship_area(var/filter_players = FALSE, var/filter_maintenance = TRUE, var/filter_critical = FALSE, need_apc = FALSE)
 	var/list/possible = list()
-	for(var/area/A as anything in SSmapping.main_ship_areas)
-		if(istype(A, /area/shuttle))
+	for(var/Y in ship_areas)
+		var/area/A = Y
+		if (istype(A, /area/shuttle))
 			continue
 
-		if(filter_maintenance && A.is_maintenance)
+		if (filter_maintenance && A.is_maintenance)
 			continue
 
-		if(filter_critical && (A.flags & AREA_FLAG_CRITICAL))
+		if (filter_critical && (A.flags & AREA_FLAG_CRITICAL))
 			continue
 
 		//Although hostile mobs instadying to turrets is fun
 		//If there's no AI they'll just be hit with stunbeams all day and spam the attack logs.
-		if(istype(A, /area/turret_protected))
+		if (istype(A, /area/turret_protected))
 			continue
 
 		if(need_apc && !A.apc)
@@ -89,7 +90,7 @@
 
 /area/proc/random_space()
 	var/list/turfs = list()
-	for(var/turf/floor/F in src.contents)
+	for(var/turf/simulated/floor/F in src.contents)
 		if(turf_clear(F))
 			turfs += F
 	if (turfs.len)
@@ -99,7 +100,7 @@
 
 /area/proc/random_hideable_turf()
 	var/list/turfs = list()
-	for(var/turf/floor/F in src.contents)
+	for(var/turf/simulated/floor/F in src.contents)
 		if(turf_clear(F))
 			if (F.flooring && (F.flooring.flags & TURF_HIDES_THINGS))
 				turfs += F

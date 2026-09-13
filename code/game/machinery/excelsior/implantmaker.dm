@@ -1,13 +1,11 @@
 /obj/machinery/complant_maker
-	name = "excelsior implant reconstructor"
+	name = "implant reconstructor"
 	desc = "This machine repurposes implants, robot components and bionics, reworking their circuitry into the Excelsior implant pattern which allows recruitment."
-	description_antag = "The compliancy implants cannot be implanted into NT personnel"
 	icon = 'icons/obj/machines/excelsior/reconstructor.dmi'
 	icon_state = "idle"
 	circuit = /obj/item/electronics/circuitboard/excelsiorreconstructor
 	anchored = TRUE
 	density = TRUE
-	shipside_only = TRUE
 
 	var/build_time = 40
 	var/working = FALSE

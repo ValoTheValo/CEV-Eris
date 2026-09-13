@@ -2,9 +2,9 @@
 
 #define MATERIAL_STEEL "steel"
 #define MATERIAL_GLASS "glass"
-#define MATERIAL_RGLASS "reinf_glass"
-#define MATERIAL_PLASMAGLASS "plasma_glass"
-#define MATERIAL_RPLASMAGLASS "plasma_reinf_glass"
+#define MATERIAL_RGLASS "rglass"
+#define MATERIAL_PLASMAGLASS "borosilicate glass"
+#define MATERIAL_RPLASMAGLASS "reinforced borosilicate glass"
 #define MATERIAL_SILVER "silver"
 #define MATERIAL_GOLD "gold"
 #define MATERIAL_PLASMA "plasma"
@@ -24,6 +24,7 @@
 #define MATERIAL_SANDSTONE "sandstone"
 #define MATERIAL_TRITIUM "tritium"
 #define MATERIAL_WOOD "wood"
+#define MATERIAL_XENOCHITIN "chitin"
 #define MATERIAL_VOXALLOY "voxalloy"
 #define MATERIAL_CARPET "carpet"
 #define MATERIAL_BIOMATTER "biomatter"
@@ -54,6 +55,7 @@
 	MATERIAL_SANDSTONE,\
 	MATERIAL_TRITIUM,\
 	MATERIAL_WOOD,\
+	MATERIAL_XENOCHITIN,\
 	MATERIAL_VOXALLOY,\
 	MATERIAL_CARPET,\
 	MATERIAL_BIOMATTER,\
@@ -62,26 +64,3 @@
 #define PLASTEEL_COLOUR "#8e9799"
 //Color to exactly match concept art #b0bcbe
 //I made it slightly darker than that, because the original color was too bright and causes eyestrain imo
-
-
-#define ORE_CARBON "o_carbon"
-#define ORE_IRON "o_hematite"
-#define ORE_PLASMA "o_plasma"
-#define ORE_SAND "o_sand"
-#define ORE_URANIUM "o_pitchblende"
-#define ORE_DIAMOND "o_diamond"
-#define ORE_SILVER "o_silver"
-#define ORE_GOLD "o_gold"
-#define ORE_PLATINUM "o_platinum"
-#define ORE_HYDROGEN "o_hydrogen"
-
-#define ORE_LIST list(\
-	ORE_CARBON,\
-	ORE_IRON,\
-	ORE_PLASMA,\
-	ORE_SAND,\
-	ORE_URANIUM,\
-	ORE_DIAMOND,\
-	ORE_SILVER,\
-	ORE_GOLD,\
-	ORE_PLATINUM)

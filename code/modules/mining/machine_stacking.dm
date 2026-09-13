@@ -8,8 +8,8 @@
 	anchored = TRUE
 	var/obj/machinery/mineral/stacking_machine/machine = null
 
-/obj/machinery/mineral/stacking_unit_console/LateInitialize()
-	. = ..()
+/obj/machinery/mineral/stacking_unit_console/New()
+	..()
 
 	spawn()
 		src.machine = locate(/obj/machinery/mineral/stacking_machine) in range(3, src)
@@ -32,9 +32,9 @@
 	for(var/stacktype in machine.stack_storage)
 		if(machine.stack_storage[stacktype] > 0)
 			var/display_name = material_display_name(stacktype) //Added to allow non-standard minerals to have proper names in the machine.
-			dat += "<tr><td width = 150><b>[capitalize(display_name)]:</b></td><td width = 30>[machine.stack_storage[stacktype]]</td><td width = 50><a href='byond://?src=\ref[src];release_stack=[stacktype]'>\[release\]</a></td></tr>"
+			dat += "<tr><td width = 150><b>[capitalize(display_name)]:</b></td><td width = 30>[machine.stack_storage[stacktype]]</td><td width = 50><A href='?src=\ref[src];release_stack=[stacktype]'>\[release\]</a></td></tr>"
 	dat += "</table><hr>"
-	dat += text("<br>Stacking: [machine.stack_amt] <a href='byond://?src=\ref[src];change_stack=1'>\[change\]</a><br><br>")
+	dat += text("<br>Stacking: [machine.stack_amt] <A href='?src=\ref[src];change_stack=1'>\[change\]</a><br><br>")
 	user << browse("[dat]", "window=console_stacking_machine")
 	onclose(user, "console_stacking_machine")
 
@@ -75,17 +75,21 @@
 	stack_storage = new
 
 	//TODO: Make this dynamic based on detecting conveyor belts or something. Maybe an interface to manually configure it
-	//The markers delete themselves on initialize so the machine can never be properly rebuilt during a round. This is bad.
-	// UPDATE: dynamic based on dir and inverse of dir
+	//These markers delete themselves on initialize so the machine can never be properly rebuilt during a round. This is bad.
+	input_dir = NORTH //Sensible default so that the machine can at least be replaced in the same location
+	output_dir = SOUTH
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/machinery/mineral/stacking_machine/LateInitialize()
 	. = ..()
-	spawn()
-		if(!input_dir)
-			input_dir = turn(dir, 180)
-		if(!output_dir)
-			output_dir = dir
+	//Locate our output and input machinery.
+	var/obj/marker
+	marker = locate(/obj/landmark/machinery/input) in range(1, loc)
+	if(marker)
+		input_dir = get_dir(src, marker)
+	marker = locate(/obj/landmark/machinery/output) in range(1, loc)
+	if(marker)
+		output_dir = get_dir(src, marker)
 
 /obj/machinery/mineral/stacking_machine/proc/outputMaterial(var/material_name, var/amount)
 	var/stored_amount = stack_storage[material_name] || 0
@@ -119,5 +123,4 @@
 		if (stack_storage[material_name] >= stack_amt)
 			outputMaterial(material_name, stack_amt)
 
-	if(console)
-		console.updateUsrDialog()
+	console.updateUsrDialog()

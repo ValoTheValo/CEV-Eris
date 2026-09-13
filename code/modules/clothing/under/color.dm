@@ -3,7 +3,6 @@
 
 /obj/item/clothing/under/color/black
 	name = "black jumpsuit"
-	desc = " A generic set of black spacer coveralls."
 	initial_name = "black jumpsuit"
 	icon_state = "black"
 	item_state = "bl_suit"
@@ -25,7 +24,6 @@
 
 /obj/item/clothing/under/color/grey
 	name = "grey jumpsuit"
-	desc = "...Just plain grey spacer coveralls, and such..."
 	initial_name = "grey jumpsuit"
 	icon_state = "grey"
 	item_state = "gy_suit"
@@ -57,7 +55,6 @@
 
 /obj/item/clothing/under/color/white
 	name = "white jumpsuit"
-	desc = "A set of generic coveralls in white."
 	initial_name = "white jumpsuit"
 	icon_state = "white"
 	item_state = "w_suit"

@@ -53,6 +53,7 @@ element identifiers are used to manage different hud parts for clients, f.e. the
 
 	var/_clickProc //called when element is clicked
 	var/_holder	//object that used with called proc
+	var/list/_procArguments	//arguments that can be passed to proc
 
 	var/list/_data //internal storage that can be utilized by _clickProc
 
@@ -103,9 +104,9 @@ element identifiers are used to manage different hud parts for clients, f.e. the
 	return QDEL_HINT_QUEUE
 
 /HUD_element/Click(location,control,params)
-	if(_clickProc)
+	if (_clickProc)
 		if(_holder)
-			call(_holder, _clickProc)(src, usr, location, control, params)
+			call(_holder, _clickProc)(arglist(_procArguments))
 		else
 			call(_clickProc)(src, usr, location, control, params)
 

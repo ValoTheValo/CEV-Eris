@@ -15,8 +15,6 @@
 	projectile_type = /obj/item/arrow/neotheo/cleansing
 	spawn_blacklisted = TRUE
 
-/obj/item/arrow
-	var/recoil = 2  // Light recoil, it's just some cleaning stuff
 
 /obj/item/arrow/neotheo
 	icon = 'icons/obj/projectiles.dmi'

@@ -1,5 +1,5 @@
 //wrapper
-/proc/do_teleport(ateleatom, adestination, aprecision = 0, afteleport = 1, aeffectin, aeffectout, asoundin, asoundout, no_checks = FALSE)
+/proc/do_teleport(ateleatom, adestination, aprecision=0, afteleport=1, aeffectin=null, aeffectout=null, asoundin=null, asoundout=null)
 	new /datum/teleport/instant/science(arglist(args))
 	return
 
@@ -12,16 +12,15 @@
 	var/soundin //soundfile to play before teleportation
 	var/soundout //soundfile to play after teleportation
 	var/force_teleport = 1 //if false, teleport will use Move() proc (dense objects will prevent teleportation)
-	var/no_checks = FALSE //Bypasses all teleportation checks, used for admin portals and pulsar portals
 
 
-/datum/teleport/New(ateleatom, adestination, aprecision = 0, afteleport = 1, aeffectin, aeffectout, asoundin, asoundout, no_checks = FALSE)
+/datum/teleport/New(ateleatom, adestination, aprecision=0, afteleport=1, aeffectin=null, aeffectout=null, asoundin=null, asoundout=null)
 	..()
 	if(!initTeleport(arglist(args)))
 		return 0
 	return 1
 
-/datum/teleport/proc/initTeleport(ateleatom, adestination, aprecision, afteleport, aeffectin, aeffectout, asoundin, asoundout, no_checks)
+/datum/teleport/proc/initTeleport(ateleatom, adestination, aprecision, afteleport, aeffectin, aeffectout, asoundin, asoundout)
 	if(!setTeleatom(ateleatom))
 		return 0
 	if(!setDestination(adestination))
@@ -31,7 +30,6 @@
 	setEffects(aeffectin, aeffectout)
 	setForceTeleport(afteleport)
 	setSounds(asoundin, asoundout)
-	setChecks(no_checks)
 	return 1
 
 //must succeed
@@ -72,10 +70,6 @@
 		soundin = isfile(asoundin) ? asoundin : null
 		soundout = isfile(asoundout) ? asoundout : null
 		return 1
-
-//optional
-/datum/teleport/proc/setChecks(_no_checks = FALSE)
-	no_checks = _no_checks
 
 //placeholder
 /datum/teleport/proc/teleportChecks()
@@ -130,13 +124,13 @@
 	return 1
 
 /datum/teleport/proc/teleport()
-	if(no_checks || teleportChecks())
+	if(teleportChecks())
 		return doTeleport()
 	return 0
 
 /datum/teleport/instant //teleports when datum is created
 
-/datum/teleport/instant/New(ateleatom, adestination, aprecision = 0, afteleport = 1, aeffectin, aeffectout, asoundin, asoundout, no_checks = FALSE)
+/datum/teleport/instant/New(ateleatom, adestination, aprecision=0, afteleport=1, aeffectin=null, aeffectout=null, asoundin=null, asoundout=null)
 	if(..())
 		teleport()
 	return
@@ -159,7 +153,7 @@
 	   istype(teleatom, /obj/item/storage/bag/ore/holding))
 		precision = rand(1, 100)
 
-	var/ofholding = 0
+	var/ofholding = 0	
 	var/list/bagholding = teleatom.search_contents_for(/obj/item/storage/backpack/holding)
 	if(bagholding.len)
 		ofholding += bagholding.len
@@ -210,7 +204,7 @@
 			teleatom.visible_message(SPAN_DANGER("\The [teleatom] bounces off of the portal!"))
 		return 0
 
-	if(IS_TECHNICAL_LEVEL(destination.z))
+	if(isAdminLevel(destination.z))
 		if(istype(teleatom, /mob/living/exosuit))
 			var/mob/living/exosuit/MM = teleatom
 			MM.occupant_message(SPAN_DANGER("\The [MM.pilots.Join(" and ")] would not survive the jump to a location so far away!"))
@@ -219,4 +213,7 @@
 			teleatom.visible_message(SPAN_DANGER("\The [teleatom] bounces off of the portal!"))
 			return 0
 
+
+	if(destination.z > max_default_z_level()) //Away mission z-levels
+		return 0
 	return 1

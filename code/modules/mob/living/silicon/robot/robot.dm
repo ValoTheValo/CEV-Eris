@@ -82,7 +82,7 @@
 	var/modtype = "Default"
 	var/lower_mod = 0
 	var/datum/effect/effect/system/ion_trail_follow/ion_trail = null
-	var/datum/effect/effect/system/spark_spread/spark_system //So they can initialize sparks whenever/N
+	var/datum/effect/effect/system/spark_spread/spark_system//So they can initialize sparks whenever/N
 	var/jeton = 0
 	var/killswitch = 0
 	var/killswitch_time = 60
@@ -90,8 +90,7 @@
 	var/weaponlock_time = 120
 	var/lawupdate = TRUE //Cyborgs will sync their laws with their AI by default
 	var/lockcharge //Used when locking down a borg to preserve cell charge
-	/// Humans get a -1 by default from any shoe. , robots had a 0.25 added by default.
-	var/speed = -0.75
+	var/speed = 0.25
 	var/scrambledcodes = 0 // Used to determine if a borg shows up on the robotics console.  Setting to one hides them.
 	var/tracking_entities = 0 //The number of known entities currently accessing the internal camera
 	var/braintype = "Cyborg"
@@ -293,7 +292,7 @@
 		return
 	var/list/modules = list()
 	modules.Add(robot_modules) //This is a global list in robot_modules.dm
-	var/decl/security_state/security_state = decls_repository.get_decl(SSmapping.security_state)
+	var/decl/security_state/security_state = decls_repository.get_decl(GLOB.maps_data.security_state)
 	if((crisis && security_state.current_security_level_is_same_or_higher_than(security_state.high_security_level)) || crisis_override) //Leaving this in until it's balanced appropriately.
 		to_chat(src, SPAN_DANGER("Crisis mode active. Combat module available."))
 		modules+="Combat"
@@ -480,23 +479,34 @@
 	else
 		set_light(0)
 
-/mob/living/silicon/robot/get_status_tab_items()
-	. = ..()
+// this function displays jetpack pressure in the stat panel
+/mob/living/silicon/robot/proc/show_jetpack_pressure()
+	// if you have a jetpack, show the internal tank pressure
+	if (jetpack)
+		stat("Internal Atmosphere Info", jetpack.name)
+		stat("Tank Pressure", jetpack.gastank.air_contents.return_pressure())
+
+
+// this function displays the cyborgs current cell charge in the stat panel
+/mob/living/silicon/robot/proc/show_cell_power()
 	if(cell)
-		. += list(list("Charge Left: [round(cell.percent())]%"))
-		. += list(list("Cell Rating: [round(cell.maxcharge)]"))
-		. += list(list("Power Cell Load: [round(used_power_this_tick)]W"))
+		stat(null, text("Charge Left: [round(cell.percent())]%"))
+		stat(null, text("Cell Rating: [round(cell.maxcharge)]")) // Round just in case we somehow get crazy values
+		stat(null, text("Power Cell Load: [round(used_power_this_tick)]W"))
 	else
-		. += list(list("No Cell Inserted!"))
+		stat(null, text("No Cell Inserted!"))
 
-	if(jetpack)
-		. += list(list("Internal Atmosphere Info: [jetpack.name]"))
-		. += list(list("Tank Pressure: [jetpack.gastank.air_contents.return_pressure()]"))
-		. += list(list("Lights: [lights_on ? "ON" : "OFF"]"))
 
-	if(module)
-		for(var/datum/matter_synth/ms in module.synths)
-			. += list(list("[ms.name]: [ms.energy]/[ms.max_energy_multiplied]"))
+// update the status screen display
+/mob/living/silicon/robot/Stat()
+	. = ..()
+	if (statpanel("Status"))
+		show_cell_power()
+		show_jetpack_pressure()
+		stat(null, text("Lights: [lights_on ? "ON" : "OFF"]"))
+		if(module)
+			for(var/datum/matter_synth/ms in module.synths)
+				stat("[ms.name]: [ms.energy]/[ms.max_energy_multiplied]")
 
 /mob/living/silicon/robot/restrained()
 	return FALSE
@@ -508,7 +518,7 @@
 			var/mob/living/carbon/human/firer = Proj.firer
 			chance -= firer.stats.getStat(STAT_VIG, FALSE) / 5
 		var/obj/item/projectile/bullet/B = Proj
-		chance = max((chance - B.armor_divisor), 0)
+		chance = max((chance - B.armor_penetration), 0)
 		if(B.starting && prob(chance))
 			visible_message(SPAN_DANGER("\The [Proj.name] ricochets off [src]\'s armour!"))
 			var/multiplier = round(10 / get_dist(B.starting, src))
@@ -590,7 +600,8 @@
 					adjustBruteLoss(-30)
 					updatehealth()
 					add_fingerprint(user)
-					user.visible_message(SPAN_DANGER("[user] has fixed some of the dents on [src]!"))
+					for(var/mob/O in viewers(user, null))
+						O.show_message(text(SPAN_DANGER("[user] has fixed some of the dents on [src]!")), 1)
 					return
 				return
 
@@ -710,7 +721,8 @@
 			user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 			adjustFireLoss(-30)
 			updatehealth()
-			user.visible_message(SPAN_DANGER("[user] has fixed some of the burnt wires on [src]!"))
+			for(var/mob/O in viewers(user, null))
+				O.show_message(text(SPAN_DANGER("[user] has fixed some of the burnt wires on [src]!")), 1)
 
 	else if (istype(I, /obj/item/stock_parts/matter_bin) && opened) // Installing/swapping a matter bin
 		if(storage)
@@ -1032,7 +1044,7 @@
 	if(R)
 		R.UnlinkSelf()
 		to_chat(R, "Buffers flushed and reset. Camera system shutdown.  All systems operational.")
-		remove_verb(src, /mob/living/silicon/robot/proc/ResetSecurityCodes)
+		verbs -= /mob/living/silicon/robot/proc/ResetSecurityCodes
 
 /mob/living/silicon/robot/proc/SetLockdown(var/state = 1)
 	// They stay locked down if their wire is cut.
@@ -1047,8 +1059,10 @@
 	set src = usr
 
 	var/obj/item/W = get_active_hand()
-	if(W)
+	if (W)
 		W.attack_self(src)
+
+	return
 
 /mob/living/silicon/robot/proc/choose_icon()
 	set category = "Robot Commands"
@@ -1057,9 +1071,10 @@
 	if(!module_sprites.len)
 		to_chat(src, "Something is badly wrong with the sprite selection. Harass a coder.")
 		return
-	if(icon_selected == 1)
-		remove_verb(src, /mob/living/silicon/robot/proc/choose_icon)
+	if (icon_selected == 1)
+		verbs -= /mob/living/silicon/robot/proc/choose_icon
 		return
+
 
 	if(module_sprites.len == 1 || !client)
 		if(!(icontype in module_sprites))
@@ -1080,7 +1095,7 @@
 		return choose_icon()
 
 	icon_selected = 1
-	remove_verb(src, /mob/living/silicon/robot/proc/choose_icon)
+	verbs -= /mob/living/silicon/robot/proc/choose_icon
 	to_chat(src, "Your icon has been set. You now require a module reset to change it.")
 
 /mob/living/silicon/robot/proc/sensor_mode() //Medical/Security HUD controller for borgs
@@ -1090,10 +1105,10 @@
 	toggle_sensor_mode()
 
 /mob/living/silicon/robot/proc/add_robot_verbs()
-	add_verb(src, robot_verbs_default)
+	verbs |= robot_verbs_default
 
 /mob/living/silicon/robot/proc/remove_robot_verbs()
-	remove_verb(src, robot_verbs_default)
+	verbs -= robot_verbs_default
 
 // Uses power from cyborg's cell. Returns 1 on success or 0 on failure.
 // Properly converts using CELLRATE now! Amount is in Joules.
@@ -1224,12 +1239,3 @@
 
 /mob/living/silicon/robot/get_cell()
 	return cell
-
-/mob/living/silicon/robot/flash(duration = 0, drop_items = FALSE, doblind = FALSE, doblurry = FALSE)
-	if(blinded)
-		return
-	if (HUDtech.Find("flash"))
-		flick("e_flash", HUDtech["flash"])
-	if(duration)
-		if(!HasTrait(CYBORG_TRAIT_FLASH_RESISTANT))
-			Weaken(duration)

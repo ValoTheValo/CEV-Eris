@@ -1,9 +1,9 @@
-/obj/item/modular_computer/examine(mob/user, extra_description = "")
+/obj/item/modular_computer/examine(var/mob/user)
+	. = ..()
 	if(damage > broken_damage)
-		extra_description += SPAN_DANGER("It is heavily damaged!")
+		to_chat(user, "<span class='danger'>It is heavily damaged!</span>")
 	else if(damage)
-		extra_description += "It is damaged."
-	..(user, extra_description)
+		to_chat(user, "It is damaged.")
 
 /obj/item/modular_computer/proc/break_apart()
 	visible_message("\The [src] breaks apart!")
@@ -16,7 +16,7 @@
 			H.take_damage(rand(10,30))
 	qdel(src)
 
-/obj/item/modular_computer/take_damage(var/amount, var/component_probability, var/damage_casing = 1, var/randomize = 1)
+/obj/item/modular_computer/proc/take_damage(var/amount, var/component_probability, var/damage_casing = 1, var/randomize = 1)
 	if(!modifiable)
 		return
 
@@ -35,6 +35,11 @@
 
 	if(damage >= max_damage)
 		break_apart()
+
+// Stronger explosions cause serious damage to internal components
+// Minor explosions are mostly mitigitated by casing.
+/obj/item/modular_computer/ex_act(var/severity)
+	take_damage(rand(100,200) / severity, 30 / severity)
 
 // EMPs are similar to explosions, but don't cause physical damage to the casing. Instead they screw up the components
 /obj/item/modular_computer/emp_act(var/severity)

@@ -41,8 +41,10 @@
 
 /datum/breakdown/positive/stalwart/conclude()
 	holder.owner.adjustBruteLoss(-25)
+	holder.owner.adjustCloneLoss(-10)
 	holder.owner.adjustFireLoss(-25)
 	holder.owner.adjustOxyLoss(-45)
+	holder.owner.adjustToxLoss(-25)
 	holder.owner.reagents.add_reagent("tramadol", 5) // the way this works is silly as all fuck and should probably be fixed at some point
 	..()
 
@@ -188,7 +190,7 @@
 				if(damage_eyes)
 					holder.owner.visible_message(SPAN_DANGER("[holder.owner] scratches at [G.his] eyes!"))
 					var/obj/item/organ/internal/eyes/eyes = holder.owner.random_organ_by_process(OP_EYES)
-					eyes.take_damage(rand(1,10), TRUE, BRUTE, TRUE, TRUE)
+					eyes.take_damage(rand(1,2), 1)
 				else
 					holder.owner.visible_message(SPAN_DANGER(pick(list(
 						"[holder.owner] tries to end [G.his] misery!",
@@ -201,9 +203,7 @@
 
 /datum/breakdown/negative/selfharm/occur()
 	spawn(delay)
-		if(ishuman(holder?.owner))
-			var/mob/living/carbon/human/tobreakdown = holder.owner
-			++tobreakdown.suppress_communication
+		++holder.owner.suppress_communication
 	return ..()
 
 /datum/breakdown/negative/selfharm/conclude()
@@ -222,6 +222,7 @@
 		"You get overwhelmed and start to panic!",
 		"You're inconsolably terrified!",
 		"You can't choke back the tears anymore!",
+		"The hair on your nape stands on end! The fear sends you into a frenzy!",
 		"It's too much! You freak out and lose control!"
 	)
 	end_messages = list(
@@ -242,11 +243,9 @@
 
 /datum/breakdown/negative/hysteric/occur()
 	spawn(delay)
-		if(ishuman(holder?.owner))
-			var/mob/living/carbon/human/tobreakdown = holder.owner
-			tobreakdown.SetWeakened(4)
-			tobreakdown.SetStunned(4)
-			++tobreakdown.suppress_communication
+		holder.owner.SetWeakened(4)
+		holder.owner.SetStunned(4)
+		++holder.owner.suppress_communication
 	return ..()
 
 /datum/breakdown/negative/hysteric/conclude()
@@ -304,8 +303,8 @@
 	)
 
 /datum/breakdown/negative/fabric/occur()
-	RegisterSignal(SSdcs, COMSIG_GLOB_FABRIC_NEW, PROC_REF(add_image))
-	RegisterSignal(holder.owner, COMSIG_MOB_LOGIN, PROC_REF(update_client_images))
+	RegisterSignal(SSdcs, COMSIG_GLOB_FABRIC_NEW, .proc/add_image)
+	RegisterSignal(holder.owner, COMSIG_MOB_LOGIN, .proc/update_client_images)
 	for(var/datum/component/fabric/F in GLOB.fabric_list)
 		if(F.parent == holder.owner)
 			continue
@@ -322,12 +321,10 @@
 	..()
 
 /datum/breakdown/negative/fabric/proc/add_image(image/I)
-	SIGNAL_HANDLER
 	images |= I
 	holder.owner.client?.images |= I
 
 /datum/breakdown/negative/fabric/proc/update_client_images()
-	SIGNAL_HANDLER
 	holder.owner.client?.images |= images
 
 
@@ -371,8 +368,8 @@
 	return FALSE
 
 /datum/breakdown/common/power_hungry/occur()
-	RegisterSignal(holder.owner, COMSIG_CARBON_ELECTROCTE, PROC_REF(check_shock))
-	RegisterSignal(holder.owner, COMSIG_LIVING_STUN_EFFECT, PROC_REF(check_shock))
+	RegisterSignal(holder.owner, COMSIG_CARBON_ELECTROCTE, .proc/check_shock)
+	RegisterSignal(holder.owner, COMSIG_LIVING_STUN_EFFECT, .proc/check_shock)
 	return ..()
 
 /datum/breakdown/common/power_hungry/update()
@@ -389,7 +386,6 @@
 	..()
 
 /datum/breakdown/common/power_hungry/proc/check_shock()
-	SIGNAL_HANDLER
 	finished = TRUE
 
 #define ACTVIEW_ONE TRUE
@@ -435,7 +431,7 @@
 			to_chat(target, SPAN_WARNING("It seems as if you are looking through someone else's eyes."))
 			active_view = ACTVIEW_BOTH
 		target.sanity.changeLevel(-rand(5,10)) //This phenomena will prove taxing on the viewed regardless
-		addtimer(CALLBACK(src, PROC_REF(reset_views), TRUE), time_view)
+		addtimer(CALLBACK(src, .proc/reset_views, TRUE), time_view)
 		time = world.time + time_view
 
 /datum/breakdown/negative/glassification/proc/reset_views()
@@ -483,7 +479,7 @@
 	return FALSE
 
 /datum/breakdown/common/desire_for_chrome/occur()
-	RegisterSignal(holder.owner, COMSIG_HUMAN_ROBOTIC_MODIFICATION, PROC_REF(check_organ))
+	RegisterSignal(holder.owner, COMSIG_HUMAN_ROBOTIC_MODIFICATION, .proc/check_organ)
 	return ..()
 
 /datum/breakdown/common/desire_for_chrome/conclude()
@@ -491,7 +487,6 @@
 	..()
 
 /datum/breakdown/common/desire_for_chrome/proc/check_organ()
-	SIGNAL_HANDLER
 	finished = TRUE
 
 
@@ -506,7 +501,7 @@
 	end_messages = list("Just like you remembered it.")
 
 /datum/breakdown/common/false_nostalgy/occur()
-	var/list/candidates = SSmapping.main_ship_areas.Copy()
+	var/list/candidates = ship_areas.Copy()
 	message_time = world.time + BREAKDOWN_ALERT_COOLDOWN
 	for(var/area/A in candidates)
 		if(A.is_maintenance)
@@ -692,7 +687,7 @@
 	to_chat(holder.owner,"...[jointext(words, " ", phrase_pos, phrase_pos + phrase_len + 1)]...")
 
 /datum/breakdown/common/signs/occur()
-	RegisterSignal(holder.owner, COMSIG_HUMAN_SAY, PROC_REF(check_message))
+	RegisterSignal(holder.owner, COMSIG_HUMAN_SAY, .proc/check_message)
 	return ..()
 
 /datum/breakdown/common/signs/conclude()
@@ -700,6 +695,5 @@
 	..()
 
 /datum/breakdown/common/signs/proc/check_message(msg)
-	SIGNAL_HANDLER
 	if(msg == message)
 		finished = TRUE

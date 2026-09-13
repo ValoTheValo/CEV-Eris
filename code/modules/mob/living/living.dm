@@ -8,20 +8,6 @@
 
 	return
 
-/mob/living/proc/flash(duration = 0, drop_items = FALSE, doblind = FALSE, doblurry = FALSE)
-	if(blinded)
-		return
-	if (HUDtech.Find("flash"))
-		flick("e_flash", HUDtech["flash"])
-	if(duration)
-		if(!ishuman(src))
-			Weaken(duration)
-		if(doblind)
-			eye_blind += duration
-		if(doblurry)
-			eye_blurry += duration
-
-
 //mob verbs are faster than object verbs. See above.
 /mob/living/pointed(atom/A as mob|obj|turf in view())
 	if(src.stat || !src.canmove || src.restrained())
@@ -167,9 +153,9 @@ default behaviour is:
 
 /mob/living/verb/succumb()
 	set hidden = TRUE
-	if (health < 0)
-		adjustOxyLoss(health + maxHealth * 2) // Deal 2x health in OxyLoss damage, as before but variable.
-		health = -maxHealth
+	if ((src.health < 0 && src.health > (5-src.maxHealth))) // Health below Zero but above 5-away-from-death, as before, but variable
+		src.adjustOxyLoss(src.health + src.maxHealth * 2) // Deal 2x health in OxyLoss damage, as before but variable.
+		src.health = src.maxHealth - src.getOxyLoss() - src.getToxLoss() - src.getFireLoss() - src.getBruteLoss()
 		to_chat(src, "\blue You have given up life and succumbed to death.")
 
 
@@ -200,7 +186,7 @@ default behaviour is:
 	var/extradam = 0	//added to when organ is at max dam
 	for(var/obj/item/organ/external/affecting in organs)
 		//TODO: fix the extradam stuff. Or, ebtter yet...rewrite this entire proc ~Carn
-		if(affecting.take_damage(divided_damage+extradam, BURN))
+		if(affecting.take_damage(0, divided_damage+extradam))
 			UpdateDamageIcon()
 	updatehealth()
 	return TRUE
@@ -432,7 +418,6 @@ default behaviour is:
 	setToxLoss(0)
 	setOxyLoss(0)
 	setCloneLoss(0)
-	setHalLoss(0)
 	setBrainLoss(0)
 	SetParalysis(0)
 	SetStunned(0)
@@ -500,8 +485,17 @@ default behaviour is:
 
 	// Delete them from datacore.
 
-	var/datum/todelete = get_crewmember_record(name)
-	qdel(todelete)
+	if(PDA_Manifest.len)
+		PDA_Manifest.Cut()
+	for(var/datum/data/record/R in data_core.medical)
+		if ((R.fields["name"] == src.real_name))
+			qdel(R)
+	for(var/datum/data/record/T in data_core.security)
+		if ((T.fields["name"] == src.real_name))
+			qdel(T)
+	for(var/datum/data/record/G in data_core.general)
+		if ((G.fields["name"] == src.real_name))
+			qdel(G)
 
 	//This should guarantee that ghosts don't spawn.
 	src.ckey = null
@@ -552,7 +546,9 @@ default behaviour is:
 						if (prob(75))
 							var/obj/item/grab/G = pick(M.grabbed_by)
 							if (istype(G, /obj/item/grab))
-								M.visible_message(SPAN_DANGER("[G.affecting] has been pulled from [G.assailant]'s grip by [src]."))
+								for(var/mob/O in viewers(M, null))
+									O.show_message(text("\red [] has been pulled from []'s grip by []", G.affecting, G.assailant, src), 1)
+								//G = null
 								qdel(G)
 						else
 							ok = 0
@@ -566,9 +562,9 @@ default behaviour is:
 							var/area/A = get_area(M)
 							if(A.has_gravity)
 								//this is the gay blood on floor shit -- Added back -- Skie
-								if(M.lying && (prob(M.getBruteLoss() / 6)))
+								if (M.lying && (prob(M.getBruteLoss() / 6)))
 									var/turf/location = M.loc
-									if(istype(location, /turf))
+									if (istype(location, /turf/simulated))
 										location.add_blood(M)
 								//pull damage with injured people
 									if(prob(25))
@@ -579,13 +575,13 @@ default behaviour is:
 										M.adjustBruteLoss(2)
 										visible_message("<span class='danger'>\The [M]'s [M.isSynthetic() ? "state" : "wounds"] worsen terribly from being dragged!</span>")
 										var/turf/location = M.loc
-										if(istype(location, /turf))
+										if (istype(location, /turf/simulated))
+											location.add_blood(M)
 											if(ishuman(M))
 												var/mob/living/carbon/human/H = M
 												var/blood_volume = round(H.vessel.get_reagent_amount("blood"))
 												if(blood_volume > 0)
 													H.vessel.remove_reagent("blood", 0.5)
-													location.add_blood(M)
 
 
 						step_glide(pulling, get_dir(pulling.loc, T), glide_size)
@@ -625,15 +621,8 @@ default behaviour is:
 
 	if(resting)
 		is_busy = TRUE
-		var/groinmult = 1
-		if(H)
-			var/obj/item/organ/external/groin = H.get_organ(BP_GROIN)
-			if(groin.limb_efficiency <= 0)
-				to_chat(src, SPAN_WARNING("You are too damaged to be able to get up."))
-				return FALSE
-			groinmult =  100 / groin.limb_efficiency // smaller mult the bigger the efficiency
 
-		if(do_after(src, min((stats.getPerk(PERK_PARKOUR) ? 0.2 SECONDS : 0.4 SECONDS) * groinmult, 2 SECONDS), null, 0, 1, INCAPACITATION_DEFAULT, immobile = 0))
+		if(do_after(src, (stats.getPerk(PERK_PARKOUR) ? 0.2 SECONDS : 0.4 SECONDS), null, 0, 1, INCAPACITATION_DEFAULT, immobile = 0))
 			resting = FALSE
 			to_chat(src, SPAN_NOTICE("You are now getting up."))
 			update_lying_buckled_and_verb_status()
@@ -673,13 +662,15 @@ default behaviour is:
 
 		// Diving
 		to_chat(src, SPAN_NOTICE("You dive onwards!"))
+		pass_flags += PASSTABLE // Jump over them!
 		allow_spin = FALSE
-		if(istype(get_step(src, _dir), /turf/open))
+		if(istype(get_step(src, _dir), /turf/simulated/open))
 			range++
 		if(momentum_speed > 4)
 			range++
-		throw_at(get_edge_target_turf(src, _dir), range, 1, src, PASSTABLE) // If you dive over a table, your momentum is set to 0. If you dive over space, you are thrown 1 tile further.
+		throw_at(get_edge_target_turf(src, _dir), range, 1) // If you dive over a table, your momentum is set to 0. If you dive over space, you are thrown 1 tile further.
 		update_lying_buckled_and_verb_status()
+		pass_flags -= PASSTABLE // Jumpn't over them anymore!
 		allow_spin = TRUE
 
 		// Slide
@@ -688,6 +679,7 @@ default behaviour is:
 		while(livmomentum > 0 && C.true_dir)
 			Move(get_step(loc, _dir),dir)
 			livmomentum--
+			regen_slickness(0.25) // The longer you slide, the more stylish it is
 			sleep(world.tick_lag + 0.5)
 		C.mloop = 0
 
@@ -718,13 +710,13 @@ default behaviour is:
 /mob/proc/can_be_possessed_by(var/mob/observer/ghost/possessor)
 	return istype(possessor) && possessor.client
 
-/mob/living/can_be_possessed_by(var/mob/observer/ghost/possessor, var/animal_check = TRUE)
+/mob/living/can_be_possessed_by(var/mob/observer/ghost/possessor)
 	if(!..())
 		return FALSE
 	if(!possession_candidate)
 		to_chat(possessor, "<span class='warning'>That animal cannot be possessed.</span>")
 		return FALSE
-	if(jobban_isbanned(possessor, "Animal") && animal_check)
+	if(jobban_isbanned(possessor, "Animal"))
 		to_chat(possessor, "<span class='warning'>You are banned from animal roles.</span>")
 		return FALSE
 	if(!possessor.MayRespawn(0 ,ANIMAL))
@@ -768,13 +760,29 @@ default behaviour is:
 		var/obj/screen/HUDthrow/HUD = HUDneed["throw"]
 		HUD.update_icon()
 
+	/*if (var/obj/screen/HUDthrow/HUD in src.client.screen)
+		if(HUD.name == "throw") //in case we don't have the HUD and we use the hotkey
+			HUD.toggle_throw_mode()
+			break*/
+
+/mob/living/stop_pulling()
+
+	set name = "Stop Pulling"
+	set category = "IC"
+
+	if(pulling)
+		pulling.pulledby = null
+		pulling = null
+/*		if(pullin)
+			pullin.icon_state = "pull0"*/
+		if (HUDneed.Find("pull"))
+			var/obj/screen/HUDthrow/HUD = HUDneed["pull"]
+			HUD.update_icon()
+
 /mob/living/start_pulling(var/atom/movable/AM)
 
 	if (!AM || !usr || src==AM || !isturf(src.loc))	//if there's no person pulling OR the person is pulling themself OR the object being pulled is inside something: abort!
 		return
-
-	if(isobj(AM)) // even if we fail all the checks assume they touched the thing
-		AM.add_fingerprint(usr)
 
 	if (AM.anchored)
 		to_chat(src, "<span class='warning'>It won't budge!</span>")
@@ -845,12 +853,12 @@ default behaviour is:
 	static_overlay = image(get_static_icon(new/icon(icon, icon_state)), loc = src)
 	static_overlay.override = 1
 
+/mob/living/New()
+	..()
 
-/mob/living/Initialize()
-	. = ..()
-	/// This proc used to be done in New() and was still somehow random with people having the same real name and name
-	/// I think it was random because of Human New calling Initialize and then calling the parent of New()
-	/// Hence it kept being random whilst unexpected...  -SPCR
+	if(!real_name)
+		real_name = name
+
 	dna_trace = sha1(real_name)
 	fingers_trace = md5(real_name)
 
@@ -868,10 +876,8 @@ default behaviour is:
 		update_z(T.z)
 
 /mob/living/Destroy()
-	if(registered_z)
-		SSmobs.mob_living_by_zlevel[registered_z] -= src	// STOP_PROCESSING() doesn't remove the mob from this list
-	QDEL_NULL(stats)
-	QDEL_NULL(static_overlay)
+	qdel(stats)
+	stats = null
 	return ..()
 
 /mob/living/proc/vomit()

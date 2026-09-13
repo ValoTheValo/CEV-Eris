@@ -30,7 +30,6 @@ var/list/global/tank_gauge_cache = list()
 	spawn_tags = SPAWN_TAG_TANK_GAS
 
 	price_tag = 50
-	matter = list(MATERIAL_STEEL = 8)
 
 	var/datum/gas_mixture/air_contents
 	var/distribute_pressure = ONE_ATMOSPHERE
@@ -70,8 +69,9 @@ var/list/global/tank_gauge_cache = list()
 	if(default_gas)
 		air_contents.adjust_gas(default_gas, default_pressure*volume/(R_IDEAL_GAS_EQUATION*T20C))
 
-/obj/item/tank/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
+/obj/item/tank/examine(mob/user)
+	. = ..(user, 0)
+	if(.)
 		var/celsius_temperature = air_contents.temperature - T0C
 		var/descriptive
 		switch(celsius_temperature)
@@ -87,8 +87,7 @@ var/list/global/tank_gauge_cache = list()
 				descriptive = "room temperature"
 			else
 				descriptive = "cold"
-		extra_description += SPAN_NOTICE("\The [src] feels [descriptive].")
-	..(user, extra_description)
+		to_chat(user, SPAN_NOTICE("\The [src] feels [descriptive]."))
 
 /obj/item/tank/attackby(obj/item/W, mob/living/user)
 	..()
@@ -106,9 +105,9 @@ var/list/global/tank_gauge_cache = list()
 	if (!(src.air_contents))
 		return
 
-	nano_ui_interact(user)
+	ui_interact(user)
 
-/obj/item/tank/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/item/tank/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/mob/living/carbon/location = null
 
 	if(istype(loc, /obj/item/rig))		// check for tanks in rigs
@@ -285,8 +284,15 @@ var/list/global/tank_gauge_cache = list()
 		air_contents.react()
 
 		pressure = air_contents.return_pressure()
-		var/power = (pressure-TANK_FRAGMENT_PRESSURE)/TANK_FRAGMENT_SCALE
-		explosion(get_turf(src), power, 10, EFLAG_ADDITIVEFALLOFF)
+		var/range = (pressure-TANK_FRAGMENT_PRESSURE)/TANK_FRAGMENT_SCALE
+
+		explosion(
+			get_turf(loc),
+			round(min(BOMBCAP_DVSTN_RADIUS, range*0.25)),
+			round(min(BOMBCAP_HEAVY_RADIUS, range*0.50)),
+			round(min(BOMBCAP_LIGHT_RADIUS, range*1.00)),
+			round(min(BOMBCAP_FLASH_RADIUS, range*1.50)),
+			)
 		qdel(src)
 
 	else if(pressure > TANK_RUPTURE_PRESSURE)
@@ -295,7 +301,7 @@ var/list/global/tank_gauge_cache = list()
 		#endif
 
 		if(integrity <= 0)
-			var/turf/T = get_turf(src)
+			var/turf/simulated/T = get_turf(src)
 			if(!T)
 				return
 			T.assume_air(air_contents)
@@ -310,7 +316,7 @@ var/list/global/tank_gauge_cache = list()
 		#endif
 
 		if(integrity <= 0)
-			var/turf/T = get_turf(src)
+			var/turf/simulated/T = get_turf(src)
 			if(!T)
 				return
 			var/datum/gas_mixture/leaked_gas = air_contents.remove_ratio(0.25)

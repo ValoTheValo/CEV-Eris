@@ -21,7 +21,6 @@
 /obj/machinery/flasher/portable //Portable version of the flasher. Only flashes when anchored
 	name = "portable flasher"
 	desc = "A portable flashing device. Wrench to activate and deactivate. Cannot detect slow movements."
-	description_info = "Will flash people that run"
 	icon_state = "pflash1"
 	strength = 8
 	anchored = FALSE
@@ -86,16 +85,30 @@
 			var/mob/living/carbon/human/H = O
 			if(!H.eyecheck() <= 0)
 				continue
-			O.flash(strength, FALSE , TRUE , TRUE , 10)
+			flash_time *= H.species.flash_mod
+			var/obj/item/organ/internal/eyes/E = H.random_organ_by_process(OP_EYES)
+			if(!E)
+				return
+			if(E.is_bruised() && prob(E.damage + 50))
+				if (O.HUDtech.Find("flash"))
+					flick("e_flash", O.HUDtech["flash"])
+				E.damage += rand(1, 5)
 		else
 			if(isrobot(O))
 				var/mob/living/silicon/robot/robo = O
-				robo.flash(strength, FALSE, FALSE , FALSE)
-				continue
+				if(robo.HasTrait(CYBORG_TRAIT_FLASH_RESISTANT))
+					continue
+				else
+					robo.Weaken(flash_time)
+					if(robo.HUDtech.Find("flash"))
+						flick("e_flash", robo.HUDtech["flash"])
+						continue
 			else
-				if (istype(O,/mob/living/silicon/ai))
-					return
-				O.flash(strength , FALSE, FALSE ,FALSE)
+				if(!O.blinded)
+					if (istype(O,/mob/living/silicon/ai))
+						return
+					if (O.HUDtech.Find("flash"))
+						flick("flash", O.HUDtech["flash"])
 			O.Weaken(flash_time)
 
 
@@ -147,7 +160,8 @@
 
 	for(var/obj/machinery/flasher/M in GLOB.machines)
 		if(M.id == src.id)
-			M.flash()
+			spawn()
+				M.flash()
 
 	sleep(50)
 

@@ -1,10 +1,11 @@
 /mob/living/silicon/ai/proc/add_mech_verbs()
-	add_verb(src, /mob/living/silicon/ai/proc/view_mech_stats)
-	add_verb(src, /mob/living/silicon/ai/proc/AIeject)
+	verbs += /mob/living/silicon/ai/proc/view_mech_stats
+	verbs += /mob/living/silicon/ai/proc/AIeject
+
 
 /mob/living/silicon/ai/proc/remove_mech_verbs()
-	remove_verb(src, /mob/living/silicon/ai/proc/view_mech_stats)
-	remove_verb(src, /mob/living/silicon/ai/proc/AIeject)
+	verbs -= /mob/living/silicon/ai/proc/view_mech_stats
+	verbs -= /mob/living/silicon/ai/proc/AIeject
 
 /mob/living/silicon/ai/proc/view_mech_stats()
 	set name = "View Stats"

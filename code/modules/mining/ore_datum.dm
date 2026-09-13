@@ -24,7 +24,7 @@ var/global/list/ore_data = list()
 		display_name = name
 
 /ore/uranium
-	name = ORE_URANIUM
+	name = MATERIAL_URANIUM
 	display_name = "pitchblende"
 	smelts_to = MATERIAL_URANIUM
 	result_amount = 10
@@ -38,9 +38,9 @@ var/global/list/ore_data = list()
 	xarch_source_mineral = "potassium"
 
 /ore/hematite
-	name = ORE_IRON
+	name = "hematite"
 	display_name = "hematite"
-	smelts_to = MATERIAL_IRON
+	smelts_to = "iron"
 	alloy = 1
 	result_amount = 10
 	spread_chance = 25
@@ -48,7 +48,7 @@ var/global/list/ore_data = list()
 	scan_icon = "mineral_common"
 
 /ore/coal
-	name = ORE_CARBON
+	name = "carbon"
 	display_name = "raw carbon"
 	smelts_to = MATERIAL_PLASTIC
 	alloy = 1
@@ -58,16 +58,16 @@ var/global/list/ore_data = list()
 	scan_icon = "mineral_common"
 
 /ore/glass
-	name = ORE_SAND
+	name = "sand"
 	display_name = "sand"
 	smelts_to = MATERIAL_GLASS
 	compresses_to = MATERIAL_SANDSTONE
 
 /ore/plasma
-	name = ORE_PLASMA
+	name = "plasma"
 	display_name = "plasma crystals"
-	compresses_to = MATERIAL_PLASMA
-	alloy = TRUE
+	compresses_to = "plasma"
+	alloy = 1
 	//smelts_to = something that explodes violently on the conveyor, huhuhuhu
 	result_amount = 8
 	spread_chance = 25
@@ -82,7 +82,7 @@ var/global/list/ore_data = list()
 	xarch_source_mineral = "plasma"
 
 /ore/silver
-	name = ORE_SILVER
+	name = "silver"
 	display_name = "native silver"
 	smelts_to = MATERIAL_SILVER
 	result_amount = 8
@@ -92,7 +92,7 @@ var/global/list/ore_data = list()
 
 /ore/gold
 	smelts_to = MATERIAL_GOLD
-	name = ORE_GOLD
+	name = "gold"
 	display_name = "native gold"
 	result_amount = 8
 	spread_chance = 10
@@ -106,7 +106,7 @@ var/global/list/ore_data = list()
 		)
 
 /ore/diamond
-	name = ORE_DIAMOND
+	name = "diamond"
 	display_name = "diamond"
 	compresses_to = MATERIAL_DIAMOND
 	result_amount = 5
@@ -116,10 +116,10 @@ var/global/list/ore_data = list()
 	xarch_source_mineral = "nitrogen"
 
 /ore/platinum
-	name = ORE_PLATINUM
+	name = "platinum"
 	display_name = "raw platinum"
 	smelts_to = MATERIAL_PLATINUM
-	compresses_to = MATERIAL_OSMIUM
+	compresses_to = "osmium"
 	alloy = 1
 	result_amount = 5
 	spread_chance = 10
@@ -127,10 +127,10 @@ var/global/list/ore_data = list()
 	scan_icon = "mineral_rare"
 
 /ore/hydrogen
-	name = ORE_HYDROGEN
+	name = "mhydrogen"
 	display_name = "metallic hydrogen"
-	smelts_to = MATERIAL_TRITIUM
-	compresses_to = MATERIAL_MHYDROGEN
+	smelts_to = "tritium"
+	compresses_to = "mhydrogen"
 	scan_icon = "mineral_rare"
 	spread_chance = 5
 	result_amount = 5

@@ -4,7 +4,7 @@
 /obj/effect/plant/proc/get_cardinal_neighbors()
 	var/list/cardinal_neighbors = list()
 	for(var/check_dir in cardinal)
-		var/turf/T = get_step(get_turf(src), check_dir)
+		var/turf/simulated/T = get_step(get_turf(src), check_dir)
 		if(istype(T))
 			cardinal_neighbors |= T
 	return cardinal_neighbors
@@ -13,7 +13,7 @@
 	// Update our list of valid neighboring turfs.
 	neighbors = list()
 	var/list/tocheck = get_cardinal_neighbors()
-	for(var/turf/floor in tocheck)
+	for(var/turf/simulated/floor in tocheck)
 		var/turf/zdest = get_connecting_turf(floor, loc)//Handling zlevels
 		if(get_dist(parent, floor) > spread_distance)
 			continue
@@ -29,7 +29,7 @@
 		//We dont want to melt external walls and cause breaches
 		if(!near_external && floor.density)
 			if(!isnull(seed.chems["pacid"]))
-				spawn(rand(5,25)) floor.explosion_act(100, null)
+				spawn(rand(5,25)) floor.ex_act(3)
 			continue
 		if(!Adjacent(floor))
 			continue
@@ -37,6 +37,10 @@
 		//Space vines can grow through airlocks by forcing their way into tiny gaps
 		//There also can be special conditions handling
 		if (!floor.Enter(src))
+
+			if(CanPass(src, floor))
+				neighbors |= floor
+				continue
 
 			//Maintshooms cannot, spread trait must be 3 or more
 			if(seed.get_trait(TRAIT_SPREAD) < 3)
@@ -67,7 +71,7 @@
 		neighbor.neighbors -= T
 
 
-/obj/effect/plant/proc/door_interaction(obj/machinery/door/door, turf/floor)
+/obj/effect/plant/proc/door_interaction(obj/machinery/door/door, turf/simulated/floor)
 	//We have to make sure that nothing ELSE aside from the door is blocking us
 	var/blocked = FALSE
 	for (var/obj/O in floor)
@@ -146,7 +150,7 @@
 
 
 /obj/effect/plant/proc/life()
-	var/turf/T = get_turf(src)
+	var/turf/simulated/T = get_turf(src)
 	if(istype(T))
 		health -= seed.handle_environment(T,T.return_air(),null,1)
 
@@ -269,7 +273,7 @@
 				P.check_health()
 
 	// This turf is clear now, let our buddies know.
-	for(var/turf/check_turf in get_cardinal_neighbors())
+	for(var/turf/simulated/check_turf in get_cardinal_neighbors())
 		if(!istype(check_turf))
 			continue
 		for(var/obj/effect/plant/neighbor in check_turf.contents)

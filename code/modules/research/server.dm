@@ -3,8 +3,7 @@
 	icon = 'icons/obj/machines/research.dmi'
 	icon_state = "server"
 	var/datum/research/files
-	health = 100
-	maxHealth = 100
+	var/health = 100
 	var/list/id_with_upload = list()	//List of R&D consoles with upload to server access.
 	var/list/id_with_download = list()	//List of R&D consoles with download from server access.
 	var/id_with_upload_string = ""		//String versions for easy editing in map editor.
@@ -63,9 +62,9 @@
 	griefProtection()
 	..()
 
-/obj/machinery/r_n_d/server/explosion_act(target_power, explosion_handler/handler)
+/obj/machinery/r_n_d/server/ex_act(severity)
 	griefProtection()
-	. = ..()
+	..()
 
 //Backup files to centcom to help admins recover data after greifer attacks
 /obj/machinery/r_n_d/server/proc/griefProtection()
@@ -80,7 +79,7 @@
 		return
 
 	if(!(stat & (NOPOWER|BROKEN))) //Blatently stolen from telecoms
-		var/turf/L = loc
+		var/turf/simulated/L = loc
 		if(istype(L))
 			var/datum/gas_mixture/env = L.return_air()
 
@@ -241,9 +240,9 @@
 				if(istype(S, /obj/machinery/r_n_d/server/centcom) && !badmin)
 					continue
 				dat += "[S.name] || "
-				dat += "<a href='byond://?src=\ref[src];access=[S.server_id]'> Access Rights</A> | "
-				dat += "<a href='byond://?src=\ref[src];data=[S.server_id]'>Data Management</A>"
-				if(badmin) dat += " | <a href='byond://?src=\ref[src];transfer=[S.server_id]'>Server-to-Server Transfer</A>"
+				dat += "<A href='?src=\ref[src];access=[S.server_id]'> Access Rights</A> | "
+				dat += "<A href='?src=\ref[src];data=[S.server_id]'>Data Management</A>"
+				if(badmin) dat += " | <A href='?src=\ref[src];transfer=[S.server_id]'>Server-to-Server Transfer</A>"
 				dat += "<BR>"
 
 		if(1) //Access rights menu
@@ -251,7 +250,7 @@
 			dat += "Consoles with Upload Access<BR>"
 			for(var/obj/machinery/computer/rdconsole/C in consoles)
 				var/turf/console_turf = get_turf(C)
-				dat += "* <a href='byond://?src=\ref[src];upload_toggle=[C.id]'>[console_turf.loc]" //FYI, these are all numeric ids, eventually.
+				dat += "* <A href='?src=\ref[src];upload_toggle=[C.id]'>[console_turf.loc]" //FYI, these are all numeric ids, eventually.
 				if(C.id in temp_server.id_with_upload)
 					dat += " (Remove)</A><BR>"
 				else
@@ -259,32 +258,32 @@
 			dat += "Consoles with Download Access<BR>"
 			for(var/obj/machinery/computer/rdconsole/C in consoles)
 				var/turf/console_turf = get_turf(C)
-				dat += "* <a href='byond://?src=\ref[src];download_toggle=[C.id]'>[console_turf.loc]"
+				dat += "* <A href='?src=\ref[src];download_toggle=[C.id]'>[console_turf.loc]"
 				if(C.id in temp_server.id_with_download)
 					dat += " (Remove)</A><BR>"
 				else
 					dat += " (Add)</A><BR>"
-			dat += "<HR><a href='byond://?src=\ref[src];main=1'>Main Menu</A>"
+			dat += "<HR><A href='?src=\ref[src];main=1'>Main Menu</A>"
 
 		if(2) //Data Management menu
 			dat += "[temp_server.name] Data Management<BR><BR>"
 			dat += "Known Tech Trees<BR>"
 			for(var/datum/tech/T in temp_server.files.researched_tech)
 				dat += "* [T.name] "
-				dat += "<a href='byond://?src=\ref[src];reset_tech=\ref[T]'>(Reset)</A><BR>"
+				dat += "<A href='?src=\ref[src];reset_tech=\ref[T]'>(Reset)</A><BR>"
 			dat += "Known Technologies<BR>"
 			for(var/t in temp_server.files.researched_nodes)
 				var/datum/technology/T = t
 				dat += "* [T.name] "
-				dat += "<a href='byond://?src=\ref[src];reset_techology=\ref[T]'>(Delete)</A><BR>"
-			dat += "<HR><a href='byond://?src=\ref[src];main=1'>Main Menu</A>"
+				dat += "<A href='?src=\ref[src];reset_techology=\ref[T]'>(Delete)</A><BR>"
+			dat += "<HR><A href='?src=\ref[src];main=1'>Main Menu</A>"
 
 		if(3) //Server Data Transfer
 			dat += "[temp_server.name] Server to Server Transfer<BR><BR>"
 			dat += "Send Data to what server?<BR>"
 			for(var/obj/machinery/r_n_d/server/S in servers)
-				dat += "[S.name] <a href='byond://?src=\ref[src];send_to=[S.server_id]'> (Transfer)</A><BR>"
-			dat += "<HR><a href='byond://?src=\ref[src];main=1'>Main Menu</A>"
+				dat += "[S.name] <A href='?src=\ref[src];send_to=[S.server_id]'> (Transfer)</A><BR>"
+			dat += "<HR><A href='?src=\ref[src];main=1'>Main Menu</A>"
 	user << browse("<TITLE>R&D Server Control</TITLE><HR>[dat]", "window=server_control;size=575x400")
 	onclose(user, "server_control")
 	return

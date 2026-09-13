@@ -186,6 +186,16 @@
 			else
 				stop()
 
+		if(occupant && ishuman(occupant))
+			occupant.setCloneLoss(max(CLONING_DONE-progress, clone_damage))
+			occupant.setBrainLoss(CLONING_DONE-progress)
+
+			occupant.adjustOxyLoss(-4)
+			occupant.Paralyse(4)
+
+			occupant.updatehealth()
+
+
 		if(progress >= CLONING_MEAT && !occupant)
 			var/datum/core_module/cruciform/cloning/R = reader.implant.get_module(CRUCIFORM_CLONING)
 			if(!R)
@@ -203,15 +213,6 @@
 			occupant.real_name = R.real_name
 			occupant.b_type = R.b_type
 			occupant.age = R.age
-			occupant.h_style = R.h_style
-			occupant.hair_color = R.hair_color
-			occupant.f_style = R.f_style
-			occupant.facial_color = R.facial_color
-			occupant.eyes_color = R.eyes_color
-			occupant.skin_color = R.skin_color
-			occupant.change_skin_tone(R.s_tone)
-			occupant.gender = R.gender
-			occupant.tts_seed = R.tts_seed
 			occupant.sync_organ_dna()
 			occupant.flavor_text = R.flavor
 			R.stats.copyTo(occupant.stats)
@@ -334,7 +335,7 @@
 
 /obj/machinery/neotheology/biomass_container
 	name = "NeoTheology's biomass container"
-	desc = "A barrel making strange noises, filled with a substance which at any time may become someone else's body."
+	desc = "Making strange noises barrel, filled with a substance which at any time may become someone else's body."
 	icon_state = "biocan"
 	density = TRUE
 	anchored = TRUE
@@ -365,19 +366,20 @@
 		P.dir = dir
 		. += P
 
-/obj/machinery/neotheology/biomass_container/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		if(reagents.has_reagent("biomatter"))
-			extra_description += SPAN_NOTICE("Filled to [reagents.total_volume]/[biomass_capacity].")
-		else
-			extra_description += SPAN_NOTICE("It is empty.")
-	..(user, extra_description)
+/obj/machinery/neotheology/biomass_container/examine(mob/user)
+	if(!..(user, 2))
+		return
+
+	if(!reagents.has_reagent("biomatter"))
+		to_chat(user, SPAN_NOTICE("It is empty."))
+	else
+		to_chat(user, SPAN_NOTICE("Filled to [reagents.total_volume]/[biomass_capacity]."))
 
 /obj/machinery/neotheology/biomass_container/attackby(obj/item/I, mob/user)
 	if (istype(I, /obj/item/stack/material/biomatter))
 		var/obj/item/stack/material/biomatter/B = I
 		if (B.biomatter_in_sheet && B.amount)
-			var/sheets_amount_to_transfer = input(user, "How many sheets do you want to load?", "Biomatter melting", 1) as num
+			var/sheets_amount_to_transfer = input(user, "How many sheets you want to load?", "Biomatter melting", 1) as num
 			if(sheets_amount_to_transfer > 0)
 				if(sheets_amount_to_transfer > B.amount)
 					sheets_amount_to_transfer = B.amount

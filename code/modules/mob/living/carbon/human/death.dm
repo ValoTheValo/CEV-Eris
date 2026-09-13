@@ -14,6 +14,8 @@
 			if(on_turf)
 				E.throw_at(get_edge_target_turf(src,pick(alldirs)),rand(1,max_range),30)
 
+	sleep(1)
+
 	for(var/obj/item/D in src)
 		if (keep_only_robotics && istype(D, /obj/item/organ))
 			continue
@@ -40,6 +42,25 @@
 	//Handle species-specific deaths.
 	species.handle_death(src)
 
+	//Handle brain slugs.
+	var/obj/item/organ/external/head = get_organ(BP_HEAD)
+	var/mob/living/simple_animal/borer/B
+
+	if(head)
+		for(var/I in head.implants)
+			if(istype(I,/mob/living/simple_animal/borer))
+				B = I
+		if(B)
+			if(!B.ckey && ckey && B.controlling)
+				B.ckey = ckey
+				B.controlling = 0
+			if(B.host_brain?.ckey)
+				ckey = B.host_brain.ckey
+				B.host_brain.ckey = null
+				B.host_brain.name = "host brain"
+				B.host_brain.real_name = "host brain"
+			verbs -= /mob/living/carbon/proc/release_control
+
 	callHook("death", list(src, gibbed))
 
 	if(wearing_rig)
@@ -61,7 +82,6 @@
 
 	var/obj/item/implant/core_implant/cruciform/C = get_core_implant(/obj/item/implant/core_implant/cruciform)
 	if(C && C.active)
-		lost_cruciforms |= C
 		var/obj/item/cruciform_upgrade/upgrade = C.upgrade
 		if(upgrade && upgrade.active && istype(upgrade, CUPGRADE_MARTYR_GIFT))
 			var/obj/item/cruciform_upgrade/martyr_gift/martyr = upgrade

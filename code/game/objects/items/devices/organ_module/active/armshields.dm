@@ -8,7 +8,7 @@
 	shield_difficulty = 65
 	shield_integrity = 130
 	price_tag = 900
-	bad_type = /obj/item/shield/buckler/energy/arm
+	spawn_blacklisted = TRUE
 
 /obj/item/shield/buckler/energy/arm/update_icon()
    return

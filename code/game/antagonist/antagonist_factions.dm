@@ -17,7 +17,7 @@
 	var/list/members = list()
 	var/list/leaders = list()
 
-	var/list/faction_datum_verbs = list()	//List of verbs, used by this faction members
+	var/list/verbs = list()	//List of verbs, used by this faction members
 	var/list/leader_verbs = list()
 
 /datum/faction/New()
@@ -39,7 +39,7 @@
 	if(objectives.len)
 		member.set_objectives(objectives)
 
-	add_verb(member.owner.current, faction_datum_verbs)
+	member.owner.current.verbs |= verbs
 	add_icons(member)
 	update_members()
 	return TRUE
@@ -52,7 +52,7 @@
 		add_member(member,FALSE)
 
 	leaders.Add(member)
-	add_verb(member.owner.current, leader_verbs)
+	member.owner.current.verbs |= leader_verbs
 	if(announce)
 		to_chat(member.owner.current, SPAN_NOTICE("You became a <b>leader</b> of the [name]."))
 	update_members()
@@ -102,7 +102,7 @@
 		to_chat(member.owner.current, SPAN_WARNING("You are no longer a member of the [name]."))
 
 	if(member.owner && member.owner.current)
-		member.owner.current.verbs.Remove(faction_datum_verbs)
+		member.owner.current.verbs.Remove(verbs)
 
 	update_members()
 	return TRUE
@@ -144,7 +144,7 @@
 
 	message = capitalize(sanitize(message))
 	var/text = "<span class='revolution'>[name] member, [user.real_name]: \"[message]\"</span>"
-	for(var/i in SShumans.mob_list)
+	for(var/i in SSmobs.mob_list)
 		if(is_excelsior(i))
 			to_chat(i, text)
 
@@ -189,7 +189,6 @@
 
 		for(var/datum/objective/O in objectives)
 			text += "<br><b>Objective [num]:</b> [O.explanation_text] "
-			text += "[O.get_info()] "
 			if(O.check_completion())
 				text += "<font color='green'><B>Success!</B></font>"
 			else
@@ -282,10 +281,10 @@
 	var/data = "<center><font size='3'><b>FACTION PANEL</b></font></center>"
 	data += "<br>[name] - faction of [antag] ([id])"
 	data += "<br>Welcome: [welcome_text]"
-	data += {"<br><a href='byond://?src=\ref[src];rename=1'>\[NAME\]</a>
-	<a href='byond://?src=\ref[src];rewelcome=1'>\[WLCM\]</a><a href='byond://?src=\ref[src];remove=1'>\[REMOVE\]</a>"}
-	data += "<br>Hud: \"<a href='byond://?src=\ref[src];seticon=1'>[hud_indicator ? hud_indicator : "null"]</a>\""
-	data += "<br><a href='byond://?src=\ref[src];toggleinv=1'>\[MAKE [faction_invisible ? "VISIBLE" : "INVISIBLE"]\]</a>"
+	data += {"<br><a href='?src=\ref[src];rename=1'>\[NAME\]</a>
+	<a href='?src=\ref[src];rewelcome=1'>\[WLCM\]</a><a href='?src=\ref[src];remove=1'>\[REMOVE\]</a>"}
+	data += "<br>Hud: \"<a href='?src=\ref[src];seticon=1'>[hud_indicator ? hud_indicator : "null"]</a>\""
+	data += "<br><a href='?src=\ref[src];toggleinv=1'>\[MAKE [faction_invisible ? "VISIBLE" : "INVISIBLE"]\]</a>"
 
 
 	data += "<br><br><b>Members:</b>"
@@ -295,10 +294,10 @@
 			data += "<br>Invalid element on index [i]: [member ? member : "NULL"]"
 		else
 			if(member in leaders)
-				data += "<br>[member.owner ? member.owner.name : "no owner"] <a href='byond://?src=\ref[src];remleader=\ref[member]'>\[REMV LEADER\]</a> \[REMOVE\]"
+				data += "<br>[member.owner ? member.owner.name : "no owner"] <a href='?src=\ref[src];remleader=\ref[member]'>\[REMV LEADER\]</a> \[REMOVE\]"
 			else
-				data += "<br>[member.owner ? member.owner.name : "no owner"] <a href='byond://?src=\ref[src];makeleader=\ref[member]'>\[MAKE LEADER\]</a> <a href='byond://?src=\ref[src];remmember=[i]'>\[REMOVE\]</a>"
-			data += "<a href='byond://?src=[member]'>\[EDIT\]</a>"
+				data += "<br>[member.owner ? member.owner.name : "no owner"] <a href='?src=\ref[src];makeleader=\ref[member]'>\[MAKE LEADER\]</a> <a href='?src=\ref[src];remmember=[i]'>\[REMOVE\]</a>"
+			data += "<a href='?src=[member]'>\[EDIT\]</a>"
 
 	data += "<br><br><b>Objectives:</b><br>"
 	for(var/i=1;i<=objectives.len; i++)

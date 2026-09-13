@@ -1,5 +1,3 @@
-#define DEFAULT_INFESTATION_DELAY 2.5 SECONDS
-
 /mob/living/simple_animal/borer/proc/release_host()
 	set category = "Abilities"
 	set name = "Release Host"
@@ -16,6 +14,8 @@
 		to_chat(src, SPAN_DANGER("You are feeling far too docile to do that."))
 		return
 
+	if(!host || !src) return
+
 	to_chat(src, SPAN_NOTICE("You begin disconnecting from [host]'s synapses and prodding at their internal ear canal."))
 
 	if(!host.stat)
@@ -30,7 +30,7 @@
 				to_chat(host, SPAN_DANGER("As though waking from a dream, you shake off the insidious mind control of the brain worm. Your thoughts are your own again."))
 			to_chat(host, SPAN_DANGER("Something slimy wiggles out of your ear and plops to the ground!"))
 
-		detach()
+		detatch()
 		leave_host()
 
 /mob/living/simple_animal/borer/proc/infest()
@@ -56,13 +56,9 @@
 
 	var/mob/living/carbon/M = input(src,"Who do you wish to infest?") in null|choices
 
-	 //non-humanoids disabled due to not working.
-	if(!M || !Adjacent(M) || !iscarbon(M))
+	if(!M || !Adjacent(M))
 		return
 
-	if((ishuman(M) && !M.isMonkey()) && (!M.mind || !M.client))
-		to_chat(src, SPAN_WARNING("Host's body is in a state of hibernation, you are afraid to be crushed when they roll over in their sleep!"))
-		return
 	if(M.has_brain_worms())
 		to_chat(src, SPAN_WARNING("You cannot infest someone who is already infested!"))
 		return
@@ -77,7 +73,6 @@
 		var/obj/item/organ/external/E = H.organs_by_name[BP_HEAD]
 		if(!E || E.is_stump())
 			to_chat(src, SPAN_WARNING("\The [H] does not have a head!"))
-			return // Causes wonky behavior, although it does work in some cases.
 
 		if(!H.species.has_process[BP_BRAIN])
 			to_chat(src, SPAN_WARNING("\The [H] does not seem to have an ear canal to breach."))
@@ -90,7 +85,7 @@
 	to_chat(M, "Something slimy begins probing at the opening of your ear canal...")
 	to_chat(src, SPAN_DANGER("You slither up [M] and begin probing at their ear canal..."))
 
-	var/infestation_delay = DEFAULT_INFESTATION_DELAY
+	var/infestation_delay = 2.5 SECONDS
 
 	// It's harder for a borer to infest NTs
 	if(is_neotheology_disciple(M))
@@ -126,6 +121,12 @@
 	update_abilities()
 	spawn(1) /// Wait for abilities to update THEN move them in due to the afore-mentioned bug.
 		forceMove(host)
+	//Update their contractor status.
+	/*if(host.mind && src.mind)
+		var/list/L = get_player_antags(src.mind, ROLE_BORER)
+		var/datum/antagonist/borer/borer
+		if(L.len)
+			borer = L[1]*/
 
 		if(ishuman(M))
 			var/mob/living/carbon/human/H = M
@@ -136,6 +137,32 @@
 				// If they're in normally, implant removal can get them out.
 				var/obj/item/organ/external/head = H.get_organ(BP_HEAD)
 				head.implants += src
+
+/*
+/mob/living/simple_animal/borer/verb/devour_brain()
+	set category = "Abilities"
+	set name = "Devour Brain"
+	set desc = "Take permanent control of a dead host."
+
+	if(!host)
+		to_chat(src, "You are not inside a host body.")
+		return
+
+	if(host.stat != 2)
+		to_chat(src, "Your host is still alive.")
+		return
+
+	if(stat)
+		to_chat(src, "You cannot do that in your current state.")
+
+	if(docile)
+		to_chat(src, "\blue You are feeling far too docile to do that.")
+		return
+
+
+	to_chat(src, "<span class = 'danger'>It only takes a few moments to render the dead host brain down into a nutrient-rich slurry...</span>")
+	replace_brain()
+*/
 
 // BRAIN WORM ZOMBIES AAAAH.
 /mob/living/simple_animal/borer/proc/replace_brain()
@@ -151,12 +178,12 @@
 	H.add_language(LANGUAGE_CORTICAL)
 
 	// Remove the usual "host control" abilities
-	remove_verb(H, abilities_in_control)
+	H.verbs -= abilities_in_control
 
-	add_verb(H, /mob/living/carbon/human/proc/commune)
-	add_verb(H, /mob/living/carbon/human/proc/psychic_whisper)
-	add_verb(H, /mob/living/carbon/proc/spawn_larvae)
-	add_verb(H, /mob/living/carbon/proc/talk_host)
+	H.verbs |= /mob/living/carbon/human/proc/commune
+	H.verbs |= /mob/living/carbon/human/proc/psychic_whisper
+	H.verbs |= /mob/living/carbon/proc/spawn_larvae
+	H.verbs |= /mob/living/carbon/proc/talk_host
 
 	if(H.client)
 		H.daemonize()
@@ -185,12 +212,14 @@
 		H.lastKnownIP = s2h_ip
 
 	if(H.stat) // > Take over a body that is always dead , die , !?!??!
-		var/all_damage = H.getBruteLoss() + H.getFireLoss() + H.getOxyLoss()
+		var/all_damage = H.getBruteLoss() + H.getFireLoss() + H.getCloneLoss() + H.getOxyLoss() + H.getToxLoss()
 		while(all_damage > 90)
 			H.adjustBruteLoss(-10)
 			H.adjustFireLoss(-10)
+			H.adjustCloneLoss(-10)
 			H.adjustOxyLoss(-10)
-			all_damage = H.getBruteLoss() + H.getFireLoss() + H.getOxyLoss()
+			H.adjustToxLoss(-10)
+			all_damage = H.getBruteLoss() + H.getFireLoss() + H.getCloneLoss() + H.getOxyLoss() + H.getToxLoss()
 		H.stat = UNCONSCIOUS
 		H.updatehealth()
 
@@ -234,11 +263,11 @@
 	set name = "Paralyze Victim"
 	set desc = "Freeze the limbs of a potential host with supernatural fear."
 
-	if(stat)
+	if(src.stat)
 		return
 
-	if(world.time - used_dominate < 1 MINUTE) // a one minutes cooldown.
-		to_chat(src, "\red <B>You cannot use that ability again so soon. It will be ready in [(1 MINUTE - (world.time - used_dominate))/ (1 SECOND)] seconds.")
+	if(world.time - used_dominate < 150)
+		to_chat(src, SPAN_WARNING("You cannot use that ability again so soon."))
 		return
 
 	if(is_ventcrawling)
@@ -262,11 +291,11 @@
 
 	var/mob/living/carbon/M = input(src,"Who do you wish to dominate?") in null|choices
 
-	if(world.time - used_dominate < 1 MINUTE)
-		to_chat(src, "\red <B>You cannot use that ability again so soon. It will be ready in [(1 MINUTE - (world.time - used_dominate))/ (1 SECOND)] seconds.")
+	if(world.time - used_dominate < 150)
+		to_chat(src, SPAN_WARNING("You cannot use that ability again so soon."))
 		return
 
-	if(!M || !Adjacent(M)) return
+	if(!M || !(M in view(1, get_turf(src)))) return
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -278,9 +307,6 @@
 		to_chat(src, "You cannot paralyze someone who is already infested!")
 		return
 
-	if(invisibility)
-		invisible() //removes invisibility on using paralyze
-		to_chat(src, SPAN_NOTICE("You become visible again."))
 	to_chat(src, SPAN_WARNING("You focus your psychic lance on [M] and freeze their limbs with a wave of terrible dread."))
 	to_chat(M, SPAN_DANGER("You feel a creeping, horrible sense of dread come over you, freezing your limbs and setting your heart racing."))
 	var/duration = 10 + (borer_level*2)
@@ -306,13 +332,9 @@
 		to_chat(src, SPAN_DANGER("You are feeling far too docile to do that."))
 		return
 
-	if(host.stat == DEAD)
-		to_chat(src, SPAN_WARNING("You can't control a dead host."))
-		return
+	to_chat(src, SPAN_NOTICE("You begin delicately adjusting your connection to the host brain..."))
 
-	to_chat(src, SPAN_NOTICE("You begin delicately adjusting your connection to the host brain. This will take some time..."))
-
-	spawn(30 SECONDS + (host.brainloss * 5))
+	spawn(100+(host.brainloss*5))
 
 		if(!host || !src || controlling)
 			return
@@ -379,12 +401,14 @@
 	visible_message(SPAN_WARNING("With a hideous, rattling moan, [src] shudders back to life!"))
 
 
-	var/all_damage = host.getBruteLoss() + host.getFireLoss() + host.getOxyLoss()
+	var/all_damage = host.getBruteLoss() + host.getFireLoss() + host.getCloneLoss() + host.getOxyLoss() + host.getToxLoss()
 	while(all_damage > 90)
 		host.adjustBruteLoss(-10)
 		host.adjustFireLoss(-10)
+		host.adjustCloneLoss(-10)
 		host.adjustOxyLoss(-10)
-		all_damage = host.getBruteLoss() + host.getFireLoss() + host.getOxyLoss()
+		host.adjustToxLoss(-10)
+		all_damage = host.getBruteLoss() + host.getFireLoss() + host.getCloneLoss() + host.getOxyLoss() + host.getToxLoss()
 
 	host.stat = UNCONSCIOUS
 	host.updatehealth()
@@ -414,7 +438,7 @@
 		return
 
 	var/list/copied_stats = list()
-	if(host.stats)
+	if(!host.stats)
 		for(var/stat_name in ALL_STATS)
 			var/host_stat = host.stats.getStat(stat_name, pure=TRUE)
 			var/borer_stat = stats.getStat(stat_name, pure=TRUE)
@@ -510,6 +534,8 @@
 		to_chat(src, SPAN_DANGER("You are feeling far too docile to do that."))
 		return
 
+	if(!host || !src) return
+
 	var/message = input("", "say (text)") as text
 	host.say(message)
 
@@ -529,6 +555,8 @@
 		to_chat(src, SPAN_DANGER("You are feeling far too docile to do that."))
 		return
 
+	if(!host || !src) return
+
 	var/message = input("", "whisper (text)") as text
 	host.whisper(message)
 
@@ -537,11 +565,11 @@
 	set name = "Invisibility"
 	set desc = "Become invisible for living being."
 
-	if(stat)
+	if(src.stat)
 		return
 
-	if(world.time - used_dominate < 1 MINUTE)
-		to_chat(src, "\red <B>You cannot use that ability again so soon. It will be ready in [(1 MINUTE - (world.time - used_dominate))/ (1 SECOND)] seconds.</B>")
+	if(world.time - used_dominate < 150)
+		to_chat(src, "\red <B>You cannot use that ability again so soon.</B>")
 		return
 
 	if(host)
@@ -563,20 +591,22 @@
 /mob/living/simple_animal/borer/proc/biograde()
 	set category = "Abilities"
 	set name = "Biograde Vision"
-	set desc = "Lets you see living beings through walls."
+	set desc = "Make you see living being throug walls."
 
-	if(stat)
+	if(src.stat)
 		return
 
 	if(host)
-		to_chat(src, SPAN_WARNING("You cannot do this inside a host."))
+		to_chat(src, "\red <B>You cannot do this inside a host.</B>")
 		return
 
 	if(sight & SEE_MOBS)
 		sight &= ~SEE_MOBS
+		to_chat(src, SPAN_NOTICE("You cannot see living being throug walls for now."))
 		return
 	else
 		sight |= SEE_MOBS
+		to_chat(src, SPAN_NOTICE("You can now sen living being throug walls."))
 		return
 
 /mob/living/simple_animal/borer/proc/reproduce()
@@ -584,33 +614,26 @@
 	set name = "Reproduce"
 	set desc = "Spawn several young."
 
-	if(stat)
-		return
-
-	if(docile)
-		to_chat(src, SPAN_DANGER("You are feeling far too docile to do that."))
+	if(src.stat)
 		return
 
 	if(!host)
 		to_chat(src, "\red <B>You cannot do this without a host.</B>")
 		return
-	var/reproduce_cost = (round(max_chemicals_inhost * 0.75)) // literally max chems but 75% of it
-	if(chemicals >= reproduce_cost)
+
+	if(chemicals >= 100)
 		to_chat(host, "\red <B>Your host twitches and quivers as you rapidly excrete a larva from your sluglike body.</B>")
 		visible_message("\red <B>[host.name] heaves violently, expelling a rush of vomit and a wriggling, sluglike creature!</B>")
-		has_reproduced = TRUE
-		chemicals -= reproduce_cost
-		if(istype(host, /mob/living/carbon/human/) && !host.isMonkey())
-			borer_add_exp(25)
-		else
-			to_chat(src, SPAN_WARNING("You do not have anything to learn from this host. Find a human!"))
+		chemicals -= 100
+		has_reproduced = 1
+		borer_add_exp(10)
 
 		new /obj/effect/decal/cleanable/vomit(get_turf(host))
 		playsound(loc, 'sound/effects/splat.ogg', 50, 1)
 		new /mob/living/simple_animal/borer(get_turf(host))
 
 	else
-		to_chat(src, SPAN_NOTICE("You do not have enough chemicals stored to reproduce. (You need [reproduce_cost])."))
+		to_chat(src, SPAN_NOTICE("You do not have enough chemicals stored to reproduce."))
 		return
 
 /mob/living/simple_animal/borer/proc/commune()
@@ -639,7 +662,7 @@
 
 	var/mob/M = targets[target]
 
-	if(M.stat == DEAD)
+	if(isghost(M) || M.stat == DEAD)
 		to_chat(src, "Not even you can speak to the dead.")
 		return
 
@@ -651,5 +674,3 @@
 
 		to_chat(H, SPAN_WARNING("Your nose begins to bleed..."))
 		H.drip_blood(1)
-
-#undef DEFAULT_INFESTATION_DELAY

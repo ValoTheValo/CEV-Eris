@@ -53,13 +53,11 @@ nanoui is used to open and update nano browser uis
 	var/is_auto_updating = 0
 	// the current status/visibility of the ui
 	var/status = STATUS_INTERACTIVE
-	// are we retrieving HTML ? if so do not send data(causes whitescreen)
-	var/retrieving_html = FALSE
 
 	// Relationship between a master interface and its children. Used in update_status
 	var/datum/nanoui/master_ui
 	var/list/datum/nanoui/children = list()
-	var/datum/nano_topic_state/state = null
+	var/datum/topic_state/state = null
 
  /**
   * Create a new nanoui instance.
@@ -75,7 +73,7 @@ nanoui is used to open and update nano browser uis
   *
   * @return /nanoui new nanoui object
   */
-/datum/nanoui/New(nuser, nsrc_object, nui_key, ntemplate_filename, ntitle = 0, nwidth = 0, nheight = 0, atom/nref, datum/nanoui/master_ui, datum/nano_topic_state/state = GLOB.default_state)
+/datum/nanoui/New(nuser, nsrc_object, nui_key, ntemplate_filename, ntitle = 0, nwidth = 0, nheight = 0, atom/nref, datum/nanoui/master_ui, datum/topic_state/state = GLOB.default_state)
 	user = nuser
 	src_object = nsrc_object
 	ui_key = nui_key
@@ -99,13 +97,13 @@ nanoui is used to open and update nano browser uis
 		ref = nref
 
 	add_common_assets()
+	if(user.client)
+		var/datum/asset/assets = get_asset_datum(/datum/asset/directories/nanoui)
 
-	var/datum/asset/nanoui = get_asset_datum(/datum/asset/simple/directories/nanoui)
-	if (nanoui.send(user.client))
-		to_chat(user, span_warning("Currently sending <b>all</b> nanoui assets, please wait!"))
-		user.client.browse_queue_flush() // stall loading nanoui until assets actualy gets sent
-		to_chat(user, span_info("Nanoui assets have been sent completely."))
-
+		// Avoid opening the window if the resources are not loaded yet.
+		if(!assets.check_sent(user.client))
+			to_chat(user, "Resources are still loading. Please wait.")
+			close()
 
 //Do not qdel nanouis. Use close() instead.
 /datum/nanoui/Destroy()
@@ -208,9 +206,9 @@ nanoui is used to open and update nano browser uis
 			"autoUpdateLayout" = auto_update_layout,
 			"autoUpdateContent" = auto_update_content,
 			"showMap" = show_map,
-			"mapName" = "eris",
+			"mapName" = GLOB.maps_data.path,
 			"mapZLevel" = map_z_level,
-			"mapZLevels" = SSmapping.main_ship_z_levels,
+			"mapZLevels" = GLOB.maps_data.station_levels,
 			"user" = list("name" = user.name)
 		)
 	return config_data
@@ -285,7 +283,7 @@ nanoui is used to open and update nano browser uis
   * @return nothing
   */
 /datum/nanoui/proc/add_template(key, filename)
-	templates[key] = SSassets.transport.get_asset_url(filename) // we remapped templates
+	templates[key] = filename
 
  /**
   * Set the layout key for use in the frontend Javascript
@@ -368,7 +366,7 @@ nanoui is used to open and update nano browser uis
   * @return string HTML for the UI
   */
 /datum/nanoui/proc/get_html()
-	retrieving_html = TRUE
+
 	// before the UI opens, add the layout files based on the layout key
 	add_stylesheet("layout_[layout_key].css")
 	add_template("layout", "layout_[layout_key].tmpl")
@@ -378,10 +376,10 @@ nanoui is used to open and update nano browser uis
 	var/head_content = ""
 
 	for (var/filename in scripts)
-		head_content += "<script type='text/javascript' src='[SSassets.transport.get_asset_url(filename)]'></script> "
+		head_content += "<script type='text/javascript' src='[filename]'></script> "
 
 	for (var/filename in stylesheets)
-		head_content += "<link rel='stylesheet' type='text/css' href='[SSassets.transport.get_asset_url(filename)]'> "
+		head_content += "<link rel='stylesheet' type='text/css' href='[filename]'> "
 
 	var/template_data_json = "{}" // An empty JSON object
 	if (templates.len > 0)
@@ -393,10 +391,6 @@ nanoui is used to open and update nano browser uis
 	initial_data_json = strip_improper(initial_data_json);
 
 	var/url_parameters_json = json_encode(list("src" = "\ref[src]"))
-
-	// This prevents the so-called white screens
-	spawn(1)
-		retrieving_html = FALSE
 
 	return {"
 <!DOCTYPE html>
@@ -521,9 +515,6 @@ nanoui is used to open and update nano browser uis
 		return // Closed
 	if (status == STATUS_DISABLED && !force_push)
 		return // Cannot update UI, no visibility
-	// still retrieving code to parse , sending data would create a error the user can't close/see
-	if(retrieving_html)
-		return
 
 	var/list/send_data = get_send_data(data)
 
@@ -551,7 +542,7 @@ nanoui is used to open and update nano browser uis
 
 	if(href_list["mapZLevel"])
 		var/map_z = text2num(href_list["mapZLevel"])
-		if(IS_SHIP_LEVEL(map_z))
+		if(map_z in GLOB.maps_data.station_levels)
 			set_map_z_level(map_z)
 			map_update = 1
 		else
@@ -590,4 +581,4 @@ nanoui is used to open and update nano browser uis
   * @return nothing
   */
 /datum/nanoui/proc/update(var/force_open = 0)
-	src_object.nano_ui_interact(user, ui_key, src, force_open, master_ui, state)
+	src_object.ui_interact(user, ui_key, src, force_open, master_ui, state)

@@ -44,11 +44,12 @@
 		to_chat(user, SPAN_NOTICE("You dissolve \the [src] in [target]."))
 
 		user.attack_log += text("\[[time_stamp()]\] <font color='red'>Spiked \a [target] with a pill. Reagents: [reagents.log_list()]</font>")
-		msg_admin_attack("[user.name] ([user.ckey]) spiked \a [target] with a pill. Reagents: [reagents.log_list()] (INTENT: [uppertext(user.a_intent)]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+		msg_admin_attack("[user.name] ([user.ckey]) spiked \a [target] with a pill. Reagents: [reagents.log_list()] (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
 		reagents.trans_to(target, reagents.total_volume)
-		if(!user.stats.getPerk(PERK_FAST_FINGERS))
-			user.visible_message(SPAN_WARNING("[user] puts something in \the [target]."), range = 2)
+		for(var/mob/O in viewers(2, user))
+			if(!user.stats.getPerk(PERK_FAST_FINGERS))
+				O.show_message(SPAN_WARNING("[user] puts something in \the [target]."), 1)
 
 		qdel(src)
 
@@ -132,30 +133,6 @@
 	icon_state = "pill8"
 	preloaded_reagents = list("citalopram" = 15)
 
-/obj/item/reagent_containers/pill/suppressital
-	name = "Njoy pill"
-	desc = "Stops all breakdowns."
-	icon_state = "pill_njoy_red"
-	preloaded_reagents = list("suppressital" = 15)
-
-/obj/item/reagent_containers/pill/suppressital/red
-	name = "Njoy red pill"
-	desc = "Stops all breakdowns. Tastes faintly of cherry."
-	icon_state = "pill_njoy_red"
-	preloaded_reagents = list("suppressital" = 15, "cherryjelly" = 5)
-
-/obj/item/reagent_containers/pill/suppressital/blue
-	name = "Njoy blue pill"
-	desc = "Stops all breakdowns. Tastes faintly of blueberry."
-	icon_state = "pill_njoy_blue"
-	preloaded_reagents = list("suppressital" = 15, "berryjuice" = 5)
-
-/obj/item/reagent_containers/pill/suppressital/green
-	name = "Njoy green pill"
-	desc = "Stops all breakdowns. Tastes faintly of watermelon."
-	icon_state = "pill_njoy_green"
-	preloaded_reagents = list("suppressital" = 15, "watermelonjuice" = 5)
-
 
 /obj/item/reagent_containers/pill/inaprovaline
 	name = "Inaprovaline pill"
@@ -191,11 +168,6 @@
 	icon_state = "pill13"
 	preloaded_reagents = list("anti_toxin" = 15)
 
-/obj/item/reagent_containers/pill/carbon
-	name = "Carbon pill"
-	desc = "A pill of activated charcoal, used to purge stomach contents."
-	icon_state = "pill9"
-	preloaded_reagents = list("carbon" = 15)
 
 /obj/item/reagent_containers/pill/inaprovaline
 	name = "Inaprovaline pill"
@@ -283,6 +255,7 @@
 					list("sacid" = 15) = 1,\
 					list("hclacid" = 15) = 1,\
 					list("impedrezene" = 15, "dexalinp" = 35) = 1,\
+					list("virusfood" = 15) = 1,\
 					list("leporazine" = 15) = 1,\
 					list("anti_toxin" = 15, "zombiepowder" = 10) = 0.5,\
 					list("dexalinp" = 35, "cyanide" = 15) = 0.5,\

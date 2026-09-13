@@ -8,11 +8,7 @@
 	max_blood_storage = 7.5
 	oxygen_req = 2.5
 	nutriment_req = 2
-	price_tag = 400
-	max_damage = IORGAN_SMALL_HEALTH
-	min_bruised_damage = IORGAN_SMALL_BRUISE
-	min_broken_damage = IORGAN_SMALL_BREAK
-
+	price_tag = 400	
 
 /obj/item/organ/internal/kidney/left
 /obj/item/organ/internal/kidney/right

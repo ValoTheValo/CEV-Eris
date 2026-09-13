@@ -1,10 +1,19 @@
-/mob/living/silicon/ai/Login()
-	. = ..()
-	if(!. || !client)
-		return FALSE
-
+/mob/living/silicon/ai/Login()	//ThisIsDumb(TM) TODO: tidy this up ¬_¬ ~Carn
+	..()
 	regenerate_icons()
-	client.create_UI(type)
+/*	flash = new /obj/screen()
+	flash.icon_state = "blank"
+	flash.name = "flash"
+	flash.screen_loc = ui_entire_screen
+	flash.layer = 17
+	blind = new /obj/screen()
+	blind.icon_state = "black"
+	blind.name = " "
+	blind.screen_loc = ui_entire_screen
+	blind.mouse_opacity = 0
+	blind.layer = 18
+	blind.alpha = 0
+	client.screen.Add( blind, flash )*/
 
 	if(stat != DEAD)
 		for(var/obj/machinery/ai_status_display/O in GLOB.ai_status_display_list) //change status
@@ -13,5 +22,3 @@
 	view_core()
 
 	client.CAN_MOVE_DIAGONALLY = TRUE
-	client.CH = new /datum/click_handler/ai(client)
-	old_client = client

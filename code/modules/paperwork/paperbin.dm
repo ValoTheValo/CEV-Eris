@@ -58,6 +58,11 @@
 			else
 				if(response == "Regular")
 					P = new /obj/item/paper
+					if(Holiday == "April Fool's Day")
+						if(prob(30))
+							P.info = "<font face=\"[P.crayonfont]\" color=\"red\"><b>HONK HONK HONK HONK HONK HONK HONK<br>HOOOOOOOOOOOOOOOOOOOOOONK<br>APRIL FOOLS</b></font>"
+							P.rigged = 1
+							P.updateinfolinks()
 				else if (response == "Carbon-Copy")
 					P = new /obj/item/paper/carbon
 
@@ -92,15 +97,17 @@ obj/item/paper_bin/MouseDrop(over_object)
 	amount++
 
 
-/obj/item/paper_bin/examine(mob/user, extra_description = "")
+/obj/item/paper_bin/examine(mob/user)
+	. = ..()
 	if(get_dist(src, user) <= 1)
-		if(amount)
-			extra_description += SPAN_NOTICE("There " + (amount > 1 ? "are [amount] papers" : "is one paper") + " in the bin.")
+		if (amount)
+			to_chat(user, "<span class='notice'>There " + (amount > 1 ? "are [amount] papers" : "is one paper") + " in the bin.</span>")
 		else
-			extra_description += SPAN_NOTICE("There are no papers in the bin.")
+			to_chat(user, SPAN_NOTICE("There are no papers in the bin."))
 	else
-		extra_description += SPAN_NOTICE("If you got closer you could see how much paper is in it.")
-	..(user, extra_description)
+		to_chat(user, SPAN_NOTICE("If you got closer you could see how much paper is in it."))
+	return
+
 
 /obj/item/paper_bin/update_icon()
 	if (amount < 1)

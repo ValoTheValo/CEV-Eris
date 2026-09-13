@@ -3,26 +3,23 @@
 	name = "Emergency energy shield"
 	desc = "An energy shield used to contain hull breaches."
 	icon = 'icons/effects/effects.dmi'
-	description_info = "Generates atmospheric blocking-shields when in contact with space"
-	description_antag = "The shields block bullets, but not lasers."
 	icon_state = "shield-old"
 	density = TRUE
 	opacity = 0
 	anchored = TRUE
 	unacidable = 1
-	var/const/maxShieldHealth = 200
-	var/shieldHealth = maxShieldHealth //The shield can only take so much beating (prevents perma-prisons)
+	var/const/max_health = 200
+	var/health = max_health //The shield can only take so much beating (prevents perma-prisons)
 	var/shield_generate_power = 7500	//how much power we use when regenerating
 	var/shield_idle_power = 1500		//how much power we use when just being sustained.
 
 /obj/machinery/shield/malfai
 	name = "emergency forcefield"
 	desc = "A powerful forcefield which seems to be projected by the vessel's emergency atmosphere containment field."
-	description_antag = "This special shield is overcharged, it has double the shieldHealth of a normal one and only blocks bullets."
-	shieldHealth = 400
+	health = 400
 
 /obj/machinery/shield/proc/check_failure()
-	if (shieldHealth <= 0)
+	if (health <= 0)
 		visible_message(SPAN_NOTICE("\The [src] dissipates!"))
 		qdel(src)
 		return
@@ -46,7 +43,7 @@
 	//Calculate damage
 	var/aforce = W.force
 	if(W.damtype == BRUTE || W.damtype == BURN)
-		src.shieldHealth -= aforce
+		src.health -= aforce
 
 	//Play a fitting sound
 	playsound(src.loc, 'sound/effects/EMPulse.ogg', 75, 1)
@@ -60,13 +57,26 @@
 	..()
 
 /obj/machinery/shield/bullet_act(var/obj/item/projectile/Proj)
-	shieldHealth -= Proj.get_structure_damage()
+	health -= Proj.get_structure_damage()
 	..()
 	check_failure()
 	set_opacity(TRUE)
 	spawn(20)
 		if(src)
 			set_opacity(FALSE)
+
+/obj/machinery/shield/ex_act(severity)
+	switch(severity)
+		if(1)
+			if (prob(75))
+				qdel(src)
+		if(2)
+			if (prob(50))
+				qdel(src)
+		if(3)
+			if (prob(25))
+				qdel(src)
+	return
 
 /obj/machinery/shield/emp_act(severity)
 	switch(severity)
@@ -91,7 +101,7 @@
 	else
 		tforce = AM:throwforce
 
-	shieldHealth -= tforce
+	health -= tforce
 
 	//This seemed to be the best sound for hitting a force field.
 	playsound(loc, 'sound/effects/EMPulse.ogg', 100, 1)
@@ -115,8 +125,8 @@
 	opacity = 0
 	anchored = FALSE
 	req_access = list(access_engine)
-	var/const/maxShieldHealth = 100
-	var/shieldHealth = maxShieldHealth
+	var/const/max_health = 100
+	var/health = max_health
 	var/active = 0
 	var/malfunction = 0 //Malfunction causes parts of the shield to slowly dissapate
 	var/list/deployed_shields = list()
@@ -142,7 +152,7 @@
 	idle_power_usage = 0
 	for(var/obj/machinery/shield/shield_tile in deployed_shields)
 		idle_power_usage += shield_tile.shield_idle_power
-	set_power_use(IDLE_POWER_USE)
+	update_use_power(1)
 
 /obj/machinery/shieldgen/proc/shields_down()
 	if(!active) return 0 //If it's already off, how did this get called?
@@ -152,7 +162,7 @@
 
 	collapse_shields()
 
-	set_power_use(NO_POWER_USE)
+	update_use_power(0)
 
 /obj/machinery/shieldgen/proc/create_shields()
 	for(var/turf/target_tile in range(2, src))
@@ -199,30 +209,39 @@
 			check_delay--
 
 /obj/machinery/shieldgen/proc/checkhp()
-	if(shieldHealth <= 30)
+	if(health <= 30)
 		src.malfunction = 1
-	if(shieldHealth <= 0)
+	if(health <= 0)
 		spawn(0)
-			explosion(get_turf(src), 50, 50)
+			explosion(get_turf(src.loc), 0, 0, 1, 0, 0, 0)
 		qdel(src)
 	update_icon()
 	return
 
-/obj/machinery/shieldgen/take_damage(amount)
-	shieldHealth -= amount / 2
-	checkhp()
-	return 0
-
+/obj/machinery/shieldgen/ex_act(severity)
+	switch(severity)
+		if(1)
+			src.health -= 75
+			src.checkhp()
+		if(2)
+			src.health -= 30
+			if (prob(15))
+				src.malfunction = 1
+			src.checkhp()
+		if(3)
+			src.health -= 10
+			src.checkhp()
+	return
 
 /obj/machinery/shieldgen/emp_act(severity)
 	switch(severity)
 		if(1)
-			src.shieldHealth /= 2 //cut shieldHealth in half
+			src.health /= 2 //cut health in half
 			malfunction = 1
 			locked = pick(0,1)
 		if(2)
 			if(prob(50))
-				src.shieldHealth *= 0.3 //chop off a third of the shieldHealth
+				src.health *= 0.3 //chop off a third of the health
 				malfunction = 1
 	checkhp()
 
@@ -291,7 +310,7 @@
 		to_chat(user, SPAN_NOTICE("You begin to replace the wires."))
 		if(do_after(user, 30,src))
 			if (coil.use(1))
-				shieldHealth = maxShieldHealth
+				health = max_health
 				malfunction = 0
 				to_chat(user, SPAN_NOTICE("You repair the [src]!"))
 				update_icon()

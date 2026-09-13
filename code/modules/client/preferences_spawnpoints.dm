@@ -57,7 +57,7 @@
 		error("Trying to create existing spawnpoint.")
 	return SP
 
-/proc/get_datum_spawn_locations(name = SSmapping.default_spawn, free_only = TRUE, late = FALSE)
+/proc/get_datum_spawn_locations(name = GLOB.maps_data.default_spawn, free_only = TRUE, late = FALSE)
 	var/datum/spawnpoint/SP = get_spawn_point(name, late)
 	if (SP)
 		return SP.get_spawn_locations()
@@ -200,7 +200,7 @@
 		//You can get yourself out of the cryopod, or it will auto-eject after one minute
 		spawn(600)
 			if (C && C.occupant == M)
-				C.eject()
+				C.eject() 
 		return TRUE
 	return FALSE
 

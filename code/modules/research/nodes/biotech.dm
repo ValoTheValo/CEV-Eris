@@ -17,7 +17,7 @@
 
 /datum/technology/basic_med_machines
 	name = "Basic Medical Machines"
-	desc = "Basic surgical monitoring."
+	desc = "Basic medical databases and surgical monitoring."
 	tech_type = RESEARCH_BIOTECH
 
 	x = 0.25
@@ -28,7 +28,9 @@
 	required_tech_levels = list()
 	cost = 200
 
-	unlocks_designs = list(/datum/design/research/circuit/operating)
+	unlocks_designs = list(	/datum/design/research/circuit/med_data,
+							/datum/design/research/circuit/operating
+						)
 /*
 /datum/technology/virology
 	name = "Virology"
@@ -286,9 +288,7 @@
 							/datum/design/research/item/mechfab/prosthesis_moebius/l_arm,
 							/datum/design/research/item/mechfab/prosthesis_moebius/r_leg,
 							/datum/design/research/item/mechfab/prosthesis_moebius/l_leg,
-							/datum/design/research/item/mechfab/prosthesis_moebius/groin,
-							/datum/design/research/item/mechfab/prosthesis_moebius/torso,
-							/datum/design/research/item/mechfab/prosthesis_moebius/head
+							/datum/design/research/item/mechfab/prosthesis_moebius/groin
 							)
 
 /datum/technology/mind_biotech

@@ -28,7 +28,8 @@
 	var/brightness_on
 	var/on = FALSE
 
-
+	stiffness = 0 // Recoil caused by moving, defined in obj/item
+	obscuration = 0 // Similar to tint, but decreases firearm accuracy instead via giving minimum extra offset, defined in obj/item
 
 	price_tag = 30
 
@@ -171,7 +172,7 @@
 
 	return english_list(body_partsL)
 
-/obj/item/clothing/nano_ui_data()
+/obj/item/clothing/ui_data()
 	var/list/data = list()
 	var/list/armorlist = armor.getList()
 	if(armorlist.len)
@@ -194,11 +195,10 @@
 		data["cold_protection"] = body_part_coverage_to_string(cold_protection)
 		data["cold_protection_temperature"] = min_cold_protection_temperature
 	data["equip_delay"] = equip_delay
-	data["info_style"] = style
 	return data
 
-/obj/item/clothing/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, state = GLOB.default_state)
-	var/list/data = nano_ui_data(user)
+/obj/item/clothing/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = 1, state = GLOB.default_state)
+	var/list/data = ui_data(user)
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
@@ -209,7 +209,7 @@
 
 /obj/item/clothing/ui_action_click(mob/living/user, action_name)
 	if(action_name == "Clothing information")
-		nano_ui_interact(user)
+		ui_interact(user)
 		return TRUE
 	return ..()
 
@@ -294,8 +294,7 @@
 	desc = "Protects your hearing from loud noises, and quiet ones as well."
 	icon_state = "earmuffs"
 	item_state = "earmuffs"
-	slot_flags = SLOT_EARS
-	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTIC = 1)
+	slot_flags = SLOT_EARS | SLOT_TWOEARS
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -334,7 +333,7 @@ BLIND     // can't see anything
 	bad_type = /obj/item/clothing/gloves
 	spawn_tags = SPAWN_TAG_GLOVES
 	body_parts_covered = ARMS
-	armor = list(melee = 2, bullet = 0, energy = 3, bomb = 0, bio = 0, rad = 0)
+	armor = list(melee = 10, bullet = 0, energy = 15, bomb = 0, bio = 0, rad = 0)
 	slot_flags = SLOT_GLOVES
 	attack_verb = list("challenged")
 	style = STYLE_LOW
@@ -436,7 +435,7 @@ BLIND     // can't see anything
 	spawn_tags = SPAWN_TAG_SHOES
 	bad_type = /obj/item/clothing/shoes
 
-	armor = list(melee = 2, bullet = 0, energy = 2, bomb = 0, bio = 0, rad = 0)
+	armor = list(melee = 10, bullet = 0, energy = 10, bomb = 0, bio = 0, rad = 0)
 	permeability_coefficient = 0.50
 	slowdown = SHOES_SLOWDOWN
 	style = STYLE_LOW
@@ -465,6 +464,9 @@ BLIND     // can't see anything
 	if(usr.put_in_hands(holding))
 		usr.visible_message(SPAN_DANGER("\The [usr] pulls a knife out of their boot!"))
 		holding = null
+		if (ishuman(usr))
+			var/mob/living/carbon/human/stylish = usr
+			stylish.regen_slickness()
 	else
 		to_chat(usr, SPAN_WARNING("You need an empty, unbroken hand to do that."))
 		holding.forceMove(src)
@@ -518,6 +520,9 @@ BLIND     // can't see anything
 			user.visible_message(SPAN_NOTICE("\The [user] shoves \the [I] into \the [src]."))
 			verbs |= /obj/item/clothing/shoes/proc/draw_knife
 			update_icon()
+			if (ishuman(user))
+				var/mob/living/carbon/human/depleted = user
+				depleted.regen_slickness(-1)
 	else
 		return ..()
 
@@ -571,9 +576,8 @@ BLIND     // can't see anything
 		/obj/item/reagent_containers/spray,
 		/obj/item/device/radio,
 		/obj/item/clothing/mask,
-		/obj/item/storage/pouch/holster/belt/sheath,
-		/obj/item/implant/carrion_spider/holographic,
-		/obj/item/shield)
+		/obj/item/storage/belt/sheath,
+		/obj/item/implant/carrion_spider/holographic)
 	slot_flags = SLOT_OCLOTHING
 	var/blood_overlay_type = "suit"
 	siemens_coefficient = 0.9
@@ -585,8 +589,6 @@ BLIND     // can't see anything
 	style = STYLE_LOW
 	valid_accessory_slots = list("armor","armband","decor")
 	restricted_accessory_slots = list("armor","armband")
-	maxHealth = 300
-	health = 300
 
 /obj/item/clothing/suit/Initialize(mapload, ...)
 	.=..()
@@ -606,7 +608,6 @@ BLIND     // can't see anything
 	slot_flags = SLOT_ICLOTHING
 	w_class = ITEM_SIZE_NORMAL
 	spawn_tags = SPAWN_TAG_CLOTHING_UNDER
-	style = STYLE_LOW
 	bad_type = /obj/item/clothing/under
 	var/has_sensor = 1 //For the crew computer 2 = unable to change mode
 	var/sensor_mode = 0
@@ -635,17 +636,17 @@ BLIND     // can't see anything
 	..()
 	item_state_slots[slot_w_uniform_str] = icon_state //TODO: drop or gonna use it?
 
-/obj/item/clothing/under/examine(mob/user, extra_description = "")
-	switch(sensor_mode)
+/obj/item/clothing/under/examine(mob/user)
+	..(user)
+	switch(src.sensor_mode)
 		if(0)
-			extra_description += "Its sensors appear to be disabled."
+			to_chat(user, "Its sensors appear to be disabled.")
 		if(1)
-			extra_description += "Its binary life sensors appear to be enabled."
+			to_chat(user, "Its binary life sensors appear to be enabled.")
 		if(2)
-			extra_description += "Its vital tracker appears to be enabled."
+			to_chat(user, "Its vital tracker appears to be enabled.")
 		if(3)
-			extra_description += "Its vital tracker and tracking beacon appear to be enabled."
-	..(user, extra_description)
+			to_chat(user, "Its vital tracker and tracking beacon appear to be enabled.")
 
 /obj/item/clothing/under/proc/set_sensors(mob/M)
 	if(has_sensor >= 2)

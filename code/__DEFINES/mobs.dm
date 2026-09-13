@@ -55,6 +55,12 @@
 #define I_GRAB		"grab"
 #define I_HURT		"harm"
 
+//Used in mob/proc/get_input
+
+#define MOB_INPUT_TEXT "text"
+#define MOB_INPUT_MESSAGE "message"
+#define MOB_INPUT_NUM "num"
+
 //These are used Bump() code for living mobs, in the mob_bump_flag, mob_swap_flags, and mob_push_flags vars to determine whom can bump/swap with whom.
 #define HUMAN 1
 #define MONKEY 2
@@ -187,6 +193,8 @@
 #define MOB_PULL_SAME 2
 #define MOB_PULL_LARGER 3
 
+#define MOVED_DROP 1
+
 //carbon taste sensitivity defines, used in mob/living/carbon/proc/ingest
 #define TASTE_HYPERSENSITIVE 3 //anything below 5%
 #define TASTE_SENSITIVE 2 //anything below 7%
@@ -210,7 +218,6 @@
 #define SPECIES_SLIME			"Slime"
 #define SPECIES_MONKEY			"Monkey"
 #define SPECIES_GOLEM			"Golem"
-#define SPECIES_SKELETON        "Skeleton"
 
 #define RANDOM_BLOOD_TYPE pick(4;"O-", 36;"O+", 3;"A-", 28;"A+", 1;"B-", 20;"B+", 1;"AB-", 5;"AB+")
 

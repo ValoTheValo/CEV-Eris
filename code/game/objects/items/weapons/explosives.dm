@@ -37,23 +37,19 @@
 /obj/item/plastique/attack_self(mob/user as mob)
 	var/newtime = input(usr, "Please set the timer.", "Timer", 10) as num
 	if(user.get_active_hand() == src)
-		newtime = CLAMP(newtime, 2, 60000)
+		newtime = CLAMP(newtime, 10, 60000)
 		timer = newtime
 		to_chat(user, "Timer set for [timer] seconds.")
 
 /obj/item/plastique/afterattack(atom/movable/target, mob/user, flag)
 	if (!flag)
 		return
-	if(isturf(target))
-		var/turf/turf = target
-		if(!turf.is_simulated)
-			return
-	if (ismob(target) || istype(target, /turf/shuttle) || istype(target, /obj/item/storage/) || istype(target, /obj/item/clothing/under))
+	if (ismob(target) || istype(target, /turf/unsimulated) || istype(target, /turf/simulated/shuttle) || istype(target, /obj/item/storage/) || istype(target, /obj/item/clothing/under))
 		return
 	to_chat(user, "Planting the explosive charge...")
 	user.do_attack_animation(target)
 
-	if(do_after(user, 2 SECONDS, target) && in_range(user, target))
+	if(do_after(user, 50, target) && in_range(user, target))
 		user.drop_item()
 		src.target = target
 		loc = null
@@ -61,11 +57,11 @@
 		if (ismob(target))
 			add_logs(user, target, "planted [name] on")
 			user.visible_message(SPAN_DANGER("[user.name] finished planting the explosive on [target.name]!"))
-			message_admins("[key_name(user, user.client)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) planted [src.name] on [key_name(target)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[target]'>?</A>) with [timer] second fuse",0,1)
+			message_admins("[key_name(user, user.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) planted [src.name] on [key_name(target)](<A HREF='?_src_=holder;adminmoreinfo=\ref[target]'>?</A>) with [timer] second fuse",0,1)
 			log_game("[key_name(user)] planted [src.name] on [key_name(target)] with [timer] second fuse")
 
 		else
-			message_admins("[key_name(user, user.client)](<a href='byond://?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) planted [src.name] on [target.name] at ([target.x],[target.y],[target.z] - <a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[target.x];Y=[target.y];Z=[target.z]'>JMP</a>) with [timer] second fuse",0,1)
+			message_admins("[key_name(user, user.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[user]'>?</A>) planted [src.name] on [target.name] at ([target.x],[target.y],[target.z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[target.x];Y=[target.y];Z=[target.z]'>JMP</a>) with [timer] second fuse",0,1)
 			log_game("[key_name(user)] planted [src.name] on [target.name] at ([target.x],[target.y],[target.z]) with [timer] second fuse")
 
 		target.overlays += image_overlay
@@ -74,31 +70,25 @@
 			explode(get_turf(target))
 
 /obj/item/plastique/proc/explode(location)
-	var/cur_turf = get_turf(src)
 	if(!target)
 		target = get_atom_on_turf(src)
 	if(!target)
 		target = src
-	if(target != src)
-		target.explosion_act(1000, null)
-	else if(location)
-		target = get_turf(location)
-		target.explosion_act(1000, null)
-	explosion(cur_turf, 400, 180)
-	/*
+	if(location)
+		explosion(location, -1, -1, 2, 3)
+
 	if(target)
-		if (istype(target, /turf/wall))
-			var/turf/wall/W = target
-			W.dismantle_wall(no_product = TRUE)
+		if (istype(target, /turf/simulated/wall))
+			var/turf/simulated/wall/W = target
+			W.dismantle_wall(1)
 		else if(isliving(target))
-			target.explosion_act(1000) // c4 can't gib mobs anymore.
+			target.ex_act(2) // c4 can't gib mobs anymore.
 		else
-			target.explosion_act(1000)
-	*/
+			target.ex_act(1)
 
 	//Girders are a pain, just delete em
-	//for (var/obj/structure/girder/G in loc)
-	//	qdel(G)
+	for (var/obj/structure/girder/G in loc)
+		qdel(G)
 
 	if(target)
 		target.overlays -= image_overlay

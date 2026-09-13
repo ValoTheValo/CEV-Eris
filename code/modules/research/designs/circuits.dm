@@ -1,7 +1,6 @@
 /datum/design/research/circuit
 	build_type = IMPRINTER
 	chemicals = list("silicon" = 5)
-	build_path = /obj/item/electronics/circuitboard
 
 /datum/design/research/circuit/AssembleDesignName(atom/temp_atom)
 	..()
@@ -36,6 +35,11 @@
 	sort_string = "MABBA"
 	category = CAT_MISC
 
+/datum/design/research/circuit/secdata
+	name = "security records console"
+	build_path = /obj/item/electronics/circuitboard/secure_data
+	sort_string = "DABAA"
+	category = CAT_COMP
 
 /datum/design/research/circuit/prisonmanage
 	name = "prisoner management console"
@@ -43,6 +47,11 @@
 	sort_string = "DACAA"
 	category = CAT_COMP
 
+/datum/design/research/circuit/med_data
+	name = "medical records console"
+	build_path = /obj/item/electronics/circuitboard/med_data
+	sort_string = "FAAAA"
+	category = CAT_COMP
 
 /datum/design/research/circuit/operating
 	name = "patient monitoring console"
@@ -375,16 +384,16 @@
 	category = CAT_MISC
 
 /datum/design/research/circuit/shield/hull
-	name = "hull shield generator"
-	desc = "Allows for the construction of a shield conduit circuit board."
+	name = "hull"
 	build_path = /obj/item/electronics/circuitboard/shield_generator
 	sort_string = "VAAAB"
-
-/datum/design/research/circuit/shield/conduit
-	name = "shield conduit"
-	desc = "Allows for the construction of a shield conduit circuit board."
-	build_path = /obj/item/electronics/circuitboard/shield_conduit
-	sort_string = "VAAAC"
+/*
+/datum/design/research/circuit/shield/capacitor
+	name = "capacitor"
+	desc = "Allows for the construction of a shield capacitor circuit board."
+	req_tech = list(TECH_MAGNET = 3, TECH_POWER = 4)
+	build_path = /obj/item/electronics/circuitboard/shield_cap
+	sort_string = "VAAAC"*/
 
 // Long range scanner
 /datum/design/research/circuit/lrange_scanner
@@ -394,24 +403,19 @@
 /datum/design/research/circuit/lrange_scanner/hull
 	name = "long range scanner"
 	build_path = /obj/item/electronics/circuitboard/long_range_scanner
-	sort_string = "VAAAD"
-
-/datum/design/research/circuit/lrange_scanner/conduit
-	name = "long range scanner conduit"
-	build_path = /obj/item/electronics/circuitboard/scanner_conduit
-	sort_string = "VAAAE"
+	sort_string = "VAAAC"
 
 //BS
 /datum/design/research/circuit/telesci/console
 	name = "TeleSci Console"
 	build_path = /obj/item/electronics/circuitboard/telesci_console
-	sort_string = "VAAAF"
+	sort_string = "VAAAD"
 	category = CAT_BLUE
 
 /datum/design/research/circuit/telesci/hub
 	name = "TeleSci Pad"
 	build_path = /obj/item/electronics/circuitboard/telesci_pad
-	sort_string = "VAAAG"
+	sort_string = "VAAAE"
 	category = CAT_BLUE
 
 /datum/design/research/circuit/bssilk/console
@@ -423,7 +427,7 @@
 /datum/design/research/circuit/bssilk/hub
 	name = "Bluespace Snare Hub"
 	build_path = /obj/item/electronics/circuitboard/bssilk_hub
-	sort_string = "VAAAH"
+	sort_string = "VAAAG"
 	category = CAT_BLUE
 
 /datum/design/research/circuit/teleporter/station

@@ -2,7 +2,6 @@
 	name = "flash"
 	desc = "Used for blinding and being an asshole."
 	icon_state = "flash"
-	description_info = "Can blind anyone that doesn't have welder-grade light protection"
 	item_state = "flashtool"
 	throwforce = WEAPON_FORCE_HARMLESS
 	w_class = ITEM_SIZE_SMALL
@@ -41,7 +40,7 @@
 
 	M.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been flashed (attempt) with [src.name]  by [user.name] ([user.ckey])</font>")
 	user.attack_log += text("\[[time_stamp()]\] <font color='red'>Used the [src.name] to flash [M.name] ([M.ckey])</font>")
-	msg_admin_attack("[user.name] ([user.ckey]) Used the [src.name] to flash [M.name] ([M.ckey]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+	msg_admin_attack("[user.name] ([user.ckey]) Used the [src.name] to flash [M.name] ([M.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
 	user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 	user.do_attack_animation(M)
@@ -78,10 +77,11 @@
 			if(flash_strength > 0)
 				if(ishuman(M))
 					var/mob/living/carbon/human/H = M
-					if(flash_strength > 0)
-						H.flash(flash_strength, FALSE, FALSE , FALSE, flash_strength / 2)
-				else
-					M.flash(flash_strength, FALSE, FALSE , FALSE)
+					flash_strength *= H.species.flash_mod
+				if(flash_strength > 0)
+					M.Weaken(flash_strength)
+					if (M.HUDtech.Find("flash"))
+						flick("e_flash", M.HUDtech["flash"])
 			else
 				flashfail = TRUE
 
@@ -89,7 +89,10 @@
 		var/mob/living/silicon/robot/robo = M
 		if(robo.HasTrait(CYBORG_TRAIT_FLASH_RESISTANT))
 			flashfail = TRUE
-		robo.flash(rand(5,10), FALSE , FALSE , FALSE) // Flash resistance handled in robot.dm
+		else
+			robo.Weaken(rand(5,10))
+			if (robo.HUDtech.Find("flash"))
+				flick("e_flash", robo.HUDtech["flash"])
 	else
 		flashfail = TRUE
 
@@ -108,7 +111,7 @@
 		flick("flash2", src)
 		if(!issilicon(M))
 
-			user.visible_message(SPAN_DISARM("[user] blinds [M] with the flash!"))
+			user.visible_message("<span class='disarm'>[user] blinds [M] with the flash!</span>")
 		else
 
 			user.visible_message(SPAN_NOTICE("[user] overloads [M]'s sensors with the flash!"))
@@ -161,7 +164,9 @@
 	for(var/mob/living/carbon/M in oviewers(3, null))
 		var/safety = M.eyecheck()
 		if(safety < FLASH_PROTECTION_MODERATE)
-			M.flash(0, FALSE, FALSE, TRUE)
+			if(!M.blinded)
+				if (M.HUDtech.Find("flash"))
+					flick("flash", M.HUDtech["flash"])
 
 	return
 
@@ -179,6 +184,9 @@
 				var/mob/living/carbon/M = loc
 				var/safety = M.eyecheck()
 				if(safety < FLASH_PROTECTION_MODERATE)
-					M.flash(10-(10*safety), FALSE, FALSE, TRUE)
-					M.visible_message(SPAN_DISARM("[M] is blinded by the flash!"))
+					M.Weaken(10-(10*safety)) // FLASH_PROTECTION_MINOR halves it, FLASH_PROTECTION_REDUCED doubles it.
+					if (M.HUDtech.Find("flash"))
+						flick("e_flash", M.HUDtech["flash"])
+					for(var/mob/O in viewers(M, null))
+						O.show_message("<span class='disarm'>[M] is blinded by the flash!</span>")
 	..()

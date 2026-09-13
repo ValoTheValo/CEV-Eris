@@ -149,7 +149,7 @@
 
 			//If we're not near to any external tiles, then we can melt stuff
 			if (!near_external)
-				T.explosion_act(prob(80) ? 50 : 100, null)
+				T.ex_act(prob(80) ? 3 : 2)
 
 /obj/effect/plant/update_icon()
 	//TODO: should really be caching this.
@@ -315,12 +315,12 @@ var/list/global/cutoff_plant_icons = list()
 	return (health >= (max_health*0.8) && world.time > mature_time)
 
 
-/obj/effect/plant/examine(mob/user, extra_description = "")
+/obj/effect/plant/examine()
+	. = ..()
 	if(seed.get_trait(TRAIT_CHEMS))
 		if(!reagents.total_volume)
-			extra_description += SPAN_NOTICE("It looks totally dried.")
-		else if(!reagents.get_free_space())
-			extra_description += SPAN_NOTICE("It looks juicy.")
+			to_chat(usr, SPAN_NOTICE("It looks totally dried."))
+		else if (!reagents.get_free_space())
+			to_chat(usr, SPAN_NOTICE("It looks juicy."))
 		else
-			extra_description += SPAN_NOTICE("It looks a bit dry.")
-	..(user, extra_description)
+			to_chat(usr, SPAN_NOTICE("It looks a bit dry."))

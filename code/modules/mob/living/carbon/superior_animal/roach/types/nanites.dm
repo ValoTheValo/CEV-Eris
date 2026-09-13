@@ -26,13 +26,11 @@
 	var/list/nanite_swarms = list()
 	var/max_swarms = 5
 
-	mob_size = MOB_SMALL * 1.5 // 15
-
 	// Armor related variables
 	armor = list(
-		melee = 5,
-		bullet = 5,
-		energy = 10,
+		melee = 20,
+		bullet = 20,
+		energy = 40,
 		bomb = 10,
 		bio = 25,
 		rad = 100
@@ -54,23 +52,15 @@
 /mob/living/carbon/superior_animal/roach/nanite/death()
 	for(var/mob/living/simple_animal/hostile/naniteswarm/NS in nanite_swarms)
 		nanite_swarms.Remove(NS)
-		NS.death()
+		NS.gib()
 	..()
 
 /mob/living/carbon/superior_animal/roach/nanite/Destroy()
 	for(var/mob/living/simple_animal/hostile/naniteswarm/NS in nanite_swarms)
 		nanite_swarms.Remove(NS)
-		NS.death()
+		NS.gib()
 	.=..()
 
-/mob/living/carbon/superior_animal/roach/nanite/joinOvermind(datum/overmind/roachmind/jointhis)
-	jointhis.addRanged(src) // Kraftwerk is Ranged
-	overseer = jointhis
-
-/mob/living/carbon/superior_animal/roach/nanite/leaveOvermind()
-	overseer?.removeRanged(src) // Ranged Kraftwerk
-	overseer?.casualties.Remove(src)
-	overseer = null
 
 /mob/living/simple_animal/hostile/naniteswarm
 	name = "nanite infested miniroach cluster"
@@ -82,9 +72,8 @@
 	density = FALSE
 	health = 10
 	maxHealth = 10
-	melee_damage_lower = 2
-	melee_damage_upper = 4
-	armor_divisor = ARMOR_PEN_MASSIVE
+	melee_damage_lower = 1
+	melee_damage_upper = 2
 	attacktext = "cut"
 	attack_sound = 'sound/weapons/bladeslice.ogg'
 	faction = "roach"

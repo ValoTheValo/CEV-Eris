@@ -34,6 +34,8 @@
 	var/list/ico[0]      //Icons and
 	var/list/offset_x[0] //offsets stored for later
 	var/list/offset_y[0] //usage by the photocopier
+	var/rigged = 0
+	var/spam_flag = 0
 	var/crumpled = FALSE
 
 	var/const/deffont = "Verdana"
@@ -67,14 +69,14 @@
 	if(!new_text)
 		free_space -= length(strip_html_properly(new_text))
 
-/obj/item/paper/examine(mob/user, extra_description = "")
+/obj/item/paper/examine(mob/user)
+	. = ..()
 	if(name != "sheet of paper")
-		extra_description += "\nIt's titled '[name]'."
+		to_chat(user, "It's titled '[name]'.")
 	if(in_range(user, src) || isghost(user))
-		show_content(user)
+		show_content(usr)
 	else
-		extra_description += SPAN_NOTICE("\nYou have to come closer if you want to read it.")
-	..(user, extra_description)
+		to_chat(user, "<span class='notice'>You have to go closer if you want to read it.</span>")
 
 /obj/item/paper/proc/show_content(mob/user, forceshow)
 	var/can_read = (istype(user, /mob/living/carbon/human) || isghost(user) || istype(user, /mob/living/silicon)) || forceshow
@@ -113,6 +115,12 @@
 		crumpled = TRUE
 		return
 	user.examinate(src)
+	if(rigged && (Holiday == "April Fool's Day"))
+		if (spam_flag == 0)
+			spam_flag = 1
+			playsound(loc, 'sound/items/bikehorn.ogg', 50, 1)
+			spawn(20)
+				spam_flag = 0
 
 /obj/item/paper/attack_ai(var/mob/living/silicon/ai/user)
 	show_content(user)
@@ -179,8 +187,8 @@
 	info_links = info
 	var/i = 0
 	for(i = 1, i<=fields, i++)
-		addtofield(i, "<font face=\"[deffont]\"><a href='byond://?src=\ref[src];write=[i]'>write</A></font>", 1)
-	info_links = info_links + "<font face=\"[deffont]\"><a href='byond://?src=\ref[src];write=end'>write</A></font>"
+		addtofield(i, "<font face=\"[deffont]\"><A href='?src=\ref[src];write=[i]'>write</A></font>", 1)
+	info_links = info_links + "<font face=\"[deffont]\"><A href='?src=\ref[src];write=end'>write</A></font>"
 
 
 /obj/item/paper/proc/clearpaper()
@@ -464,7 +472,7 @@
 	icon_state = "paper_neo_crumpled"
 
 /obj/item/paper/crumpled/neo/update_icon()
-	if (icon_state == "paper_neo_words_crumpled_bloodied")
+	if (icon_state == "paper_neo_crumpled_bloodied")
 		return
 	else if (info)
 		icon_state = "paper_neo_words_crumpled"
@@ -473,6 +481,7 @@
 	return
 
 /obj/item/paper/crumpled/neo/bloody
-	icon_state = "paper_neo_words_crumpled_bloodied"
+	icon_state = "paper_neo_crumpled_bloodied" //todo fix sprite
+	spawn_blacklisted = TRUE
 
 #undef MAX_FIELDS

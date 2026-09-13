@@ -1,37 +1,37 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/wall,
+/turf/simulated/wall,
 /area/crawler)
 "b" = (
 /obj/crawler/crawler_wallbreaker,
-/turf/wall,
+/turf/simulated/wall,
 /area/crawler)
 "c" = (
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 "d" = (
 /obj/crawler/crawler_wallbreaker/vertical,
-/turf/wall,
+/turf/simulated/wall,
 /area/crawler)
 "e" = (
 /obj/spawner/mob/roaches,
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 "f" = (
 /obj/spawner/toy/figure,
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 "g" = (
 /obj/machinery/light/floor,
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 "h" = (
 /obj/spawner/gun/energy_cheap,
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 "i" = (
 /obj/spawner/medical_lowcost,
-/turf/floor/tiled/dark/gray_perforated,
+/turf/simulated/floor/tiled/dark/gray_perforated,
 /area/crawler)
 
 (1,1,1) = {"

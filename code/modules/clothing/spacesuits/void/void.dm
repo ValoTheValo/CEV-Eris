@@ -6,9 +6,9 @@
 
 	heat_protection = HEAD
 	armor = list(
-		melee = 7,
-		bullet = 5,
-		energy = 3,
+		melee = 30,
+		bullet = 20,
+		energy = 15,
 		bomb = 25,
 		bio = 100,
 		rad = 75
@@ -17,6 +17,7 @@
 	flash_protection = FLASH_PROTECTION_MAJOR
 	light_overlay = "helmet_light"
 	spawn_tags = null
+	obscuration = LIGHT_OBSCURATION
 
 /obj/item/clothing/suit/space/void
 	name = "voidsuit"
@@ -24,9 +25,9 @@
 	item_state = "void"
 	desc = "A high-tech dark red space suit. Used for AI satellite maintenance."
 	armor = list(
-		melee = 7,
-		bullet = 5,
-		energy = 3,
+		melee = 30,
+		bullet = 20,
+		energy = 15,
 		bomb = 25,
 		bio = 100,
 		rad = 75
@@ -40,6 +41,7 @@
 	spawn_tags = SPAWN_TAG_VOID_SUIT
 	accompanying_object = /obj/item/clothing/shoes/magboots
 	slowdown = MEDIUM_SLOWDOWN
+	stiffness = HEAVY_STIFFNESS // Very hard to aim in
 
 	//Inbuilt devices.
 	var/obj/item/clothing/shoes/magboots/boots // Deployable boots, if any.
@@ -55,14 +57,14 @@
 	if(tank && ispath(tank))
 		tank = new tank(src)
 
-/obj/item/clothing/suit/space/void/examine(mob/user, extra_description = "")
+/obj/item/clothing/suit/space/void/examine(user)
+	..(user)
 	var/list/part_list = new
 	for(var/obj/item/I in list(helmet,boots,tank))
 		part_list += "\a [I]"
-	extra_description += "\The [src] has [english_list(part_list)] installed."
-	if(tank && (get_dist(user, src) < 2))
-		extra_description += SPAN_NOTICE("\nThe wrist-mounted pressure gauge reads [max(round(tank.air_contents.return_pressure()),0)] kPa remaining in \the [tank].")
-	..(user, extra_description)
+	to_chat(user, "\The [src] has [english_list(part_list)] installed.")
+	if(tank && in_range(src,user))
+		to_chat(user, SPAN_NOTICE("The wrist-mounted pressure gauge reads [max(round(tank.air_contents.return_pressure()),0)] kPa remaining in \the [tank]."))
 
 /obj/item/clothing/suit/space/void/ui_action_click(mob/living/user, action_name)
 	if(..())
@@ -74,6 +76,13 @@
 	if(boots) boots.clean_blood()
 	if(helmet) helmet.clean_blood()
 	if(tank) tank.clean_blood()
+
+	return ..()
+
+/obj/item/clothing/suit/space/void/decontaminate()
+	if(boots) boots.decontaminate()
+	if(helmet) helmet.decontaminate()
+	if(tank) tank.decontaminate()
 
 	return ..()
 
@@ -234,7 +243,7 @@
 				tank.forceMove(get_turf(src))
 				src.tank = null
 			else if(choice == boots)
-				to_chat(user, "You detach \the [boots] from \the [src]'s boot mounts.")
+				to_chat(user, "You detatch \the [boots] from \the [src]'s boot mounts.")
 				boots.forceMove(get_turf(src))
 				src.boots = null
 		else

@@ -45,11 +45,11 @@
 
 /datum/mutation/t3/inner_fuhrer/imprint(mob/living/carbon/user)
 	if(..())
-		add_verb(user, /mob/living/carbon/human/proc/inner_fuhrer)
+		user.verbs += /mob/living/carbon/human/proc/inner_fuhrer
 
 /datum/mutation/t3/inner_fuhrer/cleanse(mob/living/carbon/user)
 	if(..())
-		remove_verb(user, /mob/living/carbon/human/proc/inner_fuhrer)
+		user.verbs -= /mob/living/carbon/human/proc/inner_fuhrer
 
 /datum/mutation/t3/telekinesis
 	name = "Telekinesis"

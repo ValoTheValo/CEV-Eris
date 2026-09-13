@@ -138,8 +138,9 @@
 // Assumes the variable actually exists.
 /datum/proc/SDQL_update(var/const/var_name, var/new_value)
 	vars[var_name] = new_value
-	return TRUE
+	return 1
 
+ADMIN_VERB_ADD(/client/proc/SDQL2_query, R_DEBUG, FALSE)
 /client/proc/SDQL2_query(query_text as message)
 	set category = "Debug"
 	if(!check_rights(R_DEBUG))  //Shouldn't happen... but just to be safe.
@@ -699,7 +700,7 @@
 
 /proc/SDQL_print(object, list/text_list)
 	if (is_proper_datum(object))
-		text_list += "<a href='byond://?_src_=vars;Vars=\ref[object]'>\ref[object]</A>"
+		text_list += "<A HREF='?_src_=vars;Vars=\ref[object]'>\ref[object]</A>"
 		if(istype(object, /atom))
 			var/atom/a = object
 

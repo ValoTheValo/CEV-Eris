@@ -8,8 +8,6 @@
 /obj/machinery/power/smes
 	name = "power storage unit"
 	desc = "A high-capacity superconducting magnetic energy storage (SMES) unit."
-	description_info = "Can be fast toggled with AltClick and CtrlClick"
-	description_antag = "Cutting the safety wire lets you insert SMES components when its charged, doing so will create a preety big blast"
 	icon_state = "smes"
 	density = TRUE
 	anchored = TRUE
@@ -272,7 +270,7 @@
 
 /obj/machinery/power/smes/attack_hand(mob/user)
 	add_fingerprint(user)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 
 /obj/machinery/power/smes/attackby(var/obj/item/I, var/mob/user)
@@ -334,7 +332,7 @@
 
 	return tool_type || 1
 
-/obj/machinery/power/smes/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/power/smes/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 
 	if(stat & BROKEN)
 		return
@@ -414,7 +412,7 @@
 	failure_timer = max(failure_timer, duration)
 
 /obj/machinery/power/smes/proc/ion_act()
-	if(IS_SHIP_LEVEL(z))
+	if(isStationLevel(src.z))
 		if(prob(1)) //explosion
 			for(var/mob/M in viewers(src))
 				M.show_message("\red The [src.name] is making strange noises!", 3, "\red You hear sizzling electronics.", 2)
@@ -423,7 +421,7 @@
 			smoke.set_up(3, 0, loc)
 			smoke.attach(src)
 			smoke.start()
-			explosion(get_turf(src), 100, 20)
+			explosion(loc, -1, 0, 1, 3, 1, 0)
 			qdel(src)
 			return
 		else if(prob(15)) //Power drain

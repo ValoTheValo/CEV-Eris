@@ -11,7 +11,6 @@
 	name = "bed"
 	desc = "This is used to lie in, sleep in or strap on."
 	icon = 'icons/obj/furniture.dmi'
-	description_info = "Can be used as a support to climb up by looking up and clicking on a free tile that is not blocked by a railing"
 	icon_state = "bed"
 	anchored = TRUE
 	can_buckle = TRUE
@@ -82,6 +81,20 @@
 		return 1
 	else
 		return ..()
+
+/obj/structure/bed/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+			return
+		if(2)
+			if (prob(50))
+				qdel(src)
+				return
+		if(3)
+			if (prob(5))
+				qdel(src)
+				return
 
 /obj/structure/bed/affect_grab(var/mob/user, var/mob/target)
 	user.visible_message(SPAN_NOTICE("[user] attempts to buckle [target] into \the [src]!"))
@@ -286,9 +299,9 @@
 	..()
 	held.Add(new /obj/item/roller(src))
 
-/obj/item/roller_holder/examine(mob/user, extra_description = "")
-	extra_description += SPAN_NOTICE("It contains [LAZYLEN(held)] stored beds")
-	..(user, extra_description)
+/obj/item/roller_holder/examine(var/mob/user)
+	.=..()
+	to_chat(user, SPAN_NOTICE("It contains [held.len] stored beds"))
 
 /obj/item/roller_holder/attack_self(mob/user as mob)
 

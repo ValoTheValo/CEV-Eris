@@ -54,26 +54,26 @@
 						colour = rgb(10,10,10)
 						sense = 0
 
-					if("/turf/floor")
+					if("/turf/simulated/floor")
 						colour = rgb(150,150,150)
-						var/turf/floor/TF = T
+						var/turf/simulated/floor/TF = T
 						if(TF.burnt == 1)
 							sense = 0
 							colour = rgb(130,130,130)
 
-					if("/turf/floor/reinforced")
+					if("/turf/simulated/floor/reinforced")
 						colour = rgb(128,128,128)
 
-					if("/turf/wall")
+					if("/turf/simulated/wall")
 						colour = rgb(96,96,96)
 
-					if("/turf/wall/reinforced")
+					if("/turf/simulated/wall/r_wall")
 						colour = rgb(128,96,96)
 
-					if("/turf/floor/dummy")
+					if("/turf/unsimulated/floor")
 						colour  = rgb(240,240,240)
 
-					if("/turf/wall/dummy", "/turf/wall/dummy/other")
+					if("/turf/unsimulated/wall", "/turf/unsimulated/wall/other")
 						colour  = rgb(140,140,140)
 
 					else
@@ -208,7 +208,7 @@
 						colour = rgb(10,10,10)
 						sense = 0
 
-					if("/turf/floor/tiled", "/turf/floor/reinforced")
+					if("/turf/simulated/floor/tiled", "/turf/simulated/floor/reinforced")
 						var/datum/gas_mixture/environment = T.return_air()
 						var/turf_total = environment.total_moles
 						var/t1 = turf_total / MOLES_CELLSTANDARD * 175
@@ -219,16 +219,16 @@
 							t1 = min(100, t1-100)
 							colour = rgb( t1*2.55, t1*2.55, 255)
 
-					if("/turf/wall")
+					if("/turf/simulated/wall")
 						colour = rgb(96,96,96)
 
-					if("/turf/wall/reinforced")
+					if("/turf/simulated/wall/r_wall")
 						colour = rgb(128,96,96)
 
-					if("/turf/floor/dummy")
+					if("/turf/unsimulated/floor")
 						colour  = rgb(240,240,240)
 
-					if("/turf/wall/dummy", "/turf/wall/dummy/other")
+					if("/turf/unsimulated/wall", "/turf/unsimulated/wall/other")
 						colour  = rgb(140,140,140)
 
 					else

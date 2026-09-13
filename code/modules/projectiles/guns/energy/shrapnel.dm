@@ -1,5 +1,5 @@
 /obj/item/gun/energy/shrapnel
-	name = "OR ESG \"Shellshock\" energy shotgun"
+	name = "OR SDF \"Shellshock\" energy shotgun"
 	desc = "An Oberth Republic Self Defence Force design, this mat-fab shotgun tends to burn through cells with use. The matter contained in empty cells can be converted directly into ammunition as well, if the safety bolts are loosened."
 	icon = 'icons/obj/guns/energy/shrapnel.dmi'
 	icon_state = "eshotgun"
@@ -30,9 +30,6 @@
 
 	serial_type = "OR"
 
-/obj/item/gun/energy/shrapnel/update_icon()
- 	..()
-
 /obj/item/gun/energy/shrapnel/consume_next_projectile()
 	if(!cell) return null
 	if(!ispath(projectile_type)) return null
@@ -59,9 +56,6 @@
 				consume_cell = TRUE
 				to_chat(user, SPAN_NOTICE("You loosen the safety bolts, allowing the weapon to destroy empty cells for use as ammunition."))
 
-/obj/item/gun/energy/shrapnel/generate_guntags()
-	gun_tags = list(GUN_PROJECTILE, GUN_SCOPE, SLOT_BAYONET)
-
 /obj/item/gun/energy/shrapnel/mounted
 	name = "SDF SC \"Schrapnell\""
 	desc = "An energy-based shotgun, employing a matter fabricator to pull shotgun rounds from thin air and energy."
@@ -72,7 +66,7 @@
 	restrict_safety = TRUE
 	consume_cell = FALSE
 	cell_type = /obj/item/cell/small/high //Two shots
-	bad_type = /obj/item/gun/energy/shrapnel/mounted
+	spawn_blacklisted = TRUE
 	charge_cost = 50
 	twohanded = FALSE
 	init_firemodes = list(

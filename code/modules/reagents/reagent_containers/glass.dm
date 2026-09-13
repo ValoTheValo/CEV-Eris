@@ -17,7 +17,6 @@
 	unacidable = 1 //glass doesn't dissolve in acid
 	matter = list(MATERIAL_GLASS = 1)
 	bad_type = /obj/item/reagent_containers/glass
-	var/display_label = TRUE // to show or not to show label on the sprite
 	var/label_icon_state
 	var/lid_icon_state
 
@@ -36,6 +35,7 @@
 		/mob/living/bot/medbot,
 		/obj/item/storage/secure/safe,
 		/obj/structure/medical_stand,
+		/obj/machinery/disease2/incubator,
 		/obj/machinery/disposal,
 		/mob/living/simple_animal/cow,
 		/mob/living/simple_animal/hostile/retaliate/goat,
@@ -43,6 +43,7 @@
 		/obj/machinery/smartfridge/,
 		/obj/machinery/biogenerator,
 		/obj/machinery/constructable_frame,
+		/obj/machinery/radiocarbon_spectrometer,
 		/obj/machinery/centrifuge,
 		/obj/machinery/electrolyzer
 		)
@@ -72,10 +73,11 @@
 /obj/item/reagent_containers/glass/feed_sound(var/mob/user)
 	playsound(user.loc, 'sound/items/drink.ogg', rand(10, 50), 1)
 
-/obj/item/reagent_containers/glass/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2 && has_lid())
-		extra_description += SPAN_NOTICE("\nAirtight lid seals it completely.")
-	..(user, extra_description)
+/obj/item/reagent_containers/glass/examine(mob/user)
+	if(!..(user, 2))
+		return
+	if(has_lid())
+		to_chat(user, SPAN_NOTICE("Airtight lid seals it completely."))
 
 /obj/item/reagent_containers/glass/attack_self(mob/user)
 	..()

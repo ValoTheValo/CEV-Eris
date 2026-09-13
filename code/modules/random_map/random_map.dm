@@ -20,8 +20,8 @@ var/global/list/map_count = list()
 	var/preserve_map = 1
 
 	// Turf paths.
-	var/wall_type =  /turf/wall
-	var/floor_type = /turf/floor
+	var/wall_type =  /turf/simulated/wall
+	var/floor_type = /turf/simulated/floor
 	var/target_turf_type
 
 	// Storage for the final iteration of the map.
@@ -57,6 +57,7 @@ var/global/list/map_count = list()
 
 	// Testing needed to see how reliable this is (asynchronous calls, called during worldgen), DM ref is not optimistic
 	if(seed)
+		rand_seed(seed)
 		priority_process = 1
 
 	for(var/i = 0;i<max_attempts;i++)

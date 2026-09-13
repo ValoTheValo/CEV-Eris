@@ -12,11 +12,8 @@
 
 /obj/item/implant/explosive/New()
 	..()
-	update_icon()
-
-/obj/item/implant/explosive/voice/LateInitialize()
-	. = ..()
 	add_hearing()
+	update_icon()
 
 /obj/item/implant/explosive/Destroy()
 	remove_hearing()
@@ -49,7 +46,7 @@
 /obj/item/implant/explosive/proc/do_boom()
 	playsound(loc, 'sound/items/countdown.ogg', 75, 1, -3)
 	sleep(25)
-	explosion(get_turf(src), 400, 75)
+	explosion(get_turf(src), 1, 2, 3, 3)
 	qdel(src)
 
 /obj/item/implant/explosive/activate(delay)
@@ -61,7 +58,7 @@
 
 	if(istype(wearer, /mob/))
 		var/mob/T = wearer
-		message_admins("Explosive implant triggered in [T] ([T.key]). (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[T.x];Y=[T.y];Z=[T.z]'>JMP</a>) ")
+		message_admins("Explosive implant triggered in [T] ([T.key]). (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[T.x];Y=[T.y];Z=[T.z]'>JMP</a>) ")
 		log_game("Explosive implant triggered in [T] ([T.key]).")
 
 		if(ishuman(wearer))
@@ -71,10 +68,10 @@
 				sleep(25)
 				if (part.organ_tag in list(BP_CHEST, BP_HEAD, BP_GROIN))
 					part.createwound(BRUISE, 60)
-					explosion(get_turf(src), 400, 75)
+					explosion(get_turf(wearer), 1, 2, 3, 3)
 					qdel(src)
 				else
-					explosion(get_turf(src), 400, 75)
+					explosion(get_turf(wearer), 1, 2, 3, 3)
 					part.droplimb(0,DROPLIMB_BLUNT)
 					qdel(src)
 

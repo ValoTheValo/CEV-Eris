@@ -6,6 +6,20 @@
 	layer = SIGN_LAYER
 	w_class = ITEM_SIZE_NORMAL
 
+/obj/structure/sign/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+			return
+		if(2)
+			qdel(src)
+			return
+		if(3)
+			qdel(src)
+			return
+		else
+	return
+
 /obj/structure/sign/attackby(obj/item/tool as obj, mob/user as mob)	//deconstruction
 	if(istype(tool, /obj/item/tool/screwdriver) && !istype(src, /obj/structure/sign/double))
 		to_chat(user, "You unfasten the sign with your [tool].")
@@ -515,19 +529,14 @@
 	icon_state = "ironhammer"
 
 /obj/structure/sign/faction/one_star
-	name = "One Star Banner"
+	name = "One Star"
 	desc = "One Star's all-seeing eye, a banner of a now fallen empire. They once controlled this sector from their capital Earth. Now it's all just dust, forgotten derelicts, and automated ships."
 	icon_state = "one_star"
 
 /obj/structure/sign/faction/one_star_old
-	name = "Tattered One Star Banner"
+	name = "One Star"
 	desc = "One Star's all-seeing eye, a banner of a now fallen empire. They once controlled this sector from their capital Earth. Now it's all just dust, forgotten derelicts, and automated ships."
 	icon_state = "one_star_old"
-
-/obj/structure/sign/faction/one_star_sign
-	name = "One Star Sign"
-	desc = "One Star's all-seeing eye, an emblem of a now fallen empire. They once controlled this sector from their capital Earth. Now it's all just dust, forgotten derelicts, and automated ships."
-	icon_state = "one_star_sign"
 
 /obj/structure/sign/faction/frozenstar
 	name = "Frozen Star"
@@ -538,11 +547,6 @@
 	name = "Moebius Laboratories"
 	desc = "Shady pharmaceutical and prosthetic manufacturer. Few outsiders know what happens behind the doors of their labs, and whoever knows does not live a long life."
 	icon_state = "moebius"
-
-/obj/structure/sign/faction/moebius_alt
-	name = "Moebius Laboratories Sign"
-	desc = "Shady pharmaceutical and prosthetic manufacturer. Few outsiders know what happens behind the doors of their labs, and whoever knows does not live a long life. The sign is emblazoned with the slogan, new minds new horizons"
-	icon_state = "moebius_alt"
 
 /obj/structure/sign/faction/neotheology
 	name = "NeoTheology"
@@ -573,19 +577,14 @@
 	icon_state = "technomancers"
 
 /obj/structure/sign/faction/excelsior
-	name = "Excelsior"
-	desc = "Excelsior is a union of communist mining communities with no respect to any private property."
+	name = "EXCELSIOR"
+	desc = "EXCELSIOR is a union of communist mining communities with no respect to any private property."
 	icon_state = "excelsior"
 
 /obj/structure/sign/faction/excelsior_old
-	name = "Excelsior"
+	name = "EXCELSIOR"
 	desc = "EXCELSIOR is a union of communist mining communities with no respect to any private property."
 	icon_state = "excelsior-old"
-
-/obj/structure/sign/faction/serbian
-	name = "Serbian Arms"
-	desc = "Serbian Arms are a major supplier of cheap firearms and killer mercenaries in the sector. Their centre of operations is located in Predstraza."
-	icon_state = "serbian"
 
 /obj/structure/sign/derelict1
 	name = "Old sign"

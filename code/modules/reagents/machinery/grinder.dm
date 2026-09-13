@@ -27,7 +27,7 @@
 		return
 	//Useability tweak for borgs
 	if (istype(I,/obj/item/gripper))
-		nano_ui_interact(user)
+		ui_interact(user)
 		return
 	return insert(I, user)
 
@@ -82,16 +82,16 @@
 		return
 
 	user.set_machine(src)
-	nano_ui_interact(user)
+	ui_interact(user)
 
 /obj/machinery/reagentgrinder/on_deconstruction()
 	eject()
 
-/obj/machinery/reagentgrinder/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
+/obj/machinery/reagentgrinder/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
 	if(!nano_template)
 		return
 
-	var/list/data = nano_ui_data()
+	var/list/data = ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
@@ -99,7 +99,7 @@
 		ui.set_initial_data(data)
 		ui.open()
 
-/obj/machinery/reagentgrinder/nano_ui_data()
+/obj/machinery/reagentgrinder/ui_data()
 	var/list/data = list()
 
 	data["contents"] = list()
@@ -192,12 +192,12 @@
 
 	return ..()
 
-/obj/machinery/reagentgrinder/portable/nano_ui_data()
+/obj/machinery/reagentgrinder/portable/ui_data()
 	var/list/data = ..()
 	data["on"] = inuse
 
 	if(beaker)
-		data["beaker"] = beaker.reagents.nano_ui_data()
+		data["beaker"] = beaker.reagents.ui_data()
 	return data
 
 /obj/machinery/reagentgrinder/portable/Topic(href, href_list)
@@ -237,7 +237,6 @@
 
 	playsound(loc, 'sound/machines/blender.ogg', 50, 1)
 	inuse = 1
-	use_power(active_power_usage)
 
 	// Reset the machine.
 	spawn(60)
@@ -290,10 +289,10 @@
 	if(panel_open)
 		overlays += image(icon, "[icon_state]_p")
 
-/obj/machinery/reagentgrinder/industrial/nano_ui_data()
+/obj/machinery/reagentgrinder/industrial/ui_data()
 	var/list/data = ..()
 
-	data["reagents"] = reagents.nano_ui_data()
+	data["reagents"] = reagents.ui_data()
 	return data
 
 /obj/machinery/reagentgrinder/industrial/Topic(href, href_list)
@@ -337,7 +336,6 @@
 	desc = "Mortar and pestle to grind ingridients."
 	icon = 'icons/obj/machines/chemistry.dmi'
 	icon_state = "mortar"
-	matter = list(MATERIAL_STEEL = 3)
 	storage_slots = 3
 	unacidable = 1
 	rarity_value = 25
@@ -453,13 +451,14 @@
 	if(N)
 		amount_per_transfer_from_this = N
 
-/obj/item/storage/makeshift_grinder/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		if(LAZYLEN(contents))
-			extra_description += SPAN_NOTICE("\nIt has something inside.")
-		if(reagents.total_volume)
-			extra_description += SPAN_NOTICE("\nIt's filled with [reagents.total_volume]/[reagents.maximum_volume] units of reagents.")
-	..(user, extra_description)
+/obj/item/storage/makeshift_grinder/examine(mob/user)
+	if(!..(user, 2))
+		return
+	if(contents.len)
+		to_chat(user, SPAN_NOTICE("It has something inside."))
+	if(reagents.total_volume)
+		to_chat(user, SPAN_NOTICE("It's filled with [reagents.total_volume]/[reagents.maximum_volume] units of reagents."))
+
 
 /obj/item/storage/makeshift_grinder/update_icon()
 	. = ..()

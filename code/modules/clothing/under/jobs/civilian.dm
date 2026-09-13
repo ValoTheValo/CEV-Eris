@@ -25,26 +25,20 @@
 	item_state = "b_suit"
 
 /obj/item/clothing/under/rank/cargotech
-	desc = "A pair of jeans and turtleneck worn by the guild workers."
-	name = "guild worker's uniform"
+	name = "cargo worker's jumpsuit"
+	desc = "A pair of jeans and turtleneck worn by the cargo workers."
 	icon_state = "cargotech"
 	item_state = "lb_suit"
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
 
-/obj/item/clothing/under/rank/crewman
-	desc = "A utility jumpsuit for the working spaceman."
-	name = "crewman's jumpsuit"
-	icon_state = "crewman"
-	item_state = "crewman"
-
 /obj/item/clothing/under/rank/preacher
-	desc = "Ceremonial garb of NeoTheology preachers."
+	desc = "Ceremonial garb of NeoTheologian preachers."
 	name = "preacher vestments"
 	icon_state = "preacher"
 	item_state = "w_suit"
 
 /obj/item/clothing/under/rank/acolyte
-	desc = "Ceremonial garb of NeoTheology disciples."
+	desc = "Ceremonial garb of NeoTheologian disciples."
 	name = "acolyte vestments"
 	icon_state = "acolyte"
 	item_state = "acolyte"
@@ -88,14 +82,14 @@
 	item_state = "b_suit"
 
 /obj/item/clothing/under/rank/hydroponics
-	desc = "A jumpsuit from the Bradhaanata Agroponics 'Farm Yourself' kit."
+	desc = "A jumpsuit designed to protect against minor plant-related hazards."
 	name = "botanist's jumpsuit"
 	icon_state = "hydroponics"
 	item_state = "g_suit"
 	permeability_coefficient = 0.50
 
 /obj/item/clothing/under/rank/janitor
-	desc = "An ancient janitorial jumpsuit."
+	desc = "It's the official uniform of the ship's janitor."
 	name = "janitor's jumpsuit"
 	icon_state = "janitor"
 	item_state = "janitor"

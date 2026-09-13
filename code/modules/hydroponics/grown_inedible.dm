@@ -35,7 +35,6 @@
 	icon = 'icons/obj/trash.dmi'
 	icon_state = "corncob"
 	item_state = "corncob"
-	matter = list(MATERIAL_BIOMATTER = 4)
 	w_class = ITEM_SIZE_SMALL
 	throwforce = 0
 	throw_speed = 4
@@ -56,7 +55,6 @@
 	icon = 'icons/obj/items.dmi'
 	icon_state = "banana_peel"
 	item_state = "banana_peel"
-	matter = list(MATERIAL_BIOMATTER = 4)
 	w_class = ITEM_SIZE_SMALL
 	throwforce = 0
 	throw_speed = 4

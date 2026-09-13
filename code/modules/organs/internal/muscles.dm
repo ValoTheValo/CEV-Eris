@@ -1,13 +1,10 @@
 /obj/item/organ/internal/muscle
 	name = "muscle"
 	icon_state = "human_muscle"
-	description_info = "Increases limb efficiency, making you run faster or use tools better"
 	desc = "Rip and tear"
 	organ_efficiency = list(OP_MUSCLE = 100)
 	price_tag = 100
-	max_damage = IORGAN_SMALL_HEALTH
-	min_bruised_damage = IORGAN_SMALL_BRUISE
-	min_broken_damage = IORGAN_SMALL_BREAK
+	max_damage = 50
 	specific_organ_size = 0.5
 	blood_req = 0.5
 	max_blood_storage = 2.5

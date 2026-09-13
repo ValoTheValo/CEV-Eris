@@ -15,7 +15,6 @@
 	max_amount = 60
 	attack_verb = list("hit", "bludgeoned", "whacked")
 	price_tag = 1
-	automerge = TRUE
 
 /obj/item/stack/rods/random
 	rand_min = 2
@@ -32,7 +31,6 @@
 	charge_costs = list(500)
 	stacktype = /obj/item/stack/rods
 	spawn_tags = null
-	automerge = FALSE
 
 /obj/item/stack/rods/attackby(obj/item/I, mob/living/user)
 	..()
@@ -58,9 +56,3 @@
 
 /obj/item/stack/rods/attack_self(mob/living/user)
 	user.open_craft_menu("Tiles")//see menu.dm
-
-//when thrown on impact, rods make an audio sound
-/obj/item/stack/rods/throw_impact(atom/hit_atom, speed)
-	..()
-	if(isfloor(hit_atom))
-		playsound(loc, 'sound/effects/metalpipe.ogg', 100, 1)

@@ -14,13 +14,14 @@
 	var i
 	for(i = 0; i < 12; i++)
 		new /obj/item/checker(src.loc)
-		new /obj/item/checker/white(src.loc)
+		new /obj/item/checker/red(src.loc)
 
-/obj/item/board/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
+/obj/item/board/examine(mob/user, var/distance = -1)
+	if(in_range(user,src))
 		user.set_machine(src)
 		interact(user)
-	..(user, extra_description)
+		return
+	..()
 
 /obj/item/board/attack_hand(mob/living/carbon/human/M as mob)
 	if(M.machine == src)
@@ -73,39 +74,39 @@ obj/item/board/attackby(obj/item/I as obj, mob/user as mob)
 		user.unset_machine()
 		return
 
-	var/list/dat = list({"
-	<html><head><style type='text/css'>
-	td,td a{height:25px;width:25px}table{border-spacing:0;border:none;border-collapse:collapse}td{text-align:center;padding:0;background-repeat:no-repeat;background-position:center center}td.light{background-color:#E4E7EA}td.dark{background-color:#848891}td.selected{background-color:#FF8566}td a{display:table-cell;text-decoration:none;position:relative;line-height:27px;height:27px;width:27px;vertical-align:middle}
-	</style></head><body><table>
-	"})
+	var/dat = "<HTML>"
+	dat += "<table border='0'>"
 	var i, stagger
 	stagger = 0 //so we can have the checkerboard effect
 	for(i=0, i<64, i++)
 		if(i%8 == 0)
 			dat += "<tr>"
 			stagger = !stagger
+		dat += "<td align='center' height='50' width='50' bgcolor="
 		if(selected == i)
-			dat += "<td class='selected'"
+			dat += "'#FF8566'>"
 		else if((i + stagger)%2 == 0)
-			dat += "<td class='dark'"
+			dat += "'#66CCFF'>"
 		else
-			dat += "<td class='light'"
+			dat += "'#252536'>"
+		if(!isobserver(user))
+			dat += "<A href='?src=\ref[src];select=[i];person=\ref[user]' style='display:block;text-decoration:none;'>"
 		if(board["[i]"])
 			var/obj/item/I = board["[i]"]
 			user << browse_rsc(board_icons["[I.icon] [I.icon_state]"],"[I.icon_state].png")
-			dat += " style='background-image:url([I.icon_state].png)'>"
+			dat += "<image src='[I.icon_state].png' style='border-style: none'>"
 		else
-			dat+= ">"
+			dat += "&nbsp;"
 
 		if(!isobserver(user))
-			dat += "<a href='byond://?src=\ref[src];select=[i];person=\ref[user]'></a>"
+			dat += "</A>"
 		dat += "</td>"
 
-	dat += "</table>"
+	dat += "</table><br>"
 
 	if(selected >= 0 && !isobserver(user))
-		dat += "<br><a href='byond://?src=\ref[src];remove=0'>Remove Selected Piece</A>"
-	user << browse(jointext(dat, null),"window=boardgame;size=250x250")
+		dat += "<br><A href='?src=\ref[src];remove=0'>Remove Selected Piece</A>"
+	user << browse(dat,"window=boardgame;size=500x500")
 	onclose(usr, "boardgame")
 
 /obj/item/board/Topic(href, href_list)
@@ -173,16 +174,6 @@ obj/item/board/attackby(obj/item/I as obj, mob/user as mob)
 	icon_state = "checker_black"
 	w_class = ITEM_SIZE_TINY
 
-/obj/item/checker/queen
-	name = "black checker queen"
-	desc = "Two black checkers stacked to form a queen. This one seems to have been glued together..."
-	icon_state = "checker_black_queen"
-
-/obj/item/checker/white
-	name = "white checker"
-	icon_state = "checker_white"
-
-/obj/item/checker/white/queen
-	name = "white checker queen"
-	desc = "Two white checkers stacked to form a queen. This one seems to have been glued together..."
-	icon_state = "checker_white_queen"
+/obj/item/checker/red
+	name = "red checker"
+	icon_state = "checker_red"

@@ -2,7 +2,6 @@
 	name = "Iriska"
 	desc = "The captain's own cat. Fat and lazy."
 	icon = 'icons/mob/iriska.dmi'
-	description_fluff = "Its said that the cat has bluespace powers, cursing anyone whom it has been angered by upon death."
 	icon_state = "iriska"
 	health = 80
 	maxHealth = 80

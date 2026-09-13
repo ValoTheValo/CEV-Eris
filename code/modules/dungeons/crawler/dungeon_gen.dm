@@ -82,20 +82,10 @@
 			lane3 += RC
 		else if(RC.roomnum <= 16)
 			lane4 += RC*/
-
-	// Listen to signal to trigger dungeon generation only when needed
-	// i.e only when teleporter to dungeon is activated
-	RegisterSignal(src, COMSIG_GENERATE_DUNGEON, PROC_REF(trigger_generation))
-
-/obj/crawler/map_maker/proc/trigger_generation(obj/rogue/teleporter/O)
-	//SIGNAL_HANDLER
-	UnregisterSignal(src, COMSIG_GENERATE_DUNGEON)
 	generate_controllers()
 	populate_starting_lane()
 	sleep(100)
 	generate_dungeon()
-	// Dungeon has been generated, send signal to teleporter
-	SEND_SIGNAL_OLD(O, COMSIG_DUNGEON_GENERATED)
 
 /obj/crawler/map_maker/proc/generate_controllers()
 	var/roomnumber = 0
@@ -321,7 +311,7 @@
 	testing("finished dungeon initialization!")
 
 	sleep(1)
-	for(var/turf/wall/W in block(locate(1, 1, z), locate(210, 146, z)))
+	for(var/turf/simulated/wall/W in block(locate(1, 1, z), locate(210, 146, z)))
 		W.update_connections(1)
 
 

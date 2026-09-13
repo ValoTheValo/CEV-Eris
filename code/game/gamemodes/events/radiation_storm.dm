@@ -58,7 +58,7 @@
 		var/area/A = get_area(C)
 		if(!A)
 			continue
-		if(!IS_SHIP_LEVEL(A.z))
+		if(!(A.z in GLOB.maps_data.station_levels))
 			continue
 		if(A.flags & AREA_FLAG_RAD_SHIELDED)
 			continue

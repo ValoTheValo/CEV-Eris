@@ -45,14 +45,14 @@
 	playsound(loc, 'sound/weapons/guns/interact/rev_cock.ogg', 75, 1)
 	bolt_open = !bolt_open
 	if(bolt_open)
-		if(length(loaded))
+		if(loaded.len)
 			if(chambered)
 				to_chat(user, SPAN_NOTICE("You snap the barrel open, ejecting [chambered]!"))
 				chambered.forceMove(get_turf(src))
 				loaded -= chambered
 				chambered = null
 			else
-				var/obj/item/ammo_casing/shell = loaded[1]
+				var/obj/item/ammo_casing/shell = loaded[loaded.len]
 				to_chat(user, SPAN_NOTICE("You snap the barrel open, ejecting [shell]!"))
 				shell.forceMove(get_turf(src))
 				loaded -= shell
@@ -86,15 +86,15 @@
 	return 0
 
 /obj/item/gun/projectile/flare_gun/shotgun
-	name = "reinforced flare gun" // slightly worse than a DB sawn off, less recoil with one hand, more with two
+	name = "reinforced flare gun"
 	desc = "Flare gun made of cheap plastic, repurposed to fire shotgun shells."
 	icon_state = "empty_r"
 	caliber = CAL_SHOTGUN
-	damage_multiplier = 0.8
-	penetration_multiplier = 0.3
+	damage_multiplier = 0.6
+	penetration_multiplier = 0.5
 	fire_sound = 'sound/weapons/guns/fire/shotgunp_fire.ogg'
 	spawn_blacklisted = TRUE
-	matter = list(MATERIAL_PLASTIC = 12, MATERIAL_STEEL = 11)
+	matter = list(MATERIAL_PLASTIC = 12, MATERIAL_STEEL = 16)
 
 /obj/item/gun/projectile/flare_gun/shotgun/update_icon()
 	..()

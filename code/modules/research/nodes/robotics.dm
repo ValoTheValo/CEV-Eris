@@ -60,15 +60,13 @@
 		/datum/design/research/item/mechfab/exosuit/sensors/light,
 		/datum/design/research/item/mechfab/exosuit/chassis/light,
 		/datum/design/research/item/mechfab/exosuit/manipulators/light,
-		/datum/design/research/item/mechfab/exosuit/propulsion/light,
-		/datum/design/research/item/mechfab/exosuit/propulsion/wheels,
-		/datum/design/research/item/mechfab/exosuit/chassis/forklift
+		/datum/design/research/item/mechfab/exosuit/propulsion/light
 	)
 
 
 /datum/technology/combat_exo_components
 	name = "Combat Exosuit Components"
-	desc = "Exosuit components and equipments designed for combat, with enhanced durability and thermal sensors."
+	desc = "Exosuit components designed for combat, with enhanced durability and thermal sensors."
 	tech_type = RESEARCH_ROBOTICS
 
 	x = 0.6
@@ -83,10 +81,26 @@
 		/datum/design/research/item/mechfab/exosuit/sensors/combat,
 		/datum/design/research/item/mechfab/exosuit/chassis/combat,
 		/datum/design/research/item/mechfab/exosuit/manipulators/combat,
-		/datum/design/research/item/mechfab/exosuit/propulsion/combat,
-		/datum/design/research/item/exosuit/shield_generator/ballistic,
-		/datum/design/research/item/exosuit/weapon/mech_blade
+		/datum/design/research/item/mechfab/exosuit/propulsion/combat
 		)
+
+/datum/technology/mech_combat_armor
+	name = "Combat Armor"
+	desc = "Exosuit combat armor plates."
+	tech_type = RESEARCH_ROBOTICS
+
+	x = 0.8
+	y = 0.6
+	icon = "mecharmor"
+
+	required_technologies = list(/datum/technology/mech_weaponry_modules)
+	required_tech_levels = list()
+	cost = 3000
+
+	unlocks_designs = list(
+		/datum/design/research/item/mechfab/exosuit/armour/combat
+	)
+
 /*
 /datum/technology/mech_gyrax_ultra
 	name = "Gygax Ultra"
@@ -106,7 +120,7 @@
 
 /datum/technology/heavy_exo_components
 	name = "Heavy Exosuit Components"
-	desc = "Exosuit components and equipments designed for pure durability, heavy and uncompromising. Their functionality leaves a lot to be desired, however."
+	desc = "Exosuit components designed for pure durability, heavy and uncompromising. Their functionality leaves a lot to be desired, however."
 	tech_type = RESEARCH_ROBOTICS
 
 	x = 0.6
@@ -120,10 +134,8 @@
 	unlocks_designs = list(
 		/datum/design/research/item/mechfab/exosuit/sensors/heavy,
 		/datum/design/research/item/mechfab/exosuit/chassis/heavy,
-		/datum/design/research/item/mechfab/exosuit/chassis/walker,
 		/datum/design/research/item/mechfab/exosuit/manipulators/heavy,
-		/datum/design/research/item/mechfab/exosuit/propulsion/heavy,
-		/datum/design/research/item/exosuit/shield_generator
+		/datum/design/research/item/mechfab/exosuit/propulsion/heavy
 	)
 
 /datum/technology/mech_propulsion_alt
@@ -190,9 +202,7 @@
 
 	unlocks_designs = list(
 		/datum/design/research/circuit/exosuit/medical,
-		/datum/design/research/item/exosuit/sleeper,
-		/datum/design/research/item/exosuit/sleeper/upgraded,
-		/datum/design/research/item/exosuit/automender
+		/datum/design/research/item/exosuit/sleeper
 	)
 
 /datum/technology/mech_utility_modules
@@ -217,15 +227,7 @@
 		/datum/design/research/item/exosuit/weapon/plasma,
 		/datum/design/research/item/mechfab/exosuit/drillbit/steel,
 		/datum/design/research/item/mechfab/exosuit/drillbit/plasteel,
-		/datum/design/research/item/mechfab/exosuit/drillbit/diamond,
-		/datum/design/research/item/exosuit/ion_thruster,
-		/datum/design/research/item/exosuit/forklift,
-		/datum/design/research/item/exosuit/fuel_generator,
-		/datum/design/research/item/exosuit/plasma_generator,
-		/datum/design/research/item/exosuit/towing_hook,
-		/datum/design/research/item/exosuit/rcd,
-		/datum/design/research/item/exosuit/toolkit,
-		/datum/design/research/item/exosuit/binoculars
+		/datum/design/research/item/mechfab/exosuit/drillbit/diamond
 	)
 
 /datum/technology/mech_teleporter_modules
@@ -242,6 +244,26 @@
 	cost = 5000
 
 	unlocks_designs = list(/datum/design/research/item/exosuit/gravity_catapult)
+
+/datum/technology/mech_util_armor
+	name = "EM-Shielded Exosuit Armour"
+	desc = "Exosuit combat armor plates reinforced EM protection."
+	tech_type = RESEARCH_ROBOTICS
+
+	x = 0.3
+	y = 0.7
+	icon = "mecharmor"
+
+	required_technologies = list(
+		/datum/technology/cheap_exo_components,
+		/datum/technology/mech_utility_modules
+	)
+	required_tech_levels = list()
+	cost = 1000
+
+	unlocks_designs = list(
+			/datum/design/research/item/mechfab/exosuit/armour/em
+		)
 
 /datum/technology/mech_weaponry_modules
 	name = "Combat Systems"
@@ -262,15 +284,12 @@
 	unlocks_designs = list(
 			/datum/design/research/circuit/exosuit/weapons,
 			/datum/design/research/item/exosuit/taser,
-			/datum/design/research/item/exosuit/weapon/ion,
-			/datum/design/research/item/exosuit/weapon/shotgun,
-			/datum/design/research/item/exosuit/weapon/sprayer,
-			/datum/design/research/item/exosuit/weapon/stunbaton
+			/datum/design/research/item/exosuit/weapon/ion
 		)
 
 /datum/technology/mech_heavy_weaponry_modules
 	name = "Advanced Weaponry"
-	desc = "Exosuit-mounted heaavy energy and ballistic weapons."
+	desc = "Exosuit-mounted heaavy energy weapons."
 	tech_type = RESEARCH_ROBOTICS
 
 	x = 0.7
@@ -283,16 +302,14 @@
 
 	unlocks_designs = list(
 			/datum/design/research/item/exosuit/weapon/laser,
-			/datum/design/research/item/exosuit/weapon/pk,
-			/datum/design/research/item/exosuit/weapon/smg
-
+			/datum/design/research/item/exosuit/weapon/pk
 		)
 
 //AI BRANCH_________________________________________________________________________________________________________________________________________________
 
 /datum/technology/cyborg_robo
 	name = "AI Robotics"
-	desc = "Positron links. Man-Machine Interface. Cyborg control systems. Artificial Inteligence mobile storages."
+	desc = "Positron links. Man-Machine Interface. Cyborg control systems. Artificial Intelegence mobile storages."
 	tech_type = RESEARCH_ROBOTICS
 
 	x = 0.5

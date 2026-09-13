@@ -79,20 +79,20 @@
 	// Good to go.
 	return TRUE
 
-/obj/item/computer_hardware/examine(mob/user, extra_description = "")
+/obj/item/computer_hardware/examine(mob/user)
+	. = ..()
 	if(damage > damage_failure)
-		extra_description += SPAN_WARNING("It seems to be severely damaged!")
+		to_chat(user, SPAN_WARNING("It seems to be severely damaged!"))
 	else if(damage > damage_malfunction)
-		extra_description += SPAN_WARNING("It seems to be damaged!")
+		to_chat(user, SPAN_WARNING("It seems to be damaged!"))
 	else if(damage)
-		extra_description += SPAN_NOTICE("It seems to be slightly damaged.")
-	..(user, extra_description)
+		to_chat(user, SPAN_NOTICE("It seems to be slightly damaged."))
 
 /obj/item/computer_hardware/drop_location()
 	return holder2 ? holder2.drop_location() : ..()
 
 // Damages the component. Contains necessary checks. Negative damage "heals" the component.
-/obj/item/computer_hardware/take_damage(amount)
+/obj/item/computer_hardware/proc/take_damage(amount)
 	damage += round(amount) 					// We want nice rounded numbers here.
 	damage = between(0, damage, max_damage)		// Clamp the value.
 

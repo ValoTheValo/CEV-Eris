@@ -1,3 +1,6 @@
+/area
+	var/datum/area_sanity/sanity
+
 /datum/area_sanity
 	var/area/owner
 	var/affect_raw = 0

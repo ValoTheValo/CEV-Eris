@@ -21,7 +21,7 @@
 	w_class = ITEM_SIZE_SMALL
 	force = WEAPON_FORCE_NORMAL
 	throwforce = WEAPON_FORCE_WEAK
-	armor_divisor = ARMOR_PEN_SHALLOW
+	armor_penetration = ARMOR_PEN_SHALLOW
 	throw_speed = 3
 	slot_flags = SLOT_BELT
 	//spawn values
@@ -32,10 +32,9 @@
 /obj/item/stack/thrown/update_icon()
 	icon_state = "[initial(icon_state)][amount]"
 
-/obj/item/stack/thrown/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
-		extra_description += "There [amount == 1 ? "is" : "are"] [amount] [amount == 1 ? singular_name : plural_name] in the stack."
-	..(user, extra_description)
+/obj/item/stack/thrown/examine(mob/user)
+	if(..(user, 1))
+		to_chat(user, "There [src.amount == 1 ? "is" : "are"] [src.amount] [src.amount == 1 ? singular_name : plural_name] in the stack.")
 
 /obj/item/stack/thrown/proc/fireAt(atom/target, mob/living/carbon/C)
 	if(amount == 1)
@@ -67,19 +66,19 @@
 	flags = CONDUCT
 	sharp = TRUE
 	edge = TRUE
-	embed_mult = 80 //MADE for embedding
+	embed_mult = 40 //MADE for embedding
 	tool_qualities = list(QUALITY_WIRE_CUTTING = 5, QUALITY_CUTTING = 5)
 	max_upgrades = 0
 	attack_verb = list("slashed", "stabbed", "sliced", "torn", "ripped", "diced", "cut")
 	hitsound = 'sound/weapons/melee/lightstab.ogg'
 	structure_damage_factor = STRUCTURE_DAMAGE_BLADE
-	matter = list(MATERIAL_PLASTEEL = 1)
-	amount = 3
+	matter = list(MATERIAL_PLASTEEL = 2)
+	amount = 1
 	max_amount = 3
 	w_class = ITEM_SIZE_SMALL
 	force = WEAPON_FORCE_NORMAL
 	throwforce = WEAPON_FORCE_NORMAL
-	armor_divisor = ARMOR_PEN_SHALLOW
+	armor_penetration = ARMOR_PEN_SHALLOW
 	slot_flags = SLOT_BELT
 	//spawn values
 	rarity_value = 8

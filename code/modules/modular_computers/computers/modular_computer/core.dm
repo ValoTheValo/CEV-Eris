@@ -68,8 +68,6 @@
 		install_default_programs()
 	if(scanner)
 		scanner.do_after_install(null, src)
-	if(enabled == 0)
-		add_statverb(/datum/statverb/fix_computer)
 	update_icon()
 	update_verbs()
 	update_name()
@@ -100,7 +98,7 @@
 		return NO_EMAG_ACT
 	else
 		computer_emagged = TRUE
-		to_chat(user, "You emag \the [src]. Its screen flickers briefly.")
+		to_chat(user, "You emag \the [src]. Its screen flick_lights briefly.")
 		return TRUE
 
 /obj/item/modular_computer/update_icon()
@@ -186,7 +184,7 @@
 		active_program = null
 	var/mob/user = usr
 	if(user && istype(user))
-		nano_ui_interact(user) // Re-open the UI on this computer. It should show the main screen now.
+		ui_interact(user) // Re-open the UI on this computer. It should show the main screen now.
 	update_icon()
 
 // Returns 0 for No Signal, 1 for Low Signal and 2 for Good Signal. 3 is for wired connection (always-on)
@@ -201,7 +199,7 @@
 		return FALSE
 	return ntnet_global.add_log(text, network_card)
 
-/obj/item/modular_computer/proc/shutdown_computer(loud = FALSE)
+/obj/item/modular_computer/proc/shutdown_computer(loud = TRUE)
 	QDEL_LIST(terminals)
 
 	kill_program(forced=TRUE)
@@ -232,7 +230,7 @@
 	autorun_program(hard_drive)
 
 	if(user)
-		nano_ui_interact(user)
+		ui_interact(user)
 
 /obj/item/modular_computer/proc/autorun_program(obj/item/computer_hardware/hard_drive/disk)
 	var/datum/computer_file/data/autorun = disk?.find_file_by_name("AUTORUN")
@@ -248,7 +246,7 @@
 	active_program = null
 	update_icon()
 	if(istype(user))
-		nano_ui_interact(user) // Re-open the UI on this computer. It should show the main screen now.
+		ui_interact(user) // Re-open the UI on this computer. It should show the main screen now.
 
 /obj/item/modular_computer/proc/run_program(prog_name, obj/item/computer_hardware/hard_drive/disk)
 	var/datum/computer_file/program/P = null
@@ -287,7 +285,7 @@
 	if(P.run_program(user))
 		active_program = P
 		all_threads.Add(P)
-		active_program.nano_ui_interact(user)
+		active_program.ui_interact(user)
 		update_uis()
 		update_icon()
 	return TRUE
@@ -308,8 +306,6 @@
 	SetName(initial(name))
 
 /obj/item/modular_computer/proc/update_uis()
-	if(active_program && istype(active_program?.nanomodule_path, /datum/nano_module/tgui))
-		return FALSE
 	if(active_program) //Should we update program ui or computer ui?
 		SSnano.update_uis(active_program)
 		if(active_program.NM)

@@ -64,8 +64,6 @@
 /obj/machinery/power/apc
 	name = "area power controller"
 	desc = "A control terminal for the area electrical systems."
-	description_info = "Controls all of this area's machinery."
-	description_antag = "Can be unlocked by pulsing the lock wire. Can also be sabotaged by inserting plasma into its cell, making it blow whenever its turned on"
 
 	icon_state = "apc0"
 	anchored = TRUE
@@ -73,6 +71,7 @@
 	req_access = list(access_engine_equip)
 	var/need_sound
 	var/area/area
+	var/areastring
 	var/obj/item/cell/large/cell
 	var/chargelevel = 0.0005  // Cap for how fast APC cells charge, as a percentage-per-tick (0.01 means cellcharge is capped to 1% per second)
 	var/start_charge = 90				// initial cell charge %
@@ -118,8 +117,6 @@
 	var/global/list/status_overlays_equipment
 	var/global/list/status_overlays_lighting
 	var/global/list/status_overlays_environ
-	/// Offsets the object by APC_PIXEL_OFFSET (defined in apc_defines.dm) pixels in the direction we want it placed in. This allows the APC to be embedded in a wall, yet still inside an area (like mapping).
-	var/offset_old
 
 /obj/machinery/power/apc/updateDialog()
 	if (stat & (BROKEN|MAINT))
@@ -164,92 +161,55 @@
 
 	return cell.drain_power(drain_check, surge, amount)
 
-/obj/machinery/power/apc/New(turf/loc, ndir, building = FALSE)
+/obj/machinery/power/apc/New(turf/loc, var/ndir, var/building=0)
 	..()
-	GLOB.apc_list += src
-
 	wires = new(src)
 
-	if(building)
+	GLOB.apc_list += src
+
+	// offset 28 pixels in direction of dir
+	// this allows the APC to be embedded in a wall, yet still inside an area
+	if (building)
+		set_dir(ndir)
+	tdir = dir		// to fix Vars bug
+	set_dir(SOUTH)
+
+	pixel_x = (tdir & 3)? 0 : (tdir == 4 ? 28 : -28)
+	pixel_y = (tdir & 3)? (tdir ==1 ? 28 : -28) : 0
+	if (building==0)
+		init()
+	else
 		area = get_area(src)
 		area.apc = src
 		opened = 1
 		operating = FALSE
-		name = "\improper [get_area_name_litteral(area, TRUE)] APC"
+		name = "[area.name] APC"
 		stat |= MAINT
 		update_icon()
-		addtimer(CALLBACK(src, PROC_REF(update)), 5)
-		set_dir(ndir)
-
-
-/obj/machinery/power/apc/Initialize(mapload)
-	. = ..()
-
-	switch(dir)
-		if(NORTH)
-			offset_old = pixel_y
-			pixel_y = 28
-		if(SOUTH)
-			offset_old = pixel_y
-			pixel_y = -28
-		if(EAST)
-			offset_old = pixel_x
-			pixel_x = 28
-		if(WEST)
-			offset_old = pixel_x
-			pixel_x = -28
-
-	tdir = dir		// to fix Vars bug
-
-	if(!mapload)
-		return
-	has_electronics = 2
-	// is starting with a power cell installed, create it and set its charge level
-	if(cell_type)
-		cell = new cell_type(src)
-		cell.charge = start_charge * cell.maxcharge / 100 // (convert percentage to actual value)
-
-	area = get_area(loc)
-	name = "\improper [get_area_name_litteral(area, TRUE)] APC"
-
-	if(area)
-		if(area.apc)
-			log_mapping("Duplicate APC created at [AREACOORD(src)]. Original at [AREACOORD(area.apc)].")
-		area.apc = src
-
-
-	addtimer(CALLBACK(src, PROC_REF(update)), 5)
-
-
-/obj/machinery/power/apc/LateInitialize()
-	. = ..()
-	
-	update_icon()
-
-	make_terminal()
 
 /obj/machinery/power/apc/Destroy()
-	GLOB.apc_list -= src
+	update()
+	area.apc = null
+	SEND_SIGNAL(area, COMSIG_AREA_APC_DELETED)
+	area.power_light = 0
+	area.power_equip = 0
+	area.power_environ = 0
+	area.power_change()
+	qdel(wires)
+	wires = null
+	qdel(terminal)
+	terminal = null
+	if(cell)
+		cell.forceMove(loc)
+		cell = null
 
 	// Malf AI, removes the APC from AI's hacked APCs list.
 	if((hacker) && (hacker.hacked_apcs) && (src in hacker.hacked_apcs))
 		hacker.hacked_apcs -= src
-	if(area)
-		area.power_light = FALSE
-		area.power_equip = FALSE
-		area.power_environ = FALSE
-		area.power_change()
-		area.apc = null
-		SEND_SIGNAL_OLD(area, COMSIG_AREA_APC_DELETED)
 
-	if(wires)
-		QDEL_NULL(wires)
-	if(cell)
-		cell.forceMove(loc)
-		cell = null
-	if(terminal)
-		qdel(terminal)
-	. = ..()
+	GLOB.apc_list -= src
+
+	return ..()
 
 /obj/machinery/power/apc/proc/energy_fail(var/duration)
 	failure_timer = max(failure_timer, duration)
@@ -263,27 +223,53 @@
 	terminal.set_dir(tdir)
 	terminal.master = src
 
-/obj/machinery/power/apc/examine(mob/user, extra_description = "")
-	if(get_dist(user, src) < 2)
+/obj/machinery/power/apc/proc/init()
+	has_electronics = 2 //installed and secured
+	// is starting with a power cell installed, create it and set its charge level
+	if(cell_type)
+		cell = new cell_type(src)
+		cell.charge = start_charge * cell.maxcharge / 100		// (convert percentage to actual value)
+
+	var/area/A = loc.loc
+
+	//if area isn't specified use current
+	if(isarea(A) && areastring == null)
+		area = A
+	else
+		area = get_area_name(areastring)
+	name = "[strip_improper(area.name)] APC"
+	area.apc = src
+	update_icon()
+
+	make_terminal()
+
+	spawn(5)
+		update()
+
+/obj/machinery/power/apc/examine(mob/user)
+	if(..(user, 1))
+		to_chat(user, "A control terminal for the area electrical systems.")
 		if(stat & BROKEN)
-			extra_description += "\nLooks broken."
-		else if(opened)
+			to_chat(user, "Looks broken.")
+			return
+		if(opened)
 			if(has_electronics && terminal)
-				extra_description += "\nThe cover is [opened==2?"removed":"open"] and the power cell is [ cell ? "installed" : "missing"]."
+				to_chat(user, "The cover is [opened==2?"removed":"open"] and the power cell is [ cell ? "installed" : "missing"].")
 			else if (!has_electronics && terminal)
-				extra_description += "\nThere are some wires but no any electronics."
+				to_chat(user, "There are some wires but no any electronics.")
 			else if (has_electronics && !terminal)
-				extra_description += "\nElectronics installed but not wired."
+				to_chat(user, "Electronics installed but not wired.")
 			else /* if (!has_electronics && !terminal) */
-				extra_description += "\nThere is no electronics nor connected wires."
+				to_chat(user, "There is no electronics nor connected wires.")
+
 		else
-			if(stat & MAINT)
-				extra_description += "\nThe cover is closed. Something wrong with it: it doesn't work."
-			else if(hacker)
-				extra_description += "\nThe cover is locked."
+			if (stat & MAINT)
+				to_chat(user, "The cover is closed. Something wrong with it: it doesn't work.")
+			else if (hacker)
+				to_chat(user, "The cover is locked.")
 			else
-				extra_description += "\nThe cover is closed."
-	..(user, extra_description)
+				to_chat(user, "The cover is closed.")
+
 
 // update the APC icon to show the three base states
 // also add overlays for indicator lights
@@ -789,7 +775,7 @@
 	if(wiresexposed && !isAI(user))
 		wires.Interact(user)
 
-	return nano_ui_interact(user)
+	return ui_interact(user)
 
 /obj/machinery/power/apc/proc/toggle_lock(mob/user)
 	if(emagged)
@@ -818,7 +804,7 @@
 	else
 		toggle_lock(user)
 
-/obj/machinery/power/apc/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/power/apc/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	if(!user)
 		return
 
@@ -894,9 +880,9 @@
 //			spawn(10)
 //				world << " [area.name] [area.power_equip]"
 	else
-		area.power_light = FALSE
-		area.power_equip = FALSE
-		area.power_environ = FALSE
+		area.power_light = 0
+		area.power_equip = 0
+		area.power_environ = 0
 //		if (area.name == "AI Chamber")
 //			world << "[area.power_equip]"
 	area.power_change()
@@ -1059,7 +1045,7 @@
 		return FALSE
 
 /obj/machinery/power/apc/Process()
-	SEND_SIGNAL_OLD(area, COMSIG_AREA_APC_OPERATING, operating)
+	SEND_SIGNAL(area, COMSIG_AREA_APC_OPERATING, operating)
 	if(stat & (BROKEN|MAINT))
 		return
 	if(!area.requires_power)
@@ -1249,15 +1235,25 @@ obj/machinery/power/apc/proc/autoset(var/val, var/on)
 	update_icon()
 	..()
 
-/obj/machinery/power/apc/take_damage(amount)
-	if(cell)
-		cell.take_damage(amount)
-	. = ..()
-	if(QDELETED(src))
-		return 0
-	if(health < maxHealth * 0.5)
-		set_broken()
-	return 0
+/obj/machinery/power/apc/ex_act(severity)
+	switch(severity)
+		if(1)
+			//set_broken() //now qdel() do what we need
+			if (cell)
+				cell.ex_act(1) // more lags woohoo
+			qdel(src)
+			return
+		if(2)
+			if (prob(50))
+				set_broken()
+				if (cell && prob(50))
+					cell.ex_act(2)
+		if(3)
+			if (prob(25))
+				set_broken()
+				if (cell && prob(25))
+					cell.ex_act(3)
+	return
 
 /obj/machinery/power/apc/disconnect_terminal()
 	if(terminal)
@@ -1266,12 +1262,13 @@ obj/machinery/power/apc/proc/autoset(var/val, var/on)
 
 /obj/machinery/power/apc/proc/set_broken()
 	// Aesthetically much better!
-	visible_message(SPAN_NOTICE("[src]'s screen flickers with warnings briefly!"))
-	visible_message(SPAN_NOTICE("[src]'s screen suddenly explodes in rain of sparks and small debris!"))
-	stat |= BROKEN
-	operating = 0
-	update_icon()
-	update()
+	visible_message(SPAN_NOTICE("[src]'s screen flick_lights with warnings briefly!"))
+	spawn(rand(2,5))
+		visible_message(SPAN_NOTICE("[src]'s screen suddenly explodes in rain of sparks and small debris!"))
+		stat |= BROKEN
+		operating = 0
+		update_icon()
+		update()
 
 // overload the lights in this APC area
 

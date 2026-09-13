@@ -29,7 +29,8 @@
 		else
 			to_chat(user, SPAN_WARNING("ERROR: Incorrect access."))*/
 
-/obj/item/clothing/accessory/bs_silk/examine(mob/user, extra_description = "")
+/obj/item/clothing/accessory/bs_silk/examine()
+	..()
 	var/s_id = silk_id != "" ? silk_id : "NOT SETTED"
-	extra_description += "<br>On small display you can notice label that mean: \"DEVICE ID: <b>[s_id]</b>\"."
-	..(user, extra_description)
+	to_chat(usr, "<br>On small display you can notice label that mean: \"DEVICE ID: <b>[s_id]</b>\".")
+	//to_chat(usr, "<br>It[removable ? " can be removed" : "'s locked by access: " + locking_access].")

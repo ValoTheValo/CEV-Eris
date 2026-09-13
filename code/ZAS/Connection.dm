@@ -49,8 +49,8 @@ Class Procs:
 
 */
 
-/connection/var/turf/A
-/connection/var/turf/B
+/connection/var/turf/simulated/A
+/connection/var/turf/simulated/B
 /connection/var/zone/zoneA
 /connection/var/zone/zoneB
 
@@ -58,7 +58,7 @@ Class Procs:
 
 /connection/var/state = 0
 
-/connection/New(turf/A, turf/B)
+/connection/New(turf/simulated/A, turf/simulated/B)
 	#ifdef ZASDBG
 	ASSERT(SSair.has_valid_zone(A))
 	//ASSERT(SSair.has_valid_zone(B))
@@ -66,7 +66,7 @@ Class Procs:
 	src.A = A
 	src.B = B
 	zoneA = A.zone
-	if(!B.is_simulated)
+	if(!istype(B))
 		mark_space()
 		edge = SSair.get_edge(A.zone,B)
 		edge.add_connection(src)
@@ -97,14 +97,13 @@ Class Procs:
 	return !(state & CONNECTION_INVALID)
 
 /connection/proc/erase()
-	if(edge)
-		edge.remove_connection(src)
+	edge.remove_connection(src)
 	state |= CONNECTION_INVALID
 	//world << "Connection Erased: [state]"
 
 /connection/proc/update()
 	//world << "Updated, \..."
-	if(!A.is_simulated)
+	if(!istype(A,/turf/simulated))
 		//world << "Invalid A."
 		erase()
 		return
@@ -119,8 +118,10 @@ Class Procs:
 	else
 		mark_direct()
 
+	var/b_is_space = !istype(B,/turf/simulated)
+
 	if(state & CONNECTION_SPACE)
-		if(B.is_simulated)
+		if(!b_is_space)
 			//world << "Invalid B."
 			erase()
 			return
@@ -130,16 +131,16 @@ Class Procs:
 				erase()
 				//world << "erased."
 				return
-			if(edge)
+			else
 				edge.remove_connection(src)
 				edge = SSair.get_edge(A.zone, B)
 				edge.add_connection(src)
-			zoneA = A.zone
+				zoneA = A.zone
 
 		//world << "valid."
 		return
 
-	else if(!B.is_simulated)
+	else if(b_is_space)
 		//world << "Invalid B."
 		erase()
 		return

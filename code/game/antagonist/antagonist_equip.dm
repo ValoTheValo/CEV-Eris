@@ -65,8 +65,6 @@
 
 	if(freq == SYND_FREQ)
 		R = new/obj/item/device/radio/headset/syndicate(H)
-	else if(freq == YARR_FREQ)
-		R = new/obj/item/device/radio/headset/pirates(H)
 	else
 		R = new/obj/item/device/radio/headset(H)
 

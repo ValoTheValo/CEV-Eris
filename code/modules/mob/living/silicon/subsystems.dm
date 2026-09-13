@@ -64,39 +64,45 @@
 	SSS.Click(given)
 	return TRUE
 
-/mob/living/silicon/proc/show_crew_sensors()
+/mob/living/silicon/verb/show_crew_sensors()
 	set name = "Show Crew Sensors"
 	set desc = "Track crew gps beacons"
 
 	open_subsystem(/datum/nano_module/crew_monitor)
 
-/mob/living/silicon/proc/show_email()
+/mob/living/silicon/verb/show_email()
 	set name = "Show Emails"
 	set desc = "Open email subsystem"
 
 	open_subsystem(/datum/nano_module/email_client)
 
-/mob/living/silicon/proc/show_alerts()
+/mob/living/silicon/verb/show_alerts()
 	set name = "Show Alerts"
 	set desc = "Open alerts monitor system"
 	open_subsystem(/datum/nano_module/alarm_monitor/all)
 
-/mob/living/silicon/proc/activate_subsystem()
+/mob/living/silicon/verb/activate_subsystem()
 	set name = "Subsystems"
 	set desc = "Activates the given subsystem"
 	set category = "Silicon Commands"
 
 	var/subsystem = input(src, "Choose a sybsystem:", "Subsystems") as null|anything in silicon_subsystems_by_name
 	var/stat_silicon_subsystem/SSS = silicon_subsystems_by_name[subsystem]
-
+	
 	if(istype(SSS))
 		SSS.Click()
 
-/mob/living/silicon/get_status_tab_items()
+/mob/living/silicon/Stat()
 	. = ..()
+	if(!.)
+		return
+	if(!silicon_subsystems.len)
+		return
+	if(!statpanel("Subsystems"))
+		return
 	for(var/subsystem_type in silicon_subsystems)
 		var/stat_silicon_subsystem/SSS = silicon_subsystems[subsystem_type]
-		. += list(list(SSS.subsystem.name))
+		stat(SSS)
 
 /mob/living/silicon/proc/get_subsystem_from_path(subsystem_type)
 	var/stat_silicon_subsystem/SSS = silicon_subsystems[subsystem_type]
@@ -127,6 +133,6 @@
 
 /stat_silicon_subsystem/Click(var/mob/given = usr)
 	if (istype(given))
-		subsystem.nano_ui_interact(given, state = ui_state)
+		subsystem.ui_interact(given, state = ui_state)
 	else
-		subsystem.nano_ui_interact(usr, state = ui_state)
+		subsystem.ui_interact(usr, state = ui_state)

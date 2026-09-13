@@ -7,18 +7,18 @@
 	dir = 4;
 	tag = "icon-railing0 (EAST)"
 	},
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "c" = (
 /obj/spawner/scrap/beacon/dense,
-/turf/floor/tiled/techmaint/airless,
+/turf/simulated/floor/tiled/techmaint/airless,
 /area/template_noop)
 "d" = (
-/turf/wall/reinforced,
+/turf/simulated/wall/r_wall,
 /area/template_noop)
 "e" = (
 /obj/spawner/pack/machine,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "f" = (
 /obj/structure/railing{
@@ -26,42 +26,42 @@
 	tag = "icon-railing0 (EAST)"
 	},
 /obj/structure/railing,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "g" = (
 /obj/structure/railing,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "h" = (
-/turf/floor/tiled/techmaint/airless,
+/turf/simulated/floor/tiled/techmaint/airless,
 /area/template_noop)
 "i" = (
 /obj/structure/catwalk,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "j" = (
 /obj/structure/catwalk,
 /obj/spawner/traps/low_chance,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "k" = (
 /obj/machinery/door/airlock/maintenance_engineering{
 	name = "Engineering Maintenance";
 	req_access = list(10)
 	},
-/turf/floor/tiled/techmaint_cargo/airless,
+/turf/simulated/floor/tiled/techmaint_cargo/airless,
 /area/template_noop)
 "l" = (
 /obj/structure/catwalk,
 /obj/spawner/junk,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "m" = (
 /obj/structure/catwalk,
 /obj/structure/sign/atmos_o2{
 	pixel_x = -32
 	},
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 "n" = (
 /obj/structure/lattice,
@@ -69,7 +69,7 @@
 /area/template_noop)
 "o" = (
 /obj/structure/girder,
-/turf/floor/plating/under/airless,
+/turf/simulated/floor/plating/under/airless,
 /area/template_noop)
 
 (1,1,1) = {"

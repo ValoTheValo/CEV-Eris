@@ -109,7 +109,7 @@
 		return
 
 	else if(src.dirty==100) // The microwave is all dirty so can't be used!
-		if(istype(I, /obj/item/soap) || istype(I, /obj/item/reagent_containers/glass/rag)) // If they're trying to clean it then let them
+		if(istype(I, /obj/item/reagent_containers/spray/cleaner)) // If they're trying to clean it then let them
 			user.visible_message( \
 				SPAN_NOTICE("\The [user] starts to clean the [src]."), \
 				SPAN_NOTICE("You start to clean the [src].") \
@@ -126,7 +126,6 @@
 		else //Otherwise bad luck!!
 			to_chat(user, SPAN_WARNING("It's dirty!"))
 			return 1
-
 	else if(is_type_in_list(I,acceptable_items))
 		if(length(contents) >= max_n_of_items)
 			to_chat(user, SPAN_WARNING("This [src] is full of ingredients, you cannot put more."))
@@ -147,7 +146,6 @@
 				SPAN_NOTICE("\The [user] has added \the [I] to \the [src]."), \
 				SPAN_NOTICE("You add \the [I] to \the [src]."))
 			return
-
 	else if(istype(I,/obj/item/reagent_containers/glass) || \
 	        istype(I,/obj/item/reagent_containers/food/drinks) || \
 	        istype(I,/obj/item/reagent_containers/food/condiment) \
@@ -159,7 +157,6 @@
 				to_chat(user, SPAN_WARNING("Your [I] contains components unsuitable for cookery."))
 				return 1
 		return
-
 	if(QUALITY_BOLT_TURNING in I.tool_qualities)
 		user.visible_message( \
 		"<span class='notice'>\The [user] begins [src.anchored ? "unsecuring" : "securing"] the [src].</span>", \
@@ -171,8 +168,8 @@
 			"<span class='notice'>You [src.anchored ? "unsecure" : "secure"] the [src].</span>"
 			)
 			src.anchored = !src.anchored
-
 	else
+
 		to_chat(user, SPAN_WARNING("You have no idea what you can cook with this [I]."))
 	..()
 	src.updateUsrDialog()
@@ -247,8 +244,8 @@
 		else
 			dat = {"<b>Ingredients:</b><br>[dat]"}
 		dat += {"<HR><BR>\
-<a href='byond://?src=\ref[src];action=cook'>Turn on!<BR>\
-<a href='byond://?src=\ref[src];action=dispose'>Eject ingredients!<BR>\
+<A href='?src=\ref[src];action=cook'>Turn on!<BR>\
+<A href='?src=\ref[src];action=dispose'>Eject ingredients!<BR>\
 "}
 
 	user << browse("<HEAD><TITLE>[src] Controls</TITLE></HEAD><TT>[dat]</TT>", "window=[src]")
@@ -408,7 +405,7 @@
 	icon = 'icons/obj/kitchen.dmi'
 	icon_state = "barrelfire"
 	desc = "A fire in an old barrel. Perfect for campouts in the far corners of the ship."
-	use_power = NO_POWER_USE
+	use_power = FALSE
 	idle_power_usage = 0
 	active_power_usage = 0
 	dinger = FALSE

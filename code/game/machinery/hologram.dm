@@ -56,9 +56,6 @@ var/const/HOLOPAD_MODE = RANGE_BASED
 /obj/machinery/hologram/holopad/New()
 	..()
 	desc = "A floor-mounted device for projecting holographic images. Its ID is '[loc.loc]'"
-
-/obj/machinery/hologram/holopad/LateInitialize()
-	. = ..()
 	add_hearing()
 
 /obj/machinery/hologram/holopad/Destroy()
@@ -87,7 +84,7 @@ var/const/HOLOPAD_MODE = RANGE_BASED
 				var/area/area = get_area(src)
 				for(var/mob/living/silicon/ai/AI in GLOB.living_mob_list)
 					if(!AI.client)	continue
-					to_chat(AI, "<span class='info'>Your presence is requested at <a href='byond://?src=\ref[AI];jumptoholopad=\ref[src]'>\the [area]</a>.</span>")
+					to_chat(AI, "<span class='info'>Your presence is requested at <a href='?src=\ref[AI];jumptoholopad=\ref[src]'>\the [area]</a>.</span>")
 			else
 				to_chat(user, SPAN_NOTICE("A request for AI presence was already sent recently."))
 		if("Holocomms")
@@ -98,7 +95,7 @@ var/const/HOLOPAD_MODE = RANGE_BASED
 				last_request = world.time
 				var/list/holopadlist = list()
 				for(var/obj/machinery/hologram/holopad/H in GLOB.machines)
-					if(IS_SHIP_LEVEL(H.z) && H.operable())
+					if(isStationLevel(H.z) && H.operable())
 						holopadlist["[H.loc.loc.name]"] = H	//Define a list and fill it with the area of every holopad in the world
 				holopadlist = sortAssoc(holopadlist)
 				var/temppad = input(user, "Which holopad would you like to contact?", "holopad list") as null|anything in holopadlist
@@ -241,8 +238,9 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	var/obj/effect/overlay/hologram = new(T)//Spawn a blank effect at the location.
 	if(caller_id)
 		var/icon/tempicon = new
-		var/datum/computer_file/report/crew_record/t = get_crewmember_record(caller_id.name)
-		tempicon = t.photo_front
+		for(var/datum/data/record/t in data_core.locked)
+			if(t.fields["name"]==caller_id.name)
+				tempicon = t.fields["image"]
 		hologram.overlays += getHologramIcon(icon(tempicon)) // Add the callers image as an overlay to keep coloration!
 	else
 		hologram.overlays += A.holo_icon // Add the AI's configured holo Icon
@@ -343,6 +341,19 @@ For the other part of the code, check silicon say.dm. Particularly robot talk.*/
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 5
 	active_power_usage = 100
+
+//Destruction procs.
+/obj/machinery/hologram/ex_act(severity)
+	switch(severity)
+		if(1)
+			qdel(src)
+		if(2)
+			if (prob(50))
+				qdel(src)
+		if(3)
+			if (prob(5))
+				qdel(src)
+	return
 
 /obj/machinery/hologram/holopad/Destroy()
 	for (var/mob/living/master in masters)

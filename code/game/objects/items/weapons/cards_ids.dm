@@ -66,7 +66,6 @@
 /obj/item/card/emag
 	desc = "A card with a magnetic strip attached to some circuitry."
 	name = "cryptographic sequencer"
-	description_antag = "This item has 10 by default. Emagging turrets turns them lethal to everyone. Emagging a door opens it and bolts it. Emagging a non-sentient robot turns them hostile. Emagging a cyborg forces them to obey you. Emagging an APC lets only you acces it."
 	icon_state = "emag"
 	item_state = "card-id"
 	origin_tech = list(TECH_MAGNET = 2, TECH_COVERT = 2)
@@ -120,17 +119,17 @@ var/const/NO_EMAG_ACT = -50
 	var/formal_name_prefix
 	var/formal_name_suffix
 
-/obj/item/card/id/examine(mob/user, extra_description = "")
-	set src in oview(1) // TODO: See if this could be safely removed --KIROV
-	if(get_dist(user, src) < 2)
-		show(user)
-		extra_description += desc
-		extra_description += text("\n\icon[src] [name]: The current assignment on the card is [assignment].")
-		extra_description += "\nThe blood type on the card is [blood_type]."
-		extra_description += "\nThe DNA hash on the card is [dna_hash]."
-		extra_description += "\nThe fingerprint hash on the card is [fingerprint_hash]."
+/obj/item/card/id/examine(mob/user)
+	set src in oview(1)
+	if(in_range(usr, src))
+		show(usr)
+		to_chat(usr, desc)
+		to_chat(usr, text("\icon[] []: The current assignment on the card is [].", src, src.name, src.assignment))
+		to_chat(usr, "The blood type on the card is [blood_type].")
+		to_chat(usr, "The DNA hash on the card is [dna_hash].")
+		to_chat(usr, "The fingerprint hash on the card is [fingerprint_hash].")
 	else
-		extra_description += SPAN_WARNING("It is too far away.")
+		to_chat(usr, SPAN_WARNING("It is too far away."))
 
 /obj/item/card/id/proc/prevent_tracking()
 	return 0
@@ -141,6 +140,7 @@ var/const/NO_EMAG_ACT = -50
 		user << browse_rsc(side, "side.png")
 	var/datum/browser/popup = new(user, "idcard", name, 600, 250)
 	popup.set_content(dat())
+	popup.set_title_image(usr.browse_rsc_icon(src.icon, src.icon_state))
 	popup.open()
 	return
 
@@ -148,8 +148,8 @@ var/const/NO_EMAG_ACT = -50
 	name = "[src.registered_name]'s ID Card ([src.assignment])"
 
 /obj/item/card/id/proc/set_id_photo(var/mob/M)
-	front = getFlatIcon(M, SOUTH)
-	side = getFlatIcon(M, WEST)
+	front = getFlatIcon(M, SOUTH, always_use_defdir = 1)
+	side = getFlatIcon(M, WEST, always_use_defdir = 1)
 
 /mob/proc/set_id_info(var/obj/item/card/id/id_card)
 	id_card.age = 0
@@ -219,7 +219,6 @@ var/const/NO_EMAG_ACT = -50
 	item_state = "tdgreen"
 	assignment = "Synthetic"
 	spawn_tags = null
-	bad_type = /obj/item/card/id/synthetic
 
 /obj/item/card/id/synthetic/New()
 	access = get_all_station_access() + access_synth
@@ -329,18 +328,3 @@ var/const/NO_EMAG_ACT = -50
 
 /obj/item/card/id/blankwhite
 	icon_state = "id_blankwhite"
-
-/obj/item/card/id/randomassistant
-
-/obj/item/card/id/randomassistant/Initialize()
-	. = ..()
-	age = num2text(rand(18, 100))
-	var/datum/job_flavor/flavortype = pick(subtypesof(/datum/job_flavor/assistant))
-	assignment = initial(flavortype.title)
-	access = list(access_maint_tunnels)
-	sex = capitalize(pick(MALE, FEMALE))
-	registered_name = addtext(random_first_name(sex), " ", random_last_name()) // Is this faster than two concats? Probably!
-	dna_hash = sha1("A"+registered_name) // Something is subtly wrong with these IDs
-	fingerprint_hash = md5("A"+registered_name)
-	blood_type = pick(GLOB.blood_types)
-	update_name()

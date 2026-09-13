@@ -4,13 +4,14 @@
 	var/title = "NOPE"
 	var/list/access = list()				// Useful for servers which either have fewer players, so each person needs to fill more than one role, or servers which like to give more access, so players can't hide forever in their super secure departments (I'm looking at you, chemistry!)
 	var/list/cruciform_access = list()		// Assign this access into cruciform if target has it
-	var/security_clearance = CLEARANCE_NONE	// Cruciform-specific access type, used by Neotheology doors
+	var/security_clearance = CLEARANCE_NONE	// Cruciform-specific access type, used by neotheologian doors
 	var/list/software_on_spawn = list()		// Defines the software files that spawn on tablets and labtops
 	var/list/core_upgrades = list()			// Defines the upgrades that would be installed into core implant on spawn, if any.
 	var/flag = NONE							// Bitflags for the job
 	var/department_flag = NONE
 	var/faction = "None"					// Players will be allowed to spawn in as jobs that are set to "Station"
 	var/total_positions = 0					// How many players can be this job
+	var/spawn_positions = 0					// How many players can spawn in as this job
 	var/current_positions = 0				// How many players have this job
 	var/supervisors							// Supervisors, who this person answers to directly
 	var/selection_color = "#ffffff"			// Selection screen color
@@ -95,7 +96,7 @@
 		return
 
 	//give them an account in the station database
-	if(H.job == ASSISTANT_TITLE) // Vagabound do not get an account.
+	if(H.job == "Vagabond") // Vagabound do not get an account.
 		H.mind.store_memory("As a freelancer you do not have a bank account.")
 		return
 	var/species_modifier = (H.species ? economic_species_modifier[H.species.type] : 2)

@@ -5,20 +5,17 @@
 
 /obj/item/rig/merc
 	name = "crimson hardsuit control module"
-	desc = "A blood-red hardsuit featuring some fairly illegal technology. Advanced armor plating can last through extended firefights."
+	desc = "A blood-red hardsuit featuring some fairly illegal technology."
 	icon_state = "merc_rig"
 	suit_type = "crimson hardsuit"
 	armor = list(
-		melee = 8,
-		bullet = 10,
-		energy = 5,
-		bomb = 200,
+		melee = 50,
+		bullet = 60,
+		energy = 40,
+		bomb = 75,
 		bio = 100,
 		rad = 50
 	)
-	ablative_max = 12
-	ablation = ABLATION_DURABLE
-
 	drain = 3.5
 	offline_vision_restriction = 1
 
@@ -36,6 +33,8 @@
 		/obj/item/rig_module/fabricator/energy_net,
 		/obj/item/rig_module/storage
 		)
+	stiffness = 0
+	obscuration = 0
 
 //Has most of the modules removed
 /obj/item/rig/merc/empty

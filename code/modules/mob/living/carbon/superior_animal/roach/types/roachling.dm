@@ -6,13 +6,11 @@
 	turns_per_move = 3
 	maxHealth = 10
 	health = 10
-	move_to_delay = 3
+	move_to_delay = 2
 
 	melee_damage_lower = 1
 	melee_damage_upper = 3
 	spawn_blacklisted = TRUE
-
-	mob_size = MOB_SMALL * 0.8 // 8
 
 	meat_amount = 1
 
@@ -34,7 +32,7 @@
 					spawn_type = /mob/living/carbon/superior_animal/roach/fuhrer
 			else
 				spawn_type = /obj/spawner/mob/roaches
-
+			
 			if (ispath(spawn_type, /obj/spawner))
 				new spawn_type(src.loc, src, list("friends" = src.friends.Copy()))
 			else if(ispath(spawn_type, /mob))

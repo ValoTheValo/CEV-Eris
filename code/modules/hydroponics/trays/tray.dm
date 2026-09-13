@@ -1,14 +1,11 @@
 /obj/machinery/portable_atmospherics/hydroponics
 	name = "hydroponics tray"
 	icon = 'icons/obj/hydroponics_machines.dmi'
-	description_info = "The lid can be toggled to contain the atmosphere and control the luminosity"
-	description_antag = "Can be used to grow plants with lethal poison inside, like death berries"
 	icon_state = "hydrotray"
 	density = TRUE
 	anchored = TRUE
 	reagent_flags = OPENCONTAINER
 	volume = 100
-	circuit = /obj/item/electronics/circuitboard/hydroponics
 
 	var/mechanical = TRUE         // Set to 0 to stop it from drawing the alert lights.
 	var/base_name = "tray"
@@ -33,8 +30,7 @@
 	var/tray_light = 1         // Supplied lighting.
 
 	// Mechanical concerns.
-	health = 0             // Plant health.
-	maxHealth = 0
+	var/health = 0             // Plant health.
 	var/lastproduce = 0        // Last time tray was harvested
 	var/lastcycle = 0          // Cycle timing/tracking var.
 	var/cycledelay = 150       // Delay per cycle.
@@ -58,8 +54,7 @@
 		"pacid" =           3,
 		"plantbgone" =      3,
 		"cryoxadone" =     -3,
-		"radium" =          2,
-		"biomatter" =      -1
+		"radium" =          2
 		)
 	var/global/list/nutrient_reagents = list(
 		"milk" =            0.1,
@@ -89,8 +84,7 @@
 	var/global/list/pestkiller_reagents = list(
 		"sugar" =           2,
 		"diethylamine" =   -2,
-		"adminordrazine" = -5,
-		"biomatter" =      -1
+		"adminordrazine" = -5
 		)
 	var/global/list/water_reagents = list(
 		"water" =           1,
@@ -101,7 +95,6 @@
 		"phosphorus" =     -0.5,
 		"water" =           1,
 		"sodawater" =       1,
-		"biomatter" =		0.5
 		)
 
 	// Beneficial reagents also have values for modifying yield_mod and mut_mod (in that order).
@@ -121,21 +114,18 @@
 		"radium" =         list( -1.5,  0,   0.2),
 		"adminordrazine" = list(  1,    1,   1  ),
 		"robustharvest" =  list(  0,    0.2, 0  ),
-		"left4zed" =       list(  0,    0,   0.2),
-		"biomatter" =      list(  0.1,  0.1, 0.1)
+		"left4zed" =       list(  0,    0,   0.2)
 		)
 
 	// Mutagen list specifies minimum value for the mutation to take place, rather
 	// than a bound as the lists above specify.
 	var/global/list/mutagenic_reagents = list(
-		"radium" =    8,
-		"mutagen" =   15,
-		"biomatter" = 4
+		"radium" =  8,
+		"mutagen" = 15
 		)
 
 	var/global/list/potency_reagents = list(
-		"diethylamine" =    1,
-		"biomatter" =       0.5
+		"diethylamine" =    1
 	)
 
 /obj/machinery/portable_atmospherics/hydroponics/AltClick()
@@ -581,52 +571,53 @@
 	else if(dead)
 		remove_dead(user)
 
-/obj/machinery/portable_atmospherics/hydroponics/examine(mob/user, extra_description = "")
-	if(seed)
-		extra_description += SPAN_NOTICE("[seed.display_name] are growing here.")
+/obj/machinery/portable_atmospherics/hydroponics/examine()
+	..()
+	if(!seed)
+		to_chat(usr, "[src] is empty.")
+		return
 
-		if(get_dist(user, src) < 2)
-			extra_description += "Water: [round(waterlevel,0.1)]/100"
-			extra_description += "Nutrient: [round(nutrilevel,0.1)]/10"
+	to_chat(usr, SPAN_NOTICE("[seed.display_name] are growing here."))
 
-		if(weedlevel >= 5)
-			extra_description += "\The [src] is <span class='danger'>infested with weeds</span>!"
-		if(pestlevel >= 5)
-			extra_description += "\The [src] is <span class='danger'>infested with tiny worms</span>!"
+	if(!Adjacent(usr))
+		return
 
-		if(dead)
-			extra_description += SPAN_DANGER("The plant is dead.")
-		else if(health <= (seed.get_trait(TRAIT_ENDURANCE)/ 2))
-			extra_description += "\nThe plant looks [SPAN_DANGER("unhealthy")]."
+	to_chat(usr, "Water: [round(waterlevel,0.1)]/100")
+	to_chat(usr, "Nutrient: [round(nutrilevel,0.1)]/10")
 
-		if(mechanical)
-			var/turf/T = loc
-			var/datum/gas_mixture/environment
+	if(weedlevel >= 5)
+		to_chat(usr, "\The [src] is <span class='danger'>infested with weeds</span>!")
+	if(pestlevel >= 5)
+		to_chat(usr, "\The [src] is <span class='danger'>infested with tiny worms</span>!")
 
-			if(closed_system && (connected_port || holding))
-				environment = air_contents
+	if(dead)
+		to_chat(usr, SPAN_DANGER("The plant is dead."))
+	else if(health <= (seed.get_trait(TRAIT_ENDURANCE)/ 2))
+		to_chat(usr, "The plant looks <span class='danger'>unhealthy</span>.")
 
-			if(!environment)
-				if(istype(T))
-					environment = T.return_air()
+	if(mechanical)
+		var/turf/T = loc
+		var/datum/gas_mixture/environment
 
-			if(!environment) //We're in a crate or nullspace, bail out.
-				return
+		if(closed_system && (connected_port || holding))
+			environment = air_contents
 
-			var/light_string
-			if(closed_system && mechanical)
-				light_string = "that the internal lights are set to [tray_light] lumens"
-			else
-				var/light_available
-				light_available = round((T.get_lumcount()*10)-5)
-				light_string = "a light level of [light_available] lumens"
+		if(!environment)
+			if(istype(T))
+				environment = T.return_air()
 
-			extra_description += "\nThe tray's sensor suite is reporting [light_string] and a temperature of [environment.temperature]K."
-	else
-		extra_description += "[src] is empty."
-	
-	..(user, extra_description)
+		if(!environment) //We're in a crate or nullspace, bail out.
+			return
 
+		var/light_string
+		if(closed_system && mechanical)
+			light_string = "that the internal lights are set to [tray_light] lumens"
+		else
+			var/light_available
+			light_available = round((T.get_lumcount()*10)-5)
+			light_string = "a light level of [light_available] lumens"
+
+		to_chat(usr, "The tray's sensor suite is reporting [light_string] and a temperature of [environment.temperature]K.")
 
 /obj/machinery/portable_atmospherics/hydroponics/verb/close_lid_verb()
 	set name = "Toggle Tray Lid"
@@ -643,10 +634,3 @@
 	closed_system = !closed_system
 	to_chat(user, "You [closed_system ? "close" : "open"] the tray's lid.")
 	update_icon()
-
-/obj/item/electronics/circuitboard/hydroponics
-	name = T_BOARD("hydroponics tray")
-	build_path = /obj/machinery/portable_atmospherics/hydroponics
-	board_type = "machine"
-	req_components = list(
-	)

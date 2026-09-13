@@ -2,7 +2,7 @@
 /obj/machinery/computer/shuttle_control/explore
 	name = "general shuttle control console"
 
-/obj/machinery/computer/shuttle_control/explore/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/computer/shuttle_control/explore/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data[0]
 	var/datum/shuttle/autodock/overmap/shuttle = SSshuttle.shuttles[shuttle_tag]
 	if (!istype(shuttle))
@@ -76,3 +76,19 @@
 			"destination_name" = shuttle.get_destination_name(),
 			"can_pick" = shuttle.moving_status == SHUTTLE_IDLE,
 		)
+
+/obj/machinery/computer/shuttle_control/explore/handle_topic_href(var/datum/shuttle/autodock/overmap/shuttle, var/list/href_list)
+	if((. = ..()) != null)
+		return
+
+	if(href_list["pick"])
+		var/list/possible_d = shuttle.get_possible_destinations()
+		var/D
+		if(possible_d.len)
+			D = input("Choose shuttle destination", "Shuttle Destination") as null|anything in possible_d
+		else
+			to_chat(usr, "<span class='warning'>No valid landing sites in range.</span>")
+		possible_d = shuttle.get_possible_destinations()
+		if(CanInteract(usr,GLOB.default_state) && (D in possible_d))
+			shuttle.set_destination(possible_d[D])
+		return TOPIC_REFRESH

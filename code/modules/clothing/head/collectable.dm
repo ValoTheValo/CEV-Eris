@@ -104,6 +104,7 @@
 	desc = "The fur feels... a bit too realistic."
 	icon_state = "kitty"
 	body_parts_covered = 0
+	style = STYLE_NEG_HIGH//no.
 
 /obj/item/clothing/head/collectable/rabbitears
 	name = "collectable rabbit ears"

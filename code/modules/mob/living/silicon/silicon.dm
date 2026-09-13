@@ -2,7 +2,6 @@
 	gender = NEUTER
 	voice_name = "synthesized voice"
 	bad_type = /mob/living/silicon
-	tts_seed = "Robot_1"
 	var/syndicate = 0
 	var/const/MAIN_CHANNEL = "Main Frequency"
 	var/lawchannel = MAIN_CHANNEL // Default channel on which to state laws
@@ -36,8 +35,6 @@
 	#define SEC_HUD 1 //Security HUD mode
 	#define MED_HUD 2 //Medical HUD mode
 	mob_classification = CLASSIFICATION_SYNTHETIC
-
-	injury_type = INJURY_TYPE_UNLIVING // Has no soft vitals, but also contains delicate electronics
 
 /mob/living/silicon/Initialize()
 	GLOB.silicon_mob_list |= src
@@ -85,7 +82,8 @@
 			take_organ_damage(0,10,emp=TRUE)
 			confused = (min(confused + 2, 30))
 //	flick("noise", flash)
-	flash(0, FALSE , FALSE , FALSE)
+	if (HUDtech.Find("flash"))
+		flick("noise", HUDtech["flash"])
 	to_chat(src, SPAN_DANGER("<B>*BZZZT*</B>"))
 	to_chat(src, SPAN_DANGER("Warning: Electromagnetic pulse detected."))
 	..()
@@ -134,17 +132,39 @@
 
 /proc/islinked(var/mob/living/silicon/robot/bot, var/mob/living/silicon/ai/ai)
 	if(!istype(bot) || !istype(ai))
-		return FALSE
-	if(bot.connected_ai == ai)
-		return TRUE
-	return FALSE
+		return 0
+	if (bot.connected_ai == ai)
+		return 1
+	return 0
 
-/mob/living/silicon/get_status_tab_items()
-	. = ..()
+
+// this function shows the health of the AI in the Status panel
+/mob/living/silicon/proc/show_system_integrity()
 	if(!stat)
-		. += list(list("System integrity: [round((health/maxHealth)*100)]%"))
+		stat(null, text("System integrity: [round((health/maxHealth)*100)]%"))
 	else
-		. += list(list("Systems nonfunctional"))
+		stat(null, text("Systems nonfunctional"))
+
+
+// This is a pure virtual function, it should be overwritten by all subclasses
+/mob/living/silicon/proc/show_malf_ai()
+	return 0
+
+// this function displays the shuttles ETA in the status panel if the shuttle has been called
+/mob/living/silicon/proc/show_emergency_shuttle_eta()
+	if(evacuation_controller)
+		var/eta_status = evacuation_controller.get_status_panel_eta()
+		if(eta_status)
+			stat(null, eta_status)
+
+
+// This adds the basic clock, shuttle recall timer, and malf_ai info to all silicon lifeforms
+/mob/living/silicon/Stat()
+	if(statpanel("Status"))
+		show_emergency_shuttle_eta()
+		show_system_integrity()
+		show_malf_ai()
+	. = ..()
 
 //can't inject synths
 /mob/living/silicon/can_inject(var/mob/user, var/error_msg, var/target_zone)
@@ -174,6 +194,30 @@
 
 	..(rem_language)
 	speech_synthesizer_langs -= removed_language
+
+/mob/living/silicon/check_languages()
+	set name = "Check Known Languages"
+	set category = "IC"
+	set src = usr
+
+	var/dat = "<b><font size = 5>Known Languages</font></b><br/><br/>"
+
+	if(default_language)
+		dat += "Current default language: [default_language] - <a href='byond://?src=\ref[src];default_lang=reset'>reset</a><br/><br/>"
+
+	for(var/datum/language/L in languages)
+		if(!(L.flags & NONGLOBAL))
+			var/default_str
+			if(L == default_language)
+				default_str = " - default - <a href='byond://?src=\ref[src];default_lang=reset'>reset</a>"
+			else
+				default_str = " - <a href='byond://?src=\ref[src];default_lang=\ref[L]'>set default</a>"
+
+			var/synth = (L in speech_synthesizer_langs)
+			dat += "<b>[L.name] ([get_language_prefix()][L.key])</b>[synth ? default_str : null]<br/>Speech Synthesizer: <i>[synth ? "YES" : "NOT SUPPORTED"]</i><br/>[L.desc]<br/><br/>"
+
+	src << browse(dat, "window=checklanguage")
+	return
 
 /mob/living/silicon/proc/toggle_sensor_mode()
 	var/sensor_type = input("Please select sensor type.", "Sensor Integration", null) in list("Security", "Medical","Disable")
@@ -205,11 +249,30 @@
 /mob/living/silicon/binarycheck()
 	return 1
 
-/mob/living/silicon/explosion_act(target_power, explosion_handler/handler)
-	adjustBruteLoss(target_power/2)
-	adjustFireLoss(target_power/2)
+/mob/living/silicon/ex_act(severity)
+	if(!blinded)
+		if (HUDtech.Find("flash"))
+			flick("flash", HUDtech["flash"])
+
+	switch(severity)
+		if(1)
+			if (stat != 2)
+				adjustBruteLoss(100)
+				adjustFireLoss(100)
+				if(!anchored)
+					gib()
+		if(2)
+			if (stat != 2)
+				adjustBruteLoss(60)
+				adjustFireLoss(60)
+		if(3)
+			if (stat != 2)
+				adjustBruteLoss(30)
+		if(4)
+			if (stat != 2)
+				adjustBruteLoss(15)
+
 	updatehealth()
-	return 0
 
 /mob/living/silicon/proc/receive_alarm(var/datum/alarm_handler/alarm_handler, var/datum/alarm/alarm, was_raised)
 	if(!next_alarm_notice)
@@ -266,7 +329,7 @@
 /mob/living/silicon/ai/raised_alarm(var/datum/alarm/A)
 	var/cameratext = ""
 	for(var/obj/machinery/camera/C in A.cameras())
-		cameratext += "[(cameratext == "")? "" : "|"]<a href='byond://?src=\ref[src];switchcamera=\ref[C]'>[C.c_tag]</A>"
+		cameratext += "[(cameratext == "")? "" : "|"]<A HREF='?src=\ref[src];switchcamera=\ref[C]'>[C.c_tag]</A>"
 	to_chat(src, "[A.alarm_name()]! ([(cameratext)? cameratext : "No Camera"])")
 
 /mob/living/silicon/proc/is_malf_or_contractor()
