@@ -17,8 +17,7 @@
 	if(id_tag != signal.data["tag"] || !signal.data["command"]) return
 
 	cur_command = signal.data["command"]
-	spawn()
-		execute_current_command()
+	execute_current_command()
 
 /obj/machinery/door/airlock/proc/execute_current_command()
 	if(operating)
@@ -33,7 +32,7 @@
 		cur_command = null
 		return TRUE
 	if(!completing)
-		addtimer(CALLBACK(src , .proc/execute_current_command), 2 SECONDS) // Fuck it , try again.
+		addtimer(CALLBACK(src , PROC_REF(execute_current_command)), 2 SECONDS) // Fuck it , try again.
 		completing = TRUE
 	return FALSE
 
@@ -53,17 +52,13 @@
 
 		if("secure_open")
 			unlock()
-
-			sleep(2)
 			open()
-
 			lock()
 
 		if("secure_close")
 			unlock()
 			close()
 			lock()
-			sleep(2)
 
 	send_status()
 
@@ -129,27 +124,6 @@
 		frequency = new_frequency
 		radio_connection = SSradio.add_object(src, frequency, RADIO_AIRLOCK)
 
-
-/obj/machinery/door/airlock/Initialize()
-	. = ..()
-	if(frequency)
-		set_frequency(frequency)
-
-	//wireless connection
-	if(_wifi_id)
-		wifi_receiver = new(_wifi_id, src)
-
-	update_icon()
-
-/obj/machinery/door/airlock/New()
-	..()
-
-	set_frequency(frequency)
-
-/obj/machinery/door/airlock/Destroy()
-	if(frequency)
-		SSradio.remove_object(src,frequency)
-	. = ..()
 
 /obj/machinery/airlock_sensor
 	icon = 'icons/obj/airlock_machines.dmi'

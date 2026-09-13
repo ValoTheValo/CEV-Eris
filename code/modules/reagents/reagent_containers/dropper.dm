@@ -10,7 +10,7 @@
 	possible_transfer_amounts = list(1,2,3,4,5)
 	w_class = ITEM_SIZE_TINY
 	slot_flags = SLOT_EARS
-	matter = list(MATERIAL_GLASS = 1, MATERIAL_PLASTIC = 1)
+	matter = list(MATERIAL_GLASS = 0.5, MATERIAL_PLASTIC = 0.5)
 	volume = 5
 	reagent_flags = TRANSPARENT
 	spawn_tags = SPAWN_TAG_JUNK
@@ -66,7 +66,7 @@
 			var/contained = reagents.log_list()
 			M.attack_log += "\[[time_stamp()]\] <font color='orange'>Has been squirted with [name] by [user.name] ([user.ckey]). Reagents: [contained]</font>"
 			user.attack_log += "\[[time_stamp()]\] <font color='red'>Used the [name] to squirt [M.name] ([M.key]). Reagents: [contained]</font>"
-			msg_admin_attack("[user.name] ([user.ckey]) squirted [M.name] ([M.key]) with [name]. Reagents: [contained] (INTENT: [uppertext(user.a_intent)]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+			msg_admin_attack("[user.name] ([user.ckey]) squirted [M.name] ([M.key]) with [name]. Reagents: [contained] (INTENT: [uppertext(user.a_intent)]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
 			trans = reagents.trans_to_mob(target, reagents.total_volume, CHEM_BLOOD)
 			user.visible_message(

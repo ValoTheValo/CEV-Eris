@@ -16,6 +16,7 @@
 	layer = ABOVE_HUD_LAYER
 	plane = ABOVE_HUD_PLANE
 	unacidable = 1
+	//appearance_flags = NO_CLIENT_COLOR
 	var/obj/master = null //A reference to the object in the slot. Grabs or items, generally.
 	var/mob/living/parentmob
 	var/process_flag = FALSE
@@ -32,6 +33,9 @@
 		src.icon_state = _icon_state
 	..()
 
+/obj/screen/examine(mob/user, extra_description = "")
+	if(desc)
+		to_chat(user, SPAN_NOTICE("<div id='examine'>[desc]</div>"))
 
 /obj/screen/Process()
 	return
@@ -41,6 +45,7 @@
 
 /obj/screen/Destroy()
 	master = null
+	parentmob = null
 	return ..()
 
 /obj/screen/update_plane()
@@ -51,11 +56,13 @@
 
 
 /obj/screen/Click(location, control, params)
-	if(!usr)
-		return TRUE
+	// Object Click() processed before and separately from mob's ClickOn(), thus every shift click doubles as just click
+	// This is a band aid to prevent such behavior
+	var/list/modifiers = params2list(params)
+	if(desc && modifiers["shift"])
+		return
 
 	switch(name)
-
 		if("equip")
 			if(ishuman(usr))
 				var/mob/living/carbon/human/H = usr
@@ -63,8 +70,7 @@
 
 		if("Reset Machine")
 			usr.unset_machine()
-		else
-			return FALSE
+
 	return TRUE
 //--------------------------------------------------close---------------------------------------------------------
 
@@ -181,6 +187,7 @@
 	name = "damage zone"
 	icon_state = "zone_sel"
 	screen_loc = ui_zonesel
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/zone_sel/Click(location, control, params)
 	var/list/PL = params2list(params)
@@ -277,6 +284,7 @@
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/inventory/New(_name = "unnamed", _slot_id = null, _icon = null, _icon_state = null, _parentmob = null)//(_name = "unnamed", _screen_loc = "7,7", _slot_id = null, _icon = null, _icon_state = null, _parentmob = null)
 	name = _name
@@ -322,10 +330,14 @@
 //--------------------------------------------------health---------------------------------------------------------
 /obj/screen/health
 	name = "health"
+	desc = "Not your actual health, but an estimate of how much pain you feel.\
+	<br>Experience too much of it, and you will lose consciousness.\
+	<br>Pain tolerance scales with your Toughness."
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "health0"
 	screen_loc = "15,7"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/health/New()
 	..()
@@ -364,6 +376,8 @@
 	overlays += ovrls["health7"]
 
 /obj/screen/health/Click()
+	if(!..())
+		return
 	if(ishuman(parentmob))
 		var/mob/living/carbon/human/H = parentmob
 		H.check_self_for_injuries()
@@ -372,7 +386,12 @@
 //--------------------------------------------------sanity---------------------------------------------------------
 /obj/screen/sanity
 	name = "sanity"
+	desc = "Soundness of your mind. Not keeping it in check may result in a breakdown.\
+	<br>Damaged by feeling pain, as well as seeing grime and gore; \
+	soothed by taking drugs, drinking, eating decent food and talking, preferably in a clean place with fellow humans around.\
+	<br>Sanity damage scales with your Vigilance. Left-click eye icon to see your current sanity, insight and style."
 	icon_state = "blank"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/sanity/New()
 	..()
@@ -433,17 +452,101 @@
 	overlays += ovrls["sanity0"]
 
 /obj/screen/sanity/Click()
+	if(!..())
+		return
 	if(!ishuman(parentmob))
 		return FALSE
 	var/mob/living/carbon/human/H = parentmob
-	H.ui_interact(H)
+	H.sanity.ui_interact(H)
+	H.sanity.print_desires()
+	return TRUE
+
+/obj/screen/sanity_alt
+	name = "inspiration"
+	desc = "The color of the icon displays how close you are to receive an inspiration from your experiences.\
+	Once you gain an inspiration, you will crave for food, drinks or drugs, to be able to reflect upon all you've learned so far. \
+	Satisfy these cravings and you'll be able to \"rest\", improving upon your stats slightly, or depending on any oddities held, \
+	you'll gain a new perk, for ill or good, and better stat gains."
+	icon_state = "insight1"
+
+/obj/screen/sanity_alt/New()
+	..()
+	ovrls["sanity0"] += new /image/(icon = src.icon, icon_state = "sanity0")
+	ovrls["sanity1"] += new /image/(icon = src.icon, icon_state = "sanity1")
+	ovrls["sanity2"] += new /image/(icon = src.icon, icon_state = "sanity2")
+	ovrls["sanity3"] += new /image/(icon = src.icon, icon_state = "sanity3")
+	ovrls["sanity4"] += new /image/(icon = src.icon, icon_state = "sanity4")
+	ovrls["sanity5"] += new /image/(icon = src.icon, icon_state = "sanity5")
+	ovrls["sanity6"] += new /image/(icon = src.icon, icon_state = "sanity6")
+
+	update_icon()
+
+
+/obj/screen/sanity_alt/update_icon()
+	var/mob/living/carbon/human/H = parentmob
+	if(!istype(H) || H.stat == DEAD)
+		return
+
+	cut_overlays()
+	var/image/ovrl
+
+	add_overlay( image(icon = src.icon, icon_state =  "insight_side", pixel_x = 32))
+	switch(H.sanity.level / H.sanity.max_level)
+		if(-INFINITY to 0)
+			add_overlay( ovrls["sanity6"])
+			return
+		if(1 to INFINITY)
+			ovrl = ovrls["sanity0"]
+		if(0.8 to 1)
+			ovrl = ovrls["sanity1"]
+		if(0.6 to 0.8)
+			ovrl = ovrls["sanity2"]
+		if(0.4 to 0.6)
+			ovrl = ovrls["sanity3"]
+		if(0.2 to 0.4)
+			ovrl = ovrls["sanity4"]
+		if(0 to 0.2)
+			ovrl = ovrls["sanity5"]
+
+	add_overlay(ovrl)
+
+	switch(H.sanity.insight)
+		if(-INFINITY to 0)
+			icon_state = "insight1"
+			return
+		if(66 to 101)
+			icon_state = "insight4"
+		if(33 to 66)
+			icon_state = "insight3"
+		if(2 to 33)
+			icon_state = "insight2"
+		if(1 to INFINITY)
+			icon_state = "insight1"
+
+/obj/screen/sanity_alt/DEADelize()
+	cut_overlays()
+	add_overlay( ovrls["sanity0"])
+
+/obj/screen/sanity_alt/Click()
+	if(!..())
+		return
+	if(!ishuman(parentmob))
+		return FALSE
+	var/mob/living/carbon/human/H = parentmob
+	H.sanity.ui_interact(H)
+	H.sanity.print_desires()
 	return	TRUE
+
 
 //--------------------------------------------------sanity end---------------------------------------------------------
 //--------------------------------------------------nsa---------------------------------------------------------
 /obj/screen/nsa
 	name = "nsa"
+	desc = "Neural System Accumulation depicts strain your body is experiencing.\
+	<br>It is increased by chemicals and mutations.\
+	<br>Going beyond your body's limits has negative consequences. NSA limit scales with your Cognition."
 	icon_state = "blank"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/nsa/New()
 	..()
@@ -497,10 +600,12 @@
 //--------------------------------------------------nutrition---------------------------------------------------------
 /obj/screen/nutrition
 	name = "nutrition"
+	desc = "This shows how much hunger you feel. Being malnourished significantly slows you down. Not updated immediately after eating."
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "blank"
 	screen_loc = "15,6"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/nutrition/New()
 	..()
@@ -534,10 +639,14 @@
 //--------------------------------------------------bodytemp---------------------------------------------------------
 /obj/screen/bodytemp
 	name = "bodytemp"
+	desc = "Temperature of your body. Affected by environment, health and ingested chemicals.\
+	<br>Fever might be a sign of untreated infection.\
+	<br>You are slowed down if your body temperature is low enough."
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "blank"
 	screen_loc = "15,8"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 
 /obj/screen/bodytemp/New()
@@ -603,10 +712,13 @@
 //--------------------------------------------------pressure---------------------------------------------------------
 /obj/screen/pressure
 	name = "pressure"
+	desc = "Barometric pressure experienced by your body.\
+	<br>Being in an environment with extreme pressure without a voidsuit is fatal."
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "blank"
 	screen_loc = "15,13"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/pressure/New()
 	..()
@@ -639,6 +751,7 @@
 	icon_state = "tox0"
 	screen_loc = "15,10"
 	process_flag = 1
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/toxin/New()
 	..()
@@ -670,6 +783,7 @@
 	icon_state = "oxy0"
 	screen_loc = "15,12"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/oxygen/New()
 	..()
@@ -701,6 +815,7 @@
 	icon_state = "blank"
 	screen_loc = "15,9"
 	process_flag = TRUE
+	appearance_flags = NO_CLIENT_COLOR
 
 
 /obj/screen/fire/New()
@@ -733,6 +848,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "blank"
 	screen_loc = "15,14"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/internal/New()
 	..()
@@ -866,21 +982,54 @@ obj/screen/fire/DEADelize()
 	icon_state = "look_up"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/look_up/Click()
 	var/mob/living/carbon/human/H = parentmob
 	if(istype(H))
 		H.lookup()
 //-----------------------look up END------------------------------
+//-----------------------look down------------------------------
+/obj/screen/look_down
+	name = "look down"
+	icon_state = "look_down"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
+/obj/screen/look_down/New()
+	..()
+	update_icon()
+
+/obj/screen/look_down/Click()
+	var/mob/living/carbon/human/H = parentmob
+	if(istype(H))
+		var/turf/temp_turf = get_turf(H)
+		temp_turf.examine(H)
+//-----------------------look down END------------------------------
 //-----------------------wield------------------------------
 /obj/screen/wield
 	name = "wield"
 	icon_state = "wield"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/wield/Click()
+	var/mob/living/carbon/human/H = parentmob
+	H.do_wield()
+
+/obj/screen/wield_alt
+	name = "wield"
+	icon_state = "wield-l"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+
+/obj/screen/wield_alt/New()
+	..()
+	add_overlay( image(icon = src.icon, icon_state =  "wield-r", pixel_x = 32))
+
+/obj/screen/wield_alt/Click()
 	var/mob/living/carbon/human/H = parentmob
 	H.do_wield()
 //-----------------------wield END------------------------------
@@ -891,6 +1040,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "pull0"
 	screen_loc = "14,2"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/pull/New()
 	..()
@@ -914,6 +1064,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "act_throw_off"
 	screen_loc = "15,2"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/HUDthrow/New()
 	/*if(usr)
@@ -936,6 +1087,33 @@ obj/screen/fire/DEADelize()
 		icon_state = "act_throw_off"
 //-----------------------throw END------------------------------
 
+//-----------------------block------------------------------
+/obj/screen/block
+	name = "block"
+	icon_state = "block_off"
+	screen_loc = "15:-16,3"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
+
+/obj/screen/block/New()
+	..()
+	update_icon()
+
+/obj/screen/block/Click()
+	if(usr.client)
+		usr.client.blocking()
+		update_icon()
+
+/obj/screen/block/update_icon()
+	if(ishuman(parentmob))//always true, but just in case
+		var/mob/living/carbon/human/H = parentmob
+		if(H.blocking)
+			icon_state = "block_on"
+		else
+			icon_state = "block_off"
+//-----------------------block END------------------------------
+
 //-----------------------drop------------------------------
 /obj/screen/drop
 	name = "drop"
@@ -944,6 +1122,7 @@ obj/screen/fire/DEADelize()
 	screen_loc = "15:-16,2"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/drop/Click()
 	if(usr.client)
@@ -958,6 +1137,7 @@ obj/screen/fire/DEADelize()
 	screen_loc = "14:16,2"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/resist/Click()
 	if(isliving(parentmob))
@@ -972,6 +1152,7 @@ obj/screen/fire/DEADelize()
 	icon_state = "rest"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/rest/Click()
 	parentmob.lay_down()
@@ -982,6 +1163,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "running"
 	screen_loc = "14,1"
+	appearance_flags = NO_CLIENT_COLOR
 
 
 /obj/screen/mov_intent/Click()
@@ -989,7 +1171,7 @@ obj/screen/fire/DEADelize()
 	var/decl/move_intent/newintent = decls_repository.get_decl(move_intent_type)
 	if (newintent.can_enter(parentmob, TRUE))
 		parentmob.move_intent = newintent
-		SEND_SIGNAL(parentmob, COMSIG_HUMAN_WALKINTENT_CHANGE, parentmob, newintent)
+		SEND_SIGNAL_OLD(parentmob, COMSIG_HUMAN_WALKINTENT_CHANGE, parentmob, newintent)
 		update_icon()
 
 	update_icon()
@@ -1007,6 +1189,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "act_equip"
 	screen_loc = "8,2"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/equip/Click()
 	if(ishuman(parentmob))
@@ -1019,6 +1202,7 @@ obj/screen/fire/DEADelize()
 	icon_state = "swap-l"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/swap/New()
 	..()
@@ -1026,6 +1210,18 @@ obj/screen/fire/DEADelize()
 
 /obj/screen/swap/Click()
 	parentmob.swap_hand()
+
+
+/obj/screen/swap_alt
+	name = "swap hand"
+	icon = 'icons/mob/screen/LibertyStyle.dmi'
+	icon_state = "swap_alone"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+
+/obj/screen/swap_alt/Click()
+	parentmob.swap_hand()
+
 //-----------------------swap END------------------------------
 //-----------------------bionics------------------------------
 /obj/screen/bionics
@@ -1034,6 +1230,7 @@ obj/screen/fire/DEADelize()
 	layer = HUD_LAYER
 	plane = HUD_PLANE
 	var/target_organ
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/bionics/New()
 	..()
@@ -1065,13 +1262,46 @@ obj/screen/fire/DEADelize()
 	icon_state = "bionics_implant"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 //-----------------------bionics END------------------------------
+//-----------------------language------------------------------
+/obj/screen/language
+	name = "language menu"
+	icon_state = "language"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+
+/obj/screen/language/New()
+	..()
+	update_icon()
+
+/obj/screen/language/Click()
+	parentmob.check_languages()
+
+//-----------------------language END------------------------------
+//-----------------------examine------------------------------
+/obj/screen/examine_area
+	name = "examine"
+	icon_state = "examine"
+	layer = HUD_LAYER
+	plane = HUD_PLANE
+
+/obj/screen/examine_area/New()
+	..()
+	update_icon()
+
+/obj/screen/examine_area/Click()
+	var/look_at = input("Examine:","Mob|Object|Turf") as mob|obj|turf in view()
+	parentmob.examinate(look_at)
+
+//-----------------------examine END------------------------------
 //-----------------------craft menu------------------------------
 /obj/screen/craft_menu
 	name = "craft menu"
 	icon_state = "craft_menu"
 	layer = HUD_LAYER
 	plane = HUD_PLANE
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/craft_menu/Click()
 	parentmob.open_craft_menu()
@@ -1082,6 +1312,7 @@ obj/screen/fire/DEADelize()
 	icon = 'icons/mob/screen/ErisStyle.dmi'
 	icon_state = "full"
 	screen_loc = "8,2"
+	appearance_flags = NO_CLIENT_COLOR
 
 /obj/screen/intent/New()
 	..()
@@ -1102,7 +1333,7 @@ obj/screen/fire/DEADelize()
 		parentmob.a_intent_change(I_GRAB)
 	if(_x>=17 && _y>=17)
 		parentmob.a_intent_change(I_DISARM)
-	SEND_SIGNAL(parentmob, COMSIG_HUMAN_ACTIONINTENT_CHANGE, parentmob)
+	SEND_SIGNAL_OLD(parentmob, COMSIG_HUMAN_ACTIONINTENT_CHANGE, parentmob)
 
 /obj/screen/intent/update_icon()
 	src.cut_overlays()
@@ -1315,7 +1546,7 @@ obj/screen/fire/DEADelize()
 		var/obj/item/clothing/glasses/G = H.wearing_rig.getCurrentGlasses()
 		if(G && H.wearing_rig.visor.active)
 			overlays |= G.overlay
-	
+
 	if(get_active_mutation(H, MUTATION_NIGHT_VISION))
 		overlays |= global_hud.nvg
 

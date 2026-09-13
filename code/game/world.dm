@@ -22,6 +22,12 @@ var/global/datum/global_init/init = new ()
 	initialize_chemical_reagents()
 	initialize_chemical_reactions()
 
+
+	// Set up roundstart seed list.
+	plant_controller = new()
+
+	initialize_cooking_recipes()
+
 	qdel(src) //we're done
 
 /datum/global_init/Destroy()
@@ -79,7 +85,10 @@ var/game_id
 	href_logfile = file("data/logs/[date_string] hrefs.htm")
 	diary = file("data/logs/[date_string].log")
 	diary << "[log_end]\n[log_end]\nStarting up. (ID: [game_id]) [time2text(world.timeofday, "hh:mm.ss")][log_end]\n---------------------[log_end]"
-	changelog_hash = md5('html/changelog.html')					//used for telling if the changelog has changed recently
+
+	// TODO: globalize me
+	var/latest_changelog = file("html/changelogs/archive/" + time2text(world.timeofday, "YYYY-MM") + ".yml")
+	changelog_hash = fexists(latest_changelog) ? md5(latest_changelog) : 0 //for telling if the changelog has changed recently
 
 	world_qdel_log = file("data/logs/[date_string] qdel.log")	// GC Shutdown log
 
@@ -103,9 +112,6 @@ var/game_id
 
 	. = ..()
 
-	// Set up roundstart seed list.
-	plant_controller = new()
-
 	// This is kinda important. Set up details of what the hell things are made of.
 	populate_material_list()
 
@@ -114,33 +120,44 @@ var/game_id
 
 	Master.Initialize(10, FALSE)
 
-	call_restart_webhook()
-
 	#ifdef UNIT_TESTS
-	// load_unit_test_changes() // ??
 	HandleTestRun()
 	#endif
 
 	if(config.ToRban)
-		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, /proc/ToRban_autoupdate))
-	return
+		SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(ToRban_autoupdate)))
+
+	call_restart_webhook()
 
 /world/proc/HandleTestRun()
 	//trigger things to run the whole process
-	// Master.sleep_offline_after_initializations = FALSE
-	world.sleep_offline = FALSE // iirc mc SHOULD handle this
+	Master.sleep_offline_after_initializations = FALSE
 	SSticker.start_immediately = TRUE
+	// config hacks
 	config.empty_server_restart_time = 0
 	config.vote_autogamemode_timeleft = 0
 	// CONFIG_SET(number/round_end_countdown, 0)
 	var/datum/callback/cb
 #ifdef UNIT_TESTS
-	cb = CALLBACK(GLOBAL_PROC, /proc/RunUnitTests)
+	cb = CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(RunUnitTests))
 #else
-	cb = VARSET_CALLBACK(global, universe_has_ended, TRUE) // yes i ended the universe.
+	cb = VARSET_CALLBACK(global, universe_has_ended, TRUE)
 #endif
-	SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, /proc/addtimer, cb, 10 SECONDS))
+	SSticker.OnRoundstart(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(_addtimer), cb, 10 SECONDS))
 
+/world/proc/SetupLogs()
+	var/override_dir = params[OVERRIDE_LOG_DIRECTORY_PARAMETER]
+	if(!override_dir)
+		var/realtime = world.realtime
+		var/texttime = time2text(realtime, "YYYY/MM/DD")
+		GLOB.log_directory = "data/logs/[texttime]/round-"
+		if(game_id)
+			GLOB.log_directory += "[game_id]"
+		else
+			var/timestamp = replacetext(time_stamp(), ":", ".")
+			GLOB.log_directory += "[timestamp]"
+	else
+		GLOB.log_directory = "data/logs/[override_dir]"
 
 var/world_topic_spam_protect_ip = "0.0.0.0"
 var/world_topic_spam_protect_time = world.timeofday
@@ -186,11 +203,12 @@ var/world_topic_spam_protect_time = world.timeofday
 	qdel(src) //shut it down
 
 /world/Reboot(reason = 0, fast_track = FALSE)
-	/* spawn(0)
-		world << sound(pick('sound/AI/newroundsexy.ogg','sound/misc/apcdestroyed.ogg','sound/misc/bangindonk.ogg')) // random end sounds!! - LastyBatsy
-	 */
-	if (reason || fast_track) //special reboot, do none of the normal stuff
-		if (usr)
+	if(!config.tts_cache)
+		for(var/i in GLOB.tts_death_row)
+			fdel(i)
+
+	if(reason || fast_track) //special reboot, do none of the normal stuff
+		if(usr)
 			log_admin("[key_name(usr)] Has requested an immediate world restart via client side debugging tools")
 			message_admins("[key_name_admin(usr)] Has requested an immediate world restart via client side debugging tools")
 		to_chat(world, "<span class='boldannounce'>Rebooting World immediately due to host request.</span>")
@@ -204,10 +222,10 @@ var/world_topic_spam_protect_time = world.timeofday
 
 	#ifdef UNIT_TESTS
 	FinishTestRun()
-	return
+	#else
+	..()
 	#endif
 
-	..()
 
 /hook/startup/proc/loadMode()
 	world.load_storyteller()
@@ -291,7 +309,7 @@ var/world_topic_spam_protect_time = world.timeofday
 	if (config && config.server_name)
 		s += "<b>[config.server_name]</b> &#8212; "
 
-	s += "<b>[station_name()]</b>";
+	s += "<b>[station_name]</b>";
 	s += " ("
 	s += "<a href=\"http://\">" //Change this to wherever you want the hub to link to.
 //	s += "[game_version]"
@@ -339,54 +357,11 @@ var/world_topic_spam_protect_time = world.timeofday
 	if (src.status != s)
 		src.status = s
 
-#define FAILED_DB_CONNECTION_CUTOFF 5
-var/failed_db_connections = 0
-var/failed_old_db_connections = 0
-
-/hook/startup/proc/connectDB()
-	if(!setup_database_connection())
-		log_world("Your server failed to establish a connection with the feedback database.")
-	else
-		log_world("Feedback database connection established.")
-	return 1
-
-proc/setup_database_connection()
-
-	if(failed_db_connections > FAILED_DB_CONNECTION_CUTOFF)	//If it failed to establish a connection more than 5 times in a row, don't bother attempting to conenct anymore.
-		return 0
-
-	if(!dbcon)
-		dbcon = new()
-
-	var/user = sqllogin
-	var/pass = sqlpass
-	var/db = sqldb
-	var/address = sqladdress
-	var/port = sqlport
-
-	dbcon.Connect("dbi:mysql:[db]:[address]:[port]", "[user]", "[pass]")
-	. = dbcon.IsConnected()
-	if ( . )
-		failed_db_connections = 0	//If this connection succeeded, reset the failed connections counter.
-	else
-		failed_db_connections++		//If it failed, increase the failed connections counter.
-		log_world(dbcon.ErrorMsg())
-
-	return .
-
-//This proc ensures that the connection to the feedback database (global variable dbcon) is established
-proc/establish_db_connection()
-	if(failed_db_connections > FAILED_DB_CONNECTION_CUTOFF)
-		return 0
-
-	if(!dbcon || !dbcon.IsConnected())
-		return setup_database_connection()
-	else
-		return 1
-
-/world/proc/incrementMaxZ()
+/world/proc/incrementMaxZ(z_level_info)
+	SEND_SIGNAL(SSdcs, COMSIG_WORLD_MAXZ_INCREMENTING)
 	maxz++
 	SSmobs.MaxZChanged()
+	SSmapping.MaxZChanged(z_level_info)
 
 /world/proc/change_fps(new_value = 30)
 	if(new_value <= 0)

@@ -4,19 +4,19 @@
 /datum/nano_module/crew_monitor/Topic(href, href_list)
 	if(..())
 		return 1
-	// TODO: Allow setting any config.contact_levels from the interface.
-	if(!isOnPlayerLevel(nano_host()))
-		usr << "<span class='warning'>Unable to establish a connection</span>: You're too far away from the station!"
+	var/atom/host_atom = nano_host()
+	if(host_atom && !IS_PLAYABLE_LEVEL(host_atom.z))
+		usr << SPAN_WARNING("Unable to establish a connection: You're too far away from the ship!")
 		return 0
 	if(href_list["track"])
 		if(isAI(usr))
 			var/mob/living/silicon/ai/AI = usr
-			var/mob/living/carbon/human/H = locate(href_list["track"]) in SSmobs.mob_list
+			var/mob/living/carbon/human/H = locate(href_list["track"]) in SShumans.mob_list
 			if(hassensorlevel(H, SUIT_SENSOR_TRACKING))
 				AI.ai_actual_track(H)
 		return 1
 
-/datum/nano_module/crew_monitor/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/datum/nano_module/crew_monitor/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/list/data = host.initial_data()
 	var/turf/T = get_turf(nano_host())
 

@@ -100,16 +100,16 @@ var/list/mob_hat_cache = list()
 	. = ..()
 
 /mob/living/silicon/robot/drone/New()
-
 	..()
 
 	//Stats must be initialised before creating the module
-	if(!module) module = new module_type(src)
+	if(!module)
+		module = new module_type(src)
 
-	verbs += /mob/living/proc/hide
 	remove_language(LANGUAGE_ROBOT)
 	add_language(LANGUAGE_ROBOT, 0)
 	add_language(LANGUAGE_DRONE, 1)
+	add_verb(src, /mob/living/proc/hide)
 
 	//They are unable to be upgraded, so let's give them a bit of a better battery.
 	cell.maxcharge = 10000
@@ -123,9 +123,8 @@ var/list/mob_hat_cache = list()
 		var/datum/robot_component/C = components[V]
 		C.max_damage = 10
 
-	verbs -= /mob/living/silicon/robot/verb/Namepick
-	//choose_overlay()
-	updateicon()
+	remove_verb(src, /mob/living/silicon/robot/verb/Namepick)
+	updateicon() //choose_overlay()
 
 	if(station_drone)
 		GLOB.drones |= src
@@ -229,7 +228,7 @@ var/list/mob_hat_cache = list()
 		to_chat(user, SPAN_DANGER("You attempt to subvert [src], but the sequencer has no effect."))
 		return
 
-	to_chat(user, SPAN_DANGER("You swipe the sequencer across [src]'s interface and watch its eyes flick_light."))
+	to_chat(user, SPAN_DANGER("You swipe the sequencer across [src]'s interface and watch its eyes flicker."))
 	to_chat(src, SPAN_DANGER("You feel a sudden burst of malware loaded into your execute-as-root buffer. Your tiny brain methodically parses, loads and executes the script."))
 
 	message_admins("[key_name_admin(user)] emagged drone [key_name_admin(src)].  Laws overridden.")
@@ -362,7 +361,7 @@ var/list/mob_hat_cache = list()
 		armguard = ""
 		return
 
-	verbs -= /mob/living/silicon/robot/drone/verb/choose_armguard
+	add_verb(src, /mob/living/silicon/robot/drone/verb/choose_armguard)
 	to_chat(src, "Your armguard has been set.")
 
 // AI-bound maintenance drone
@@ -425,6 +424,6 @@ var/list/mob_hat_cache = list()
 
 /mob/living/silicon/robot/drone/aibound/Life()
 	..()
-	if(bound_ai && !isOnStationLevel(src))
+	if(bound_ai && !IS_SHIP_LEVEL(z))
 		to_chat(src, SPAN_WARNING("You get out of the ship control range!"))
 		death(TRUE)

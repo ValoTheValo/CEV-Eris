@@ -73,7 +73,7 @@
 	occupant.unset_machine()
 	occupant = null
 	autodoc_processor.set_patient(null)
-	update_use_power(1)
+	set_power_use(IDLE_POWER_USE)
 	update_icon()
 
 /obj/machinery/autodoc/proc/set_occupant(var/mob/living/L)
@@ -85,8 +85,8 @@
 		return
 	else
 		autodoc_processor.set_patient(L)
-		ui_interact(L)
-		update_use_power(2)
+		nano_ui_interact(L)
+		set_power_use(ACTIVE_POWER_USE)
 		L.set_machine(src)
 	update_icon()
 
@@ -135,8 +135,8 @@
 		locked = autodoc_processor.active
 	update_icon()
 
-/obj/machinery/autodoc/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FORCE_OPEN, var/datum/topic_state/state = GLOB.default_state)
-	autodoc_processor.ui_interact(user, ui_key, ui, force_open, state)
+/obj/machinery/autodoc/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FORCE_OPEN, var/datum/nano_topic_state/state = GLOB.default_state)
+	autodoc_processor.nano_ui_interact(user, ui_key, ui, force_open, state)
 
 /obj/machinery/autodoc/Topic(href, href_list)
 	return autodoc_processor.Topic(href, href_list)

@@ -1,161 +1,174 @@
 //MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
 "a" = (
-/turf/simulated/wall/untinted/onestar_reinforced,
+/turf/wall/untinted/onestar_reinforced,
 /area/crawler)
 "b" = (
 /obj/structure/extinguisher_cabinet,
-/turf/simulated/wall/untinted/onestar_reinforced,
+/turf/wall/untinted/onestar_reinforced,
 /area/crawler)
 "c" = (
 /obj/machinery/light/floor,
-/turf/simulated/floor/tiled/dark/techfloor_grid,
+/turf/floor/tiled/dark/techfloor_grid,
 /area/crawler)
 "d" = (
 /obj/machinery/antigrav,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "e" = (
-/turf/simulated/floor/bluegrid,
+/obj/spawner/pack/tech_loot/onestar,
+/turf/floor/bluegrid,
 /area/crawler)
 "f" = (
 /obj/structure/window/reinforced{
 	dir = 4
 	},
-/turf/simulated/floor/tiled/dark/techfloor,
+/turf/floor/tiled/dark/techfloor,
 /area/crawler)
 "g" = (
 /obj/effect/floor_decal/industrial/warning/corner{
 	dir = 8
 	},
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "h" = (
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "i" = (
 /obj/effect/floor_decal/industrial/warning/corner,
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "j" = (
 /obj/structure/window/reinforced{
 	dir = 8
 	},
-/turf/simulated/floor/tiled/dark/techfloor,
+/turf/floor/tiled/dark/techfloor,
 /area/crawler)
 "k" = (
 /obj/machinery/r_n_d/server,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "l" = (
-/obj/machinery/computer,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/console,
+/turf/floor/bluegrid,
 /area/crawler)
 "m" = (
 /obj/machinery/light/floor,
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "n" = (
-/turf/simulated/floor/tiled/dark/techfloor_grid,
+/turf/floor/tiled/dark/techfloor_grid,
 /area/crawler)
 "o" = (
 /obj/machinery/door/window/eastright,
-/turf/simulated/floor/tiled/dark/techfloor,
+/turf/floor/tiled/dark/techfloor,
 /area/crawler)
 "p" = (
 /obj/effect/floor_decal/industrial/warning{
 	dir = 8
 	},
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "q" = (
 /obj/effect/floor_decal/industrial/warning{
 	dir = 4
 	},
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "r" = (
 /obj/machinery/door/window/westright,
-/turf/simulated/floor/tiled/dark/techfloor,
+/turf/floor/tiled/dark/techfloor,
 /area/crawler)
 "s" = (
 /obj/spawner/mob/roomba,
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "t" = (
 /obj/crawler/crawler_wallbreaker/vertical,
-/turf/simulated/wall/untinted/onestar_reinforced,
+/turf/wall/untinted/onestar_reinforced,
 /area/crawler)
 "u" = (
-/obj/machinery/field_generator,
-/turf/simulated/floor/bluegrid,
+/obj/machinery/shieldwallgen/excelsior,
+/turf/floor/bluegrid,
 /area/crawler)
 "v" = (
 /obj/effect/floor_decal/industrial/warning/corner{
 	dir = 1
 	},
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "w" = (
 /obj/effect/floor_decal/industrial/warning/corner{
-	icon_state = "warningcorner";
-	dir = 4
+	dir = 4;
+	icon_state = "warningcorner"
 	},
-/turf/simulated/floor/tiled/derelict,
+/turf/floor/tiled/derelict,
 /area/crawler)
 "x" = (
 /obj/machinery/constructable_frame/machine_frame/vertical,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "y" = (
 /obj/spawner/toy/plushie,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "z" = (
 /obj/structure/table/rack,
-/turf/simulated/floor/bluegrid,
+/obj/spawner/tool/advanced/onestar/low_chance,
+/obj/spawner/tool_upgrade/rare/onestar,
+/turf/floor/bluegrid,
 /area/crawler)
 "A" = (
 /obj/structure/closet/onestar/tier2,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "B" = (
 /obj/structure/closet/onestar/tier3,
-/turf/simulated/floor/bluegrid,
+/turf/floor/bluegrid,
 /area/crawler)
 "C" = (
-/obj/machinery/constructable_frame/machine_frame,
-/turf/simulated/floor/bluegrid,
+/obj/machinery/power/port_gen/os_generator,
+/turf/floor/bluegrid,
 /area/crawler)
 "D" = (
 /obj/structure/window/reinforced{
 	dir = 4
 	},
 /obj/spawner/toolbox,
-/turf/simulated/floor/tiled/dark/techfloor,
+/turf/floor/tiled/dark/techfloor,
 /area/crawler)
 "E" = (
-/obj/structure/salvageable/implant_container,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/implant_container,
+/turf/floor/bluegrid,
 /area/crawler)
 "F" = (
-/obj/structure/salvageable/server,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/server,
+/turf/floor/bluegrid,
 /area/crawler)
 "G" = (
-/obj/structure/salvageable/machine,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/machine,
+/turf/floor/bluegrid,
 /area/crawler)
 "H" = (
-/obj/structure/salvageable/computer,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/computer,
+/turf/floor/bluegrid,
 /area/crawler)
 "I" = (
-/obj/structure/salvageable/data,
-/turf/simulated/floor/bluegrid,
+/obj/structure/salvageable/os/data,
+/turf/floor/bluegrid,
 /area/crawler)
 "J" = (
 /obj/crawler/crawler_wallbreaker,
-/turf/simulated/wall/untinted/onestar_reinforced,
+/turf/wall/untinted/onestar_reinforced,
+/area/crawler)
+"T" = (
+/obj/structure/salvageable/os/console_broken{
+	dir = 1
+	},
+/turf/floor/bluegrid,
+/area/crawler)
+"Z" = (
+/obj/structure/salvageable/bliss,
+/turf/floor/bluegrid,
 /area/crawler)
 
 (1,1,1) = {"
@@ -186,7 +199,7 @@ A
 n
 u
 a
-e
+Z
 n
 H
 a
@@ -265,7 +278,7 @@ x
 a
 E
 n
-G
+F
 a
 "}
 (11,1,1) = {"
@@ -276,7 +289,7 @@ y
 a
 F
 n
-H
+T
 a
 "}
 (12,1,1) = {"

@@ -29,7 +29,7 @@ GLOBAL_LIST_INIT(conveyor_switches, list())
 
 
 // create a conveyor
-/obj/machinery/conveyor/New(loc, new_dir, new_id)
+/obj/machinery/conveyor/Initialize(loc, new_dir, new_id)
 	..(loc)
 	GLOB.conveyor_belts += src
 	if(new_id)
@@ -255,7 +255,7 @@ GLOBAL_LIST_INIT(conveyor_switches, list())
 	// DEPRECATED: remove once map is updated
 	var/convdir
 
-/obj/machinery/conveyor_switch/New(newloc, new_id)
+/obj/machinery/conveyor_switch/Initialize(newloc, new_id)
 	..(newloc)
 	GLOB.conveyor_switches += src
 	if(!id)
@@ -371,7 +371,7 @@ GLOBAL_LIST_INIT(conveyor_switches, list())
 		id = C.id
 
 /obj/item/construct/conveyor/afterattack(atom/A, mob/user, proximity)
-	if(!proximity || !istype(A, /turf/simulated/floor) || istype(A, /area/shuttle) || user.incapacitated())
+	if(!proximity || !istype(A, /turf/floor) || istype(A, /area/shuttle) || user.incapacitated())
 		return
 	var/cdir = get_dir(A, user)
 	if(!(cdir in cardinal) || A == user.loc)
@@ -404,7 +404,7 @@ GLOBAL_LIST_INIT(conveyor_switches, list())
 		id = world.time + rand() //this couldn't possibly go wrong
 
 /obj/item/construct/conveyor_switch/afterattack(atom/A, mob/user, proximity)
-	if(!proximity || !istype(A, /turf/simulated/floor) || istype(A, /area/shuttle) || user.incapacitated())
+	if(!proximity || !istype(A, /turf/floor) || istype(A, /area/shuttle) || user.incapacitated())
 		return
 	var/found = FALSE
 	for(var/obj/machinery/conveyor/C in view())

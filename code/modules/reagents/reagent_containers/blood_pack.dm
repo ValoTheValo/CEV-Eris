@@ -3,18 +3,15 @@
 	desc = "This box contains blood packs."
 	icon_state = "sterile"
 	rarity_value = 10
-	initial_amount = 7
-	spawn_type = /obj/item/reagent_containers/blood
-
-/obj/item/storage/box/bloodpacks/populate_contents()
-	for(var/i in 1 to initial_amount)
-		new spawn_type(src)
+	prespawned_content_amount = 7
+	prespawned_content_type = /obj/item/reagent_containers/blood
 
 /obj/item/reagent_containers/blood
 	name = "blood pack"
 	desc = "Contains blood used for transfusion."
 	icon = 'icons/obj/bloodpack.dmi'
 	icon_state = "bloodpack"
+	matter = list(MATERIAL_PLASTIC = 0.5)
 	volume = 200
 	reagent_flags = OPENCONTAINER
 	filling_states = "25;50;75;100"

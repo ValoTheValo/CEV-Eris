@@ -52,11 +52,11 @@
 
 	dat += "<hr/><br/><b>[storage_name]</b><br/>"
 	dat += "<i>Welcome, [user.real_name].</i><br/><br/><hr/>"
-	dat += "<a href='?src=\ref[src];log=1'>View storage log</a>.<br>"
+	dat += "<a href='byond://?src=\ref[src];log=1'>View storage log</a>.<br>"
 	if(allow_items)
-		dat += "<a href='?src=\ref[src];view=1'>View objects</a>.<br>"
-		dat += "<a href='?src=\ref[src];item=1'>Recover object</a>.<br>"
-		dat += "<a href='?src=\ref[src];allitems=1'>Recover all objects</a>.<br>"
+		dat += "<a href='byond://?src=\ref[src];view=1'>View objects</a>.<br>"
+		dat += "<a href='byond://?src=\ref[src];item=1'>Recover object</a>.<br>"
+		dat += "<a href='byond://?src=\ref[src];allitems=1'>Recover all objects</a>.<br>"
 
 	user << browse(dat, "window=cryopod_console")
 	onclose(user, "cryopod_console")
@@ -183,7 +183,18 @@
 		/obj/item/clothing/shoes/magboots,
 		/obj/item/blueprints,
 		/obj/item/clothing/head/space,
-		/obj/item/storage/internal
+		/obj/item/storage/internal,
+		/obj/item/device/von_krabin,
+		/obj/item/complicator,
+		/obj/item/biosyphon,
+		/obj/item/device/last_shelter,
+		/obj/item/device/techno_tribalism,
+		/obj/item/device/radio/random_radio,
+		/obj/item/maneki_neko,
+		/obj/item/tool/sword/nt_sword,
+		/obj/item/reagent_containers/atomic_distillery,
+		/obj/item/reagent_containers/bonsai,
+		/obj/item/reagent_containers/enricher
 	)
 
 /obj/machinery/cryopod/robot
@@ -332,7 +343,7 @@
 		else
 			if(control_computer && control_computer.allow_items)
 				control_computer.frozen_items += W
-				W.loc = null
+				W.forceMove(NULLSPACE)
 			else
 				W.forceMove(src.loc)
 
@@ -408,7 +419,7 @@
 
 		// Book keeping!
 		var/turf/location = get_turf(src)
-		log_admin("[key_name_admin(affecting)] has entered a stasis pod. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
+		log_admin("[key_name_admin(affecting)] has entered a stasis pod. (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[location.x];Y=[location.y];Z=[location.z]'>JMP</a>)")
 		message_admins("<span class='notice'>[key_name_admin(affecting)] has entered a stasis pod.</span>")
 		if(user == affecting)
 			src.add_fingerprint(affecting)
@@ -484,23 +495,33 @@
 
 	return
 
-/obj/machinery/cryopod/relaymove(var/mob/user)
-	..()
-	eject()
+/obj/machinery/cryopod/relaymove(mob/user)
+	/// Why isn't it just eject ? because it somehow breaks SSchunks. ForceMoving out of these does not get registered properly
+	/// The mob does NOT have a LOC when it gets done by eject() , but this way it does for its forceMove() when we call go_out() from here
+	/// I dont know why it is this way , blame Byond ? - SPCR 2023
+	/// I figured it out... its because it used to remove the mob to eject from its contents before actually ejecting them , causing their loc to be null..
+	if(occupant)
+		var/list/items_to_give = contents
+		items_to_give -= announce
+		for(var/obj/item/W in items_to_give)
+			W.forceMove(get_turf(src))
+			occupant.equip_to_appropriate_slot(W) // Items are now ejected. Tries to put them items on the occupant so they don't leave them behind
+		go_out()
+
 
 /obj/machinery/cryopod/proc/go_out()
 
 	if(!occupant)
 		return
 
-	set_occupant(null)
+	set_occupant(null, FALSE)
 
 	spawn(30)
 		state("Please remember to check inside the cryopod if any belongings are missing.")
 		playsound(loc, "robot_talk_light", 100, 0, 0)
 
 //Notifications is set false when someone spawns in here
-/obj/machinery/cryopod/proc/set_occupant(var/mob/living/new_occupant, var/notifications = TRUE)
+/obj/machinery/cryopod/proc/set_occupant(mob/living/new_occupant, notifications = TRUE)
 	name = initial(name)
 	if(new_occupant)
 		occupant = new_occupant
@@ -524,8 +545,6 @@
 						if(!EA.wage_manual) // Update department account's wage if it's not in manual mode
 							EA.wage = D.get_total_budget()
 
-		new_occupant.forceMove(src)
-
 		if(notifications)
 			to_chat(occupant, SPAN_NOTICE("[on_enter_occupant_message]"))
 			to_chat(occupant, SPAN_NOTICE("<b>If you ghost, log out or close your client now, your character will shortly be permanently removed from the round.</b>"))
@@ -535,6 +554,7 @@
 				to_chat(occupant, SPAN_NOTICE("<b>Your respawn time will be reduced by [(CRYOPOD_WOUNDED_RESPAWN_BONUS)/600] minutes, allowing you to respawn as a crewmember much more quickly.</b>"))
 				to_chat(occupant, SPAN_DANGER("<b>Because you are not in perfect health, respawn time reduction is low. \
 				If you wish to respawn as a different crewmember sooner, you should treat your injuries first</b>"))
+		occupant.forceMove(src)
 
 	else
 		if(!QDELETED(occupant))

@@ -43,7 +43,7 @@
 
 /obj/machinery/power/am_control_unit/Process()
 	if(exploding)
-		explosion(get_turf(src),8,12,18,12)
+		explosion(get_turf(src), 5000, 250)
 		if(src) qdel(src)
 
 	if(update_shield_icons && !shield_icon_delay)
@@ -100,19 +100,11 @@
 	..()
 	return 0
 
-
-/obj/machinery/power/am_control_unit/ex_act(severity)
-	switch(severity)
-		if(1)
-			stability -= 60
-		if(2)
-			stability -= 40
-		if(3)
-			stability -= 20
-		if(4)
-			stability -= 10
+/obj/machinery/power/am_control_unit/explosion_act(target_power, explosion_handler/handler)
+	stability -= target_power / 10
 	check_stability()
-	return
+	return target_power
+
 
 
 /obj/machinery/power/am_control_unit/bullet_act(var/obj/item/projectile/Proj)
@@ -206,10 +198,10 @@
 /obj/machinery/power/am_control_unit/proc/toggle_power()
 	active = !active
 	if(active)
-		use_power = ACTIVE_POWER_USE
+		set_power_use(ACTIVE_POWER_USE)
 		visible_message("The [src.name] starts up.")
 	else
-		use_power = IDLE_POWER_USE
+		set_power_use(IDLE_POWER_USE)
 		visible_message("The [src.name] shuts down.")
 	update_icon()
 	return
@@ -256,28 +248,28 @@
 
 	var/dat = ""
 	dat += "AntiMatter Control Panel<BR>"
-	dat += "<A href='?src=\ref[src];close=1'>Close</A><BR>"
-	dat += "<A href='?src=\ref[src];refresh=1'>Refresh</A><BR>"
-	dat += "<A href='?src=\ref[src];refreshicons=1'>Force Shielding Update</A><BR><BR>"
+	dat += "<a href='byond://?src=\ref[src];close=1'>Close</A><BR>"
+	dat += "<a href='byond://?src=\ref[src];refresh=1'>Refresh</A><BR>"
+	dat += "<a href='byond://?src=\ref[src];refreshicons=1'>Force Shielding Update</A><BR><BR>"
 	dat += "Status: [(active?"Injecting":"Standby")] <BR>"
-	dat += "<A href='?src=\ref[src];togglestatus=1'>Toggle Status</A><BR>"
+	dat += "<a href='byond://?src=\ref[src];togglestatus=1'>Toggle Status</A><BR>"
 
 	dat += "Instability: [stability]%<BR>"
 	dat += "Reactor parts: [linked_shielding.len]<BR>"//TODO: perhaps add some sort of stability check
 	dat += "Cores: [linked_cores.len]<BR><BR>"
 	dat += "-Current Efficiency: [reported_core_efficiency]<BR>"
-	dat += "-Average Stability: [stored_core_stability] <A href='?src=\ref[src];refreshstability=1'>(update)</A><BR>"
+	dat += "-Average Stability: [stored_core_stability] <a href='byond://?src=\ref[src];refreshstability=1'>(update)</A><BR>"
 	dat += "Last Produced: [stored_power]<BR>"
 
 	dat += "Fuel: "
 	if(!fueljar)
 		dat += "<BR>No fuel receptacle detected."
 	else
-		dat += "<A href='?src=\ref[src];ejectjar=1'>Eject</A><BR>"
+		dat += "<a href='byond://?src=\ref[src];ejectjar=1'>Eject</A><BR>"
 		dat += "- [fueljar.fuel]/[fueljar.fuel_max] Units<BR>"
 
 		dat += "- Injecting: [fuel_injection] units<BR>"
-		dat += "- <A href='?src=\ref[src];strengthdown=1'>--</A>|<A href='?src=\ref[src];strengthup=1'>++</A><BR><BR>"
+		dat += "- <a href='byond://?src=\ref[src];strengthdown=1'>--</A>|<a href='byond://?src=\ref[src];strengthup=1'>++</A><BR><BR>"
 
 
 	user << browse(dat, "window=AMcontrol;size=420x500")

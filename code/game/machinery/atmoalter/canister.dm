@@ -3,7 +3,8 @@
 	icon = 'icons/obj/atmos.dmi'
 	icon_state = "yellow"
 	density = TRUE
-	var/health = 100
+	health = 100
+	maxHealth = 100
 	flags = CONDUCT
 	w_class = ITEM_SIZE_HUGE
 
@@ -28,6 +29,7 @@
 /obj/machinery/portable_atmospherics/canister/sleeping_agent
 	name = "Canister: \[N2O]"
 	icon_state = "redws"
+	description_antag = "Causes people to sleep temporarily. Needs high concentrations for a permanent sleep"
 	canister_color = "redws"
 	can_label = 0
 
@@ -283,9 +285,9 @@ update_flag
 	return src.attack_hand(user)
 
 /obj/machinery/portable_atmospherics/canister/attack_hand(var/mob/user as mob)
-	return src.ui_interact(user)
+	return src.nano_ui_interact(user)
 
-/obj/machinery/portable_atmospherics/canister/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/portable_atmospherics/canister/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	if (src.destroyed)
 		return
 
@@ -420,7 +422,7 @@ update_flag
 	..()
 	air_contents.gas["sleeping_agent"] = 9*4000
 	spawn(10)
-		var/turf/simulated/location = src.loc
+		var/turf/location = src.loc
 		if (istype(src.loc))
 			while (!location.air)
 				sleep(10)

@@ -18,12 +18,11 @@
 /datum/gear/clown
 	display_name = "clown pack"
 	path = /obj/item/storage/box/clown
-	cost = 3
-	allowed_roles = list("Vagabond")
+	allowed_roles = list(ASSISTANT_TITLE)
 
 /datum/gear/dice
 	display_name = "dice pack"
-	path = /obj/item/storage/pill_bottle/dice
+	path = /obj/item/storage/box/dice
 
 /datum/gear/cards
 	display_name = "deck of cards"
@@ -163,10 +162,9 @@
 /datum/gear/cigarettes/New()
 	..()
 	var/cigarettes_type = list(
-		"Space Cigarettes"	=	/obj/item/storage/fancy/cigarettes,
+		"Space Cigarettes"			=	/obj/item/storage/fancy/cigarettes,
 		"DromedaryCo Cigarettes"	=	/obj/item/storage/fancy/cigarettes/dromedaryco,
-		"AcmeCo Cigarettes"	=	/obj/item/storage/fancy/cigarettes/killthroat,
-		//"Nomads Cigarettes"	=	/obj/item/storage/fancy/cigarettes/homeless
+		"AcmeCo Cigarettes"			=	/obj/item/storage/fancy/cigarettes/killthroat
 	)
 	gear_tweaks += new/datum/gear_tweak/path(cigarettes_type)
 

@@ -1,5 +1,5 @@
-#define ARMOR_HALLOS_COEFFICIENT 0.1
-#define ARMOR_GDR_COEFFICIENT 0.1
+#define ARMOR_HALLOS_COEFFICIENT 0.4
+
 
 //This calculation replaces old run_armor_check in favor of more complex and better system
 //If you need to do something else with armor - just use getarmor() proc and do with those numbers all you want
@@ -17,102 +17,173 @@
 	else
 		show_message(msg1, 1)
 
-/mob/living/proc/damage_through_armor(var/damage = 0, var/damagetype = BRUTE, var/def_zone, var/attack_flag = ARMOR_MELEE, var/armour_pen = 0, var/used_weapon, var/sharp = FALSE, var/edge = FALSE)
+/mob/living/proc/damage_through_armor(damage = 0, damagetype = BRUTE, def_zone, attack_flag = ARMOR_MELEE, armor_divisor = 1, used_weapon, sharp = FALSE, edge = FALSE, wounding_multiplier, list/dmg_types = list(), return_continuation = FALSE, dir_mult = 1)
+	if(damage) // If damage is defined, we add it to the list
+		if(!dmg_types[damagetype])
+			dmg_types += damagetype
+		dmg_types[damagetype] += damage
 
-	if(damage == 0)
-		return FALSE
+	if(armor_divisor <= 0)
+		armor_divisor = 1
+		log_debug("[used_weapon] applied damage to [name] with a nonpositive armor divisor")
 
-	//GDR - guaranteed damage reduction. It's a value that deducted from damage before all calculations
-	var/armor = getarmor(def_zone, attack_flag)
-	var/guaranteed_damage_red = armor * ARMOR_GDR_COEFFICIENT
-	var/armor_effectiveness = max(0, ( armor - armour_pen ) )
-	var/effective_damage = damage - guaranteed_damage_red
-	var/sanctified_attack = FALSE
+	var/total_dmg = 0
+	var/dealt_damage = 0
 
-	if(damagetype == HALLOSS)
-		effective_damage = round(effective_damage * max(0.5, (get_specific_organ_efficiency(OP_NERVE, def_zone) / 100)))
+	for(var/dmg_type in dmg_types)
+		total_dmg += dmg_types[dmg_type]
 
-	if(effective_damage <= 0)
-		armor_message(SPAN_NOTICE("Your armor absorbs the blow!"))
-		return FALSE
+	if(!total_dmg)
+		return PROJECTILE_STOP
 
-	//Here we can remove edge or sharpness from the blow
-	if ( (sharp || edge) && prob ( getarmor (def_zone, attack_flag) ) )
-		sharp = FALSE
-		edge = FALSE
+	// Determine DR and ADR, armour divisor reduces it
+	var/armor = getarmor(def_zone, attack_flag)*dir_mult / armor_divisor
+	if(!(attack_flag in list(ARMOR_MELEE, ARMOR_BULLET, ARMOR_ENERGY))) // Making sure BIO and other armor types are handled correctly
+		armor /= 5
+	var/ablative_armor = getarmorablative(def_zone, attack_flag) / armor_divisor
 
-	//Check if sanctify aspect true
-	if(ishuman(src) && isitem(used_weapon))
-		var/mob/living/carbon/human/H = src
-		var/obj/item/I = used_weapon
-		if((is_carrion(H) || active_mutations.len) && (SANCTIFIED in I.aspects))
-			sanctified_attack = TRUE
+	var/remaining_armor = armor
+	var/remaining_ablative = ablative_armor
+
+	for(var/dmg_type in dmg_types)
+		var/dmg = dmg_types[dmg_type]
+		if(dmg)
+			var/used_armor = 0 // Used for agony calculation, as well as reduction in armour before follow-up attacks
+
+			if(dmg_type in list(BRUTE, BURN, TOX, BLAST)) // Some damage types do not help penetrate armor
+				if(remaining_armor)
+					var/dmg_armor_difference = dmg - remaining_armor
+					var/is_difference_positive = dmg_armor_difference > 0
+					used_armor += is_difference_positive ? dmg - dmg_armor_difference : dmg
+					remaining_armor = is_difference_positive ? 0 : -dmg_armor_difference
+					dmg = is_difference_positive ? dmg_armor_difference : 0
+				if(remaining_ablative && dmg)
+					var/ablative_difference
+					ablative_difference = dmg - remaining_ablative
+					var/is_difference_positive = ablative_difference > 0
+					used_armor += is_difference_positive ? dmg - ablative_difference : dmg
+					remaining_ablative = is_difference_positive ? 0 : -ablative_difference
+					dmg = is_difference_positive ? ablative_difference : 0
+			else
+				dmg = max(dmg - remaining_armor - remaining_ablative, 0)
+
+			if(!(dmg_type == HALLOSS)) // Determine pain from impact
+				adjustHalLoss(used_armor * (wounding_multiplier ? wounding_multiplier : 1) * ARMOR_HALLOS_COEFFICIENT * max(0.5, (get_specific_organ_efficiency(OP_NERVE, def_zone) / 100)))
+
+			dmg_types[dmg_type] = dmg // Finally, we adjust the damage passing through
+			if(dmg)
+				dealt_damage += dmg
+
+				if(dmg_type == HALLOSS)
+					dmg = round(dmg * max(0.5, (get_specific_organ_efficiency(OP_NERVE, def_zone) / 100)))
+				if(dmg_type == BRUTE)
+
+					if ( (sharp || edge) && prob ( (1 - dmg / dmg_types[dmg_type]) * 100 ) ) // If enough of the brute damage is blocked, sharpness is lost from all followup attacks, this converts damage into crushing as well
+						if(wounding_multiplier)
+							wounding_multiplier = step_wounding_double(wounding_multiplier) // Implied piercing damage, degrade by two steps (prevents damage duping from <1 multiplier)
+						else
+							wounding_multiplier = 1 // Crushing multiplier forced
+						sharp = FALSE
+						edge = FALSE
+						armor_message(SPAN_NOTICE("[src] armor deflected the strike!"), // No cut (strike), only bash
+										SPAN_NOTICE("Your armor deflects the strike!"))
+
+					if(ishuman(src) && isitem(used_weapon))
+						var/mob/living/carbon/human/H = src
+						var/obj/item/I = used_weapon
+						if((is_carrion(H) || active_mutations.len) && (SANCTIFIED in I.aspects))
+							apply_damage(dmg / 2, BURN, def_zone, armor_divisor, wounding_multiplier, sharp, edge, used_weapon)
+
+				apply_damage(dmg, dmg_type, def_zone, armor_divisor, wounding_multiplier, sharp, edge, used_weapon)
+				if(ishuman(src) && def_zone && dmg >= 20)
+					var/mob/living/carbon/human/H = src
+					var/obj/item/organ/external/o = H.get_organ(def_zone)
+					if (o && o.status & ORGAN_SPLINTED)
+						visible_message(SPAN_WARNING("The splints break off [src] after being hit!"),
+								SPAN_WARNING("Your splints break off after being hit!"))
+						o.status &= ~ORGAN_SPLINTED
+	var/effective_armor = round((1 - dealt_damage / total_dmg) * 100)
+
+
 	//Feedback
 	//In order to show both target and everyone around that armor is actually working, we are going to send message for both of them
 	//Goon/tg chat should take care of spam issue on this one
+	switch(effective_armor)
+		if(24 to 49)
+			armor_message(SPAN_NOTICE("[src] armor reduces the impact by a little."),
+							SPAN_NOTICE("Your armor reduced the impact a little."))
+		if(50 to 74)
+			armor_message(SPAN_NOTICE("[src] armor absorbs most of the damage!"),
+							SPAN_NOTICE("Your armor protects you from the impact!"))
+		if(75 to 89)
+			armor_message(SPAN_NOTICE("[src] armor easily absorbs the blow!"),
+							SPAN_NOTICE("Your armor reduced the impact greatly!"))
+		if(90 to INFINITY)
+			armor_message(SPAN_NOTICE("[src] armor absorbs the blow!"),
+							SPAN_NOTICE("Your armor absorbed the impact!"))
 
-	if(armor_effectiveness >= 74)
-		armor_message(SPAN_NOTICE("[src] armor easily absorbs the blow!"),
-						SPAN_NOTICE("Your armor reduced the impact greatly!"))
 
-	else if(armor_effectiveness >= 49)
-		armor_message(SPAN_NOTICE("[src] armor absorbs most of the damage!"),
-						SPAN_NOTICE("Your armor protects you from impact!"))
+	// Deal damage to ablative armour based on how much was used, we multiply armour divisor back so high AP doesn't decrease damage dealt to ADR
+	if(ablative_armor)
+		damageablative(def_zone, (ablative_armor - remaining_ablative) * armor_divisor)
 
-	else if(armor_effectiveness >= 24)
-		armor_message(SPAN_NOTICE("Your armor reduced impact for a bit."))
+	//If we have a grab in our hands and get hit with melee damage type, there is a chance we lower our grab's state
+	if(attack_flag == ARMOR_MELEE && ishuman(src) && isitem(used_weapon))
+		var/mob/living/carbon/human/H = src
+		var/obj/item/I = used_weapon
+		var/toughness_val = H.stats.getStat(STAT_TGH)
 
-	//No armor? Damage as usual
-	if(armor_effectiveness == 0)
-		apply_damage(effective_damage, damagetype, def_zone, sharp, edge, used_weapon)
-		if(ishuman(src) && def_zone)
-			var/mob/living/carbon/human/H = src
-			var/obj/item/organ/external/o = H.get_organ(def_zone)
-			if (o && o.status & ORGAN_SPLINTED && effective_damage >= 20)
-				visible_message(SPAN_WARNING("The splints break off [src] after being hit!"),
-						SPAN_WARNING("Your splints break off after being hit!"))
-				o.status &= ~ORGAN_SPLINTED
-		if(sanctified_attack)
-			apply_damage(effective_damage / 2, BURN, def_zone, sharp, edge, used_weapon)
-	//Here we split damage in two parts, where armor value will determine how much damage will get through
-	else
-		//Pain part of the damage, that simulates impact from armor absorbtion
-		//For balance purposes, it's lowered by ARMOR_HALLOS_COEFFICIENT
-		if(!(damagetype == HALLOSS ))
-			var/agony_gamage = round( ( effective_damage * armor_effectiveness * ARMOR_HALLOS_COEFFICIENT * max(0.5, (get_specific_organ_efficiency(OP_NERVE, def_zone) / 100)) / 100))
-			adjustHalLoss(agony_gamage)
+		if(dealt_damage > 10 && prob((dealt_damage - toughness_val * (sharp && edge ? 1 : 0.5) * (I.w_class < ITEM_SIZE_BULKY ? 1 : 0.5))))
+			for(var/obj/item/grab/G in get_both_hands(H))
+				visible_message(SPAN_NOTICE("[H]'s grab has been weakened!"), SPAN_WARNING("Your grab has been weakened!"))
+				G.state--
 
-		//Actual part of the damage that passed through armor
-		var/actual_damage = round ( ( effective_damage * ( 100 - armor_effectiveness ) ) / 100 )
-		apply_damage(actual_damage, damagetype, def_zone, sharp, edge, used_weapon)
-		if(ishuman(src) && def_zone && actual_damage >= 20)
-			var/mob/living/carbon/human/H = src
-			var/obj/item/organ/external/o = H.get_organ(def_zone)
-			if (o && o.status & ORGAN_SPLINTED)
-				visible_message(SPAN_WARNING("The splints break off [src] after being hit!"),
-						SPAN_WARNING("Your splints break off after being hit!"))
-				o.status &= ~ORGAN_SPLINTED
-		if(sanctified_attack)
-			apply_damage(actual_damage / 2, BURN, def_zone, sharp, edge, used_weapon)
-		return actual_damage
-	return effective_damage
+	// Returns if a projectile should continue travelling
+	if(return_continuation)
+		var/obj/item/projectile/P = used_weapon
+		if(istype(P, /obj/item/projectile/bullet/pellet)) // Pellets should never penetrate
+			return PROJECTILE_STOP
+		P.damage_types = dmg_types
+		if(sharp)
+			var/remaining_dmg = 0
+			for(var/dmg_type in dmg_types)
+				remaining_dmg += dmg_types[dmg_type]
+			return ((total_dmg / 2 < remaining_dmg && remaining_dmg > mob_size) ? PROJECTILE_CONTINUE : PROJECTILE_STOP)
+		else return PROJECTILE_STOP
+
+	return dealt_damage
 
 //if null is passed for def_zone, then this should return something appropriate for all zones (e.g. area effect damage)
 /mob/living/proc/getarmor(var/def_zone, var/type)
-	return 0
+	return FALSE
 
+/mob/living/proc/getarmorablative(var/def_zone, var/type)
+	return FALSE
+
+/mob/living/proc/damageablative(var/def_zone, var/damage)
+	return FALSE
 
 /mob/living/proc/hit_impact(damage, dir)
 	if(incapacitated(INCAPACITATION_DEFAULT|INCAPACITATION_BUCKLED_PARTIALLY))
 		return
 	shake_animation(damage)
 
-
-/mob/living/bullet_act(obj/item/projectile/P, var/def_zone)
+ // return PROJECTILE_CONTINUE if bullet should continue flying
+/mob/living/bullet_act(obj/item/projectile/P, var/def_zone_hit)
 	var/hit_dir = get_dir(P, src)
 
 	if (P.is_hot() >= HEAT_MOBIGNITE_THRESHOLD)
 		IgniteMob()
+
+	if(config.z_level_shooting && P.height) // If the bullet came from above or below, limit what bodyparts can be hit for consistency
+		if(resting || lying)
+			return PROJECTILE_CONTINUE // Bullet flies overhead
+
+		switch(P.height)
+			if(HEIGHT_HIGH)
+				def_zone_hit = pick(list(BP_CHEST, BP_HEAD, BP_L_ARM, BP_R_ARM))
+			if(HEIGHT_LOW)
+				def_zone_hit = pick(list(BP_CHEST, BP_GROIN, BP_L_LEG, BP_R_LEG))
 
 	//Being hit while using a deadman switch
 	if(istype(get_active_hand(),/obj/item/device/assembly/signaler))
@@ -122,29 +193,25 @@
 			src.visible_message(SPAN_WARNING("[src] triggers their deadman's switch!"))
 			signaler.signal()
 
+	var/agony = P.damage_types[HALLOSS] ? P.damage_types[HALLOSS] : 0
 	//Stun Beams
 	if(P.taser_effect)
-		stun_effect_act(0, P.agony, def_zone, P)
+		stun_effect_act(0, agony, def_zone_hit, P)
 		to_chat(src, SPAN_WARNING("You have been hit by [P]!"))
 		qdel(P)
 		return TRUE
-	
-	if(P.agony > 0)
-		hit_impact(P.agony, hit_dir)
-		damage_through_armor(P.agony, HALLOSS, def_zone, P.check_armour, armour_pen = P.armor_penetration, used_weapon = P, sharp = is_sharp(P), edge = has_edge(P))
 
 	if(P.knockback && hit_dir)
 		throw_at(get_edge_target_turf(src, hit_dir), P.knockback, P.knockback)
 
+	P.on_hit(src, def_zone_hit)
+
 	//Armor and damage
 	if(!P.nodamage)
 		hit_impact(P.get_structure_damage(), hit_dir)
-		for(var/damage_type in P.damage_types)
-			var/damage = P.damage_types[damage_type]
-			damage_through_armor(damage, damage_type, def_zone, P.check_armour, armour_pen = P.armor_penetration, used_weapon = P, sharp=is_sharp(P), edge=has_edge(P))
+		return damage_through_armor(def_zone = def_zone_hit, attack_flag = P.check_armour, armor_divisor = P.armor_divisor, used_weapon = P, sharp = is_sharp(P), edge = has_edge(P), wounding_multiplier = P.wounding_mult, dmg_types = P.damage_types, return_continuation = TRUE)
 
-	P.on_hit(src, def_zone)
-	return TRUE
+	return PROJECTILE_CONTINUE
 
 //Handles the effects of "stun" weapons
 /mob/living/proc/stun_effect_act(var/stun_amount, var/agony_amount, var/def_zone, var/used_weapon)
@@ -160,11 +227,11 @@
 		Weaken(stun_amount * armor_coefficient)
 		apply_effect(STUTTER, stun_amount * armor_coefficient)
 		apply_effect(EYE_BLUR, stun_amount * armor_coefficient)
-		SEND_SIGNAL(src, COMSIG_LIVING_STUN_EFFECT)
+		SEND_SIGNAL_OLD(src, COMSIG_LIVING_STUN_EFFECT)
 
 	if (agony_amount && armor_coefficient)
 
-		apply_damage(agony_amount * armor_coefficient, HALLOSS, def_zone, 0, used_weapon)
+		apply_damage(agony_amount * armor_coefficient, HALLOSS, def_zone, FALSE, FALSE, FALSE, used_weapon)
 		apply_effect(STUTTER, agony_amount * armor_coefficient)
 		apply_effect(EYE_BLUR, agony_amount * armor_coefficient)
 
@@ -187,7 +254,7 @@
 	standard_weapon_hit_effects(I, user, effective_force, hit_zone)
 
 	if(I.damtype == BRUTE && prob(33)) // Added blood for whacking non-humans too
-		var/turf/simulated/location = get_turf(src)
+		var/turf/location = get_turf(src)
 		if(istype(location)) location.add_blood_floor(src)
 
 	return
@@ -202,7 +269,7 @@
 //		effective_force *= 2
 
 	//Apply weapon damage
-	if (damage_through_armor(effective_force, I.damtype, hit_zone, ARMOR_MELEE, I.armor_penetration, used_weapon = I, sharp = is_sharp(I), edge = has_edge(I)))
+	if (damage_through_armor(effective_force, I.damtype, hit_zone, ARMOR_MELEE, I.armor_divisor, used_weapon = I, sharp = is_sharp(I), edge = has_edge(I)))
 		return TRUE
 	else
 		return FALSE
@@ -213,22 +280,13 @@
 		var/obj/O = AM
 		var/dtype = O.damtype
 		var/throw_damage = O.throwforce
-		var/miss_chance = 15
-		if (O.throw_source)
-			var/distance = get_dist(O.throw_source, loc)
-			miss_chance = max(15*(distance-2), 0)
-
-		if (prob(miss_chance))
-			visible_message("\blue \The [O] misses [src] narrowly!")
-			playsound(src, "miss_sound", 50, 1, -6)
-			return
 
 		if (O.is_hot() >= HEAT_MOBIGNITE_THRESHOLD)
 			IgniteMob()
 
 		src.visible_message(SPAN_WARNING("[src] has been hit by [O]."))
 
-		damage_through_armor(throw_damage, dtype, null, ARMOR_MELEE, null, used_weapon = O, sharp = is_sharp(O), edge = has_edge(O))
+		damage_through_armor(throw_damage, dtype, null, ARMOR_MELEE, O.armor_divisor, used_weapon = O, sharp = is_sharp(O), edge = has_edge(O))
 
 		O.throwing = 0		//it hit, so stop moving
 
@@ -239,7 +297,7 @@
 				src.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been hit with a [O], thrown by [M.name] ([assailant.ckey])</font>")
 				M.attack_log += text("\[[time_stamp()]\] <font color='red'>Hit [src.name] ([src.ckey]) with a thrown [O]</font>")
 				if(!ismouse(src))
-					msg_admin_attack("[src.name] ([src.ckey]) was hit by a [O], thrown by [M.name] ([assailant.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
+					msg_admin_attack("[src.name] ([src.ckey]) was hit by a [O], thrown by [M.name] ([assailant.ckey]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
 
 		// Begin BS12 momentum-transfer code.
 		var/mass = 1.5
@@ -278,7 +336,7 @@
 	O.forceMove(src)
 	src.embedded += O
 	src.visible_message(SPAN_DANGER("\The [O] embeds in the [src]!"))
-	src.verbs += /mob/proc/yank_out_object
+	add_verb(src, /mob/proc/yank_out_object)
 	O.on_embed(src)
 
 //This is called when the mob is thrown into a dense turf
@@ -350,9 +408,6 @@
 
 	var/turf/location = get_turf(src)
 	location.hotspot_expose(fire_burn_temperature(), 50, 1)
-	if (ishuman(src))
-		var/mob/living/carbon/human/stylish = src
-		stylish.regen_slickness() // being on fire is cool, but don't try this at home
 
 /mob/living/fire_act()
 	adjust_fire_stacks(2)
@@ -376,47 +431,51 @@
 /mob/living/proc/reagent_permeability()
 	return 1
 
-/mob/living/proc/handle_actions()
-	//Pretty bad, i'd use picked/dropped instead but the parent calls in these are nonexistent
-	for(var/datum/action/A in actions)
-		if(A.CheckRemoval(src))
-			A.Remove(src)
-	for(var/obj/item/I in src)
-		if(I.action_button_name)
-			if(!I.action)
-				if(I.action_button_is_hands_free)
-					I.action = new/datum/action/item_action/hands_free
-				else
-					I.action = new/datum/action/item_action
-				I.action.name = I.action_button_name
-				I.action.target = I
-			I.action.Grant(src)
+/mob/proc/action_button_add(obj/item/item)
 	return
+
+/mob/living/action_button_add(obj/item/item)
+	ASSERT(item)
+	if(!item.action_button_name)
+		return
+
+	if(!item.action)
+		if(item.action_button_is_hands_free)
+			item.action = new/datum/action/item_action/hands_free
+		else
+			item.action = new/datum/action/item_action
+		item.action.name = item.action_button_name
+		item.action.target = item
+		if(item.action_button_proc)
+			item.action.action_type = AB_ITEM_PROC
+			item.action.procname = item.action_button_proc
+			if(item.action_button_arguments)
+				item.action.arguments = item.action_button_arguments
+	item.action.Grant(src)
+
+
+/mob/proc/action_button_remove(obj/item/item)
+	return
+
+/mob/living/action_button_remove(obj/item/item)
+	ASSERT(item)
+	ASSERT(istype(item))
+	if(item.action)
+		item.action.Remove(src)
+	else
+		for(var/datum/action/action in actions)
+			if(action.target == item)
+				action.Remove(src)
+
 
 /mob/living/update_action_buttons()
 	if(!hud_used) return
 	if(!client) return
 
-	//if(hud_used.hud_shown != 1)	//Hud toggled to minimal
-	//	return
-
-	//client.screen -= hud_used.hide_actions_toggle
 	for(var/datum/action/A in actions)
 		if(A.button)
 			client.screen -= A.button
 
-	/*if(hud_used.action_buttons_hidden)
-		if(!hud_used.hide_actions_toggle)
-			hud_used.hide_actions_toggle = new(hud_used)
-			hud_used.hide_actions_toggle.UpdateIcon()
-
-		if(!hud_used.hide_actions_toggle.moved)
-			hud_used.hide_actions_toggle.screen_loc = hud_used.ButtonNumberToScreenCoords(1)
-			//hud_used.SetButtonCoords(hud_used.hide_actions_toggle,1)
-
-		client.screen += hud_used.hide_actions_toggle
-		return
-*/
 	var/button_number = 0
 	for(var/datum/action/A in actions)
 		button_number++
@@ -435,13 +494,3 @@
 
 		if(!B.moved)
 			B.screen_loc = hud_used.ButtonNumberToScreenCoords(button_number)
-			//hud_used.SetButtonCoords(B,button_number)
-
-//	if(button_number > 0)
-		/*if(!hud_used.hide_actions_toggle)
-			hud_used.hide_actions_toggle = new(hud_used)
-			hud_used.hide_actions_toggle.InitialiseIcon(src)
-		if(!hud_used.hide_actions_toggle.moved)
-			hud_used.hide_actions_toggle.screen_loc = hud_used.ButtonNumberToScreenCoords(button_number+1)
-			//hud_used.SetButtonCoords(hud_used.hide_actions_toggle,button_number+1)
-		client.screen += hud_used.hide_actions_toggle*/

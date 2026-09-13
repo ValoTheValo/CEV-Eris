@@ -4,18 +4,18 @@
 	icon_state = "scaf"
 	item_state = "scaf"
 	armor = list(
-		melee = 60,
-		bullet = 65,
-		energy = 60,
-		bomb = 75,
+		melee = 15,
+		bullet = 16,
+		energy = 14,
+		bomb = 150,
 		bio = 100,
 		rad = 30
 	)
 	siemens_coefficient = 0.35
+	max_heat_protection_temperature = 15000 //Halfway between Space Suit 5000 and Firesuit 30000
 	species_restricted = list(SPECIES_HUMAN)
 	camera_networks = list(NETWORK_MERCENARY)
 	light_overlay = "helmet_light_green"
-	obscuration = MEDIUM_OBSCURATION
 
 /obj/item/clothing/suit/space/void/SCAF
 	name = "SCAF suit"
@@ -24,14 +24,15 @@
 	item_state = "scaf"
 	flags_inv = HIDEGLOVES|HIDEJUMPSUIT|HIDETAIL
 	armor = list(
-		melee = 60,
-		bullet = 65,
-		energy = 60,
-		bomb = 75,
+		melee = 15,
+		bullet = 16,
+		energy = 14,
+		bomb = 150,
 		bio = 100,
 		rad = 30
 	)
 	siemens_coefficient = 0.35
+	max_heat_protection_temperature = 15000 //Halfway between Space Suit 5000 and Firesuit 30000
 	breach_threshold = 10
 	resilience = 0.07
 	species_restricted = list(SPECIES_HUMAN)
@@ -39,7 +40,6 @@
 	helmet = /obj/item/clothing/head/space/void/SCAF
 	spawn_blacklisted = TRUE
 	slowdown = MEDIUM_SLOWDOWN * 1.5
-	stiffness = MEDIUM_STIFFNESS
 
 
 //Voidsuit for contractors
@@ -49,10 +49,10 @@
 	icon_state = "syndiehelm"
 	item_state = "syndiehelm"
 	armor = list(
-		melee = 50,
-		bullet = 50,
-		energy = 50,
-		bomb = 50,
+		melee = 13,
+		bullet = 13,
+		energy = 13,
+		bomb = 75,
 		bio = 100,
 		rad = 75
 	)
@@ -60,7 +60,6 @@
 	species_restricted = list(SPECIES_HUMAN)
 	camera_networks = list(NETWORK_MERCENARY)
 	light_overlay = "helmet_light_ihs"
-	obscuration = 0
 
 /obj/item/clothing/head/space/void/merc/update_icon()
 	..()
@@ -76,10 +75,10 @@
 	desc = "An advanced suit that protects against injuries during special operations. Surprisingly flexible. This version is additionally reinforced against melee attacks."
 	item_state = "syndie_voidsuit"
 	armor = list(
-		melee = 50,
-		bullet = 50,
-		energy = 50,
-		bomb = 50,
+		melee = 13,
+		bullet = 13,
+		energy = 13,
+		bomb = 75,
 		bio = 100,
 		rad = 75
 	)
@@ -88,7 +87,6 @@
 	resilience = 0.08
 	species_restricted = list(SPECIES_HUMAN)
 	helmet = /obj/item/clothing/head/space/void/merc
-	stiffness = MEDIUM_STIFFNESS
 
 /obj/item/clothing/suit/space/void/merc/equipped
 	spawn_blacklisted = TRUE

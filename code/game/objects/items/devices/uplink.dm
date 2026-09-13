@@ -30,6 +30,8 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 
 	var/bsdm_time = 0
 
+	var/list/blacklist = list() // Single purchase items are sent here
+
 /obj/item/device/uplink/nano_host()
 	return loc
 
@@ -39,7 +41,7 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 	purchase_log = list()
 	world_uplinks += src
 	uses = telecrystals
-	addtimer(CALLBACK(src, .obj/item/device/uplink/proc/gain_TC), 600)
+	addtimer(CALLBACK(src, TYPE_PROC_REF(/obj/item/device/uplink, gain_TC)), 600)
 
 /obj/item/device/uplink/Destroy()
 	world_uplinks -= src
@@ -48,16 +50,18 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 
 //Passive TC gain, triggers once per minute as long as the owner is alive and active
 /obj/item/device/uplink/proc/gain_TC()
-	addtimer(CALLBACK(src, .obj/item/device/uplink/proc/gain_TC), 600)
-	if (!uplink_owner || !uplink_owner.current)
+	if(QDELETED(src))
+		return
+	addtimer(CALLBACK(src, TYPE_PROC_REF(/obj/item/device/uplink, gain_TC)), 600)
+	if(!uplink_owner || !uplink_owner.current)
 		return
 
 	var/mob/M = uplink_owner.current
-	if (M.stat == DEAD)
+	if(M.stat == DEAD)
 		return
 
 	gain_progress += passive_gain
-	if (gain_progress >= 1)
+	if(gain_progress >= 1)
 		uses += 1
 		gain_progress -= 1
 
@@ -116,7 +120,7 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 /*
 	NANO UI FOR UPLINK WOOP WOOP
 */
-/obj/item/device/uplink/hidden/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/item/device/uplink/hidden/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/title = "Remote Uplink"
 	var/data[0]
 	var/list/implants_in_list = list()
@@ -139,8 +143,8 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 	data["welcome"] = welcome
 	data["crystals"] = uses
 	data["menu"] = nanoui_menu
-	data["has_contracts"] = uplink_owner ? player_is_antag_in_list(uplink_owner, ROLES_CONTRACT | ROLES_CONTRACT_VIEWONLY)\
-	                                     : !!length(owner_roles & ROLES_CONTRACT | ROLES_CONTRACT_VIEWONLY)
+	data["has_contracts"] = uplink_owner ? player_is_antag_in_list(uplink_owner, ROLES_CONTRACT_VIEW)\
+	                                     : !!length(owner_roles & ROLES_CONTRACT_VIEW)
 	data += nanoui_data
 
 	// update the ui if it exists, returns null if no ui is passed/found
@@ -156,7 +160,7 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 
 // Interaction code. Gathers a list of items purchasable from the paren't uplink and displays it. It also adds a lock button.
 /obj/item/device/uplink/interact(mob/user)
-	ui_interact(user)
+	nano_ui_interact(user)
 
 // The purchasing code.
 /obj/item/device/uplink/hidden/Topic(href, href_list)
@@ -230,14 +234,14 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 		nanoui_data["items"] = items
 	else if(nanoui_menu == 2)
 		var/permanentData[0]
-		for(var/datum/data/record/L in sortRecord(data_core.locked))
-			permanentData[++permanentData.len] = list(Name = L.fields["name"],"id" = L.fields["id"])
+		for(var/datum/computer_file/report/crew_record/L in GLOB.all_crew_records)
+			permanentData[++permanentData.len] = list(Name = L.get_name(), "id" = jointext(L.get_name(), L.get_job()))
 		nanoui_data["exploit_records"] = permanentData
 	else if(nanoui_menu == 21)
 		nanoui_data["exploit_exists"] = 0
 
-		for(var/datum/data/record/L in data_core.locked)
-			if(L.fields["id"] == exploit_id)
+		for(var/datum/computer_file/report/crew_record/L in GLOB.all_crew_records)
+			if(jointext(L.get_name(), L.get_job()) == exploit_id) // datacore used name and job to make their IDs, so this would be the same level of specificity as it was in datacore
 				nanoui_data["exploit"] = list()  // Setting this to equal L.fields passes it's variables that are lists as reference instead of value.
 								 // We trade off being able to automatically add shit for more control over what gets passed to json
 								 // and if it's sanitized for html.
@@ -252,7 +256,7 @@ A list of items and costs is stored under the datum of every game mode, alongsid
 
 				nanoui_data["exploit_exists"] = 1
 				break
-	else if(nanoui_menu == 3 && (uplink_owner ? player_is_antag_in_list(uplink_owner, ROLES_CONTRACT | ROLES_CONTRACT_VIEWONLY) : !!length(owner_roles & ROLES_CONTRACT | ROLES_CONTRACT_VIEWONLY)))
+	else if(nanoui_menu == 3 && (uplink_owner ? player_is_antag_in_list(uplink_owner, ROLES_CONTRACT_VIEW) : !!length(owner_roles & ROLES_CONTRACT_VIEW)))
 		var/list/available_contracts = list()
 		var/list/completed_contracts = list()
 		for(var/datum/antag_contract/C in GLOB.various_antag_contracts)

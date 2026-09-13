@@ -37,7 +37,7 @@
 	if(oddity_stats)
 		if(random_stats)
 			for(var/stat in oddity_stats)
-				oddity_stats[stat] = rand(1, oddity_stats[stat])
+				oddity_stats[stat] = rand(2, oddity_stats[stat])
 		AddComponent(/datum/component/inspiration, oddity_stats, perk)
 
 /proc/get_oddity_perk()
@@ -53,41 +53,22 @@
 	bad_type = /obj/item/oddity/common
 	spawn_blacklisted = FALSE
 
-/obj/item/oddity/common/blueprint
-	name = "strange blueprint"
-	desc = "There's no telling what this design is supposed to be. Whatever could be built from this likely wouldn't work."
-	icon_state = "blueprint"
-	oddity_stats = list(
-		STAT_COG = 5,
-		STAT_MEC = 7,
-	)
-	rarity_value = 15
 
-/obj/item/oddity/common/coin
-	name = "strange coin"
-	desc = "It appears to be more of a collectible than any sort of actual currency. What metal it's made from seems to be a mystery."
-	icon_state = "coin"
+//Single stat oddities. Starting with combat stats (ROB, TGH, and VIG)
+/obj/item/oddity/common/lighter
+	name = "rusted lighter"
+	desc = "This zippo ligher has been rusted shut. It smells faintly of sulphur and blood."
+	icon_state = "syndicate_lighter"
 	oddity_stats = list(
-		STAT_ROB = 5,
-		STAT_TGH = 5,
+		STAT_ROB = 10,
 	)
 
-/obj/item/oddity/common/photo_landscape
-	name = "alien landscape photo"
-	desc = "There is some ire about the planet in this photograph."
-	icon_state = "photo_landscape"
+/obj/item/oddity/common/old_id
+	name = "old id"
+	desc = "There is a story behind this name. Untold, and cruel in fate."
+	icon_state = "old_id"
 	oddity_stats = list(
-		STAT_COG = 5,
-		STAT_TGH = 5,
-	)
-
-/obj/item/oddity/common/photo_coridor
-	name = "surreal maint photo"
-	desc = "The corridor in this photograph looks familiar, though something seems wrong about it; it's as if everything in it was replaced with an exact replica of itself."
-	icon_state = "photo_corridor"
-	oddity_stats = list(
-		STAT_MEC = 5,
-		STAT_TGH = 5,
+		STAT_TGH = 10,
 	)
 
 /obj/item/oddity/common/photo_eyes
@@ -95,87 +76,16 @@
 	desc = "Just looking at this photo sparks a primal fear in your heart."
 	icon_state = "photo_corridor"
 	oddity_stats = list(
-		STAT_ROB = 6,
-		STAT_TGH = 6,
-		STAT_VIG = 6,
-	)
-	rarity_value = 18
-
-/obj/item/oddity/common/photo_crime
-	name = "crime scene photo"
-	desc = "It is unclear whether this is a victim of suicide or murder. His face is frozen in a look of agony and terror, and you shudder to think at what his last moments might have been."
-	icon_state = "photo_crime"
-	oddity_stats = list(
-		STAT_COG = 7,
-		STAT_VIG = 7,
-	)
-	rarity_value = 23
-
-/obj/item/oddity/common/old_newspaper
-	name = "old newspaper"
-	desc = "It contains a report on some old and strange phenomenon. Maybe it's lies, maybe it's corporate experiments gone wrong. Wait, there are two comically obvious holes for peering through!"
-	icon_state = "old_newspaper"
-	oddity_stats = list(
-		STAT_MEC = 4,
-		STAT_COG = 4,
-		STAT_BIO = 4,
+		STAT_VIG = 10,
 	)
 
-/obj/item/oddity/common/old_newspaper/attack_self(mob/user)
-	zoom(8, 8)
-	..()
-
-/obj/item/oddity/common/paper_crumpled
-	name = "turn-out page"
-	desc = "This ALMOST makes sense."
-	icon_state = "paper_crumpled"
+//Single stat, work stat (BIO, COG, and MEC)
+/obj/item/oddity/common/disk
+	name = "broken design disk"
+	desc = "This disk is corrupted and completely unusable. It has a hand-drawn picture of some strange mechanism on it - looking at it for too long makes your head hurt."
+	icon_state = "disc"
 	oddity_stats = list(
-		STAT_MEC = 6,
-		STAT_COG = 6,
-		STAT_BIO = 6,
-	)
-	rarity_value = 18
-
-/obj/item/oddity/common/paper_omega
-	name = "collection of obscure reports"
-	desc = "Even the authors seem to be rather skeptical about their findings. The reports are not connected to each other, but their results are similar."
-	icon_state = "folder-omega" //changed from "paper_omega"
-	oddity_stats = list(
-		STAT_MEC = 8,
-		STAT_COG = 8,
-		STAT_BIO = 8,
-	)
-	rarity_value = 27
-
-/obj/item/oddity/common/book_eyes
-	name = "observer book"
-	desc = "This book details information on some cyber creatures. Who did this, how this is even possible?"
-	icon_state = "book_eyes"
-	oddity_stats = list(
-		STAT_ROB = 9,
-		STAT_TGH = 9,
-		STAT_VIG = 9,
-	)
-	rarity_value = 30
-
-/obj/item/oddity/common/book_omega
-	name = "occult book"
-	desc = "Most of the stories in this book seem to be the writings of madmen, but at least the stories are interesting."
-	icon_state = "book_omega"
-	oddity_stats = list(
-		STAT_BIO = 6,
-		STAT_ROB = 6,
-		STAT_VIG = 6,
-	)
-	rarity_value = 18
-
-/obj/item/oddity/common/book_bible
-	name = "old bible"
-	desc = "Oh, how quickly we forgot."
-	icon_state = "book_bible"
-	oddity_stats = list(
-		STAT_ROB = 5,
-		STAT_VIG = 5,
+		STAT_MEC = 10,
 	)
 
 /obj/item/oddity/common/book_unholy
@@ -183,20 +93,8 @@
 	desc = "The writings inside entail some strange ritual. Pages have been torn out or smudged to illegibility."
 	icon_state = "book_skull"
 	oddity_stats = list(
-		STAT_COG = 7,
-		STAT_MEC = 7,
+		STAT_COG = 10,
 	)
-	rarity_value = 24
-
-/obj/item/oddity/common/old_money
-	name = "old money"
-	desc = "It's not like the organization that issued this exists anymore."
-	icon_state = "old_money"
-	oddity_stats = list(
-		STAT_ROB = 4,
-		STAT_TGH = 4,
-	)
-	rarity_value = 8
 
 /obj/item/oddity/common/healthscanner
 	name = "odd health scanner"
@@ -204,21 +102,19 @@
 	icon_state = "healthscanner"
 	item_state = "electronic"
 	oddity_stats = list(
-		STAT_COG = 8,
-		STAT_BIO = 8,
+		STAT_BIO = 10,
 	)
-	rarity_value = 23
 
-/obj/item/oddity/common/old_pda
-	name = "broken pda"
-	desc = "An old Nanotrasen era PDA. These were issued to their employees all throughout the galaxy."
-	icon_state = "old_pda"
-	item_state = "electronic"
+//Double stat oddities, combat.
+/obj/item/oddity/common/coin
+	name = "strange coin"
+	desc = "It appears to be more of a collectible than any sort of actual currency. What metal it's made from seems to be a mystery."
+	icon_state = "coin"
 	oddity_stats = list(
-		STAT_COG = 6,
-		STAT_MEC = 6,
+		STAT_ROB = 6,
+		STAT_TGH = 6,
 	)
-	rarity_value = 15
+
 
 /obj/item/oddity/common/towel
 	name = "trustworthy towel"
@@ -230,17 +126,120 @@
 	)
 	rarity_value = 15
 
-/obj/item/oddity/common/teddy
-	name = "teddy bear"
-	desc = "He will be there for you, even in tough times."
-	icon_state = "teddy"
+/obj/item/oddity/common/book_bible
+	name = "old bible"
+	desc = "Oh, how quickly we forgot."
+	icon_state = "book_bible"
 	oddity_stats = list(
-		STAT_ROB = 7,
-		STAT_TGH = 7,
+		STAT_ROB = 6,
+		STAT_VIG = 6,
+	)
+
+/obj/item/oddity/common/old_money
+	name = "old money"
+	desc = "It's not like the organization that issued this exists anymore."
+	icon_state = "old_money"
+	oddity_stats = list(
+		STAT_TGH = 6,
+		STAT_VIG = 6,
+	)
+
+//Go to hell, Jimmy. But then, you're already there, aren't you?
+/obj/item/oddity/common/mouthwash
+	name = "expired mouthwash"
+	desc = "It's an old bottle of DRAGONBREATH X mouthwash. The contents have hopelessly congealed and fused to the bottle."
+	icon_state = "curly"
+	oddity_stats = list(
+		STAT_ROB = 4,
+		STAT_TGH = 4,
+		STAT_VIG = 4
+	)
+
+
+//Double stat, mixed
+/obj/item/oddity/common/photo_crime
+	name = "crime scene photo"
+	desc = "It is unclear whether this is a victim of suicide or murder. His face is frozen in a look of agony and terror, and you shudder to think at what his last moments might have been."
+	icon_state = "photo_crime"
+	oddity_stats = list(
+		STAT_BIO = 7,
 		STAT_VIG = 7,
 	)
-	rarity_value = 20
+	rarity_value = 17
 
+/obj/item/oddity/common/photo_coridor
+	name = "surreal maint photo"
+	desc = "The corridor in this photograph looks familiar, though something seems wrong about it; it's as if everything in it was replaced with an exact replica of itself."
+	icon_state = "photo_corridor"
+	oddity_stats = list(
+		STAT_MEC = 7,
+		STAT_VIG = 7,
+	)
+	rarity_value = 17
+
+/obj/item/oddity/common/photo_landscape
+	name = "alien landscape photo"
+	desc = "There is some ire about the planet in this photograph."
+	icon_state = "photo_landscape"
+	oddity_stats = list(
+		STAT_COG = 7,
+		STAT_VIG = 7,
+	)
+	rarity_value = 17
+
+/obj/item/oddity/common/old_radio
+	name = "old radio"
+	desc = "Close your eyes, bring it closer and listen. You can almost hear it, in the edge of your consciousness. The World is ticking."
+	icon_state = "old_radio"
+	oddity_stats = list(
+		STAT_COG = 9,
+		STAT_VIG = 9,
+	)
+	rarity_value = 23
+
+/obj/item/oddity/common/mirror
+	name = "cracked mirror"
+	desc = "A thousand mirror images stare back at you as you examine the trinket. What if you're the reflection, staring back out at the real world? At the real you?"
+	icon_state = "mirror"
+	oddity_stats = list(
+		STAT_COG = 5,
+		STAT_TGH = 5,
+	)
+	rarity_value = 9
+
+//Double stat, work
+/obj/item/oddity/common/old_pda
+	name = "broken pda"
+	desc = "An old Nanotrasen era PDA. These were issued to their employees all throughout the galaxy."
+	icon_state = "old_pda"
+	item_state = "electronic"
+	oddity_stats = list(
+		STAT_COG = 6,
+		STAT_BIO = 6,
+	)
+	rarity_value = 15
+
+/obj/item/oddity/common/blueprint
+	name = "strange blueprint"
+	desc = "There's no telling what this design is supposed to be. Whatever could be built from this likely wouldn't work."
+	icon_state = "blueprint"
+	oddity_stats = list(
+		STAT_COG = 5,
+		STAT_MEC = 7,
+	)
+	rarity_value = 15
+
+/obj/item/oddity/common/device
+	name = "odd device"
+	desc = "Something about this gadget both disturbs and interests you. It's manufacturer's name has been mostly smudged away, but you can see a strange mechanism as their logo."
+	icon_state = "device"
+	oddity_stats = list(
+		STAT_COG = 8,
+		STAT_MEC = 8,
+	)
+	rarity_value = 19
+
+//Triple stat, combat
 /obj/item/oddity/common/old_knife
 	name = "old knife"
 	desc = "Is this blood older then you? You can't tell, and will never know."
@@ -255,77 +254,96 @@
 	sharp = TRUE
 	edge = TRUE
 	oddity_stats = list(
-		STAT_ROB = 5,
-		STAT_TGH = 5,
-		STAT_VIG = 5,
+		STAT_ROB = 6,
+		STAT_TGH = 6,
+		STAT_VIG = 6,
 	)
 	rarity_value = 22
 
-/obj/item/oddity/common/old_id
-	name = "old id"
-	desc = "There is a story behind this name. Untold, and cruel in fate."
-	icon_state = "old_id"
+/obj/item/oddity/common/teddy
+	name = "teddy bear"
+	desc = "He will be there for you, even in tough times."
+	icon_state = "teddy"
 	oddity_stats = list(
-		STAT_VIG = 9,
+		STAT_ROB = 7,
+		STAT_TGH = 7,
+		STAT_VIG = 7,
 	)
+	rarity_value = 20
 
-/obj/item/oddity/common/disk
-	name = "broken design disk"
-	desc = "This disk is corrupted and completely unusable. It has a hand-drawn picture of some strange mechanism on it - looking at it for too long makes your head hurt."
-	icon_state = "disc"
+/obj/item/oddity/common/book_eyes
+	name = "observer book"
+	desc = "This book contains detailed information on otherwise unknown cyber creatures. Who did this, how is this even possible?"
+	icon_state = "book_eyes"
 	oddity_stats = list(
-		STAT_MEC = 9,
-	)
-
-/obj/item/oddity/common/mirror
-	name = "cracked mirror"
-	desc = "A thousand mirror images stare back at you as you examine the trinket. What if you're the reflection, staring back out at the real world? At the real you?"
-	icon_state = "mirror"
-	oddity_stats = list(
-		STAT_COG = 4,
-		STAT_VIG = 4,
-	)
-	rarity_value = 8
-
-/obj/item/oddity/common/lighter
-	name = "rusted lighter"
-	desc = "This zippo ligher has been rusted shut. It smells faintly of sulphur and blood."
-	icon_state = "syndicate_lighter"
-	oddity_stats = list(
+		STAT_ROB = 9,
 		STAT_TGH = 9,
-	)
-
-/obj/item/oddity/common/device
-	name = "odd device"
-	desc = "Something about this gadget both disturbs and interests you. It's manufacturer's name has been mostly smudged away, but you can see a strange mechanism as their logo."
-	icon_state = "device"
-	oddity_stats = list(
-		STAT_MEC = 8,
-		STAT_COG = 8,
-	)
-	rarity_value = 19
-
-/obj/item/oddity/common/old_radio
-	name = "old radio"
-	desc = "Close your eyes, bring it closer and listen. You can almost hear it, in the edge of your consciousness. The World is ticking."
-	icon_state = "old_radio"
-	oddity_stats = list(
-		STAT_COG = 9,
 		STAT_VIG = 9,
 	)
-	rarity_value = 23
+	rarity_value = 30
 
+//Triple stat, mixed
 /obj/item/oddity/common/paper_bundle
 	name = "paper bundle"
 	desc = "Somewhere there is a truth, hidden under all of this scrap."
 	icon_state = "paper_bundle"
 	oddity_stats = list(
 		STAT_BIO = 6,
-		STAT_ROB = 6,
+		STAT_TGH = 6,
 		STAT_VIG = 6,
 	)
 	rarity_value = 16
 
+/obj/item/oddity/common/book_omega
+	name = "occult book"
+	desc = "Most of the stories in this book seem to be the writings of madmen, but at least the stories are interesting."
+	icon_state = "book_omega"
+	oddity_stats = list(
+		STAT_BIO = 6,
+		STAT_ROB = 6,
+		STAT_TGH = 6,
+	)
+	rarity_value = 16
+
+/obj/item/oddity/common/paper_crumpled
+	name = "torn-out page"
+	desc = "This ALMOST makes sense."
+	icon_state = "paper_crumpled"
+	oddity_stats = list(
+		STAT_MEC = 6,
+		STAT_ROB = 6,
+		STAT_TGH = 6,
+	)
+	rarity_value = 16
+
+//Triple stat, work
+/obj/item/oddity/common/old_newspaper
+	name = "old newspaper"
+	desc = "It contains a report on some old and strange phenomenon. Maybe it's lies, maybe it's corporate experiments gone wrong. Wait, there are two comically obvious holes for peering through!"
+	icon_state = "old_newspaper"
+	oddity_stats = list(
+		STAT_MEC = 6,
+		STAT_COG = 6,
+		STAT_BIO = 6,
+	)
+	rarity_value = 18
+
+/obj/item/oddity/common/old_newspaper/attack_self(mob/user)
+	zoom(user,8, 8)
+	..()
+
+/obj/item/oddity/common/paper_omega
+	name = "collection of obscure reports"
+	desc = "Even the authors seem to be rather skeptical about their findings. The reports are not connected to each other, but their results are similar."
+	icon_state = "folder-omega" //changed from "paper_omega"
+	oddity_stats = list(
+		STAT_MEC = 8,
+		STAT_COG = 8,
+		STAT_BIO = 8,
+	)
+	rarity_value = 27
+
+//Oddity generated from Technomancer's Techno-Tribalism Enforcer
 /obj/item/oddity/techno
 	name = "Unknown technological part"
 	desc = "Technological part created by Techno-Tribalism Enforcer."
@@ -335,6 +353,7 @@
 	icon_state = "techno_part[rand(1,7)]"
 	.=..()
 
+//Rare bluespace oddity.
 /obj/item/oddity/broken_necklace
 	name = "Broken necklace"
 	desc = "A broken necklace that has a blue crystal as a trinket."
@@ -358,21 +377,20 @@
 	GLOB.bluespace_gift++
 	GLOB.bluespace_entropy -= rand(30, 50)
 
-/obj/item/oddity/broken_necklace/examine(user, distance)
-	. = ..()
+/obj/item/oddity/broken_necklace/examine(mob/user, extra_description = "")
 	var/area/my_area = get_area(src)
-	switch(my_area.bluespace_entropy)
-		if(0 to my_area.bluespace_hazard_threshold*0.3)
-			to_chat(user, SPAN_NOTICE("This feels cold to the touch."))
-
-		if(my_area.bluespace_hazard_threshold*0.7 to INFINITY)
-			to_chat(user, SPAN_NOTICE("This feels warm to the touch."))
+	if(my_area.bluespace_entropy < (my_area.bluespace_hazard_threshold * 0.75))
+		extra_description += SPAN_NOTICE("This feels cold to the touch.")
+	else
+		extra_description += SPAN_NOTICE("This feels warm to the touch.")
 
 	if(GLOB.bluespace_entropy > GLOB.bluespace_hazard_threshold*0.7)
-		to_chat(user, SPAN_NOTICE("Has it always shone so brightly?"))
+		extra_description += SPAN_NOTICE("\nHas it always shone so brightly?")
 
-	if(my_area.bluespace_entropy > my_area.bluespace_hazard_threshold*0.95 || GLOB.bluespace_hazard_threshold > GLOB.bluespace_hazard_threshold*0.95)
-		to_chat(user, SPAN_NOTICE("You can see an inscription in some language unknown to you."))
+	if(my_area.bluespace_entropy > my_area.bluespace_hazard_threshold*0.95 || GLOB.bluespace_entropy > GLOB.bluespace_hazard_threshold*0.95)
+		extra_description += SPAN_NOTICE("\nYou can see an inscription in some language unknown to you.")
+
+	..(user, extra_description)
 
 /obj/item/oddity/broken_necklace/Destroy()
 	var/turf/T = get_turf(src)
@@ -442,7 +460,7 @@
 
 /obj/item/oddity/nt/seal
 	name = "High Inquisitor's Seal"
-	desc = "An honorary badge given to the most devout of NeoTheologian preachers by the High Inquisitor. Such a badge is a rare sight indeed - rumor has it that the badge imbues the holder with the power of the Angels themselves."
+	desc = "An honorary badge given to the most devout of NeoTheology preachers by the High Inquisitor. Such a badge is a rare sight indeed - rumor has it that the badge imbues the holder with the power of the Angels themselves."
 	icon_state = "nt_seal"
 	oddity_stats = list(
 		STAT_COG = 12,
@@ -549,8 +567,10 @@
 
 /hook/roundstart/proc/place_pendant()
 	var/obj/landmark/storyevent/potential_unique_oddity_spawn/L = pick_landmark(/obj/landmark/storyevent/potential_unique_oddity_spawn)
-	new /obj/item/oddity/pendant(L.get_loc())
-	return TRUE
+	if(L)
+		new /obj/item/oddity/pendant(L.get_loc())
+		return TRUE
+	return FALSE
 
 /obj/item/golden_leaf
 	name = "golden leaf"
@@ -575,6 +595,7 @@
 			to_chat(user, SPAN_NOTICE("You drop \the [src] in the water, it dissolves slowly."))
 			qdel(src)
 
+//Complex Functional Oddities (Spawn in maint too, but moving them up would eat quite a bit of the document)
 /obj/item/clothing/mask/gas/big_shot
 	name = "big shot mask"
 	desc = "A cheerful mask of a cartoonish salesman."
@@ -583,16 +604,17 @@
 
 
 	armor = list(
-		melee = 15,
-		bullet = 15,
-		energy = 15,
-		bomb = 15,
+		melee = 3,
+		bullet = 3,
+		energy = 3,
+		bomb = 50,
 		bio = 75,
 		rad = 10
 	)
 	price_tag = 1997
 
 	spawn_tags = SPAWN_TAG_ODDITY
+	spawn_blacklisted = TRUE
 
 /obj/item/clothing/mask/gas/big_shot/equipped(mob/living/carbon/human/user, slot)
 	..()
@@ -600,3 +622,178 @@
 		user.stats.addPerk(/datum/perk/big_shot)
 		var/datum/perk/big_shot/perk = user.stats.getPerk(PERK_BIG_SHOT)
 		perk.my_mask = src
+
+/obj/item/oddity/common/bearmath
+	name = "scrap of semi-semiotics research pamphlet"
+	desc = "A piece of paper with an unfinished mathematical equation."
+	icon = 'icons/obj/bureaucracy.dmi'
+	icon_state = "paper_words_crumpled"
+	prob_perk = 0
+	oddity_stats = list(
+		STAT_ROB = 4,
+		STAT_TGH = 4,
+		STAT_COG = 7
+	)
+
+
+/obj/item/oddity/common/bearmath/attack_self(mob/living/carbon/human/user)
+	if(istype(user))
+		if(alert(user, "Do you want to try and solve the equation on the scrap?", "Math problems!", "Yes", "No") == "Yes")
+			if(user.stat_check(STAT_COG, STAT_LEVEL_ADEPT))
+				if(prob(95))
+					user.visible_message(SPAN_WARNING("A bear appears out of nowhere!"), SPAN_DANGER("The equation results in a bear!"))
+					var/turf/T = get_turf(pick(oview(2, user)))
+					var/mob/living/simple_animal/hostile/bear/B = new /mob/living/simple_animal/hostile/bear(T)
+					var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
+					sparks.set_up(3, 0, get_turf(B.loc))
+					sparks.start()
+					if(prob(15))
+						user.visible_message(SPAN_WARNING("The paper disintegrates!"))
+						qdel(src)
+				else
+					new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+					new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+					new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+					var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
+					sparks.set_up(3, 0, get_turf(user.loc))
+					sparks.start()
+					user.visible_message(SPAN_WARNING("A bunch of items appear out of nowhere!"), SPAN_DANGER("The equation results in several unique objects!"))
+					qdel(src)
+			else
+				to_chat(user, "You fail to solve the equation, did you carry the [rand(1, 9)]?")
+	else
+		to_chat(user, "You're not smart enough to comprehend what this says.")
+
+
+//May one day I be forgiven
+/obj/item/oddity/common/justificande
+	name = "seven-sided coin"
+	desc = "An odd seven-sided coin with somewhat sharp edges and blank sides. You have a strange urge to flip it."
+	icon_state = "justificande"
+	prob_perk = 0 //No perk for the sake of balance
+	oddity_stats = list(
+		STAT_COG = 3,
+		STAT_VIG = 2,
+		STAT_ROB = 2,
+		STAT_TGH = 2,
+		STAT_BIO = 3,
+		STAT_MEC = 3
+	)
+
+	var/heads_stats = list(
+
+		STAT_VIG = 5,
+		STAT_ROB = 5,
+		STAT_TGH = 5
+	)
+
+	var/tails_stats = list(
+		STAT_COG = 5,
+		STAT_BIO = 5,
+		STAT_MEC = 5
+	)
+
+	//It is, after all, the Number.
+	var/sideways_stats = list(
+		STAT_COG = 7,
+		STAT_BIO = 7,
+		STAT_MEC = 7,
+		STAT_VIG = 7,
+		STAT_ROB = 7,
+		STAT_TGH = 7
+	)
+
+	var/was_flipped = FALSE
+
+
+
+/obj/item/oddity/common/justificande/attack_self(mob/living/carbon/human/user)
+	if(istype(user))
+		if(alert(user, "Flip the coin?", "seven-sided coin", "Yes", "No") == "Yes")
+			if(prob(1))
+				user.visible_message(SPAN_NOTICE("[user] has thrown \the [src]. It lands on its side?! "), \
+						 SPAN_NOTICE("You throw \the [src]. It lands on its side?! "))
+				if(!was_flipped)
+					oddity_stats = sideways_stats
+					desc = "An odd seven-sided coin with somewhat sharp edges and blank sides. Holding it gives you a strange sense of nonspecific closure."
+			else
+				var/result = rand(1, 2)
+				var/comment = ""
+				if(result == 1)
+					comment = "tails"
+					if(!was_flipped)
+						oddity_stats = tails_stats
+						desc = "An odd seven-sided coin with somewhat sharp edges. ONE DAY YOU WILL FORGIVE is stamped on the front."
+				else if(result == 2)
+					if(!was_flipped)
+						oddity_stats = heads_stats
+						desc = "An odd seven-sided coin with somewhat sharp edges. ONE DAY YOU WILL FORGIVE is stamped on the back."
+					comment = "heads"
+
+				user.visible_message(SPAN_NOTICE("[user] has thrown \the [src]. It lands on [comment]! "), \
+									 SPAN_NOTICE("You throw \the [src]. It lands on [comment]! "))
+			was_flipped = TRUE
+			var/datum/component/inspiration/odd = GetComponent(/datum/component/inspiration)
+			odd.stats = oddity_stats
+
+		else
+			to_chat(user, "You have decided against flipping the coin.")
+
+//Episode 8, coming never
+/obj/item/oddity/common/anomazon_card
+	name = "expired anomazon dismembership card"
+	desc = "A gaudy-looking plastic card stamped with a slogan - \"All good things cost an arm and a leg!\" You have a bad feeling about this."
+	icon_state = "anomazon"
+	oddity_stats = list(
+		STAT_ROB = 7,
+		STAT_TGH = 7,
+		STAT_VIG = 7
+	)
+
+	rarity_value = 50
+
+/obj/item/oddity/common/anomazon_card/attack_self(mob/living/carbon/human/user)
+	if(istype(user))
+		if(alert(user, "There is a small button at the back of the card, annotated with a request to press it in order to renew your membership. Press it?", "You have a bad feeling about this", "Yes", "No") == "Yes")
+			if(alert(user, "Are you sure?", "Please, don't", "Yes", "No") == "Yes")
+				var/tries = 32
+				var/found_limbs = 0
+				var/list/limbs_to_remove = list()
+				while(tries > 0)
+					var/obj/item/organ/external/E = user.get_organ(pick(list(BP_L_ARM, BP_L_LEG, BP_R_ARM, BP_R_LEG)))
+					if(E && !(E in limbs_to_remove) && !E.is_stump())
+						limbs_to_remove += E
+						found_limbs++
+					tries--
+				if(found_limbs >= 2)
+					var/limb_count = 2
+					while(limb_count > 0)
+						limb_count--
+						var/obj/item/organ/external/E = pick(limbs_to_remove)
+						limbs_to_remove -= E
+						E.droplimb(TRUE, DROPLIMB_BLUNT)
+
+
+				else //nice try, asshole
+					var/obj/item/organ/external/head/head = user.get_organ(BP_HEAD)
+					if(head && !head.is_stump())
+						head.droplimb(TRUE, DROPLIMB_BLUNT)
+					else
+						user.gib()
+
+				new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+				new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+				new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+				new /obj/spawner/oddities(get_turf(pick(oview(2, user))))
+
+
+				new /obj/item/stack/material/gold/full(get_turf(pick(oview(2, user))))
+				new /obj/item/stack/material/silver/full(get_turf(pick(oview(2, user))))
+				new /obj/item/stack/material/platinum/random(get_turf(pick(oview(2, user))))
+
+				var/datum/effect/effect/system/spark_spread/sparks = new /datum/effect/effect/system/spark_spread()
+				sparks.set_up(3, 0, get_turf(user.loc))
+				sparks.start()
+				user.visible_message(SPAN_WARNING("A collection of strange items appears out of nowhere!"), SPAN_DANGER("The card disintegrates, leaving behind several strange objects!"))
+				qdel(src)
+

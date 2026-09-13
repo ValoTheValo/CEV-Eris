@@ -10,11 +10,11 @@
 	size = 8
 
 	var/list/access_lookup = list(access_change_sec, 	//Lookup list for all the accesses that can use the ID computer.
-									access_change_medbay, 
-									access_change_research, 
-									access_change_engineering, 
-									access_change_ids, 
-									access_change_nt, 
+									access_change_medbay,
+									access_change_research,
+									access_change_engineering,
+									access_change_ids,
+									access_change_nt,
 									access_change_cargo,
 									access_change_club)
 
@@ -24,11 +24,11 @@
 	var/is_centcom = 0
 	var/show_assignments = 0
 
-/datum/nano_module/program/card_mod/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/topic_state/state = GLOB.default_state)
+/datum/nano_module/program/card_mod/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS, var/datum/nano_topic_state/state = GLOB.default_state)
 	var/list/data = host.initial_data()
 
 	data["src"] = "\ref[src]"
-	data["station_name"] = station_name()
+	data["station_name"] = station_name
 	data["manifest"] = html_crew_manifest()
 	data["assignments"] = show_assignments
 	if(program && program.computer)
@@ -62,7 +62,7 @@
 	data["security_jobs"] = format_jobs(security_positions)
 	//data["exploration_jobs"] = format_jobs(exploration_positions)
 	data["service_jobs"] = format_jobs(civilian_positions)
-	data["supply_jobs"] = format_jobs(cargo_positions)
+	data["supply_jobs"] = format_jobs(guild_positions)
 	data["church_jobs"] = format_jobs(church_positions)
 	//data["civilian_jobs"] = format_jobs(civilian_positions)
 	data["centcom_jobs"] = format_jobs(get_all_centcom_jobs())
@@ -294,6 +294,6 @@
 /datum/computer_file/program/card_mod/proc/check_modify(var/obj/item/card/id/id_card, var/access_requested)
 	for(var/access in id_card.access)
 		var/region_type = get_access_region_by_id(access_requested)
-		if(access in GLOB.maps_data.access_modify_region[region_type])
+		if(access in SSmapping.access_modify_region[region_type])
 			return TRUE
 	return FALSE

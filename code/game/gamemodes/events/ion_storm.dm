@@ -15,7 +15,6 @@
 
 
 /datum/event/ionstorm
-	var/botEmagChance = 0.5
 	var/list/players = list()
 
 /datum/event/ionstorm/setup()
@@ -91,20 +90,6 @@
 		target.add_ion_law(law)
 		target.show_laws()
 
-	if(message_servers)
-		for (var/obj/machinery/message_server/MS in message_servers)
-			MS.spamfilter.Cut()
-			var/i
-			for (i = 1, i <= MS.spamfilter_limit, i++)
-				MS.spamfilter += pick("kitty","HONK","rev","malf","liberty","freedom","drugs", "[station_short]", \
-					"admin","ponies","heresy","meow","Pun Pun","monkey","Ian","moron","pizza","message","spam",\
-					"director", "Hello", "Hi!"," ","nuke","crate","dwarf","xeno")
-
-/datum/event/ionstorm/tick()
-	if(botEmagChance)
-		for(var/obj/machinery/bot/bot in world)
-			if(prob(botEmagChance))
-				bot.emag_act(1)
 
 /datum/event/ionstorm/end()
 	spawn(rand(5000,8000))
@@ -134,7 +119,7 @@
 	return default_if_none
 
 
-/proc/IonStorm(botEmagChance = 10)
+/proc/IonStorm()
 
 /*Deuryn's current project, notes here for those who care.
 Revamping the random laws so they don't suck.
@@ -238,8 +223,3 @@ Would like to add a law like "Law x is _______" where x = a number, and _____ is
 					to_chat(M, "\red THE STATION IS [who2pref] [who2]...LAWS UPDATED")
 					to_chat(M, "<br>")
 					M.add_ion_law("THE STATION IS [who2pref] [who2]")
-
-	if(botEmagChance)
-		for(var/obj/machinery/bot/bot in world)
-			if(prob(botEmagChance))
-				bot.emag_act()

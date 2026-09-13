@@ -24,17 +24,24 @@
 	hunger_enabled = FALSE
 	pass_flags = PASSTABLE
 	universal_understand = 1
+	holder_type = /obj/item/holder/carrion
 	density = TRUE //Should be 0, but then these things would be a nightmare to kill.
 	faction = "spiders"
 
 /mob/living/simple_animal/spider_core/New()
 	. = ..()
-	verbs |= /mob/living/proc/ventcrawl
-	verbs |= /mob/living/proc/hide
-	verbs |= /mob/living/simple_animal/spider_core/proc/generate_body
+	add_verb(src, list(
+		/mob/living/proc/ventcrawl,
+		/mob/living/proc/hide,
+		/mob/living/simple_animal/spider_core/proc/generate_body))
 
 /mob/living/simple_animal/spider_core/death()
-	gibs(loc, null, /obj/effect/gibspawner/generic, "#666600", "#666600")
+	var/obj/item/organ/internal/core = locate(/obj/item/organ/internal/carrion/core) in contents
+	if(core)
+		core.forceMove(loc)
+		core.status |= ORGAN_DEAD // todo: make wound somehow
+		core.refresh_damage()
+	playsound(loc, 'sound/voice/shriek1.ogg', 50)
 	qdel(src)
 	
 
@@ -50,6 +57,7 @@
 		return
 
 	var/mob/living/carbon/human/H = new /mob/living/carbon/human(loc)
+	H.randomize_appearance()
 	visible_message(SPAN_DANGER("[src] morphs into a human body!"))
 	gibs(loc, null)
 	var/obj/item/organ/internal/carrion/core/core = locate(/obj/item/organ/internal/carrion/core) in contents

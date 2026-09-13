@@ -9,14 +9,14 @@
 	name = "railing"
 	result = /obj/structure/railing
 	steps = list(
-		list(CRAFT_MATERIAL, 4, MATERIAL_STEEL),
+		list(CRAFT_MATERIAL, 2, MATERIAL_STEEL),
 	)
 
 /datum/craft_recipe/furniture/railing_grey
 	name = "grey railing"
 	result = /obj/structure/railing/grey
 	steps = list(
-		list(CRAFT_MATERIAL, 4, MATERIAL_STEEL),
+		list(CRAFT_MATERIAL, 2, MATERIAL_STEEL),
 	)
 
 /datum/craft_recipe/furniture/table
@@ -81,6 +81,13 @@
 	result = /obj/structure/closet/coffin
 	steps = list(
 		list(CRAFT_MATERIAL, 10, MATERIAL_WOOD),
+	)
+
+/datum/craft_recipe/furniture/pauper
+	name = "pauper's coffin"
+	result = /obj/structure/closet/coffin/pauper
+	steps = list(
+		list(CRAFT_MATERIAL, 30, MATERIAL_WOOD)
 	)
 
 /datum/craft_recipe/furniture/bed
@@ -204,10 +211,21 @@
 	name = "green comfy chair"
 	result = /obj/structure/bed/chair/comfy/green
 
-/datum/craft_recipe/furniture/campfire
-	name = "burn barrel"
-	result = /obj/machinery/microwave/campfire
+///datum/craft_recipe/furniture/campfire
+//	name = "burn barrel"
+//	result = /obj/machinery/microwave/campfire
+//	steps = list(
+//		list(CRAFT_MATERIAL, 10, MATERIAL_STEEL),
+//		list(CRAFT_MATERIAL, 1, MATERIAL_WOOD),
+//	)
+
+/datum/craft_recipe/furniture/drying_rack
+	name = "drying rack"
+	result = /obj/machinery/smartfridge/drying_rack
 	steps = list(
-		list(CRAFT_MATERIAL, 10, MATERIAL_STEEL),
-		list(CRAFT_MATERIAL, 1, MATERIAL_WOOD),
+		list(CRAFT_MATERIAL, 10, MATERIAL_WOOD),
+		list(QUALITY_SAWING, 10, 20),
+		list(CRAFT_MATERIAL, 2, MATERIAL_STEEL),
+		list(QUALITY_HAMMERING, 10, 20),
 	)
+

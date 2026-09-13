@@ -65,7 +65,7 @@
 			to_chat(user, SPAN_NOTICE("[src]'s slots is full."))
 
 	user.set_machine(src)
-	ui_interact(user)
+	nano_ui_interact(user)
 	update_icon()
 
 
@@ -93,29 +93,29 @@
 		return TRUE
 
 	user.set_machine(src)
-	ui_interact(user)
+	nano_ui_interact(user)
 	update_icon()
 
 
-/obj/machinery/autolathe_disk_cloner/ui_data()
+/obj/machinery/autolathe_disk_cloner/nano_ui_data()
 	var/list/data = list(
 		"copying" = copying,
 		"hacked" = hacked
 	)
 
 	if(original)
-		data["disk1"] = original.ui_data()
+		data["disk1"] = original.nano_ui_data()
 		data["copyingtotal"] = original.stored_files.len
 
 	if(copy)
-		data["disk2"] = copy.ui_data()
+		data["disk2"] = copy.nano_ui_data()
 		data["copyingnow"] = copy.stored_files.len
 
 	return data
 
 
-/obj/machinery/autolathe_disk_cloner/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
-	var/list/data = ui_data()
+/obj/machinery/autolathe_disk_cloner/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
+	var/list/data = nano_ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
@@ -176,6 +176,7 @@
 
 /obj/machinery/autolathe_disk_cloner/proc/copy()
 	copying = TRUE
+	set_power_use(ACTIVE_POWER_USE)
 	SSnano.update_uis(src)
 	update_icon()
 	if(original && copy && !copy.used_capacity)
@@ -226,6 +227,7 @@
 			sleep(copying_delay)
 
 	copying = FALSE
+	set_power_use(IDLE_POWER_USE)
 	SSnano.update_uis(src)
 	update_icon()
 

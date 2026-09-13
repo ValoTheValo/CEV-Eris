@@ -46,7 +46,8 @@ SUBSYSTEM_DEF(migration)
 	for (var/i = 0; i < roundstart_burrows; i++)
 		var/area/A = random_ship_area(FALSE, FALSE, FALSE)
 		var/turf/T = A.random_space() //Lets make sure the selected area is valid
-		create_burrow(T)
+		if(T)
+			create_burrow(T)
 
 
 
@@ -54,8 +55,8 @@ SUBSYSTEM_DEF(migration)
 Called by roaches when they spawn.
 This proc will attempt to create a burrow against a wall, within view of the target location
 */
-/proc/create_burrow(var/turf/target)
-	if (!isOnShipLevel(target))
+/proc/create_burrow(turf/target)
+	if(!IS_SHIP_LEVEL(target.z))
 		return
 
 	//First of all lets get a list of everything in dview.
@@ -64,11 +65,16 @@ This proc will attempt to create a burrow against a wall, within view of the tar
 
 	var/list/possible_turfs = list()
 	//Now lets look at all the floors
-	for (var/turf/simulated/floor/F in viewlist)
+	for (var/turf/floor/F in viewlist)
 
 
 		//No being under a low wall
 		if (F.is_wall)
+			continue
+
+		// SPCR 2022 - added this to prevent them disconnecting pipes and cables , since , through magical means , it is impossible to find the code behind pipes being disconnected
+		// on turfs with burrows.
+		if(!turf_clear(F))
 			continue
 
 		//No stacking multiple burrows per tile
@@ -239,7 +245,7 @@ This proc will attempt to create a burrow against a wall, within view of the tar
 			continue
 
 		// if burrow was closed before it has chance to be ignored
-		if (candidate.isSealed && candidate.isRevealed && prob(reroll_prob/3))
+		if (candidate.is_sealed && candidate.is_revealed && prob(reroll_prob/3))
 			continue
 
 		break
@@ -274,7 +280,7 @@ This proc will attempt to create a burrow against a wall, within view of the tar
 			continue
 
 		// Burrow is closed
-		if(candidate.isSealed)
+		if(candidate.is_sealed)
 			continue
 
 		//Lets not take mobs away from a burrow that's requesting more
@@ -383,6 +389,7 @@ This proc will attempt to create a burrow against a wall, within view of the tar
 	while (i < plantspread_burrows_num && sorted.len)
 		var/obj/structure/burrow/C = sorted[1] //Grab the first element
 		sorted.Cut(1,2)//And remove it from the list
+		var/turf/T = get_turf(C)
 
 
 		//It already has plants, no good
@@ -392,6 +399,10 @@ This proc will attempt to create a burrow against a wall, within view of the tar
 		//We don't want to send to other burrows in the same room as us.
 		//The point of burrows is to let things move between rooms
 		if (C in viewlist)
+			continue
+
+		//We don't want maintshrooms to spread into places that are too bright
+		if (B.plant.type == /datum/seed/mushroom/maintshroom && T.get_lumcount() > 0.5)
 			continue
 
 		//Chance to reject it anyways to make plant spreading less predictable

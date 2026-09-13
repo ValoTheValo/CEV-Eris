@@ -33,20 +33,20 @@
 	user.set_machine(src)
 	var/dat
 	dat += "<TT><B>Automatic Station Floor Repairer v1.0</B></TT><BR><BR>"
-	dat += "Status: <A href='?src=\ref[src];operation=start'>[src.on ? "On" : "Off"]</A><BR>"
+	dat += "Status: <a href='byond://?src=\ref[src];operation=start'>[src.on ? "On" : "Off"]</A><BR>"
 	dat += "Maintenance panel is [open ? "opened" : "closed"]<BR>"
 	//dat += "Tiles left: [amount]<BR>"
 	dat += "Behvaiour controls are [locked ? "locked" : "unlocked"]<BR>"
 	if(!locked || issilicon(user))
-		dat += "Improves floors: <A href='?src=\ref[src];operation=improve'>[improvefloors ? "Yes" : "No"]</A><BR>"
-		dat += "Finds tiles: <A href='?src=\ref[src];operation=tiles'>[eattiles ? "Yes" : "No"]</A><BR>"
-		dat += "Make singles pieces of metal into tiles when empty: <A href='?src=\ref[src];operation=make'>[maketiles ? "Yes" : "No"]</A><BR>"
+		dat += "Improves floors: <a href='byond://?src=\ref[src];operation=improve'>[improvefloors ? "Yes" : "No"]</A><BR>"
+		dat += "Finds tiles: <a href='byond://?src=\ref[src];operation=tiles'>[eattiles ? "Yes" : "No"]</A><BR>"
+		dat += "Make singles pieces of metal into tiles when empty: <a href='byond://?src=\ref[src];operation=make'>[maketiles ? "Yes" : "No"]</A><BR>"
 		var/bmode
 		if(targetdirection)
 			bmode = dir2text(targetdirection)
 		else
 			bmode = "Disabled"
-		dat += "<BR><BR>Bridge Mode : <A href='?src=\ref[src];operation=bridgemode'>[bmode]</A><BR>"
+		dat += "<BR><BR>Bridge Mode : <a href='byond://?src=\ref[src];operation=bridgemode'>[bmode]</A><BR>"
 
 	user << browse("<HEAD><TITLE>Repairbot v1.0 controls</TITLE></HEAD>[dat]", "window=autorepair")
 	onclose(user, "autorepair")
@@ -126,7 +126,7 @@
 		if(!target && targetdirection) // Building a bridge
 			var/turf/T = get_step(src, targetdirection)
 			while(T in range(src))
-				if(istype(T, /turf/space) || (istype(T, /turf/simulated/open) && locate(/obj/structure/lattice) in T))
+				if(istype(T, /turf/space) || (istype(T, /turf/open) && locate(/obj/structure/lattice) in T))
 					target = T
 					break
 				T = get_step(T, targetdirection)
@@ -137,16 +137,16 @@
 					continue
 				if(T in ignorelist)
 					continue
-				if(istype(T, /turf/space) || (istype(T, /turf/simulated/open) && locate(/obj/structure/lattice) in T))
+				if(istype(T, /turf/space) || (istype(T, /turf/open) && locate(/obj/structure/lattice) in T))
 					if(get_turf(T) == loc || prob(40)) // So they target the same tile all the time
 						target = T
-				if(improvefloors && istype(T, /turf/simulated/floor))
-					var/turf/simulated/floor/F = T
+				if(improvefloors && istype(T, /turf/floor))
+					var/turf/floor/F = T
 					if(!F.flooring && (get_turf(T) == loc || prob(40)))
 						target = T
 
 	if(emagged) // Time to griff
-		for(var/turf/simulated/floor/D in view(src))
+		for(var/turf/floor/D in view(src))
 			if(D.loc.name == "Space" || D.loc.name == "open space")
 				continue
 			if(D in ignorelist)
@@ -194,10 +194,10 @@
 	if(get_turf(A) != loc)
 		return
 
-	if(emagged && istype(A, /turf/simulated/floor)) // Emaged floor destroy
+	if(emagged && istype(A, /turf/floor)) // Emaged floor destroy
 		repairing = 1
 		update_icons()
-		var/turf/simulated/floor/F = A
+		var/turf/floor/F = A
 		var/obj/structure/catwalk/C = A
 		if(F.flooring)
 			visible_message(SPAN_WARNING("[src] begins to tear the floor tile from the floor!"))
@@ -213,7 +213,7 @@
 			say(message)
 			playsound(loc, "robot_talk_heavy", 100, 0, 0)
 			if(do_after(src, 50, C))
-				if(istype(A, /turf/space) || istype(A, /turf/simulated/open))
+				if(istype(A, /turf/space) || istype(A, /turf/open))
 					new /obj/structure/lattice(locate(A.x, A.y, A.z)) // Spawning lattice under floorbot to allow it destroy more and more!
 				else
 					addTiles(1)
@@ -230,7 +230,7 @@
 		repairing = 0
 		update_icons()
 
-	else if(emagged && (istype(A, /turf/space) || istype(A, /turf/simulated/open)))  // Emaged nekowalk destroy
+	else if(emagged && (istype(A, /turf/space) || istype(A, /turf/open)))  // Emaged nekowalk destroy
 		if(locate(/obj/structure/catwalk, A))
 			var/obj/structure/catwalk/C = A
 			visible_message(SPAN_WARNING("[src] begins to dismatle \the [C.name]!"))
@@ -238,7 +238,7 @@
 			say(message)
 			playsound(loc, "robot_talk_heavy", 100, 0, 0)
 			if(do_after(src, 50, C))
-				if(istype(A, /turf/space) || istype(A, /turf/simulated/open))
+				if(istype(A, /turf/space) || istype(A, /turf/open))
 					new /obj/structure/lattice(locate(A.x, A.y, A.z)) // Spawning lattice under floorbot to allow it destroy more and more!
 				else
 					addTiles(1)
@@ -247,7 +247,7 @@
 			repairing = 0
 			update_icons()
 
-	else if(istype(A, /turf/space) || (istype(A, /turf/simulated/open) && locate(/obj/structure/lattice) in A))
+	else if(istype(A, /turf/space) || (istype(A, /turf/open) && locate(/obj/structure/lattice) in A))
 		var/building = 2
 		if(locate(/obj/structure/lattice, A) || locate(/obj/structure/catwalk, A))
 			building = 1
@@ -271,8 +271,8 @@
 		target = null
 		repairing = 0
 		update_icons()
-	else if(istype(A, /turf/simulated/floor))
-		var/turf/simulated/floor/F = A
+	else if(istype(A, /turf/floor))
+		var/turf/floor/F = A
 		if(!F.flooring && amount)
 			repairing = 1
 			update_icons()
@@ -381,7 +381,7 @@
 
 /obj/item/toolbox_tiles/attackby(var/obj/item/W, mob/user as mob)
 	..()
-	if(is_proximity_sensor(W))
+	if(isproxsensor(W))
 		qdel(W)
 		var/obj/item/toolbox_tiles_sensor/B = new /obj/item/toolbox_tiles_sensor()
 		B.created_name = created_name

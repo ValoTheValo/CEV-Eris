@@ -1,7 +1,8 @@
 /obj/machinery/autolathe
 	name = "autolathe"
-	desc = "It produces items using metal and glass."
+	desc = "A general purpose fabricator capable of producing nearly any item you need, provided you have the necessary materials and design disks."
 	icon = 'icons/obj/machines/autolathe.dmi'
+	description_info = "Can be upgraded to print faster, cheaper or hold more material. Can recycle items by trying to insert them as material"
 	icon_state = "autolathe"
 	density = TRUE
 	anchored = TRUE
@@ -40,6 +41,7 @@
 	var/storage_capacity = 120
 	var/speed = 2
 	var/mat_efficiency = 1
+	var/max_quality = 0
 
 	var/default_disk	// The disk that spawns in autolathe by default
 
@@ -53,6 +55,8 @@
 	var/list/unsuitable_materials = list(MATERIAL_BIOMATTER)
 	var/list/suitable_materials //List that limits autolathes to eating mats only in that list.
 
+	var/list/selectively_recycled_types = list()
+
 	var/global/list/error_messages = list(
 		ERR_NOLICENSE = "Not enough license points left.",
 		ERR_NOTFOUND = "Design data not found.",
@@ -60,7 +64,10 @@
 		ERR_NOREAGENT = "Not enough reagents.",
 		ERR_PAUSED = "**Construction Paused**",
 		ERR_NOINSIGHT = "Not enough insight.",
-		ERR_NOODDITY = "catalyst not found."
+		ERR_NOODDITY = "Catalyst not found.",
+		ERR_DISTANT = "User too far to operate machine.",
+		ERR_STOPPED = "User stopped operating machine.",
+		ERR_SKILL_ISSUE = "User cannot produce this design."
 	)
 
 	var/tmp/datum/wires/autolathe/wires
@@ -81,6 +88,7 @@
 	var/obj/item/oddity
 	var/is_nanoforge = FALSE
 	var/list/saved_designs = list()
+	var/uses_stat = FALSE
 
 /obj/machinery/autolathe/Initialize()
 	. = ..()
@@ -136,7 +144,7 @@
 	return data
 
 
-/obj/machinery/autolathe/ui_data()
+/obj/machinery/autolathe/nano_ui_data(mob/user)
 	var/list/data = list()
 
 	data["have_disk"] = have_disk
@@ -170,12 +178,12 @@
 	for(var/d in design_list())
 		var/datum/computer_file/binary/design/design_file = d
 		if(!show_category || design_file.design.category == show_category)
-			L.Add(list(design_file.ui_data()))
+			L.Add(list(design_file.nano_ui_data()))
 	data["designs"] = L
 
 
 	if(current_file)
-		data["current"] = current_file.ui_data()
+		data["current"] = current_file.nano_ui_data()
 		data["progress"] = progress
 
 	var/list/Q = list()
@@ -184,7 +192,7 @@
 
 	for(var/i = 1; i <= queue.len; i++)
 		var/datum/computer_file/binary/design/design_file = queue[i]
-		var/list/QR = design_file.ui_data()
+		var/list/QR = design_file.nano_ui_data()
 
 		QR["ind"] = i
 
@@ -226,11 +234,20 @@
 
 	data["use_license"] = !!disk
 	data["is_nanoforge"] = is_nanoforge
+
+	if(uses_stat)
+		data["uses_stat"] = uses_stat
+		data["max_quality"] = get_quality()
+
 	return data
 
 
-/obj/machinery/autolathe/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
-	var/list/data = ui_data(user, ui_key)
+/obj/machinery/autolathe/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+	var/list/data = nano_ui_data(user, ui_key)
+
+	var/datum/asset/designIcons = get_asset_datum(/datum/asset/simple/design_icons)
+	if (designIcons.send(user.client))
+		user.client.browse_queue_flush() // stall loading nanoui until assets actualy gets sent
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
@@ -281,7 +298,7 @@
 		return
 
 	user.set_machine(src)
-	ui_interact(user)
+	nano_ui_interact(user)
 
 /obj/machinery/autolathe/proc/check_user(mob/user)
 	return TRUE
@@ -294,7 +311,7 @@
 		return TRUE
 
 	user.set_machine(src)
-	ui_interact(user)
+	nano_ui_interact(user)
 	wires.Interact(user)
 
 /obj/machinery/autolathe/Topic(href, href_list)
@@ -530,13 +547,19 @@
 	if(is_robot_module(eating))
 		return FALSE
 
-	if(!have_recycling && !istype(eating, /obj/item/stack))
+	if(!have_recycling && !(istype(eating, /obj/item/stack) || can_recycle(eating)))
 		to_chat(user, SPAN_WARNING("[src] does not support material recycling."))
 		return FALSE
 
 	if(!length(eating.get_matter()))
-		to_chat(user, SPAN_WARNING("\The [eating] does not contain significant amounts of useful materials and cannot be accepted."))
-		return FALSE
+		var/matterless = TRUE
+		for(var/obj/O in eating.GetAllContents()) // can now recycle empty shells to get at the contents
+			if(length(O.get_matter()))
+				matterless = FALSE
+				break
+		if(matterless)
+			to_chat(user, SPAN_WARNING("\The [eating] does not contain significant amounts of useful materials and cannot be accepted."))
+			return FALSE
 
 	if(istype(eating, /obj/item/computer_hardware/hard_drive/portable))
 		var/obj/item/computer_hardware/hard_drive/portable/DISK = eating
@@ -628,6 +651,18 @@
 	else if(reagents_filltype == 2)
 		to_chat(user, SPAN_NOTICE("Some liquid flowed to the floor from \the [src]."))
 
+
+/obj/machinery/autolathe/proc/can_recycle(obj/O)
+	if(!selectively_recycled_types)
+		return FALSE
+	if(!selectively_recycled_types.len)
+		return FALSE
+
+	for(var/type in selectively_recycled_types)
+		if(istype(O, type))
+			return TRUE
+
+	return FALSE
 
 /obj/machinery/autolathe/proc/queue_design(datum/computer_file/binary/design/design_file, amount=1)
 	if(!design_file || !amount)
@@ -780,7 +815,7 @@
 		working = FALSE
 		next_file()
 
-	use_power = working ? ACTIVE_POWER_USE : IDLE_POWER_USE
+	set_power_use(working ? ACTIVE_POWER_USE : IDLE_POWER_USE)
 
 	special_process()
 	update_icon()
@@ -885,6 +920,7 @@
 		man_rating += M.rating
 		man_amount++
 	man_rating -= man_amount
+	max_quality = man_rating
 
 	var/las_rating = 0
 	var/las_amount = 0
@@ -922,9 +958,9 @@
 	consume_materials(design)
 
 	if(disk && disk.GetComponent(/datum/component/oldficator))
-		design.Fabricate(drop_location(), mat_efficiency, src, TRUE)
+		design.Fabricate(drop_location(), mat_efficiency, src, TRUE, machine_rating = get_quality())
 	else
-		design.Fabricate(drop_location(), mat_efficiency, src, FALSE, extra_quality_print)
+		design.Fabricate(drop_location(), mat_efficiency, src, FALSE, machine_rating = get_quality(), high_quality_print = extra_quality_print)
 
 	working = FALSE
 	current_file = null
@@ -977,6 +1013,10 @@
 	oddity = null
 	inspiration = null
 	SSnano.update_uis(src)
+
+/obj/machinery/autolathe/proc/get_quality(mob/living/user)
+	return max_quality
+
 
 #undef ERR_OK
 #undef ERR_NOTFOUND

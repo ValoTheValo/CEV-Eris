@@ -107,9 +107,6 @@
 	if(temperature < minimum_temperature || temperature > maximum_temperature)
 		return FALSE
 
-	if(rotation_required && !holder.rotating)
-		return FALSE
-
 	if(maximum_pressure)
 		var/turf/location = get_turf(holder.my_atom)
 		if(location)
@@ -221,7 +218,7 @@
 	return null
 
 // UI data used by chemical catalog
-/datum/chemical_reaction/ui_data()
+/datum/chemical_reaction/nano_ui_data()
 	var/list/dat = list()
 	if(required_reagents)
 		dat["reagents"] = list()
@@ -343,11 +340,6 @@
 	required_reagents = list("bicaridine" = 2, "clonexadone" = 2)
 	catalysts = list("plasma" = 5)
 	result_amount = 2
-
-/datum/chemical_reaction/virus_food
-	result = "virusfood"
-	required_reagents = list("water" = 1, "milk" = 1)
-	result_amount = 5
 
 /datum/chemical_reaction/leporazine
 	result = "leporazine"
@@ -553,7 +545,11 @@
 	result = "coolant"
 	required_reagents = list("tungsten" = 1, "acetone" = 1, "water" = 1)
 	result_amount = 3
-	log_is_important = 1
+
+/datum/chemical_reaction/refrigerant
+	result = "refrigerant"
+	required_reagents = list("carbon" = 1, "acetone" = 1, "water" = 1)
+	result_amount = 3
 
 /datum/chemical_reaction/rezadone
 	result = "rezadone"
@@ -581,19 +577,6 @@
 	required_reagents = list("mindbreaker" = 1, "acetone" = 1, "inaprovaline" = 1)
 	result_amount = 3
 
-/* Centrifuge */
-
-/datum/chemical_reaction/curing
-	result = "antibodies"
-	required_reagents = list("blood" = 1)
-	result_amount = 1
-	reaction_rate = REACTION_RATE(0.3)
-	rotation_required = TRUE
-	supports_decomposition_by_electrolysis = FALSE
-	mix_message = null
-
-/datum/chemical_reaction/curing/send_data(datum/reagents/T)
-	return list("antibodies" = T.get_data("blood")["antibodies"])
 
 /* Solidification */
 
@@ -677,22 +660,12 @@
 	for(var/mob/living/carbon/M in viewers(world.view, location))
 		switch(get_dist(M, location))
 			if(0 to 3)
-				if(hasvar(M, "glasses"))
-					if(istype(M:glasses, /obj/item/clothing/glasses/sunglasses))
-						continue
-
-				if (M.HUDtech.Find("flash"))
-					flick("e_flash", M.HUDtech["flash"])
-				M.Weaken(15)
+				if(M.eyecheck() < FLASH_PROTECTION_MAJOR)
+					M.flash(15, FALSE , FALSE , FALSE)
 
 			if(4 to 5)
-				if(hasvar(M, "glasses"))
-					if(istype(M:glasses, /obj/item/clothing/glasses/sunglasses))
-						continue
-
-				if (M.HUDtech.Find("flash"))
-					flick("e_flash", M.HUDtech["flash"])
-				M.Stun(5)
+				if(M.eyecheck() < FLASH_PROTECTION_MAJOR)
+					M.flash(0, FALSE , FALSE , FALSE)
 
 /datum/chemical_reaction/emp_pulse
 	result = null
@@ -733,7 +706,7 @@
 
 /datum/chemical_reaction/napalm/on_reaction(var/datum/reagents/holder, var/created_volume)
 	var/turf/location = get_turf(holder.my_atom.loc)
-	for(var/turf/simulated/floor/target_tile in range(0,location))
+	for(var/turf/floor/target_tile in range(0,location))
 		target_tile.assume_gas("plasma", created_volume, 400+T0C)
 		spawn (0) target_tile.hotspot_expose(700, 400)
 	holder.del_reagent("napalm")
@@ -805,201 +778,12 @@
 	s.start()
 	return
 
-/* Paint */
-
-/datum/chemical_reaction/red_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_red" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/red_paint/send_data()
-	return "#FE191A"
-
-/datum/chemical_reaction/orange_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_orange" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/orange_paint/send_data()
-	return "#FFBE4F"
-
-/datum/chemical_reaction/yellow_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_yellow" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/yellow_paint/send_data()
-	return "#FDFE7D"
-
-/datum/chemical_reaction/green_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_green" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/green_paint/send_data()
-	return "#18A31A"
-
-/datum/chemical_reaction/blue_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_blue" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/blue_paint/send_data()
-	return "#247CFF"
-
-/datum/chemical_reaction/purple_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_purple" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/purple_paint/send_data()
-	return "#CC0099"
-
-/datum/chemical_reaction/grey_paint //mime
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_grey" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/grey_paint/send_data()
-	return "#808080"
-
-/datum/chemical_reaction/brown_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_brown" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/brown_paint/send_data()
-	return "#846F35"
-
-/datum/chemical_reaction/blood_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "blood" = 2)
-	result_amount = 5
-
-/datum/chemical_reaction/blood_paint/send_data(var/datum/reagents/T)
-	var/t = T.get_data("blood")
-	if(t && t["blood_colour"])
-		return t["blood_colour"]
-	return "#FE191A" // Probably red
-
-/datum/chemical_reaction/milk_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "milk" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/milk_paint/send_data()
-	return "#F0F8FF"
-
-/datum/chemical_reaction/orange_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "orangejuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/orange_juice_paint/send_data()
-	return "#E78108"
-
-/datum/chemical_reaction/tomato_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "tomatojuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/tomato_juice_paint/send_data()
-	return "#731008"
-
-/datum/chemical_reaction/lime_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "limejuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/lime_juice_paint/send_data()
-	return "#365E30"
-
-/datum/chemical_reaction/carrot_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "carrotjuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/carrot_juice_paint/send_data()
-	return "#973800"
-
-/datum/chemical_reaction/berry_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "berryjuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/berry_juice_paint/send_data()
-	return "#990066"
-
-/datum/chemical_reaction/grape_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "grapejuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/grape_juice_paint/send_data()
-	return "#863333"
-
-/datum/chemical_reaction/poisonberry_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "poisonberryjuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/poisonberry_juice_paint/send_data()
-	return "#863353"
-
-/datum/chemical_reaction/watermelon_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "watermelonjuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/watermelon_juice_paint/send_data()
-	return "#B83333"
-
-/datum/chemical_reaction/lemon_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "lemonjuice" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/lemon_juice_paint/send_data()
-	return "#AFAF00"
-
-/datum/chemical_reaction/banana_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "banana" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/banana_juice_paint/send_data()
-	return "#C3AF00"
-
-/datum/chemical_reaction/potato_juice_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "potato" = 5)
-	result_amount = 5
-
-/datum/chemical_reaction/potato_juice_paint/send_data()
-	return "#302000"
-
-/datum/chemical_reaction/carbon_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "carbon" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/carbon_paint/send_data()
-	return "#333333"
-
-/datum/chemical_reaction/aluminum_paint
-	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "aluminum" = 1)
-	result_amount = 5
-
-/datum/chemical_reaction/aluminum_paint/send_data()
-	return "#F0F8FF"
-
 /* Slime cores */
 
 /datum/chemical_reaction/slime
 	var/required = null
 
-/datum/chemical_reaction/slime/ui_data()
+/datum/chemical_reaction/slime/nano_ui_data()
 	var/list/dat = ..()
 	dat["required_object"] = required
 	return dat
@@ -1093,8 +877,7 @@
 	playsound(get_turf(holder.my_atom), 'sound/effects/phasein.ogg', 100, 1)
 	for(var/mob/living/carbon/human/M in viewers(get_turf(holder.my_atom), null))
 		if(M.eyecheck() < FLASH_PROTECTION_MODERATE)
-			if (M.HUDtech.Find("flash"))
-				flick("e_flash", M.HUDtech["flash"])
+			M.flash(0, FALSE , FALSE , FALSE, 0) // flashed by the gods or something idk
 
 	for(var/i = 1, i <= 4 + rand(1,2), i++)
 		var/chosen = pick(borks)
@@ -1123,11 +906,17 @@
 
 /datum/chemical_reaction/slime/freeze/on_reaction(var/datum/reagents/holder)
 	..()
-	sleep(50)
-	playsound(get_turf(holder.my_atom), 'sound/effects/phasein.ogg', 100, 1)
-	for(var/mob/living/M in range (get_turf(holder.my_atom), 7))
+	addtimer(CALLBACK(src, PROC_REF(do_freeze), get_turf(holder.my_atom)), 5 SECONDS)
+
+/datum/chemical_reaction/slime/freeze/proc/do_freeze(turf/target)
+	playsound(target, 'sound/effects/phasein.ogg', 100, 1)
+	for(var/mob/living/M in range (target, 7))
 		M.bodytemperature -= 140
 		to_chat(M, SPAN_WARNING("You feel a chill!"))
+
+
+
+
 
 //Orange
 /datum/chemical_reaction/slime/casp
@@ -1145,12 +934,12 @@
 
 /datum/chemical_reaction/slime/fire/on_reaction(var/datum/reagents/holder)
 	..()
-	sleep(50)
-	var/turf/location = get_turf(holder.my_atom.loc)
-	for(var/turf/simulated/floor/target_tile in range(0, location))
+	addtimer(CALLBACK(src, PROC_REF(do_fire), get_turf(holder.my_atom)), 5 SECONDS)
+
+/datum/chemical_reaction/slime/fire/proc/do_fire(turf/target)
+	for(var/turf/floor/target_tile in range(0, target))
 		target_tile.assume_gas("plasma", 25, 1400)
-		spawn (0)
-			target_tile.hotspot_expose(700, 400)
+		target_tile.hotspot_expose(700, 400)
 
 //Yellow
 /datum/chemical_reaction/slime/overload
@@ -1264,8 +1053,10 @@
 
 /datum/chemical_reaction/slime/explosion/on_reaction(var/datum/reagents/holder)
 	..()
-	sleep(50)
-	explosion(get_turf(holder.my_atom), 1, 3, 6)
+	addtimer(CALLBACK(src, PROC_REF(do_explode), get_turf(holder.my_atom)), 5 SECONDS)
+
+/datum/chemical_reaction/slime/explosion/proc/do_explode(turf/target)
+	explosion(target, 600, 50)
 
 //Light Pink
 /datum/chemical_reaction/slime/potion2
@@ -1364,7 +1155,7 @@
 /datum/chemical_reaction/meatball/on_reaction(var/datum/reagents/holder, var/created_volume)
 	var/location = get_turf(holder.my_atom)
 	for(var/i = 1, i <= created_volume, i++)
-		new /obj/item/reagent_containers/food/snacks/meatball(location)
+		new /obj/item/reagent_containers/food/snacks/rawmeatball(location)
 
 /datum/chemical_reaction/dough
 	result = null
@@ -1397,6 +1188,36 @@
 	result = "hell_ramen"
 	required_reagents = list("capsaicin" = 1, "hot_ramen" = 6)
 	result_amount = 6
+
+/datum/chemical_reaction/mint
+	result = null
+	required_reagents = list("sugar" = 5, "frostoil" = 5)
+	result_amount = 1
+
+/datum/chemical_reaction/mint/on_reaction(var/datum/reagents/holder, var/created_volume)
+	var/location = get_turf(holder.my_atom)
+	for(var/i = 1, i <= created_volume, i++)
+		new /obj/item/reagent_containers/food/snacks/mint(location)
+
+/datum/chemical_reaction/candy_corn
+	result = null
+	required_reagents = list("sugar" = 5, "cornoil" = 5)
+	result_amount = 1
+
+/datum/chemical_reaction/candy_corn/on_reaction(var/datum/reagents/holder, var/created_volume)
+	var/location = get_turf(holder.my_atom)
+	for(var/i = 1, i <= created_volume, i++)
+		new /obj/item/reagent_containers/food/snacks/candy_corn(location)
+
+/datum/chemical_reaction/amanitajelly
+	result = null
+	required_reagents = list("water" = 5, "vodka" = 5, "amatoxin" = 5)
+	result_amount = 1
+
+/datum/chemical_reaction/amanitajelly/on_reaction(var/datum/reagents/holder, var/created_volume)
+	var/location = get_turf(holder.my_atom)
+	for(var/i = 1, i <= created_volume, i++)
+		new /obj/item/reagent_containers/food/snacks/jelly/amanita(location)
 
 /* Alcohol */
 
@@ -2116,7 +1937,7 @@
 
 /datum/chemical_reaction/nanosymbiotes
 	result = "nanosymbiotes"
-	required_reagents = list("nanites" = 1, "peridaxon" = 1)
+	required_reagents = list("nanites" = 1, "bicaridine" = 1)
 	result_amount = 1
 
 /datum/chemical_reaction/oxyrush
@@ -2126,7 +1947,7 @@
 
 /datum/chemical_reaction/trauma_control_system
 	result = "trauma_control_system"
-	required_reagents = list("nanites" = 1, "bicaridine" = 1)
+	required_reagents = list("nanites" = 1, "peridaxon" = 1)
 	result_amount = 1
 
 /datum/chemical_reaction/nanopurgers
@@ -2168,3 +1989,31 @@
 	result = "kaiserbeer"
 	required_reagents = list("fuhrerole" = 1, "kaiseraurum" = 1, "roachbeer" = 2)
 	result_amount = 2
+
+/* Other */
+
+/datum/chemical_reaction/protein_shake
+	result = "protein_shake"
+	required_reagents = list("milk" = 1, "protein" = 1)
+	result_amount = 2
+
+/datum/chemical_reaction/suppressital
+	result = "suppressital"
+	required_reagents = list("blood" = 1, "citalopram" = 1)
+	result_amount = 2
+	maximum_temperature = 12.7
+	minimum_temperature = 7.7
+
+/* FBP "medicine" */
+
+/datum/chemical_reaction/fbp_repair
+	result = "fbp_repair"
+	required_reagents = list("nanites" = 1, "silicon" = 1)
+	result_amount = 2
+
+/* Uncomment when CE_MECH_REPLENISH has a use
+/datum/chemical_reaction/fbp_replenish
+	result = "fbp_replenish"
+	required_reagents = list("nanites" = 1, "oil" = 1)
+	result_amount = 2
+*/

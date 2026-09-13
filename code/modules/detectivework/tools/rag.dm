@@ -19,6 +19,7 @@
 	w_class = ITEM_SIZE_TINY
 	icon = 'icons/obj/toy.dmi'
 	icon_state = "rag"
+	matter = list(MATERIAL_BIOMATTER = 4)
 	amount_per_transfer_from_this = 5
 	possible_transfer_amounts = list(5)
 	volume = 10
@@ -31,8 +32,8 @@
 	var/on_fire = 0
 	var/burn_time = 20 //if the rag burns for too long it turns to ashes
 
-/obj/item/reagent_containers/glass/rag/New()
-	..()
+/obj/item/reagent_containers/glass/rag/Initialize()
+	. = ..()
 	update_name()
 
 /obj/item/reagent_containers/glass/rag/Destroy()
@@ -59,6 +60,10 @@
 
 	. = ..()
 	update_name()
+
+/obj/item/reagent_containers/glass/rag/is_hot()
+    if(on_fire)
+        return 1000
 
 /obj/item/reagent_containers/glass/rag/proc/update_name()
 	if(on_fire)

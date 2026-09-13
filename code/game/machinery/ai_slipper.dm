@@ -1,6 +1,7 @@
 /obj/machinery/ai_slipper
 	name = "\improper AI Liquid Dispenser"
 	icon = 'icons/obj/device.dmi'
+	description_info = "Will slip anyone that doesn't have no-slips or magboots"
 	icon_state = "motion0"
 	plane = FLOOR_PLANE
 	layer = PROJECTILE_HIT_THRESHHOLD_LAYER
@@ -80,8 +81,8 @@
 	if(src.locked && (!issilicon(user)))
 		t += "<I>(Swipe ID card to unlock control panel.)</I><BR>"
 	else
-		t += text("Dispenser [] - <A href='?src=\ref[];toggleOn=1'>[]?</a><br>\n", src.disabled?"deactivated":"activated", src, src.disabled?"Enable":"Disable")
-		t += text("Uses Left: [uses]. <A href='?src=\ref[src];toggleUse=1'>Activate the dispenser?</A><br>\n")
+		t += text("Dispenser [] - <a href='byond://?src=\ref[];toggleOn=1'>[]?</a><br>\n", src.disabled?"deactivated":"activated", src, src.disabled?"Enable":"Disable")
+		t += text("Uses Left: [uses]. <a href='byond://?src=\ref[src];toggleUse=1'>Activate the dispenser?</A><br>\n")
 
 	user << browse(t, "window=computer;size=575x450")
 	onclose(user, "computer")

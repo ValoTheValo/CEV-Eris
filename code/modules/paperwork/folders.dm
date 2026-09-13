@@ -33,7 +33,7 @@
 /obj/item/folder/attackby(obj/item/W as obj, mob/user as mob)
 	if(istype(W, /obj/item/paper) || istype(W, /obj/item/photo) || istype(W, /obj/item/paper_bundle))
 		user.drop_item()
-		W.loc = src
+		W.forceMove(src)
 		playsound(src,'sound/effects/Paper_Shake.ogg',40,1)
 		to_chat(user, SPAN_NOTICE("You put the [W] into \the [src]."))
 		update_icon()
@@ -47,11 +47,11 @@
 	var/dat = "<title>[name]</title>"
 
 	for(var/obj/item/paper/P in src)
-		dat += "<A href='?src=\ref[src];remove=\ref[P]'>Remove</A> <A href='?src=\ref[src];rename=\ref[P]'>Rename</A> - <A href='?src=\ref[src];read=\ref[P]'>[P.name]</A><BR>"
+		dat += "<a href='byond://?src=\ref[src];remove=\ref[P]'>Remove</A> <a href='byond://?src=\ref[src];rename=\ref[P]'>Rename</A> - <a href='byond://?src=\ref[src];read=\ref[P]'>[P.name]</A><BR>"
 	for(var/obj/item/photo/Ph in src)
-		dat += "<A href='?src=\ref[src];remove=\ref[Ph]'>Remove</A> <A href='?src=\ref[src];rename=\ref[Ph]'>Rename</A> - <A href='?src=\ref[src];look=\ref[Ph]'>[Ph.name]</A><BR>"
+		dat += "<a href='byond://?src=\ref[src];remove=\ref[Ph]'>Remove</A> <a href='byond://?src=\ref[src];rename=\ref[Ph]'>Rename</A> - <a href='byond://?src=\ref[src];look=\ref[Ph]'>[Ph.name]</A><BR>"
 	for(var/obj/item/paper_bundle/Pb in src)
-		dat += "<A href='?src=\ref[src];remove=\ref[Pb]'>Remove</A> <A href='?src=\ref[src];rename=\ref[Pb]'>Rename</A> - <A href='?src=\ref[src];browse=\ref[Pb]'>[Pb.name]</A><BR>"
+		dat += "<a href='byond://?src=\ref[src];remove=\ref[Pb]'>Remove</A> <a href='byond://?src=\ref[src];rename=\ref[Pb]'>Rename</A> - <a href='byond://?src=\ref[src];browse=\ref[Pb]'>[Pb.name]</A><BR>"
 	user << browse(dat, "window=folder")
 	onclose(user, "folder")
 	add_fingerprint(usr)

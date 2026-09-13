@@ -5,13 +5,14 @@
 	var/datum/computer/file/embedded_program/docking/airlock/docking_program
 	tag_secure = 1
 
-/obj/machinery/embedded_controller/radio/airlock/docking_port/New()
-	. = ..()
-	airlock_program = new/datum/computer/file/embedded_program/airlock/docking(src)
-	docking_program = new/datum/computer/file/embedded_program/docking/airlock(src, airlock_program)
+/obj/machinery/embedded_controller/radio/airlock/docking_port/LateInitialize()
+	..()
+	airlock_program = new /datum/computer/file/embedded_program/airlock/docking(src)
+	docking_program = new /datum/computer/file/embedded_program/docking/airlock(src, airlock_program)
+	docking_program.tag = id_tag
 	program = docking_program
 
-/obj/machinery/embedded_controller/radio/airlock/docking_port/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/embedded_controller/radio/airlock/docking_port/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	var/data[0]
 
 	data = list(
@@ -87,8 +88,10 @@
 /datum/computer/file/embedded_program/docking/airlock/ready_for_docking()
 	//Unsimulated turfs have no atmos simulation so don't bother trying to cycle anything
 	//just short circuit this and be always ready
-	if (istype(master.loc, /turf/unsimulated))
-		return TRUE
+	if(istype(master.loc, /turf))
+		var/turf/turf = master.loc
+		if(!turf.is_simulated)
+			return TRUE
 
 	return airlock_program.done_cycling()
 

@@ -1,6 +1,6 @@
 /obj/item/gun/projectile/automatic/molly
 	name = "FS MP .35 Auto \"Molly\""
-	desc = "An experimental fully automatic pistol, designed as a middle ground between SMGs and Pistols. \
+	desc = "An experimental pistol featuring a 3 and 6-round hyperburst, designed as a middle ground between SMGs and Pistols. \
 			Primarily employed in CQC scenarios or as a civilian self defence tool. \
 			Takes both highcap pistol and smg mags. Uses .35 Auto rounds."
 
@@ -20,14 +20,16 @@
 
 	gun_tags = list(GUN_SILENCABLE)
 	init_firemodes = list(
-		FULL_AUTO_400,
-		SEMI_AUTO_NODELAY,
+		SEMI_AUTO_300,
+		BURST_3_ROUND_SMG,
+		BURST_6_ROUND_SMG
 		)
 
 	can_dual = 1
 	auto_eject = 1
-	damage_multiplier = 0.7 //good for rubber takedowns or self-defence, not so good to kill someone, you might want to use better smg
-	init_recoil = SMG_RECOIL(0.6)
+	damage_multiplier = 0.8 //good for rubber takedowns or self-defence, not so good to kill someone, you might want to use better smg
+	penetration_multiplier = -0.1
+	init_recoil = HANDGUN_RECOIL(0.6)
 
 	origin_tech = list(TECH_COMBAT = 4, TECH_MATERIAL = 2)
 	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_PLASTIC = 3)
@@ -35,7 +37,7 @@
 	price_tag = 1000
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
 	wield_delay = 0 // pistols don't get delays. X Doubt
-	gun_parts = list(/obj/item/part/gun/frame/molly = 1, /obj/item/part/gun/grip/rubber = 1, /obj/item/part/gun/mechanism/pistol = 1, /obj/item/part/gun/barrel/pistol = 1)
+	gun_parts = list(/obj/item/part/gun/frame/molly = 1, /obj/item/part/gun/modular/grip/rubber = 1, /obj/item/part/gun/modular/mechanism/pistol = 1, /obj/item/part/gun/modular/barrel/pistol = 1)
 	serial_type = "FS"
 
 /obj/item/gun/projectile/automatic/molly/update_icon()
@@ -53,9 +55,10 @@
 	if (silenced)
 		iconstring += "_s"
 		itemstring += "_s"
+		wielded_item_state = "_doble_s"
+	else
+		wielded_item_state = "_doble"
 
-	if (wielded)
-		itemstring += "_doble"
 
 	icon_state = iconstring
 	set_item_state(itemstring)
@@ -68,7 +71,7 @@
 	name = "Molly frame"
 	desc = "A Molly machine pistol frame. Toeing the line between pistol and SMG."
 	icon_state = "frame_autopistol"
-	result = /obj/item/gun/projectile/automatic/molly
-	grip = /obj/item/part/gun/grip/rubber
-	mechanism = /obj/item/part/gun/mechanism/pistol
-	barrel = /obj/item/part/gun/barrel/pistol
+	resultvars = list(/obj/item/gun/projectile/automatic/molly)
+	gripvars = list(/obj/item/part/gun/modular/grip/rubber)
+	mechanismvar = /obj/item/part/gun/modular/mechanism/pistol
+	barrelvars = list(/obj/item/part/gun/modular/barrel/pistol)

@@ -6,10 +6,10 @@
 	brightness_on = 4 //luminosity when on
 	light_overlay = "hardhat_light"
 	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 10,
-		bomb = 10,
+		melee = 2,
+		bullet = 2,
+		energy = 2,
+		bomb = 50,
 		bio = 10,
 		rad = 25
 	)

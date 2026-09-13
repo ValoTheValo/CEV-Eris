@@ -1,13 +1,13 @@
 /datum/random_map/automata/cave_system
 	iterations = 5
 	descriptor = "moon caves"
-	wall_type =  /turf/simulated/mineral
-	floor_type = /turf/simulated/floor/asteroid
-	target_turf_type = /turf/unsimulated/mask
-	var/mineral_sparse =  /turf/simulated/mineral/random
-	var/mineral_rich = /turf/simulated/mineral/random/high_chance
+	wall_type =  /turf/mineral
+	floor_type = /turf/floor/asteroid
+	target_turf_type = /turf/mask
+	var/mineral_sparse =  /turf/mineral/random
+	var/mineral_rich = /turf/mineral/random/high_chance
 	var/list/ore_turfs = list()
-//	var/mineral_turf = /turf/simulated/mineral/random
+//	var/mineral_turf = /turf/mineral/random
 
 /datum/random_map/automata/cave_system/get_appropriate_path(var/value)
 	switch(value)
@@ -40,6 +40,10 @@
 
 // Create ore turfs.
 /datum/random_map/automata/cave_system/cleanup()
+	if(!ore_data || !ore_data.len)
+		for(var/oretype in typesof(/ore)-/ore)
+			var/ore/OD = new oretype()
+			ore_data[OD.name] = OD
 	var/ore_count = round(map.len/20)
 	while((ore_count>0) && (ore_turfs.len>0))
 		if(!priority_process) sleep(-1)

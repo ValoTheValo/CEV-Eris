@@ -36,9 +36,9 @@
 		to_chat(user, SPAN_WARNING("You need to remove the eye covering first."))
 		return ..()
 
-	INVOKE_ASYNC(src, .proc/imprint, user)
+	INVOKE_ASYNC(src, PROC_REF(imprint), user)
 
-/obj/item/device/mental_imprinter/examine(mob/user)
-	. = ..()
+/obj/item/device/mental_imprinter/examine(mob/user, extra_description = "")
 	if(spent)
-		to_chat(user, SPAN_WARNING("It is spent."))
+		extra_description += SPAN_WARNING("It is spent.")
+	..(user, extra_description)

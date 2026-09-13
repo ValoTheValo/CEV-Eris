@@ -24,7 +24,7 @@
 	var/id
 	var/datum/radio_frequency/radio_connection
 
-/obj/machinery/atmospherics/binary/passive_gate/New()
+/obj/machinery/atmospherics/binary/passive_gate/LateInitialize()
 	..()
 	air1.volume = ATMOS_DEFAULT_VOLUME_PUMP * 2.5
 	air2.volume = ATMOS_DEFAULT_VOLUME_PUMP * 2.5
@@ -176,10 +176,10 @@
 		to_chat(user, SPAN_WARNING("Access denied."))
 		return
 	usr.set_machine(src)
-	ui_interact(user)
+	nano_ui_interact(user)
 	return
 
-/obj/machinery/atmospherics/binary/passive_gate/ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
+/obj/machinery/atmospherics/binary/passive_gate/nano_ui_interact(mob/user, ui_key = "main", var/datum/nanoui/ui = null, var/force_open = NANOUI_FOCUS)
 	if(stat & (BROKEN|NOPOWER))
 		return
 

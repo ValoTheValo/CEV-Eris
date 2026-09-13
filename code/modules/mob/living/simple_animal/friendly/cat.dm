@@ -121,9 +121,11 @@
 	if(M.a_intent == I_HURT)
 		set_flee_target(M)
 
-/mob/living/simple_animal/cat/ex_act()
+/mob/living/simple_animal/cat/explosion_act(target_power)
 	. = ..()
-	set_flee_target(src.loc)
+	if(QDELETED(src))
+		return
+	set_flee_target(get_turf(src))
 
 /mob/living/simple_animal/cat/bullet_act(var/obj/item/projectile/proj)
 	. = ..()
@@ -309,7 +311,7 @@ var/cat_number = 0
 
 /mob/living/simple_animal/cat/runtime/Destroy()
 	// We teleport Dusty in the corner of one of the ship zlevel for stylish disparition
-	do_teleport(src, get_turf(locate(1, 1, pick(GLOB.maps_data.station_levels))), 2, 0, null, null, 'sound/effects/teleport.ogg', 'sound/effects/teleport.ogg')
+	do_teleport(src, get_turf(locate(1, 1, pick(SSmapping.main_ship_z_levels))), 2, 0, null, null, 'sound/effects/teleport.ogg', 'sound/effects/teleport.ogg')
 	cat_number -= 1
 	return ..()
 
@@ -368,8 +370,8 @@ var/cat_number = 0
 /mob/living/simple_animal/cat/runtime/bullet_act(var/obj/item/projectile/proj)
 	return PROJECTILE_FORCE_MISS
 
-/mob/living/simple_animal/cat/runtime/ex_act(severity)
-	return
+/mob/living/simple_animal/cat/runtime/explosion_act(target_power)
+	return 0
 
 /mob/living/simple_animal/cat/runtime/singularity_act()
 	return

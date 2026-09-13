@@ -26,10 +26,9 @@
 	owner = L
 	sync_icon(L)
 
-/mob/Destroy()
-	qdel(shadow)
-	shadow = null
-	. = ..()
+/mob/shadow/Destroy()
+	owner = null
+	return ..()
 
 /mob/shadow/examine(mob/user, distance, infix, suffix)
 	return owner.examine(user, distance, infix, suffix)
@@ -56,13 +55,13 @@
 /mob/living/proc/check_shadow()
 	var/mob/M = src
 	if(isturf(M.loc))
-		var/turf/T = GetAbove(src)
-		while(T && T.isTransparent)
+		var/turf/T = SSmapping.GetAbove(src)
+		while(T && T.is_transparent)
 			if(!M.shadow)
 				M.shadow = new(M)
 			M.shadow.forceMove(T)
 			M = M.shadow
-			T = GetAbove(M)
+			T = SSmapping.GetAbove(M)
 
 	if(M.shadow)
 		qdel(M.shadow)

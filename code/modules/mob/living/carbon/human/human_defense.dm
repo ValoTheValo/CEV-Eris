@@ -2,27 +2,16 @@
 Contains most of the procs that are called when a mob is attacked by something
 
 bullet_act
-ex_act
+explosion_act
 meteor_act
 
 */
 
 /mob/living/carbon/human/bullet_act(var/obj/item/projectile/P, var/def_zone)
-
-	if (dodging && slickness && P.style_damage <= slickness && !incapacitated(INCAPACITATION_UNMOVING))
-		visible_message(SPAN_WARNING("[src] dodges [P]!"))
-		slickness -= P.style_damage
-		dodge_time = get_game_time()
-		confidence = FALSE
-		external_recoil(P.style_damage)
-		return PROJECTILE_FORCE_MISS_SILENCED // src dodged.
-
 	def_zone = check_zone(def_zone)
 	if(!has_organ(def_zone))
 		return PROJECTILE_FORCE_MISS //if they don't have the organ in question then the projectile just passes by.
 
-	dodge_time = get_game_time() // stylish person got hit in a limb they had
-	confidence = FALSE // so they get the slickness regen delay
 
 	var/obj/item/organ/external/organ = get_organ(def_zone)
 
@@ -40,17 +29,20 @@ meteor_act
 
 	var/check_absorb = .
 	//Shrapnel
-	if(P.can_embed() && (check_absorb < 2))
+	if(P.can_embed() && (check_absorb == PROJECTILE_STOP))
 		var/armor = getarmor_organ(organ, ARMOR_BULLET)
 		if(prob(20 + max(P.damage_types[BRUTE] - armor, -10)))
 			var/obj/item/material/shard/shrapnel/SP = new()
 			SP.name = (P.name != "shrapnel")? "[P.name] shrapnel" : "shrapnel"
 			SP.desc = "[SP.desc] It looks like it was fired from [P.shot_from]."
 			SP.loc = organ
+			if(length(P.matter))
+				SP.material = get_material_by_name(P.matter[1])
+				SP.amount = P.matter[SP.material] // amount no longer randomized
 			organ.embed(SP)
 
 
-/mob/living/carbon/human/hit_impact(damage, dir)
+/mob/living/carbon/human/hit_impact(damage, dir, hit_zone)
 	if(incapacitated(INCAPACITATION_DEFAULT|INCAPACITATION_BUCKLED_PARTIALLY))
 		return
 	if(damage < stats.getStat(STAT_TGH))
@@ -63,43 +55,10 @@ meteor_act
 	var/r_dir = reverse_dir[dir]
 	var/hit_dirs = (r_dir in cardinal) ? r_dir : list(r_dir & NORTH|SOUTH, r_dir & EAST|WEST)
 
-	var/stumbled = FALSE
-
-	if(prob(60 - stats.getStat(STAT_TGH)))
-		stumbled = TRUE
-		step(src, pick(cardinal - hit_dirs))
-
-	for(var/atom/movable/A in oview(1))
-		if(!A.Adjacent(src) || prob(50 + stats.getStat(STAT_TGH)))
-			continue
-
-		if(istype(A, /obj/structure/table))
-			var/obj/structure/table/T = A
-			if (!T.can_touch(src) || T.flipped != 0 || !T.flip(get_cardinal_dir(src, T)))
-				continue
-			if(T.climbable)
-				T.structure_shaken()
-			playsound(T,'sound/machines/Table_Fall.ogg',100,1)
-
-		else if(istype(A, /obj/machinery/door))
-			var/obj/machinery/door/D = A
-			D.Bumped(src)
-
-		else if(istype(A, /obj/machinery/button))
-			A.attack_hand(src)
-
-		else if(istype(A, /obj/item) || prob(33))
-			if(A.anchored)
-				continue
-			step(A, pick(cardinal))
-
-		else
-			continue
-		stumbled = TRUE
-
-	if(stumbled)
-		visible_message(SPAN_WARNING("[src] stumbles around."))
-
+	if(hit_zone == BP_R_LEG || hit_zone == BP_L_LEG)
+		if(prob(60 - stats.getStat(STAT_TGH)))
+			step(src, pick(cardinal - hit_dirs))
+			visible_message(SPAN_WARNING("[src] stumbles around."))
 
 /mob/living/carbon/human/stun_effect_act(var/stun_amount, var/agony_amount, var/def_zone)
 
@@ -109,16 +68,12 @@ meteor_act
 
 	switch (def_zone)
 		if(BP_L_ARM, BP_R_ARM)
-			var/c_hand
-			if (def_zone == BP_L_ARM)
-				c_hand = l_hand
-			else
-				c_hand = r_hand
+			var/obj/item/organ/external/hand = get_organ(def_zone)
 
-			if(c_hand && (stun_amount || agony_amount > 10))
+			if(hand && hand.mob_can_unequip(src) && (stun_amount || agony_amount > 10))
 				msg_admin_attack("[src.name] ([src.ckey]) was disarmed by a stun effect")
 
-				drop_from_inventory(c_hand)
+				drop_from_inventory(hand)
 				if (BP_IS_ROBOTIC(affected))
 					emote("pain", 1, "drops what they were holding, their [affected.name] malfunctioning!")
 				else
@@ -156,6 +111,24 @@ meteor_act
 				armorval = (75+(armorval-75)/2)
 
 	return armorval
+
+/mob/living/carbon/human/getarmorablative(var/def_zone, var/type)
+
+	var/obj/item/rig/R = get_equipped_item(slot_back)
+	if(istype(R))
+		if(R.ablative_armor && (type in list(ARMOR_MELEE, ARMOR_BULLET, ARMOR_ENERGY, ARMOR_BOMB)))
+			return R.ablative_armor
+	return FALSE
+
+//Returns true if the ablative armor successfully took damage
+/mob/living/carbon/human/damageablative(var/def_zone, var/damage_taken)
+
+	var/obj/item/rig/R = get_equipped_item(slot_back)
+	if(istype(R))
+		if(R.ablative_armor)
+			R.ablative_armor = max(R.ablative_armor - damage_taken / R.ablation, 0)
+			return TRUE
+	return FALSE
 
 //this proc returns the Siemens coefficient of electrical resistivity for a particular external organ.
 /mob/living/carbon/human/proc/get_siemens_coefficient_organ(obj/item/organ/external/def_zone)
@@ -221,6 +194,11 @@ meteor_act
 		if(!shield) continue
 		. = shield.handle_shield(src, damage, damage_source, attacker, def_zone, attack_text)
 		if(.) return
+
+	if(istype(damage_source, /obj/item/projectile))
+		var/obj/item/rig/R = back
+		if(R)
+			R.block_bullet(src, damage_source, def_zone)
 	return 0
 
 /mob/living/carbon/human/proc/has_shield()
@@ -228,6 +206,43 @@ meteor_act
 		if(!shield) continue
 		return shield
 	return FALSE
+
+/mob/living/carbon/human/proc/handle_blocking(var/damage)
+	var/stat_affect = 0.3 //lowered to 0.2 if we are blocking with an item
+	var/item_size_affect = 0 //the bigger the thing you hold is, the more damage you can block
+	var/toughness = max(1, stats.getStat(STAT_TGH))
+	//passive blocking with shields is handled differently(code is above this proc)
+	if(get_active_hand())//are we blocking with an item?
+		var/obj/item/I = get_active_hand()
+		if(istype(I))
+			item_size_affect = I.w_class * 5
+			stat_affect = 0.2
+	damage -= (toughness * stat_affect + item_size_affect)
+	return max(0, damage)
+
+/mob/living/carbon/human/proc/grab_redirect_attack(var/mob/living/carbon/human/attacker, var/obj/item/grab/G, var/obj/item/I)
+	var/mob/living/carbon/human/grabbed = G.affecting
+	visible_message(SPAN_DANGER("[src] redirects the blow at [grabbed]!"), SPAN_DANGER("You redirect the blow at [grabbed]!"))
+	//check what we are being hit with, a hand(I is null), or an item?
+	//quickly turn blocking off and on to prevent looping(since we are attacking again)
+	blocking = FALSE
+	if(istype(I, /obj/item))
+		grabbed.attackby(I, attacker)
+	else
+		grabbed.attack_hand(attacker)//and now it's not our problems
+	blocking = TRUE
+	//change our block state depending on grab level
+	if(G.state >= GRAB_NECK)
+		return //block remains active
+	else if(G.state >= GRAB_AGGRESSIVE)
+		stop_blocking()
+		return //block is turned off
+	else
+		stop_blocking()
+		drop_from_inventory(G)
+		G.loc = null
+		qdel(G)
+		return //block is turned off, grab is GONE
 
 /mob/living/carbon/human/resolve_item_attack(obj/item/I, mob/living/user, var/target_zone)
 	if(check_attack_throat(I, user))
@@ -249,6 +264,11 @@ meteor_act
 	if(!affecting)
 		return FALSE//should be prevented by attacked_with_item() but for sanity.
 
+
+	if(ishuman(user))
+		var/mob/living/carbon/human/H = user
+		H.stop_blocking()
+
 	visible_message("<span class='danger'>[src] has been [I.attack_verb.len? pick(I.attack_verb) : "attacked"] in the [affecting.name] with [I.name] by [user]!</span>")
 
 	standard_weapon_hit_effects(I, user, effective_force, hit_zone)
@@ -260,65 +280,127 @@ meteor_act
 	if(!affecting)
 		return FALSE
 
-	// Handle striking to cripple.
-	if(user.a_intent == I_DISARM)
-		effective_force /= 2 //half the effective force
-		if(!..(I, user, effective_force, hit_zone))
+	if(blocking)
+		if(istype(get_active_hand(), /obj/item/grab))//we are blocking with a human shield! We redirect the attack. You know, because grab doesn't exist as an item.
+			var/obj/item/grab/G = get_active_hand()
+			grab_redirect_attack(G, I)
 			return FALSE
+		else
+			stop_blocking()
+			src.attack_log += text("\[[time_stamp()]\] <font color='orange'>Blocked attack of [user.name] ([user.ckey])</font>")
+			user.attack_log += text("\[[time_stamp()]\] <font color='orange'>Attack has been blocked by [src.name] ([src.ckey])</font>")
+			visible_message(SPAN_WARNING("[src] blocks the blow!"), SPAN_WARNING("You block the blow!"))
+			effective_force = handle_blocking(effective_force)
+			if(effective_force == 0)
+				visible_message(SPAN_DANGER("The attack has been completely negated!"))
+				return FALSE
 
-		attack_joint(affecting, I) //but can dislocate joints
+	//If not blocked, handle broad strike attacks
+	if(((I.sharp && I.edge && user.a_intent == I_DISARM) || I.forced_broad_strike) && (!istype(I, /obj/item/tool/sword/nt/spear) || !istype(I, /obj/item/tele_spear) || !istype(I, /obj/item/tool/spear)))
+		var/list/L[] = BP_ALL_LIMBS
+		effective_force /= 3
+		L.Remove(hit_zone)
+		for(var/i in 1 to 2)
+			var/temp_zone = pick(L)
+			L.Remove(temp_zone)
+			..(I, user, effective_force, temp_zone)
+
+	//Push attacks
+	if(hit_zone == BP_GROIN && I.push_attack && user.a_intent == I_DISARM)
+		step_glide(src, get_dir(user, src), DELAY2GLIDESIZE(0.4 SECONDS))
+		visible_message(SPAN_WARNING("[src] is pushed away by the attack!"))
 	else if(!..())
 		return FALSE
-
 	if(effective_force > 10 || effective_force >= 5 && prob(33))
 		forcesay(hit_appends)	//forcesay checks stat already
 
-		//Apply blood
-		if(!((I.flags & NOBLOODY)||(I.item_flags & NOBLOODY)))
-			I.add_blood(src)
+		//Apply screenshake
+		if(I.screen_shake && prob(70))
+			shake_camera(src, 0.5, 1)
 
-		if(prob(33 + I.sharp * 10))
-			var/turf/location = loc
-			if(istype(location, /turf/simulated))
-				location.add_blood(src)
-			if(ishuman(user))
-				var/mob/living/carbon/human/H = user
-				if(get_dist(H, src) <= 1) //people with TK won't get smeared with blood
-					H.bloody_body(src)
-					H.bloody_hands(src)
+		var/turf/target_location = get_turf(src)
 
-			switch(hit_zone)
-				if(BP_HEAD)
-					if(wear_mask)
-						wear_mask.add_blood(src)
-						update_inv_wear_mask(0)
-					if(head)
-						head.add_blood(src)
-						update_inv_head(0)
-					if(glasses && prob(33))
-						glasses.add_blood(src)
-						update_inv_glasses(0)
-				if(BP_CHEST)
-					bloody_body(src)
-			//All this is copypasta'd from projectile code. Basically there's a cool splat animation when someone gets hit by something.
+		// Blood splatter
+		var/blood_color = species.blood_color
+		if(blood_color)
+			//Apply blood
+			if(!((I.flags & NOBLOODY)||(I.item_flags & NOBLOODY)))
+				I.add_blood(src)
 			var/splatter_dir = dir
-			var/turf/target_loca = get_turf(src)
-			splatter_dir = get_dir(user, target_loca)
-			target_loca = get_step(target_loca, splatter_dir)
-			var/blood_color = "#C80000"
-			blood_color = src.species.blood_color
-			new /obj/effect/overlay/temp/dir_setting/bloodsplatter(src.loc, splatter_dir, blood_color)
-			target_loca.add_blood(src)
+			splatter_dir = get_dir(user, target_location)
+			target_location = get_step(target_location, splatter_dir)
+			new /obj/effect/overlay/temp/dir_setting/bloodsplatter(loc, splatter_dir, blood_color)
+			target_location.add_blood(src)
 
+		//Intervention attacks
+		if(prob(max(5, min(30, 30 - stats.getStat(STAT_TGH)/2.5)))) //This is hell. 30% is default chance, 5% is minimum which is met at 80 TGH.
+			//See if we have any guns that might go off,
+			for(var/obj/item/gun/W in get_both_hands())
+				if(W && prob(40))
+					visible_message(SPAN_DANGER("[src]'s [W] goes off during the struggle!"))
+					W.Fire(target_location, src)
+					return TRUE
+			//else do other types of intervention attacks
+			var/intervention_type = pick("out of breath", "bloodstains", "winded")
+			switch(intervention_type)
+				if("bloodstains")
+					if(blood_color)
+						var/turf/location = loc
+						if(istype(location, /turf))
+							location.add_blood(src)
+						if(ishuman(user))
+							var/mob/living/carbon/human/H = user
+							if(get_dist(H, src) <= 1) //people with TK won't get smeared with blood
+								H.bloody_body(src)
+								H.bloody_hands(src)
+
+							if(prob(40))
+								if(wear_mask)
+									wear_mask.add_blood(src)
+									update_inv_wear_mask(0)
+								if(head)
+									head.add_blood(src)
+									update_inv_head(0)
+								if(glasses)
+									glasses.add_blood(src)
+									update_inv_glasses(0)
+							else
+								bloody_body(src)
+						visible_message(SPAN_WARNING("Blood stains [src]'s clothes!"), SPAN_DANGER("Blood seeps through your clothes and your heart skips a beat!"))
+						sanity.changeLevel(-5)
+
+				if("out of breath")
+					if(!stat)
+						visible_message(SPAN_WARNING("[src] gasps in pain!"), SPAN_DANGER("Pain jolts through your nerves!"))
+						adjustOxyLoss(10)
+						adjustHalLoss(5)
+
+				if("winded")
+					visible_message(SPAN_WARNING("[src] is winded!"), SPAN_DANGER("You feel disoriented!"))
+					confused = max(confused, 2)
+					external_recoil(40)
+					var/obj/item/item_in_active_hand = get_active_hand()
+					if(recoil >= 60 && item_in_active_hand)
+						if(istype(item_in_active_hand, /obj/item/grab))
+							break_all_grabs(user) //See about breaking grips or pulls
+							playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+							return TRUE
+						if(item_in_active_hand.wielded && recoil < 80)
+							playsound(loc, 'sound/weapons/punchmiss.ogg', 25, 1, -1)
+							return TRUE
+						unEquip(item_in_active_hand)
+						visible_message(SPAN_DANGER("[user] has disarmed [src]!"))
+						playsound(loc, 'sound/weapons/thudswoosh.ogg', 50, 1, -1)
+						return TRUE
 	return TRUE
 
 /mob/living/carbon/human/proc/attack_joint(var/obj/item/organ/external/organ, var/obj/item/W)
-	if(!organ || (organ.dislocated == 2) || (organ.dislocated == -1) )
+	if(!organ || (organ.nerve_struck == 2) || (organ.nerve_struck == -1))
 		return FALSE
 	//There was blocked var, removed now. For the sake of game balance, it was just replaced by 2
 	if(prob(W.force / 2))
 		visible_message("<span class='danger'>[src]'s [organ.joint] [pick("gives way","caves in","crumbles","collapses")]!</span>")
-		organ.dislocate(1)
+		organ.nerve_strike_add(1)
 		return TRUE
 	return FALSE
 
@@ -334,15 +416,6 @@ meteor_act
 					visible_message(SPAN_WARNING("[src] catches [O]!"))
 					throw_mode_off()
 					return
-
-		if (dodging && slickness && O.style_damage <= slickness && !incapacitated(INCAPACITATION_UNMOVING))
-			visible_message(SPAN_WARNING("[src] dodges [O]!"))
-			slickness -= O.style_damage
-			dodge_time = get_game_time()
-			confidence = FALSE
-			external_recoil(O.style_damage)
-			return
-
 
 		var/dtype = O.damtype
 		var/throw_damage = O.throwforce
@@ -362,12 +435,6 @@ meteor_act
 		if(!zone)
 			visible_message(SPAN_NOTICE("\The [O] misses [src] narrowly!"))
 			return
-
-		dodge_time = get_game_time() // stylish person got hit and wasn't saved by RNG
-		confidence = FALSE // so they get the slickness regen delay
-		if (ishuman(O.thrower))
-			var/mob/living/carbon/human/stylish = O.thrower
-			stylish.regen_slickness() // throwing something and hitting your target is slick
 
 
 		O.throwing = 0		//it hit, so stop moving
@@ -391,7 +458,7 @@ meteor_act
 				src.attack_log += text("\[[time_stamp()]\] <font color='orange'>Has been hit with a [O], thrown by [M.name] ([assailant.ckey])</font>")
 				M.attack_log += text("\[[time_stamp()]\] <font color='red'>Hit [src.name] ([src.ckey]) with a thrown [O]</font>")
 				if(!ismouse(src))
-					msg_admin_attack("[src.name] ([src.ckey]) was hit by a [O], thrown by [M.name] ([assailant.ckey]) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
+					msg_admin_attack("[src.name] ([src.ckey]) was hit by a [O], thrown by [M.name] ([assailant.ckey]) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[src.x];Y=[src.y];Z=[src.z]'>JMP</a>)")
 
 		//thrown weapon embedded object code.
 		if(istype(O,/obj/item))
@@ -408,9 +475,6 @@ meteor_act
 				var/embed_chance = (damage - embed_threshold)*I.embed_mult
 				if (embed_chance > 0 && prob(embed_chance))
 					affecting.embed(I)
-				if (ishuman(I.thrower))
-					var/mob/living/carbon/human/stylish = I.thrower
-					stylish.regen_slickness()
 
 		// Begin BS12 momentum-transfer code.
 		var/mass = 1.5

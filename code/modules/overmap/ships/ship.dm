@@ -14,7 +14,7 @@
 
 	var/obj/machinery/computer/helm/nav_control
 	var/list/engines = list()  // contains /datum/ship_engine
-	var/list/scanners = list() // contains /obj/machinery/power/long_range_scanner
+	var/list/scanners = list() // contains /obj/machinery/power/shipside/long_range_scanner
 	var/engines_state = 1 //global on/off toggle for all engines
 	var/thrust_limit = 1 //global thrust limit for all engines, 0..1
 	var/triggers_events = 1
@@ -22,21 +22,17 @@
 	var/scan_range = PASSIVE_SCAN_RANGE
 	var/pulsing = FALSE
 
-	Crossed(var/obj/effect/overmap_event/movable/ME)
-		..()
-		if(ME)
-			if(istype(ME, /obj/effect/overmap_event/movable))
-				if(ME.OE)
-					if(istype(src, /obj/effect/overmap/ship))
-						ME.OE:enter(src)
+/obj/effect/overmap/ship/Crossed(obj/effect/overmap_event/movable/ME)
+	..()
+	if(istype(ME))
+		if(ME.OE)
+			ME.OE.enter(src)
 
-	Uncrossed(var/obj/effect/overmap_event/movable/ME)
-		..()
-		if(ME)
-			if(istype(ME, /obj/effect/overmap_event/movable))
-				if(ME.OE)
-					if(istype(src, /obj/effect/overmap/ship))
-						ME.OE:leave(src)
+/obj/effect/overmap/ship/Uncrossed(obj/effect/overmap_event/movable/ME)
+	..()
+	if(istype(ME))
+		if(ME.OE)
+			ME.OE.leave(src)
 
 /obj/effect/overmap/ship/New()
 	GLOB.ships += src
@@ -57,7 +53,7 @@
 			E.linked = src
 			//testing("Engines console at level [E.z] linked to overmap object '[name]'.")
 
-	for(var/obj/machinery/power/long_range_scanner/LRS in ship_scanners)
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in ship_scanners)
 		if (LRS.z in map_z)
 			//testing("Scanner at level [LRS.z] linked to overmap object '[name]'.")
 			scanners |= LRS
@@ -87,7 +83,7 @@
 			E.linked = src
 			//testing("Engines console at level [E.z] linked to overmap object '[name]'.")
 
-	for(var/obj/machinery/power/long_range_scanner/LRS in ship_scanners)
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in ship_scanners)
 		if (LRS.z in map_z)
 			//testing("Scanner at level [LRS.z] linked to overmap object '[name]'.")
 			scanners |= LRS
@@ -187,7 +183,7 @@
 			Move(newloc)
 			handle_wraparound()
 		update_icon()
-	SEND_SIGNAL(src, COMSIG_SHIP_STILL, x, y, is_still())
+	SEND_SIGNAL_OLD(src, COMSIG_SHIP_STILL, x, y, is_still())
 
 /obj/effect/overmap/ship/update_icon()
 	cut_overlays()
@@ -222,28 +218,27 @@
 	. = max(.,0)
 
 /obj/effect/overmap/ship/proc/handle_wraparound()
-	var/nx = x
-	var/ny = y
-	var/low_edge = 1
-	var/high_edge = GLOB.maps_data.overmap_size - 1
+    var/nx = x
+    var/ny = y
+    var/low_edge = 1
+    var/high_edge = OVERMAP_SIZE
 
-	if(dir == WEST && x == low_edge)
-		nx = high_edge
-	else if(dir == EAST && x == high_edge)
-		nx = low_edge
-	else if(dir == SOUTH  && y == low_edge)
-		ny = high_edge
-	else if(dir == NORTH && y == high_edge)
-		ny = low_edge
-	else
-		return //we're not flying off anywhere
+    if(x <= low_edge)
+        nx = high_edge
+    if(x >= high_edge)
+        nx = low_edge
 
-	var/turf/T = locate(nx,ny,z)
-	if(T)
-		forceMove(T)
+    if(y <= low_edge)
+        ny =high_edge
+    if(y >= high_edge)
+        ny = low_edge
+
+    var/turf/T = locate(nx,ny,z)
+    if(T)
+        forceMove(T)
 
 /obj/effect/overmap/ship/Bump(var/atom/A)
-	if(istype(A,/turf/unsimulated/map/edge))
+	if(istype(A,/turf/map/edge))
 		handle_wraparound()
 	..()
 
@@ -252,14 +247,16 @@
 	if(pulsing)  // Should not happen but better to check
 		return
 
-	var/obj/machinery/power/long_range_scanner/enough_LRS = null
-	for(var/obj/machinery/power/long_range_scanner/LRS in scanners)  // Among all ship's scanners get one with enough energy
+	var/obj/machinery/power/shipside/long_range_scanner/enough_LRS = null
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in scanners)  // Among all ship's scanners get one with enough energy
 		if(LRS.running && (LRS.current_energy > round(ENERGY_PER_SCAN * LRS.as_energy_multiplier)))
 			enough_LRS = LRS
 
-	if(enough_LRS)
-		enough_LRS.consume_energy_scan()
+	if(!enough_LRS)
+		nav_control.visible_message(SPAN_DANGER("The [src] buzzes an insistent warning as it fails to find any sensors with enough power to pulse"))
+		playsound(nav_control.loc, 'sound/machines/buzz-two.ogg', 100, 1, 5)
 
+	if(enough_LRS.consume_energy_scan())
 		pulsing = TRUE
 		scan_range = ACTIVE_SCAN_RANGE
 		spawn(ACTIVE_SCAN_DURATION * enough_LRS.as_duration_multiplier)
@@ -270,7 +267,7 @@
 
 /obj/effect/overmap/ship/proc/can_scan()
 
-	for(var/obj/machinery/power/long_range_scanner/LRS in scanners)
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in scanners)
 		. |= (LRS.running)
 
 /obj/effect/overmap/ship/proc/can_pulse()
@@ -279,7 +276,7 @@
 		return FALSE
 
 	// Check if one of the ship's scanners has enough energy to pulse
-	for(var/obj/machinery/power/long_range_scanner/LRS in scanners)
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in scanners)
 		. |= (LRS.running && (LRS.current_energy > round(ENERGY_PER_SCAN * LRS.as_energy_multiplier)))
 
 /obj/effect/overmap/ship/proc/can_scan_poi()
@@ -287,7 +284,7 @@
 	if(!is_still())  // Ship must be immobile
 		return FALSE
 
-	for(var/obj/machinery/power/long_range_scanner/LRS in scanners)
+	for(var/obj/machinery/power/shipside/long_range_scanner/LRS in scanners)
 		. |= (LRS.running)
 
 /obj/effect/overmap/ship/proc/scan_poi()

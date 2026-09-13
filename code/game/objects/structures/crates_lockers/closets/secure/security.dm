@@ -13,13 +13,13 @@
 	new /obj/item/clothing/shoes/jackboots(src)
 	new /obj/item/device/radio/headset/heads/captain(src)
 	new /obj/item/clothing/gloves/captain(src)
-	new /obj/item/storage/belt/sheath(src)
+	new /obj/item/storage/pouch/holster/belt/sheath(src)
 	new /obj/item/tool/sword/saber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/melee/telebaton(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
+	new /obj/item/storage/pouch/holster(src)
 
 /obj/structure/closet/secure_closet/reinforced/hop
 	name = "First Officer's locker"
@@ -35,13 +35,13 @@
 	new /obj/item/device/radio/headset/heads/hop(src)
 	new /obj/item/storage/box/ids(src)
 	new /obj/item/storage/box/ids( src )
-	new /obj/item/storage/belt/sheath(src)
+	new /obj/item/storage/pouch/holster/belt/sheath(src)
 	new /obj/item/tool/sword/saber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/ammo_magazine/magnum/rubber(src)
 	new /obj/item/device/flash(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
+	new /obj/item/storage/pouch/holster(src)
 
 /obj/structure/closet/secure_closet/reinforced/hos
 	name = "Ironhammer Commander locker"
@@ -56,6 +56,7 @@
 	new /obj/item/storage/backpack/satchel/ironhammer(src)
 	new /obj/item/clothing/head/beret/sec/navy/hos(src)
 	new /obj/item/clothing/head/HoS(src)
+	new /obj/item/clothing/head/caphat/ihc(src)
 	new /obj/item/clothing/mask/gas/ihs(src)
 	new /obj/item/clothing/suit/storage/greatcoat/ironhammer(src)
 	new /obj/item/clothing/under/rank/ih_commander(src)
@@ -70,11 +71,11 @@
 	new /obj/item/cell/small/high(src)
 	new /obj/item/cell/small/high(src)
 	new /obj/item/gun/energy/gun/martin(src)
-	new /obj/item/clothing/accessory/holster/waist(src)
+	new /obj/item/clothing/accessory/holster(src)
 	new /obj/item/melee/telebaton(src)
-	new /obj/item/clothing/accessory/badge/hos(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
-	new /obj/item/storage/pouch/baton_holster(src)
+	new /obj/item/clothing/accessory/badge/commander(src)
+	new /obj/item/storage/pouch/holster(src)
+	new /obj/item/storage/pouch/holster/baton(src)
 
 /obj/structure/closet/secure_closet/warden
 	name = "Gunnery Sergeant's locker"
@@ -93,6 +94,7 @@
 	new /obj/item/clothing/glasses/sunglasses/sechud/tactical(src)
 	new /obj/item/storage/belt/tactical/ironhammer(src)
 	new /obj/item/clothing/suit/storage/vest/ironhammer(src)
+	new /obj/item/clothing/suit/armor/vest/warden/ironhammer(src)
 	new /obj/item/clothing/under/rank/security/turtleneck(src)
 	new /obj/item/clothing/mask/gas/ihs(src)
 	new /obj/item/storage/box/teargas(src)
@@ -104,9 +106,9 @@
 	new /obj/item/ammo_magazine/ihclrifle/rubber(src)
 	new /obj/item/gun/projectile/automatic/sol(src)
 	new /obj/item/storage/box/holobadge(src)
-	new /obj/item/clothing/accessory/badge/warden(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
-	new /obj/item/storage/pouch/baton_holster(src)
+	new /obj/item/clothing/accessory/badge/holo/sergeant(src)
+	new /obj/item/storage/pouch/holster(src)
+	new /obj/item/storage/pouch/holster/baton(src)
 	new /obj/item/clothing/suit/armor/vest/ironhammer(src)
 
 /obj/structure/closet/secure_closet/personal/security
@@ -133,8 +135,8 @@
 	new /obj/item/ammo_magazine/pistol/rubber(src)
 	new /obj/item/ammo_magazine/pistol/rubber(src)
 	new	/obj/item/gun/projectile/paco(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
-	new /obj/item/storage/pouch/baton_holster(src)
+	new /obj/item/storage/pouch/holster(src)
+	new /obj/item/storage/pouch/holster/baton(src)
 	new /obj/item/storage/ration_pack/ihr(src)
 
 /obj/structure/closet/secure_closet/medspec
@@ -155,7 +157,8 @@
 	new /obj/item/clothing/suit/storage/toggle/labcoat/medspec(src)
 	new /obj/item/ammo_magazine/smg/rubber(src)
 	new /obj/item/gun/projectile/automatic/molly(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
+	new /obj/item/clothing/accessory/badge/holo/specialist(src)
+	new /obj/item/storage/pouch/holster(src)
 	new /obj/item/storage/briefcase/crimekit(src)
 
 /obj/structure/closet/secure_closet/detective
@@ -168,11 +171,13 @@
 	new /obj/item/clothing/under/rank/det/black(src)
 	new /obj/item/clothing/under/rank/inspector(src)
 	new /obj/item/clothing/suit/storage/detective(src)
-	new /obj/item/clothing/suit/storage/detective/ironhammer(src)
+	new /obj/item/clothing/suit/storage/detective/brown(src)
+	new /obj/item/clothing/suit/storage/detective/black(src)
 	new /obj/item/clothing/mask/gas/ihs(src)
 	new /obj/item/clothing/gloves/thick(src)
-	new /obj/item/clothing/head/det(src)
-	new /obj/item/clothing/head/det/grey(src)
+	new /obj/item/clothing/head/detective(src)
+	new /obj/item/clothing/head/detective/grey(src)
+	new /obj/item/clothing/head/detective/black(src)
 	new /obj/item/clothing/shoes/reinforced/ironhammer(src)
 	new /obj/item/storage/box/evidence(src)
 	new /obj/item/device/radio/headset/headset_sec(src)
@@ -184,11 +189,12 @@
 	new /obj/item/cell/small/high(src)
 	new /obj/item/device/taperecorder(src)
 	new /obj/item/gun/projectile/revolver/consul(src)
-	new /obj/item/clothing/accessory/holster/armpit(src)
+	new /obj/item/clothing/accessory/holster(src)
 	new /obj/item/ammo_magazine/slmagnum/rubber(src)
 	new /obj/item/ammo_magazine/slmagnum/rubber(src)
 	new /obj/item/ammo_magazine/slmagnum/rubber(src)
-	new /obj/item/storage/pouch/pistol_holster(src)
+	new /obj/item/storage/pouch/holster(src)
+	new /obj/item/clothing/accessory/badge/inspector(src)
 	new /obj/item/storage/briefcase/crimekit(src)
 	new /obj/item/storage/box/syndie_kit/spy(src)
 
@@ -198,8 +204,8 @@
 	icon_state = "secure"
 
 /obj/structure/closet/secure_closet/injection/populate_contents()
-	new /obj/item/reagent_containers/syringe/ld50_syringe/choral(src)
-	new /obj/item/reagent_containers/syringe/ld50_syringe/choral(src)
+	new /obj/item/reagent_containers/syringe/ld50_syringe/chlorine(src)
+	new /obj/item/reagent_containers/syringe/ld50_syringe/chlorine(src)
 
 /obj/structure/closet/secure_closet/brig
 	name = "brig locker"

@@ -18,6 +18,8 @@
 
 #define CEILING(x, y) ( -round(-(x) / (y)) * (y) )
 
+#define DIST_EUCLIDIAN(x1,y1,x2,y2) (sqrt((x1-x2)**2 + (y1-y2)**2))
+
 // round() acts like floor(x, 1) by default but can't handle other values
 #define FLOOR(x, y) ( round((x) / (y)) * (y) )
 
@@ -72,11 +74,13 @@
 
 #define ISODD(x) (x % 2 != 0)
 
+#define NFRACT(tofract) (tofract - round(tofract)) // I live in agony
+
 //Probability based rounding that makes whole numbers out of decimals based on luck.
 //The decimal value is the probability to be rounded up.
 //Eg a value of 1.37 has a 37% chance to become 2, otherwise it is 1
 //Useful for game balance matters where the gulf caused by consistent rounding is too much
-#define ROUND_PROB(val) (val - (val % 1) + prob((val % 1) * 100))
+#define ROUND_PROB(val) (val - (NFRACT(val)) + prob(NFRACT(val) * 100))
 
 #define RAND_DECIMAL(lower, upper) (rand(0, upper - lower) + lower)
 
@@ -233,6 +237,34 @@ proc/leftmost_bit(num)
 			pos++
 	return pos
 
+
+proc/get_vector(dir) // Accepts a directional string and returns a list containing an actual vector
+    switch(dir)
+        if(NORTH)
+            return list(0, 1)
+        if(NORTHEAST)
+            return list(1, 1)
+        if(EAST)
+            return list(1, 0)
+        if(SOUTHEAST)
+            return list(1, -1)
+        if(SOUTH)
+            return list(0, -1)
+        if(SOUTHWEST)
+            return list(-1, -1)
+        if(WEST)
+            return list(-1, 0)
+        if(NORTHWEST)
+            return list(-1, 1)
+        else if(!dir)
+            return list(1, 0)
+
+proc/get_vector_angle(vec1, vec2) // Calculates the angle between two vectors, then returns the angle. Uses degrees instead of radians because BYOND expects trig functions to be called with degrees.
+    var/dot = vec1[1] * vec2[1] + vec1[2] * vec2[2] // Calculate the dot product
+    var/mag1 = sqrt((vec1[1] ** 2) + (vec1[2] ** 2)) // Calculate the magnitudes of the vectors
+    var/mag2 = sqrt((vec2[1] ** 2) + (vec2[2] ** 2))
+    var/angle = arccos(dot / (mag1 * mag2)) // Calculate the angle based on the dot product and magnitudes of the vectors
+    return angle
 
 #define T100C 373.15 //  100.0 degrees celsius
 

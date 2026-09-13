@@ -9,6 +9,8 @@
 	name = "syringe"
 	desc = "A syringe."
 	icon = 'icons/obj/syringe.dmi'
+	description_info = "Holds 15 units of reagents, can be used through voidsuits and non-thick armour"
+	description_antag = "People tend to place full trust into paramedics or doctors when they get scanned beforehand and told they're damaged, followed by a injection of what usually is healing chemicals."
 	item_state = "syringe"
 	icon_state = "0"
 	matter = list(MATERIAL_GLASS = 1, MATERIAL_STEEL = 1)
@@ -108,8 +110,7 @@
 						on_reagent_change()
 						reagents.handle_reactions()
 					to_chat(user, SPAN_NOTICE("You take a blood sample from [target]."))
-					for(var/mob/O in viewers(4, user))
-						O.show_message(SPAN_NOTICE("[user] takes a blood sample from [target]."), 1)
+					user.visible_message(SPAN_NOTICE("[user] takes a blood sample from [target]."), range = 4)
 
 			else //if not mob
 				if(!target.reagents.total_volume)
@@ -261,14 +262,13 @@
 			return
 
 		if (target != user && H.getarmor(target_zone, ARMOR_MELEE) > 5 && prob(50))
-			for(var/mob/O in viewers(world.view, user))
-				O.show_message(text("\red <B>[user] tries to stab [target] in \the [hit_area] with [src.name], but the attack is deflected by armor!</B>"), 1)
+			user.visible_message(SPAN_DANGER("[user] tries to stab [target] in \the [hit_area] with [src.name], but the attack is deflected by armor!"))
 			user.remove_from_mob(src)
 			qdel(src)
 
 			user.attack_log += "\[[time_stamp()]\]<font color='red'> Attacked [target.name] ([target.ckey]) with \the [src] (INTENT: HARM).</font>"
 			target.attack_log += "\[[time_stamp()]\]<font color='orange'> Attacked by [user.name] ([user.ckey]) with [src.name] (INTENT: HARM).</font>"
-			msg_admin_attack("[key_name_admin(user)] attacked [key_name_admin(target)] with [src.name] (INTENT: HARM) (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
+			msg_admin_attack("[key_name_admin(user)] attacked [key_name_admin(target)] with [src.name] (INTENT: HARM) (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[user.x];Y=[user.y];Z=[user.z]'>JMP</a>)")
 
 			return
 
@@ -404,6 +404,36 @@
 	desc = "Contains hyperzine - a long lasting muscle stimulant."
 	preloaded_reagents = list("hyperzine" = 15)
 
+/obj/item/reagent_containers/syringe/meralyne
+	name = "syringe (meralyne)"
+	desc = "Contains meralyne - a potent brute-healing medicine"
+	preloaded_reagents = list("meralyne" = 15)
+
+/obj/item/reagent_containers/syringe/tramadol
+	name = "syringe (tramadol)"
+	desc = "Contains tramadol - a general use painkiller"
+	preloaded_reagents = list("tramadol" = 15)
+
+/obj/item/reagent_containers/syringe/paracetamol
+	name = "syringe (paracetamol)"
+	desc = "Contains paracetamol - a mild painkiller"
+	preloaded_reagents = list("paracetamol" = 15)
+
+/obj/item/reagent_containers/syringe/adrenaline
+	name = "syringe (adrenaline)"
+	desc = "Contains adrenaline - a natural stimulant"
+	preloaded_reagents = list("adrenaline" = 15)
+
+/obj/item/reagent_containers/syringe/dermaline
+	name = "syringe (dermaline)"
+	desc = "Contains dermaline - a potent burn-salving medicine"
+	preloaded_reagents = list("dermaline" = 15)
+
+/obj/item/reagent_containers/syringe/polystem
+	name = "syringe (polystem)"
+	desc = "Contains polystem - a mild healing stimulant for surface wounds"
+	preloaded_reagents = list("polystem" = 15)
+
 /obj/item/reagent_containers/syringe/drugs
 	name = "syringe (drugs)"
 	desc = "Contains aggressive drugs meant for torture."
@@ -418,8 +448,8 @@
 	spawn_tags = SPAWN_ITEM_CONTRABAND
 	rarity_value = 40
 
-/obj/item/reagent_containers/syringe/ld50_syringe/choral
-	preloaded_reagents = list("chloralhydrate" = 50)
+/obj/item/reagent_containers/syringe/ld50_syringe/chlorine
+	preloaded_reagents = list("chlorine" = 25, "chloralhydrate" = 25)
 
 /obj/item/reagent_containers/syringe/stim
 	name = "syringe (stim)"

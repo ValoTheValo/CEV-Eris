@@ -18,17 +18,18 @@
 	else
 		return temp_access
 
-/obj/item/card/id/guest/examine(mob/user)
-	..(user)
-	if (world.time < expiration_time)
-		to_chat(user, SPAN_NOTICE("This pass expires at [worldtime2stationtime(expiration_time)]."))
+/obj/item/card/id/guest/examine(mob/user, extra_description = "")
+	if(world.time < expiration_time)
+		extra_description += SPAN_NOTICE("This pass expires at [worldtime2stationtime(expiration_time)].")
 	else
-		to_chat(user, SPAN_WARNING("It expired at [worldtime2stationtime(expiration_time)]."))
+		extra_description += SPAN_WARNING("It expired at [worldtime2stationtime(expiration_time)].")
 
-	to_chat(usr, SPAN_NOTICE("It grants access to the following areas:"))
-	for (var/A in temp_access)
-		to_chat(usr, SPAN_NOTICE("[get_access_desc(A)]."))
-	to_chat(usr, SPAN_NOTICE("Issuing reason: [reason]."))
+	extra_description += SPAN_NOTICE("\nIt grants access to the following areas:")
+
+	for(var/A in temp_access)
+		extra_description += SPAN_NOTICE("\n[get_access_desc(A)].")
+
+	extra_description += SPAN_NOTICE("\nIssuing reason: [reason].")
 
 /////////////////////////////////////////////
 //Guest pass terminal////////////////////////
@@ -90,23 +91,23 @@
 		dat += "<h3>Activity log</h3><br>"
 		for (var/entry in internal_log)
 			dat += "[entry]<br><hr>"
-		dat += "<a href='?src=\ref[src];action=print'>Print</a><br>"
-		dat += "<a href='?src=\ref[src];mode=0'>Back</a><br>"
+		dat += "<a href='byond://?src=\ref[src];action=print'>Print</a><br>"
+		dat += "<a href='byond://?src=\ref[src];mode=0'>Back</a><br>"
 	else
 		dat += "<h3>Guest pass terminal #[uid]</h3><br>"
-		dat += "<a href='?src=\ref[src];mode=1'>View activity log</a><br><br>"
-		dat += "Issuing ID: <a href='?src=\ref[src];action=id'>[giver]</a><br>"
-		dat += "Issued to: <a href='?src=\ref[src];choice=giv_name'>[giv_name]</a><br>"
-		dat += "Reason:  <a href='?src=\ref[src];choice=reason'>[reason]</a><br>"
-		dat += "Duration (minutes):  <a href='?src=\ref[src];choice=duration'>[duration] m</a><br>"
+		dat += "<a href='byond://?src=\ref[src];mode=1'>View activity log</a><br><br>"
+		dat += "Issuing ID: <a href='byond://?src=\ref[src];action=id'>[giver]</a><br>"
+		dat += "Issued to: <a href='byond://?src=\ref[src];choice=giv_name'>[giv_name]</a><br>"
+		dat += "Reason:  <a href='byond://?src=\ref[src];choice=reason'>[reason]</a><br>"
+		dat += "Duration (minutes):  <a href='byond://?src=\ref[src];choice=duration'>[duration] m</a><br>"
 		dat += "Access to areas:<br>"
 		if (giver && giver.access)
 			for (var/A in giver.access)
 				var/area = get_access_desc(A)
 				if (A in accesses)
 					area = "<b>[area]</b>"
-				dat += "<a href='?src=\ref[src];choice=access;access=[A]'>[area]</a><br>"
-		dat += "<br><a href='?src=\ref[src];action=issue'>Issue pass</a><br>"
+				dat += "<a href='byond://?src=\ref[src];choice=access;access=[A]'>[area]</a><br>"
+		dat += "<br><a href='byond://?src=\ref[src];action=issue'>Issue pass</a><br>"
 
 	user << browse(dat, "window=guestpass;size=400x520")
 	onclose(user, "guestpass")

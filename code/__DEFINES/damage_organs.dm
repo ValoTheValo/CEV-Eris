@@ -113,13 +113,15 @@
 
 
 // Organ defines.
-#define ORGAN_CUT_AWAY   (1<<0)
-#define ORGAN_BLEEDING   (1<<1)
-#define ORGAN_BROKEN     (1<<2)
-#define ORGAN_DESTROYED  (1<<3)
-#define ORGAN_SPLINTED   (1<<4)
-#define ORGAN_DEAD       (1<<5)
-#define ORGAN_MUTATED    (1<<6)
+#define ORGAN_CUT_AWAY	(1<<0)
+#define ORGAN_BLEEDING	(1<<1)
+#define ORGAN_BROKEN	(1<<2)
+#define ORGAN_DESTROYED	(1<<3)
+#define ORGAN_SPLINTED	(1<<4)
+#define ORGAN_DEAD		(1<<5)
+#define ORGAN_MUTATED	(1<<6)
+#define ORGAN_INFECTED	(1<<7)
+#define ORGAN_WOUNDED	(1<<8)
 
 // Body part functions
 #define BODYPART_GRASP				(1<<0)
@@ -130,6 +132,7 @@
 #define DROPLIMB_EDGE 0
 #define DROPLIMB_BLUNT 1
 #define DROPLIMB_BURN 2
+#define DROPLIMB_EDGE_BURN 3
 
 #define MODIFICATION_ORGANIC 0	// Organic
 #define MODIFICATION_ASSISTED 1 // Like pacemakers, not robotic
@@ -140,12 +143,63 @@
 // Damage above this value must be repaired with surgery.
 #define ROBOLIMB_SELF_REPAIR_CAP 30
 
-//Germs and infections.
-#define GERM_LEVEL_AMBIENT  110 // Maximum germ level you can reach by standing still.
-#define GERM_LEVEL_MOVE_CAP 200 // Maximum germ level you can reach by running around.
-
-#define INFECTION_LEVEL_ONE   100
-#define INFECTION_LEVEL_TWO   500
-#define INFECTION_LEVEL_THREE 1000
-
 #define ORGAN_RECOVERY_THRESHOLD (5 MINUTES)
+
+// INTERNAL ORGANS
+#define IORGAN_VITAL_HEALTH 12 // Heart
+#define IORGAN_VITAL_BRUISE 6
+#define IORGAN_VITAL_BREAK 8
+#define IORGAN_STANDARD_HEALTH 8
+#define IORGAN_STANDARD_BRUISE 3
+#define IORGAN_STANDARD_BREAK 5
+#define IORGAN_SMALL_HEALTH 6
+#define IORGAN_SMALL_BRUISE 2
+#define IORGAN_SMALL_BREAK 4
+#define IORGAN_TINY_HEALTH 4
+#define IORGAN_TINY_BRUISE 1
+#define IORGAN_TINY_BREAK 2
+#define IORGAN_SKELETAL_HEALTH 14
+#define IORGAN_SKELETAL_BRUISE 4
+#define IORGAN_SKELETAL_BREAK 6
+#define IORGAN_MAX_HEALTH 14 // Brain
+
+#define IORGAN_KIDNEY_TOX_RATIO 0.25
+#define IORGAN_LIVER_TOX_RATIO 0.75
+
+// INTERNAL WOUNDS
+#define TREATMENT_ITEM 1
+#define TREATMENT_TOOL 2
+#define TREATMENT_CHEM 3
+
+#define IWOUND_CAN_DAMAGE		(1<<0)
+#define IWOUND_PROGRESS			(1<<1)
+#define IWOUND_PROGRESS_DEATH	(1<<2)
+#define IWOUND_SPREAD			(1<<3)
+#define IWOUND_HALLUCINATE		(1<<4)
+#define IWOUND_AGGRAVATION      (1<<5)
+#define IWOUND_RECOVER              (1<<6)
+#define IWOUND_STASIS               (1<<7) // disables certain automatic flag changes
+
+#define IWOUND_INSIGNIFICANT_DAMAGE 0.05
+#define IWOUND_LIGHT_DAMAGE 0.1
+#define IWOUND_MEDIUM_DAMAGE 0.25
+#define IWOUND_HEAVY_DAMAGE 0.5
+
+#define WE_SALVE "salve" // salves
+#define WE_BANDAGE "bandage" // bandaging
+
+#define WOUND_STABLE 1
+#define WOUND_RECOVER 2
+
+#define IWOUND_1_MINUTE	30
+#define IWOUND_2_MINUTES 60
+#define IWOUND_3_MINUTES 90
+#define IWOUND_4_MINUTES 120
+#define IWOUND_5_MINUTES 150
+#define IWOUND_HALF_MINUTE 15
+
+// Organ generation
+#define ORGAN_HAS_BONES			(1<<0)
+#define ORGAN_HAS_BLOOD_VESSELS	(1<<1)
+#define ORGAN_HAS_NERVES		(1<<2)
+#define ORGAN_HAS_MUSCLES		(1<<3)

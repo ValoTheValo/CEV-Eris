@@ -112,7 +112,7 @@ SUBSYSTEM_DEF(atoms)
 	else if(!A.initialized)
 		BadInitializeCalls[the_type] |= BAD_INIT_DIDNT_INIT
 	else
-		//SEND_SIGNAL(A,COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZE)
+		//SEND_SIGNAL_OLD(A,COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZE)
 		if(created_atoms && from_template && ispath(the_type, /atom/movable))//we only want to populate the list with movables
 			created_atoms += A.GetAllContents()
 
@@ -151,7 +151,6 @@ SUBSYSTEM_DEF(atoms)
 	if(initlog)
 		text2file(initlog, "data/logs/initialize.log")
 
-ADMIN_VERB_ADD(/client/proc/cmd_display_init_log, R_DEBUG, null)
 /client/proc/cmd_display_init_log()
 	set category = "Debug"
 	set name = "Display Initialize() Log"

@@ -1,8 +1,11 @@
 /datum/trade_station/boozefood
 	name_pool = list(
-		"ATB \'Vermouth\'" = "Aster's Trade Beacon \'Vermouth\': \"Best beverages, ingredients for your cooks, and anything that is needed for your private bars and more!\""
+		"BTB \'Vermouth\'" = "Bradhaanata Trade Beacon \'Vermouth\': \"Best beverages, ingredients for your cooks, and anything that is needed for your private bars and more! Part of the Aster's Trade Network\""
 	)
+	icon_states = list("htu_station", "station")
 	uid = "commissary"
+	tree_x = 0.5
+	tree_y = 0.9
 	start_discovered = TRUE
 	spawn_always = TRUE
 	markup = WHOLESALE_GOODS
@@ -15,13 +18,17 @@
 		"Basic Ingredients" = list(
 			/obj/item/reagent_containers/food/condiment/flour = custom_good_price(50),
 			/obj/item/reagent_containers/food/drinks/milk = custom_good_price(50),
+			/obj/item/reagent_containers/food/snacks/sliceable/butterstick = custom_good_price(50),
 			/obj/item/storage/fancy/egg_box = custom_good_price(100),
 			/obj/item/reagent_containers/food/snacks/tofu = custom_good_price(50),
 			/obj/item/reagent_containers/food/snacks/meat = custom_good_price(100),
-			/obj/item/reagent_containers/food/condiment/enzyme = custom_good_price(80)
+			/obj/item/reagent_containers/food/snacks/meat/chicken = custom_good_price(75),
+			/obj/item/reagent_containers/food/condiment/enzyme = custom_good_price(80),
+			/obj/item/reagent_containers/food/condiment/saltshaker = custom_good_price(30),
+			/obj/item/reagent_containers/food/condiment/peppermill = custom_good_price(30)
 		),
 		"Drinks" = list(
-			/obj/item/reagent_containers/food/drinks/bottle/gin = custom_good_price(100), 
+			/obj/item/reagent_containers/food/drinks/bottle/gin = custom_good_price(100),
 			/obj/item/reagent_containers/food/drinks/bottle/whiskey = custom_good_price(100),
 			/obj/item/reagent_containers/food/drinks/bottle/tequilla = custom_good_price(100),
 			/obj/item/reagent_containers/food/drinks/bottle/vodka = custom_good_price(100),
@@ -35,6 +42,7 @@
 			/obj/item/reagent_containers/food/drinks/bottle/orangejuice,
 			/obj/item/reagent_containers/food/drinks/bottle/tomatojuice,
 			/obj/item/reagent_containers/food/drinks/bottle/limejuice,
+			///obj/item/reagent_containers/food/drinks/bottle/lemonjuice,
 			/obj/item/reagent_containers/food/drinks/bottle/cream,
 			/obj/item/reagent_containers/food/drinks/bottle/cola,
 			/obj/item/reagent_containers/food/drinks/bottle/space_up,
@@ -54,7 +62,12 @@
 			/obj/item/reagent_containers/food/drinks/carafe,
 			/obj/item/reagent_containers/food/drinks/flask/barflask,
 			/obj/item/reagent_containers/food/drinks/flask/vacuumflask,
-			/obj/item/storage/deferred/kitchen = custom_good_price(50)
+			/obj/item/storage/deferred/crate/kitchen = custom_good_price(300)
+		),
+		"Appliance IKEAs" = list(
+		/obj/item/machinery_crate/stove = custom_good_price(300),
+		/obj/item/machinery_crate/grill = custom_good_price(300),
+		/obj/item/machinery_crate/oven = custom_good_price(400)
 		)
 	)
 	hidden_inventory = list(
@@ -65,12 +78,17 @@
 		)
 	)
 	offer_types = list(
+		/obj/item/oddity/common/old_knife = offer_data("old knife", 500, 1),
 		/obj/item/reagent_containers/food/snacks/kampferburger = offer_data("kampfer burger", 500, 3),
 		/obj/item/reagent_containers/food/snacks/panzerburger = offer_data("panzer burger", 700, 2),
 		/obj/item/reagent_containers/food/snacks/jagerburger = offer_data("jager burger", 700, 2),
 		/obj/item/reagent_containers/food/snacks/seucheburger = offer_data("seuche burger", 700, 2),
 		/obj/item/reagent_containers/food/snacks/bigroachburger = offer_data("big roach burger", 2000, 2),
 		/obj/item/reagent_containers/food/snacks/fuhrerburger = offer_data("fuhrer burger", 2000, 2),
+		/obj/item/reagent_containers/food/snacks/bacon = offer_data("cooked bacon", 5000, 2), //Space pigs are rare, but there is shipside procurement
 		/datum/reagent/alcohol/changelingsting = offer_data("Changeling Sting bottle (60u)", 1500, 1),
-		/datum/reagent/alcohol/longislandicedtea = offer_data("Long Island Iced Tea bottle (60u)", 1500, 1)		// Lemon juice bottle may need to be added to the game
+		/datum/reagent/alcohol/longislandicedtea = offer_data("Long Island Iced Tea bottle (60u)", 1500, 1),	// Lemon juice bottle may need to be added to the game
+		/datum/reagent/alcohol/alliescocktail = offer_data("Allies Cocktail bottle (60u)", 1500, 1),
+		/datum/reagent/alcohol/manhattan_proj = offer_data("Manhattan Project bottle (60u)", 2500, 1),
+		/datum/reagent/alcohol/atomicbomb = offer_data("Atomic Bomb bottle (60u)", 3000, 1)
 	)

@@ -24,7 +24,7 @@
 
 	var/list/ports = new()
 
-/obj/machinery/atmospherics/omni/New()
+/obj/machinery/atmospherics/omni/LateInitialize()
 	..()
 	icon_state = "base"
 
@@ -105,7 +105,7 @@
 		return
 
 	src.add_fingerprint(usr)
-	ui_interact(user)
+	nano_ui_interact(user)
 	return
 
 /obj/machinery/atmospherics/omni/proc/build_icons()

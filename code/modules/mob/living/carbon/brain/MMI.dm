@@ -21,6 +21,7 @@
 /obj/item/device/mmi
 	name = "man-machine interface"
 	desc = "The Warrior's bland acronym, MMI, obscures the true horror of this monstrosity."
+	description_info = "Brains can be inserted by clicking on it. Brains can be removed by swiping a ID with roboticist access and clicking with an empty hand."
 	icon = 'icons/obj/assemblies.dmi'
 	icon_state = "mmi_empty"
 	w_class = ITEM_SIZE_NORMAL
@@ -32,12 +33,12 @@
 
 	var/locked = 0
 	var/mob/living/carbon/brain/brainmob = null//The current occupant.
-	var/obj/item/organ/internal/brain/brainobj = null	//The current brain organ.
+	var/obj/item/organ/internal/vital/brain/brainobj = null	//The current brain organ.
 
 /obj/item/device/mmi/attackby(var/obj/item/O as obj, var/mob/user as mob)
-	if(istype(O,/obj/item/organ/internal/brain) && !brainmob) //Time to stick a brain in it --NEO
+	if(istype(O,/obj/item/organ/internal/vital/brain) && !brainmob) //Time to stick a brain in it --NEO
 
-		var/obj/item/organ/internal/brain/B = O
+		var/obj/item/organ/internal/vital/brain/B = O
 		if(B.health <= 0)
 			to_chat(user, "\red That brain is well and truly dead.")
 			return
@@ -48,9 +49,8 @@
 		if(!BM.client)
 			for(var/mob/observer/ghost/G in GLOB.player_list)
 				if(G.can_reenter_corpse && G.mind == BM.mind)
-					if(alert(G, "Somebody is attempting to put your brain in an MMI. Would you like to return to it?","Become brain","OH YES","No") == "OH YES")
-						G.reenter_corpse()
-						break
+					G.reenter_corpse()
+					break
 			if(!BM.client)
 				to_chat(user, SPAN_WARNING("\The [src] indicates that \the [B] is unresponsive."))
 				return
@@ -98,7 +98,7 @@
 		to_chat(user, "\red You upend the MMI, but the brain is clamped into place.")
 	else
 		to_chat(user, "\blue You upend the MMI, spilling the brain onto the floor.")
-		var/obj/item/organ/internal/brain/brain
+		var/obj/item/organ/internal/vital/brain/brain
 		if (brainobj)	//Pull brain organ out of MMI.
 			brainobj.loc = user.loc
 			brain = brainobj

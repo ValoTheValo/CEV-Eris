@@ -71,7 +71,7 @@
 
 
 /obj/item/clothing/suit/chickensuit
-	name = "Chicken Suit"
+	name = "chicken suit"
 	desc = "A suit made long ago by the ancient empire KFC."
 	icon_state = "chickensuit"
 	item_state = "chickensuit"
@@ -81,7 +81,7 @@
 
 
 /obj/item/clothing/suit/monkeysuit
-	name = "Monkey Suit"
+	name = "monkey suit"
 	desc = "A suit that looks like a primate"
 	icon_state = "monkeysuit"
 	item_state = "monkeysuit"
@@ -98,6 +98,12 @@
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO
 	flags_inv = HIDEJUMPSUIT
 
+/obj/item/clothing/suit/marisa
+	name = "witch robe"
+	desc = "Magic is all about the spell power, Ze!"
+	icon_state = "marisa"
+	item_state = "marisa"
+	spawn_blacklisted = TRUE
 /*
  * Misc
  */
@@ -143,6 +149,7 @@
 /obj/item/clothing/under/swimsuit
 	siemens_coefficient = 1
 	body_parts_covered = 0
+	bad_type = /obj/item/clothing/under/swimsuit
 
 /obj/item/clothing/under/swimsuit/black
 	name = "black swimsuit"
@@ -184,14 +191,59 @@
 
 /obj/item/clothing/suit/storage/toggle/bomber
 	name = "bomber jacket"
-	desc = "A thick, well-worn WW2 leather bomber jacket."
+	desc = "A thick, well-worn WW2 style leather bomber jacket."
 	icon_state = "bomber"
 	item_state = "bomber"
 	icon_open = "bomber_open"
 	icon_closed = "bomber"
+	style = STYLE_LOW
 	body_parts_covered = UPPER_TORSO|ARMS
 	cold_protection = UPPER_TORSO|ARMS
 	min_cold_protection_temperature = T0C - 20
+	siemens_coefficient = 0.7
+
+/obj/item/clothing/suit/storage/toggle/bomber/furred
+	name = "furred bomber jacket"
+	desc = "A thick, well-worn WW2 style leather bomber jacket, padded with warm fur. It's cold out in space!"
+	icon_state = "fur_bomber"
+	item_state = "fur_bomber"
+	icon_open = "fur_bomber_open"
+	icon_closed = "fur_bomber"
+
+/obj/item/clothing/suit/storage/toggle/service
+	name = "Ironhammer service jacket"
+	desc = "A blue service jacket with golden badges. Often worn in low threat areas, formal situations, or by veterans."
+	icon_state = "service"
+	item_state = "service"
+	icon_open = "service_open"
+	icon_closed = "service"
+	style = STYLE_LOW
+
+/obj/item/clothing/suit/storage/jamrock
+	name = "disco blazer"
+	desc = "A green blazer that looks perfect for a disco party."
+	icon_state = "jamrock_blazer"
+	item_state = "jamrock_blazer"
+	style = STYLE_HIGH
+	body_parts_covered = UPPER_TORSO|ARMS
+	siemens_coefficient = 0.7
+
+/obj/item/clothing/suit/storage/aerostatic
+	name = "aerostatic bomber jacket"
+	desc = "A red bomber jacket that looks like its seen better days."
+	icon_state = "aerostatic_bomber_jacket"
+	item_state = "aerostatic_bomber_jacket"
+	style = STYLE_HIGH
+	body_parts_covered = UPPER_TORSO|ARMS
+	siemens_coefficient = 0.7
+
+/obj/item/clothing/suit/storage/khaki
+	name = "tactful jacket"
+	desc = "A khaki-colored jacket so stylishly casual you might think it sports a tactical vest."
+	icon_state = "khaki"
+	item_state = "khaki"
+	style = STYLE_LOW
+	body_parts_covered = UPPER_TORSO|ARMS
 	siemens_coefficient = 0.7
 
 /obj/item/clothing/suit/storage/leather_jacket
@@ -200,9 +252,9 @@
 	icon_state = "leather_jacket"
 	item_state = "leather_jacket"
 	armor = list(
-		melee = 10,
-		bullet = 10,
-		energy = 10,
+		melee = 2,
+		bullet = 2,
+		energy = 2,
 		bomb = 10,
 		bio = 0,
 		rad = 0
@@ -211,23 +263,64 @@
 	cold_protection = UPPER_TORSO|LOWER_TORSO|ARMS
 	min_cold_protection_temperature = T0C - 20
 	siemens_coefficient = 0.7
+
 /obj/item/clothing/suit/storage/leather_jacket/tunnelsnake
-	name = "Sleek leather Jacket"
+	name = "sleek leather jacket"
 	desc = "A sturdy, synthetic leather jacket with a high collar. It is able to protect you from a knife slice or a bite, but don't expect too much. More importantly, it makes you look like a really bad boy or girl."
 	icon_state = "tunnelsnake_blank"
 	item_state = "tunnelsnake_blank"
 
 /obj/item/clothing/suit/storage/leather_jacket/tunnelsnake_jager
-	name = "Jaeger leather Jacket"
+	name = "Jaeger leather jacket"
 	desc = "A sturdy, synthetic leather jacket with a high collar. It is able to protect you from a knife slice or a bite, but don't expect too much. More importantly, it makes you look like a really bad boy or girl. This jacket has a Jaeger roach pictured on the back. Jaeger Roach rules!"
 	icon_state = "tunnelsnake_jager"
 	item_state = "tunnelsnake_jager"
 
 /obj/item/clothing/suit/storage/leather_jacket/tunnelsnake_snake
-	name = "Tunnelsnake Jacket"
+	name = "Tunnelsnake jacket"
 	desc = "Tunnelsnakes Rule! That's us! And we Rule!"
 	icon_state = "tunnelsnake"
 	item_state = "tunnelsnake"
+
+/obj/item/clothing/suit/storage/leather_jacket/punk
+	name = "punk jacket"
+	desc = "Authentic leather for an authentic punk."
+	icon_state = "punk_highlight"
+
+/obj/item/clothing/suit/storage/leather_jacket/punk/New(loc, jacket_type = "punk_highlight", logo_type, is_natural_spawn = TRUE)
+	..()
+	if(is_natural_spawn) // From junk pile or some such
+		logo_type = pick(list(
+			null, null, null, null, // 50% chance of not having any logo
+			"punk_over_valentinos",
+			"punk_over_samurai",
+			"punk_over_jager_roach",
+			"punk_over_tunnel_snakes"
+		))
+		jacket_type = pick(list(
+			"punk_bright",
+			"punk_dark",
+			"punk_highlight"
+		))
+
+	if(logo_type)
+		var/obj/item/clothing/accessory/logo/logo = new
+		logo.icon_state = logo_type
+		accessories += logo
+		logo.has_suit = src
+		loc = src
+		switch(logo_type) // All of the following names associated with some group of people, thus capitalized 
+			if("punk_over_valentinos")
+				name = "Valentinos jacket"
+			if("punk_over_samurai")
+				name = "Samurai jacket"
+			if("punk_over_jager_roach")
+				name = "Jager Roaches jacket"
+			if("punk_over_tunnel_snakes")
+				name = "Tunnel Snakes jacket"
+
+	icon_state = jacket_type
+	update_icon()
 
 /obj/item/clothing/suit/storage/toggle/hoodie
 	name = "grey hoodie"
@@ -253,9 +346,9 @@
 	icon_state = "cyberpunksleek"
 	item_state = "brown_jacket"
 	armor = list(
-		melee = 5,
-		bullet = 20,
-		energy = 10,
+		melee = 1,
+		bullet = 4,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -288,9 +381,9 @@
 	icon_state = "cyberpunksleek_long"
 	item_state = "cyberpunksleek_long"
 	armor = list(
-		melee = 10,
-		bullet = 20,
-		energy = 10,
+		melee = 2,
+		bullet = 4,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -323,20 +416,38 @@
 	icon_state = "bladerunner_coat"
 	item_state = "bladerunner_coat"
 	armor = list(
-		melee = 10,
-		bullet = 20,
-		energy = 10,
+		melee = 2,
+		bullet = 4,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
 	)
 	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS|LEGS
 
+/obj/item/clothing/suit/storage/dante//makes even the devil cry
+	name = "exterminator coat"
+	desc = "A stylish red leather coat. So stylish, in fact, that it makes you want to dance."
+	icon_state = "dante"
+	item_state = "dante"
+	armor = list(
+		melee = 2,
+		bullet = 4,
+		energy = 2,
+		bomb = 0,
+		bio = 0,
+		rad = 0
+	)
+	style = STYLE_HIGH
+	body_parts_covered = UPPER_TORSO|LOWER_TORSO|ARMS
+	siemens_coefficient = 0.7
+
 /obj/item/clothing/suit/storage/drive_jacket
 	name = "white jacket"
 	desc = "With the warmth of this jacket you feel like you're a real human being."
 	icon_state = "drive_jacket"
 	item_state = "drive_jacket"
+	style = STYLE_LOW
 	body_parts_covered = UPPER_TORSO|ARMS
 
 /obj/item/clothing/suit/storage/violet_jacket
@@ -344,6 +455,7 @@
 	desc = "Coat that you ride like lightning, and will crash with you like thunder."
 	icon_state = "violet_jacket"
 	item_state = "violet_jacket"
+	style = STYLE_LOW
 	body_parts_covered = UPPER_TORSO|ARMS
 
 /obj/item/clothing/suit/storage/bomj
@@ -352,9 +464,9 @@
 	icon_state = "bomj"
 	item_state = "bomj"
 	armor = list(
-		melee = 10,
-		bullet = 20,
-		energy = 10,
+		melee = 2,
+		bullet = 4,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -370,8 +482,8 @@
 	icon_state = "punkvest"
 	item_state = "punkvest"
 	armor = list(
-		melee = 10,
-		bullet = 10,
+		melee = 2,
+		bullet = 2,
 		energy = 0,
 		bomb = 0,
 		bio = 0,
@@ -387,8 +499,8 @@
 	icon_open = "windbreaker_open"
 	icon_closed = "windbreaker"
 	armor = list(
-		melee = 10,
-		bullet = 10,
+		melee = 2,
+		bullet = 2,
 		energy = 0,
 		bomb = 0,
 		bio = 30,
@@ -402,9 +514,9 @@
 	icon_state = "cyberpunk"
 	item_state = "cyberpunk"
 	armor = list(
-		melee = 10,
-		bullet = 20,
-		energy = 10,
+		melee = 2,
+		bullet = 5,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -416,9 +528,9 @@
 	icon_state = "scav_armor"
 	item_state = "scav_armor"
 	armor = list(
-		melee = 50,
-		bullet = 45,
-		energy = 25,
+		melee = 13,
+		bullet = 12,
+		energy = 6,
 		bomb = 15,
 		bio = 50,
 		rad = 0
@@ -442,9 +554,9 @@
 	icon_state = "triadkillers"
 	item_state = "triadkillers"
 	armor = list(
-		melee = 35,
-		bullet = 35,
-		energy = 35,
+		melee = 5,
+		bullet = 5,
+		energy = 5,
 		bomb = 15,
 		bio = 0,
 		rad = 0
@@ -466,9 +578,9 @@
 	icon_state = "akira"
 	item_state = "akira"
 	armor = list(
-		melee = 20,
-		bullet = 20,
-		energy = 10,
+		melee = 5,
+		bullet = 5,
+		energy = 2,
 		bomb = 0,
 		bio = 0,
 		rad = 0
@@ -476,6 +588,15 @@
 	body_parts_covered = UPPER_TORSO|ARMS
 	style = STYLE_HIGH
 	price_tag = 400
+
+/obj/item/clothing/suit/storage/boxer_jacket
+	name = "boxer jacket"//Mother Russia Bleeds reference
+	desc = "Uppercut their heads off."
+	icon_state = "boxer_jacket"
+	item_state = "boxer_jacket"
+	siemens_coefficient = 0.7
+	style = STYLE_LOW
+	body_parts_covered = UPPER_TORSO|ARMS
 
 /obj/item/clothing/suit/storage/puffyblue
 	name = "blue puffy coat"

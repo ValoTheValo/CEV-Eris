@@ -14,7 +14,7 @@
 	anchored = TRUE
 	animate_movement=1
 	health = 150 //yeah, it's tougher than ed209 because it is a big metal box with wheels --rastaf0
-	maxhealth = 150
+	maxHealth = 150
 	fire_dam_coeff = 0.7
 	brute_dam_coeff = 0.5
 	var/atom/movable/load = null		// the loaded crate (usually)
@@ -118,8 +118,8 @@
 
 		updateDialog()
 	else if (istype(I, /obj/item/tool/wrench))
-		if (src.health < maxhealth)
-			src.health = min(maxhealth, src.health+25)
+		if (src.health < maxHealth)
+			src.health = min(maxHealth, src.health+25)
 			user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
 			user.visible_message(
 				SPAN_NOTICE("\The [user] repairs \the [src]!"),
@@ -145,17 +145,17 @@
 	playsound(src.loc, 'sound/effects/sparks1.ogg', 100, 0)
 	return 1
 
-/obj/machinery/bot/mulebot/ex_act(var/severity)
+/obj/machinery/bot/mulebot/take_damage(amount)
+	. = ..()
+	if(QDELETED(src))
+		return 0
 	unload(0)
-	switch(severity)
-		if(2)
-			BITRESET(wires, rand(0,9))
-			BITRESET(wires, rand(0,9))
-			BITRESET(wires, rand(0,9))
-		if(3)
-			BITRESET(wires, rand(0,9))
-	..()
-	return
+	if(amount > 100)
+		BITRESET(wires, rand(0,9))
+		BITRESET(wires, rand(0,9))
+		BITRESET(wires, rand(0,9))
+	else
+		BITRESET(wires, rand(0,9))
 
 /obj/machinery/bot/mulebot/bullet_act()
 	if(prob(50) && !isnull(load))
@@ -212,22 +212,22 @@
 		dat += "Power level: [cell ? cell.percent() : 0]%<BR>"
 
 		if(locked && !ai)
-			dat += "<HR>Controls are locked <A href='byond://?src=\ref[src];op=unlock'><I>(unlock)</I></A>"
+			dat += "<HR>Controls are locked <a href='byond://?src=\ref[src];op=unlock'><I>(unlock)</I></A>"
 		else
-			dat += "<HR>Controls are unlocked <A href='byond://?src=\ref[src];op=lock'><I>(lock)</I></A><BR><BR>"
+			dat += "<HR>Controls are unlocked <a href='byond://?src=\ref[src];op=lock'><I>(lock)</I></A><BR><BR>"
 
-			dat += "<A href='byond://?src=\ref[src];op=power'>Toggle Power</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=stop'>Stop</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=go'>Proceed</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=home'>Return to Home</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=destination'>Set Destination</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=setid'>Set Bot ID</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=sethome'>Set Home</A><BR>"
-			dat += "<A href='byond://?src=\ref[src];op=autoret'>Toggle Auto Return Home</A> ([auto_return ? "On":"Off"])<BR>"
-			dat += "<A href='byond://?src=\ref[src];op=autopick'>Toggle Auto Pickup Crate</A> ([auto_pickup ? "On":"Off"])<BR>"
+			dat += "<a href='byond://?src=\ref[src];op=power'>Toggle Power</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=stop'>Stop</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=go'>Proceed</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=home'>Return to Home</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=destination'>Set Destination</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=setid'>Set Bot ID</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=sethome'>Set Home</A><BR>"
+			dat += "<a href='byond://?src=\ref[src];op=autoret'>Toggle Auto Return Home</A> ([auto_return ? "On":"Off"])<BR>"
+			dat += "<a href='byond://?src=\ref[src];op=autopick'>Toggle Auto Pickup Crate</A> ([auto_pickup ? "On":"Off"])<BR>"
 
 			if(load)
-				dat += "<A href='byond://?src=\ref[src];op=unload'>Unload Now</A><BR>"
+				dat += "<a href='byond://?src=\ref[src];op=unload'>Unload Now</A><BR>"
 			dat += "<HR>The maintenance hatch is closed.<BR>"
 
 	else
@@ -235,9 +235,9 @@
 			dat += "The maintenance hatch is open.<BR><BR>"
 			dat += "Power cell: "
 			if(cell)
-				dat += "<A href='byond://?src=\ref[src];op=cellremove'>Installed</A><BR>"
+				dat += "<a href='byond://?src=\ref[src];op=cellremove'>Installed</A><BR>"
 			else
-				dat += "<A href='byond://?src=\ref[src];op=cellinsert'>Removed</A><BR>"
+				dat += "<a href='byond://?src=\ref[src];op=cellinsert'>Removed</A><BR>"
 
 			dat += wires.GetInteractWindow(user)
 		else
@@ -540,7 +540,7 @@
 					return
 
 
-				if(istype( next, /turf/simulated))
+				if(istype( next, /turf))
 					//world << "at ([x],[y]) moving to ([next.x],[next.y])"
 
 

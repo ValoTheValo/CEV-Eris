@@ -13,22 +13,17 @@
 	var/turf/loc = get_turf(O)
 	return loc ? loc.z : 0
 
-/proc/get_area_name(N) //get area by its name
-	for(var/area/A in GLOB.map_areas)
-		if(A.name == N)
-			return A
-	return 0
+// get the area's name
+/proc/get_area_name_litteral(atom/X, format_text = FALSE)
+	var/area/A = isarea(X) ? X : get_area(X)
+	if(!A)
+		return null
+	return format_text ? format_text(A.name) : A.name
 
 /proc/get_area_master(const/O)
 	var/area/A = get_area(O)
 	if (isarea(A))
 		return A
-
-/proc/in_range(source, user)
-	if(get_dist(source, user) <= 1)
-		return TRUE
-
-	return FALSE //not in range and not telekinetic
 
 // Like view but bypasses luminosity check
 
@@ -158,19 +153,15 @@
 			objs[AM] = TRUE
 			hearturfs[AM.locs[1]] = TRUE
 
-	for(var/m in GLOB.player_list)
-		var/mob/M = m
-		if(checkghosts == GHOSTS_ALL_HEAR && M.stat == DEAD && !isnewplayer(M) && (M.client && M.get_preference_value(/datum/client_preference/ghost_ears) == GLOB.PREF_ALL_SPEECH))
-			if (!mobs[M])
-				mobs[M] = TRUE
-			continue
-		if(M.loc && hearturfs[M.locs[1]])
-			if (!mobs[M])
-				mobs[M] = TRUE
 
-	for(var/obj in GLOB.hearing_objects)
-		if(get_turf(obj) in hearturfs)
-			objs |= obj
+	for(var/mob/M as anything in getMobsInRangeChunked(T, range, FALSE, TRUE))
+		mobs[M] = TRUE
+	for(var/mob/M as anything in GLOB.player_ghost_list)
+		if(checkghosts == GHOSTS_ALL_HEAR && M.stat == DEAD && M.get_preference_value(/datum/client_preference/ghost_ears) == GLOB.PREF_ALL_SPEECH)
+			mobs[M] = TRUE
+
+	objs |= getHearersInRangeChunked(T, range)
+
 
 
 /proc/get_mobs_in_radio_ranges(list/obj/item/device/radio/radios)
@@ -268,13 +259,13 @@
 			return get_step(start, EAST)
 
 /proc/get_mob_by_key(key)
-	for(var/mob/M in SSmobs.mob_list)
+	for(var/mob/M in SSmobs.mob_list | SShumans.mob_list)
 		if(M.ckey == lowertext(key))
 			return M
 	return null
 
 /proc/get_client_by_ckey(key)
-	for(var/mob/M in SSmobs.mob_list)
+	for(var/mob/M in SSmobs.mob_list | SShumans.mob_list)
 		if(M.ckey == lowertext(key))
 			return M.client
 	return null
@@ -441,14 +432,13 @@
 	var/minp=16777216;
 	var/maxp=0;
 	for(var/dir in cardinal)
-		var/turf/simulated/T=get_turf(get_step(loc, dir))
+		var/turf/T=get_turf(get_step(loc, dir))
 		var/cp=0
 		if(T && istype(T) && T.zone)
 			var/datum/gas_mixture/environment = T.return_air()
 			cp = environment.return_pressure()
 		else
-			if(istype(T,/turf/simulated))
-				continue
+			continue
 		if(cp<minp)minp=cp
 		if(cp>maxp)maxp=cp
 	return abs(minp-maxp)
@@ -472,7 +462,7 @@
 				direction = 3
 			if(WEST)
 				direction = 4
-		var/turf/simulated/T=get_turf(get_step(loc, dir))
+		var/turf/T=get_turf(get_step(loc, dir))
 		var/list/rstats = new /list(stats.len)
 		if(T && istype(T) && T.zone)
 			var/datum/gas_mixture/environment = T.return_air()
@@ -481,8 +471,6 @@
 					rstats[i] = environment.return_pressure()
 				else
 					rstats[i] = environment.vars[stats[i]]
-		else if(istype(T, /turf/simulated))
-			rstats = null // Exclude zone (wall, door, etc).
 		else if(istype(T, /turf))
 			// Should still work.  (/turf/return_air())
 			var/datum/gas_mixture/environment = T.return_air()
@@ -503,7 +491,7 @@
 /proc/get_vents()
 	var/list/vents = list()
 	for(var/obj/machinery/atmospherics/unary/vent_pump/temp_vent in GLOB.machines)
-		if(!temp_vent.welded && temp_vent.network && isOnStationLevel(temp_vent))
+		if(!temp_vent.welded && temp_vent.network && IS_SHIP_LEVEL(temp_vent.z))
 			if(temp_vent.network.normal_members.len > 15)
 				vents += temp_vent
 	return vents

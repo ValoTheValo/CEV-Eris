@@ -1,5 +1,3 @@
-#define SHEET_MATERIAL_AMOUNT 2000
-
 #define TECH_MATERIAL "materials"
 #define TECH_ENGINEERING "engineering"
 #define TECH_PLASMA "plasmatech"
@@ -22,6 +20,7 @@
 
 #define ORGAN_GROWER	(1<<6)
 
+#define MAKESHIFT		(1<<7)
 
 #define RESEARCH_ENGINEERING   /datum/tech/engineering
 #define RESEARCH_BIOTECH       /datum/tech/biotech
@@ -61,3 +60,6 @@
 #define ERR_PAUSED "paused"
 #define ERR_NOINSIGHT "no insight"
 #define ERR_NOODDITY "no oddity"
+#define ERR_DISTANT "no users"
+#define ERR_STOPPED "lazy user"
+#define ERR_SKILL_ISSUE "unskilled user"

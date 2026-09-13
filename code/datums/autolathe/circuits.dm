@@ -44,10 +44,6 @@
 	name = "navigation console"
 	build_path = /obj/item/electronics/circuitboard/nav
 
-/datum/design/autolathe/circuit/jtb
-	name = "junk tractor beam control console"
-	build_path = /obj/item/electronics/circuitboard/jtb
-
 /datum/design/autolathe/circuit/centrifuge
 	name = "centrifuge"
 	build_path = /obj/item/electronics/circuitboard/centrifuge
@@ -76,6 +72,25 @@
 	name = "crafting station"
 	build_path = /obj/item/electronics/circuitboard/crafting_station
 
+/datum/design/autolathe/circuit/tracker
+	name = "tracker electronics"
+	build_path = /obj/item/electronics/tracker
+
+/datum/design/autolathe/circuit/hydroponics
+	name = "hydroponics tray"
+	build_path = /obj/item/electronics/circuitboard/hydroponics
+
+/datum/design/autolathe/circuit/stove
+	name = "stovetop"
+	build_path = /obj/item/electronics/circuitboard/cooking_with_jane/stove
+
+/datum/design/autolathe/circuit/oven
+	name = "oven"
+	build_path = /obj/item/electronics/circuitboard/cooking_with_jane/oven
+
+/datum/design/autolathe/circuit/grill
+	name = "grill"
+	build_path = /obj/item/electronics/circuitboard/cooking_with_jane/grill
 
 //Exelsior ciruits
 /datum/design/autolathe/circuit/shieldgen_excelsior

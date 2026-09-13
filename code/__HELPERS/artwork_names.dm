@@ -28,7 +28,7 @@ GLOBAL_LIST_INIT(art_types, file2list("strings/artist_strings/descriptors/art_ty
 	var/list/names = list()
 	var/art_crew_name = "Who?"
 	for(var/mob/living/carbon/human/H in (GLOB.human_mob_list & GLOB.player_list))
-		if(!isOnStationLevel(H))
+		if(!IS_SHIP_LEVEL(H.z))
 			continue
 		if(H.mind && player_is_antag(H.mind))
 			continue
@@ -106,6 +106,7 @@ GLOBAL_LIST_INIT(art_description_types_statue, file2list("strings/artist_strings
 	var/description_artwork_statue = pick(description_artwork_statue_verb,description_artwork_statue_stationary)
 
 	var/description_statue = "[description_artwork_statue] [get_artwork_description()]"
+	description_statue += qualitydesc
 	desc += " [description_statue]"
 	return description_statue
 

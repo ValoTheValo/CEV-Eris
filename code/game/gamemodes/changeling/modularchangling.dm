@@ -132,6 +132,11 @@ var/list/datum/power/carrion/powerinstances = list()
 	set category = "Carrion"
 	set desc = "Level up!"
 
+	var/obj/item/organ/internal/carrion/core/core = locate() in src
+	if(!core)
+		return
+	src = core
+
 	if(!powerinstances.len)
 		for(var/P in powers)
 			powerinstances += new P()
@@ -211,7 +216,7 @@ var/list/datum/power/carrion/powerinstances = list()
 
 					if(!ownsthis)
 					{
-						body += "<a href='?src=\ref[src];P="+power+"'>Evolve</a>"
+						body += "<a href='byond://?src=\ref[src];P="+power+"'>Evolve</a>"
 					}
 
 					body += "</td><td align='center'>";

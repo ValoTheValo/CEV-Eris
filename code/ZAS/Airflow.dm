@@ -227,11 +227,11 @@ mob/living/carbon/human/airflow_hit(atom/A)
 		bloody_body(src)
 	var/b_loss = airflow_speed * vsc.airflow_damage
 
-	damage_through_armor(b_loss/3, BRUTE, BP_HEAD, ARMOR_MELEE, 0, "Airflow")
+	damage_through_armor(b_loss/3, BRUTE, BP_HEAD, ARMOR_MELEE, 1, "Airflow")
 
-	damage_through_armor(b_loss/3, BRUTE, BP_CHEST, ARMOR_MELEE, 0, "Airflow")
+	damage_through_armor(b_loss/3, BRUTE, BP_CHEST, ARMOR_MELEE, 1, "Airflow")
 
-	damage_through_armor(b_loss/3, BRUTE, BP_GROIN, ARMOR_MELEE, 0, "Airflow")
+	damage_through_armor(b_loss/3, BRUTE, BP_GROIN, ARMOR_MELEE, 1, "Airflow")
 
 	if(airflow_speed > 10)
 		Paralyse(round(airflow_speed * vsc.airflow_stun))
@@ -242,8 +242,8 @@ mob/living/carbon/human/airflow_hit(atom/A)
 
 zone/proc/movables()
 	. = list()
-	for(var/turf/T in contents)
-		for(var/atom/movable/A in T)
+	for(var/turf/turf as anything in contents)
+		for(var/atom/movable/A in turf)
 			if(!A.simulated || A.anchored || istype(A, /obj/effect) || isobserver(A))
 				continue
 			. += A

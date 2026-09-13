@@ -1,6 +1,7 @@
 /obj/machinery/camera
 	name = "security camera"
 	desc = "It's used to monitor rooms."
+	description_antag = "Can be silently disabled using tape, however this will show if anyone tries to acces the camera."
 	icon = 'icons/obj/monitors.dmi'
 	icon_state = "camera"
 	use_power = ACTIVE_POWER_USE
@@ -101,15 +102,10 @@
 /obj/machinery/camera/bullet_act(var/obj/item/projectile/P)
 	take_damage(P.get_structure_damage())
 
-/obj/machinery/camera/ex_act(severity)
-	if(src.invuln)
-		return
-
-	//camera dies if an explosion touches it!
-	if(severity <= 2 || prob(50))
-		destroy()
-
-	..() //and give it the regular chance of being deleted outright
+/obj/machinery/camera/explosion_act(target_power, explosion_handler/handler)
+	if(invuln)
+		return 0
+	. = ..()
 
 /obj/machinery/camera/hitby(AM as mob|obj)
 	..()
@@ -148,7 +144,9 @@
 	var/list/usable_qualities = list(QUALITY_SCREW_DRIVING,QUALITY_SEALING)
 	if((wires.CanDeconstruct() || (stat & BROKEN)))
 		usable_qualities.Add(QUALITY_WELDING)
-
+	if(panel_open)
+		usable_qualities.Add(QUALITY_CUTTING)
+		usable_qualities.Add(QUALITY_PULSING)
 
 	var/tool_type = I.get_tool_type(user, usable_qualities, src)
 	switch(tool_type)
@@ -170,6 +168,7 @@
 						else
 							assembly.state = 1
 							to_chat(user, SPAN_NOTICE("You cut \the [src] free from the wall."))
+							assembly.update_plane()
 							new /obj/item/stack/cable_coil(src.loc, length=2)
 						assembly = null //so qdel doesn't eat it.
 					qdel(src)
@@ -184,6 +183,16 @@
 				"<span class='notice'>You screw the camera's panel [panel_open ? "open" : "closed"].</span>")
 				return
 			return
+
+		if(QUALITY_CUTTING)
+			if(panel_open)
+				interact(user)
+				return
+
+		if(QUALITY_PULSING)
+			if(panel_open)
+				interact(user)
+				return
 
 		if(QUALITY_SEALING)
 			if(taped)
@@ -202,11 +211,11 @@
 			return
 
 
-	if(istool(I) && panel_open)
-		interact(user)
+	//if(istool(I) && panel_open)
+	//	interact(user)
 
 	// OTHER
-	else if (can_use() && isliving(user) && user.a_intent != I_HURT)
+	if (can_use() && isliving(user) && user.a_intent != I_HURT)
 		var/mob/living/U = user
 		var/list/mob/viewers = list()
 		if(istype(I, /obj/item/ducttape))
@@ -296,7 +305,7 @@
 		playsound(src.loc, 'sound/items/Wirecutter.ogg', 100, 1)
 		icon_state = initial(icon_state)
 
-/obj/machinery/camera/proc/take_damage(var/force, var/message)
+/obj/machinery/camera/take_damage(var/force, var/message)
 	//prob(25) gives an average of 3-4 hits
 	if (force >= toughness && (force > toughness*4 || prob(25)))
 		destroy()
@@ -368,8 +377,8 @@
 
 /atom/proc/auto_turn()
 	//Automatically turns based on nearby walls.
-	var/turf/simulated/wall/T = null
-	for(var/i = 1, i <= 8; i += i)
+	var/turf/wall/T = null
+	for(var/i = 1, i <= 8, i += i)
 		T = get_ranged_target_turf(src, i, 1)
 		if(istype(T))
 			//If someone knows a better way to do this, let me know. -Giacom

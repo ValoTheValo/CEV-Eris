@@ -3,6 +3,7 @@
 	dir = WEST
 	suitable_cell = /obj/item/cell/small
 	rarity_value = 5
+	flags = CONDUCT|MOVE_NOTIFY
 	var/tick_cost = 0.4
 
 	var/obj/effect/effect/light/light_spot
@@ -17,6 +18,9 @@
 	var/light_direction
 	var/lightspot_hitObstacle = FALSE
 
+	description_info = "Can be used on other people's eyes to check for brain damage, and if they're drugged or have the x-ray mutation"
+	description_antag = "Can be used to flash people on harm intent, provided they do not have any protection"
+
 /obj/item/device/lighting/toggleable/flashlight/Destroy()
 	QDEL_NULL(light_spot)
 	return ..()
@@ -27,6 +31,11 @@
 	if(istype(src.loc,/mob/living))
 		var/mob/living/L = src.loc
 		set_dir(L.dir)
+	if(istype(src.loc,/obj/item/gun))
+		var/obj/item/gun/G = src.loc
+		if(istype(G.loc,/mob/living))
+			var/mob/living/L = G.loc
+			set_dir(L.dir)
 	else if(pulledby && old_loc)
 		var/x_diff = src.x - old_loc.x
 		var/y_diff = src.y - old_loc.y
@@ -95,6 +104,10 @@
 
 	if(!istype(src.loc,/mob/living))
 		dir = new_dir
+	if(istype(src.loc,/obj/item/gun))
+		var/obj/item/gun/G = src.loc
+		if(!istype(G.loc,/mob/living))
+			dir = new_dir
 
 /obj/item/device/lighting/toggleable/flashlight/proc/place_lightspot(var/turf/T, var/angle = null)
 	if(light_spot && on && !T.is_space())
@@ -163,6 +176,7 @@
 /obj/item/device/lighting/toggleable/flashlight/dropped(mob/user as mob)
 	if(light_direction)
 		set_dir(light_direction)
+	..()
 
 /obj/item/device/lighting/toggleable/flashlight/afterattack(atom/A, mob/user)
 	var/turf/T = get_turf(A)
@@ -229,7 +243,7 @@
 			if(ismob(src.loc))
 				to_chat(src.loc, SPAN_WARNING("Your flashlight dies. You are alone now."))
 			turn_off()
-		else if(cell.percent() <= 25)
+		else if(cell && (cell.percent() <= 25))
 			apply_power_deficiency()
 
 /obj/item/device/lighting/toggleable/flashlight/attack(mob/living/M, mob/living/user)
@@ -242,7 +256,7 @@
 		var/mob/living/carbon/human/H = M	//mob has protective eyewear
 		if(istype(H))
 			for(var/obj/item/clothing/C in list(H.head,H.wear_mask,H.glasses))
-				if(istype(C) && (C.body_parts_covered & EYES))
+				if(istype(C) && (C.body_parts_covered & EYES) && C.flash_protection > 0)
 					to_chat(user, SPAN_WARNING("You're going to need to remove [C.name] first."))
 					return
 
@@ -255,7 +269,7 @@
 
 			user.visible_message(SPAN_NOTICE("\The [user] directs [src] to [M]'s eyes."), \
 							 	 SPAN_NOTICE("You direct [src] to [M]'s eyes."))
-			if(H == user)	//can't look into your own eyes buster
+			if(H != user)	//can't look into your own eyes buster
 				if(M.stat == DEAD || M.blinded)	//mob is dead or fully blind
 					to_chat(user, SPAN_WARNING("\The [M]'s pupils do not react to the light!"))
 					return
@@ -277,9 +291,14 @@
 				else
 					to_chat(user, SPAN_NOTICE("\The [M]'s pupils narrow."))
 
-			user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN) //can be used offensively
-			if(M.HUDtech.Find("flash"))
-				flick("flash", M.HUDtech["flash"])
+				if(user.a_intent == I_HURT)
+					user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN) //can be used offensively
+					M.flash(0, FALSE , FALSE , FALSE, 2)
+					return
+
+			if(user.a_intent == I_HURT)
+				user.setClickCooldown(DEFAULT_ATTACK_COOLDOWN) //can be used offensively
+				M.flash(0, FALSE , FALSE , FALSE)
 	else
 		return ..()
 

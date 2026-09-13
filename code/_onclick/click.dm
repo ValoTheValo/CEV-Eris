@@ -6,6 +6,7 @@
 // 1 decisecond click delay (above and beyond mob/next_move)
 /mob/var/next_click = 0
 
+
 /*
 	Before anything else, defer these calls to a per-mobtype handler.  This allows us to
 	remove istype() spaghetti code, but requires the addition of other handler procs to simplify it.
@@ -80,25 +81,28 @@
 
 	var/list/modifiers = params2list(params)
 	if(modifiers["shift"] && modifiers["ctrl"])
-		CtrlShiftClickOn(A)
+		CtrlShiftClickOn(A, params)
 		return 1
 	if(modifiers["ctrl"] && modifiers["alt"])
-		CtrlAltClickOn(A)
+		CtrlAltClickOn(A, params)
 		return 1
 	if(modifiers["middle"])
 		if(modifiers["shift"])
-			ShiftMiddleClickOn(A)
+			ShiftMiddleClickOn(A, params)
 		else
-			MiddleClickOn(A)
+			MiddleClickOn(A, params)
 		return 1
 	if(modifiers["shift"])
-		ShiftClickOn(A)
+		SEND_SIGNAL_OLD(src, COMSIG_SHIFTCLICK, A)
+		ShiftClickOn(A, params)
 		return 0
 	if(modifiers["alt"]) // alt and alt-gr (rightalt)
-		AltClickOn(A)
+		SEND_SIGNAL_OLD(src, COMSIG_ALTCLICK, A)
+		AltClickOn(A, params)
 		return 1
 	if(modifiers["ctrl"])
-		CtrlClickOn(A)
+		SEND_SIGNAL_OLD(src, COMSIG_CTRLCLICK, A)
+		CtrlClickOn(A, params)
 		return 1
 
 	if(stat || paralysis || stunned || weakened)
@@ -116,11 +120,11 @@
 
 	if(restrained())
 		setClickCooldown(10)
-		RestrainedClickOn(A)
+		RestrainedClickOn(A, params)
 		return 1
 
 	if(in_throw_mode)
-		if(isturf(A) || isturf(A.loc))
+		if(isturf(A) || isturf(A.loc) && isturf(loc))
 			throw_item(A)
 			return 1
 		throw_mode_off()
@@ -137,13 +141,13 @@
 	if((!isturf(A) && A == loc) || (sdepth != -1 && sdepth <= 1))
 		// faster access to objects already on you
 		if(W)
-			var/resolved = (SEND_SIGNAL(W, COMSIG_IATTACK, A, src, params)) || (SEND_SIGNAL(A, COMSIG_ATTACKBY, W, src, params)) || W.resolve_attackby(A, src, params)
+			var/resolved = (SEND_SIGNAL_OLD(W, COMSIG_IATTACK, A, src, params)) || (SEND_SIGNAL_OLD(A, COMSIG_ATTACKBY, W, src, params)) || W.resolve_attackby(A, src, params)
 			if(!resolved && A && W)
 				W.afterattack(A, src, 1, params) // 1 indicates adjacency
 		else
 			if(ismob(A)) // No instant mob attacking
 				setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-			UnarmedAttack(A, 1)
+			UnarmedAttack(A, 1, params)
 		return 1
 
 	if(!isturf(loc)) // This is going to stop you from telekinesing from inside a closet, but I don't shed many tears for that
@@ -157,20 +161,25 @@
 	// A is a turf or is on a turf, or in something on a turf (pen in a box); but not something in something on a turf (pen in a box in a backpack)
 	sdepth = A.storage_depth_turf()
 	if(isturf(A) || isturf(A.loc) || (sdepth != -1 && sdepth <= 1))
-		if(A.Adjacent(src)) // see adjacent.dm
+		var/adjacent = A.Adjacent(src)
+		if(adjacent) // see adjacent.dm
 			if(W)
 				// Return 1 in attackby() to prevent afterattack() effects (when safely moving items for example)
-				var/resolved = (SEND_SIGNAL(W, COMSIG_IATTACK, A, src, params)) || (SEND_SIGNAL(A, COMSIG_ATTACKBY, W, src, params)) || W.resolve_attackby(A, src, params)
+				var/resolved = (SEND_SIGNAL_OLD(W, COMSIG_IATTACK, A, src, params)) || (SEND_SIGNAL_OLD(A, COMSIG_ATTACKBY, W, src, params))
 				if(!resolved && A && W)
-					W.afterattack(A, src, 1, params) // 1: clicking something Adjacent
+					if(W.double_tact(src, A, adjacent))
+						resolved = W.resolve_attackby(A, src, params)
+					if(!resolved)
+						W.afterattack(A, src, 1, params) // 1: clicking something Adjacent
 			else
 				if(ismob(A)) // No instant mob attacking
 					setClickCooldown(DEFAULT_ATTACK_COOLDOWN)
-				UnarmedAttack(A, 1)
+				UnarmedAttack(A, 1, params)
 			return
 		else // non-adjacent click
 			if(W)
-				W.afterattack(A, src, 0, params) // 0: not Adjacent
+				if(W.double_tact(src, A))
+					W.afterattack(A, src, 0, params) // 0: not Adjacent
 			else
 				setClickCooldown(DEFAULT_ATTACK_COOLDOWN) // no ranged spam
 				RangedAttack(A, params)
@@ -181,8 +190,8 @@
 
 /mob/proc/can_click()
 	if(next_click <= world.time)
-		return 1
-	return 0
+		return TRUE
+	return FALSE
 
 // Default behavior: ignore double clicks, the second click that makes the doubleclick call already calls for a normal click
 /mob/proc/DblClickOn(atom/A, params)
@@ -210,7 +219,7 @@
 /*
 	Ranged unarmed attack:
 
-	This currently is just a default for all mobs, involving	
+	This currently is just a default for all mobs, involving
 	laser eyes and telekinesis.  You could easily add exceptions
 	for things like ranged glove touches, spitting alien acid/neurotoxin,
 	animals lunging, etc.
@@ -236,12 +245,12 @@
 	Middle click
 	Only used for swapping hands
 */
-/mob/proc/MiddleClickOn(atom/A)
+/mob/proc/MiddleClickOn(atom/A, params)
 	swap_hand()
 	return
 
-/mob/proc/ShiftMiddleClickOn(atom/A)
-	pointed(A)
+/mob/proc/ShiftMiddleClickOn(atom/A, params)
+	pointed(A, params)
 
 // In case of use break glass
 /*
@@ -254,11 +263,11 @@
 	For most mobs, examine.
 	This is overridden in ai.dm
 */
-/mob/proc/ShiftClickOn(atom/A)
-	A.ShiftClick(src)
+/mob/proc/ShiftClickOn(atom/A, params)
+	A.ShiftClick(src, params)
 	return
 
-/atom/proc/ShiftClick(mob/user)
+/atom/proc/ShiftClick(mob/user, params)
 	if(user.client && user.client.eye == user)
 		user.examinate(src)
 	return
@@ -266,24 +275,24 @@
 /*
 	Control+Alt click
 */
-/mob/proc/CtrlAltClickOn(atom/A)
-	A.CtrlAltClick(src)
+/mob/proc/CtrlAltClickOn(atom/A, params)
+	A.CtrlAltClick(src, params)
 	return
 
-/atom/proc/CtrlAltClick(mob/user)
+/atom/proc/CtrlAltClick(mob/user, params)
 	return
 
 /*
 	Ctrl click
 	For most objects, pull
 */
-/mob/proc/CtrlClickOn(atom/A)
-	A.CtrlClick(src)
+/mob/proc/CtrlClickOn(atom/A, params)
+	A.CtrlClick(src, params)
 	return
-/atom/proc/CtrlClick(mob/user)
+/atom/proc/CtrlClick(mob/user, params)
 	return
 
-/atom/movable/CtrlClick(mob/user)
+/atom/movable/CtrlClick(mob/user, params)
 	if(Adjacent(user))
 		user.start_pulling(src)
 
@@ -291,19 +300,16 @@
 	Alt click
 	Unused except for AI
 */
-/mob/proc/AltClickOn(atom/A)
-	A.AltClick(src)
+/mob/proc/AltClickOn(atom/A, params)
+	A.AltClick(src, params)
 	return
 
-/atom/proc/AltClick(mob/user)
+/atom/proc/AltClick(mob/user, params)
 	var/turf/T = get_turf(src)
 	if(T && user.TurfAdjacent(T))
-		if(user.listed_turf == T)
-			user.listed_turf = null
-		else
-			user.listed_turf = T
-			user.client.statpanel = "Turf"
-	return 1
+		user.listed_turf = T
+		user.client << output("[url_encode(json_encode(T.name))];", "statbrowser:create_listedturf")
+	return TRUE
 
 /mob/proc/TurfAdjacent(turf/T)
 	return T.AdjacentQuick(src)
@@ -312,11 +318,11 @@
 	Control+Shift click
 	Unused except for AI
 */
-/mob/proc/CtrlShiftClickOn(atom/A)
-	A.CtrlShiftClick(src)
+/mob/proc/CtrlShiftClickOn(atom/A, params)
+	A.CtrlShiftClick(src, params)
 	return
 
-/atom/proc/CtrlShiftClick(mob/user)
+/atom/proc/CtrlShiftClick(mob/user, params)
 	return
 
 /*

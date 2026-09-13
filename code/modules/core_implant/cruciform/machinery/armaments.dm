@@ -56,7 +56,7 @@
 	return
 
 
-/obj/machinery/power/eotp/ui_data(mob/user)
+/obj/machinery/power/eotp/nano_ui_data(mob/user)
 	var/list/data = list()
 	var/list/listed_armaments = list()
 	for(var/i=1 to armaments.len)
@@ -70,8 +70,8 @@
 	return data
 
 
-/obj/machinery/power/eotp/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
-	var/list/data = ui_data(user, ui_key)
+/obj/machinery/power/eotp/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS)
+	var/list/data = nano_ui_data(user, ui_key)
 
 	ui = SSnano.try_update_ui(user, eotp, ui_key, ui, data, force_open)
 	if (!ui)
@@ -122,6 +122,29 @@
 		if (text)
 			desc = text
 
+
+//Roundstart disks start at minimal cost, implies they were ordered before
+/datum/armament/item/disk/utilities
+	name = "Utilities disk"
+	cost = 50
+	min_cost = 50
+	path = /obj/item/computer_hardware/hard_drive/portable/design/nt_bioprinter
+	purchase_count = 1
+
+
+/datum/armament/item/disk/clothes
+	name = "Bio-Fabric disk"
+	cost = 50
+	min_cost = 50
+	path = /obj/item/computer_hardware/hard_drive/portable/design/nt_bioprinter_clothes
+	purchase_count = 1
+
+/datum/armament/item/disk/hastatii
+	name = "Hastatii disk"
+	cost = 50
+	min_cost = 50
+	path = /obj/item/computer_hardware/hard_drive/portable/design/nt_melee
+	purchase_count = 1
 
 /datum/armament/item/disk/cells
 	name = "Power Cells disk"

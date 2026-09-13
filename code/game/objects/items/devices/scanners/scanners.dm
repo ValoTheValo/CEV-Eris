@@ -28,7 +28,7 @@
 	var/window_width = 450
 	var/window_height = 600
 
-	var/charge_per_use = 0
+	var/charge_per_use = 5
 
 	var/is_virtual = FALSE // for non-physical scanner to avoid displaying action messages
 
@@ -45,15 +45,16 @@
 	popup.open()
 
 /obj/item/device/scanner/proc/get_header()
-	return "<a href='?src=\ref[src];print=1'>Print Report</a><a href='?src=\ref[src];clear=1'>Clear data</a>"
+	return "<a href='byond://?src=\ref[src];print=1'>Print Report</a><a href='byond://?src=\ref[src];clear=1'>Clear data</a>"
 
 /obj/item/device/scanner/proc/can_use(mob/user)
 	if (user.incapacitated())
 		return
 	if (!user.IsAdvancedToolUser())
 		return
-	if(!cell_use_check(charge_per_use, user))
-		return
+	if(!is_virtual)
+		if(!cell_use_check(charge_per_use, user))
+			return
 	return TRUE
 
 /obj/item/device/scanner/proc/is_valid_scan_target(atom/O)
@@ -115,6 +116,7 @@
 	user.put_in_hands(P)
 	user.visible_message("\The [src] spits out a piece of paper.")
 
-/obj/item/device/scanner/examine(mob/user)
-	if(..(user, 2) && scan_data)
+/obj/item/device/scanner/examine(mob/user, extra_description = "")
+	if(get_dist(user, src) < 2 && scan_data)
 		show_results(user)
+	..(user, extra_description)

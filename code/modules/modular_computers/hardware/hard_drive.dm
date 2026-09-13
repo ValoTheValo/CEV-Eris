@@ -97,9 +97,9 @@
 	stored_files = null
 	return ..()
 
-/obj/item/computer_hardware/hard_drive/examine(mob/user)
-	. = ..()
-	to_chat(user, SPAN_NOTICE("It can store up to [max_capacity] GQ."))
+/obj/item/computer_hardware/hard_drive/examine(mob/user, extra_description = "")
+	extra_description += SPAN_NOTICE("It can store up to [max_capacity] GQ.")
+	..(user, extra_description)
 
 /obj/item/computer_hardware/hard_drive/diagnostics(mob/user)
 	..()
@@ -250,7 +250,7 @@
 
 
 // Disk UI data, used by file browser UI
-/obj/item/computer_hardware/hard_drive/ui_data()
+/obj/item/computer_hardware/hard_drive/nano_ui_data()
 	var/list/data = list(
 		"read_only" = read_only,
 		"disk_name" = get_disk_name(),

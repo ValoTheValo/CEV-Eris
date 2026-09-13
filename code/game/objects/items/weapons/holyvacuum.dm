@@ -14,6 +14,7 @@
 	rarity_value = 100
 	spawn_blacklisted = TRUE
 	price_tag = 300
+	no_double_tact = TRUE
 
 	var/amount = 0
 	var/max_amount = 30
@@ -25,9 +26,9 @@
 	refill()
 	update_icon()
 
-/obj/item/holyvacuum/examine(mob/user)
-	..()
-	to_chat(user, "\The [src]'s tank contains [amount] units of compressed filth.")
+/obj/item/holyvacuum/examine(mob/user, extra_description = "")
+	extra_description += "\The [src]'s tank contains [amount] units of compressed filth."
+	..(user, extra_description)
 
 /obj/item/holyvacuum/update_icon()
 	.=..()

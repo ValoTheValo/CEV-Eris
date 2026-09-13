@@ -9,6 +9,8 @@
 	anchored = TRUE
 	icon = 'icons/obj/stairs.dmi'
 	bad_type = /obj/structure/multiz
+	health = 5000
+	maxHealth = 5000
 	var/istop = TRUE
 	var/obj/structure/multiz/target
 	var/obj/structure/multiz/targeted_by
@@ -70,11 +72,13 @@
 /obj/structure/multiz/ladder
 	name = "ladder"
 	desc = "A ladder.  You can climb it up and down."
+	description_info = "You can look what is on the other side with Alt-Click. You can also fire guns at anyone near the other side when peeking. You can also throw grenades."
+	description_antag = "Don't try to place traps or slippery liquids onto the ladder's exit/entry directly, they won't work."
 	icon_state = "ladderdown"
 	var/climb_delay = 30
 
 /obj/structure/multiz/ladder/find_target()
-	var/turf/targetTurf = istop ? GetBelow(src) : GetAbove(src)
+	var/turf/targetTurf = istop ? SSmapping.GetBelow(src) : SSmapping.GetAbove(src)
 	target = locate(/obj/structure/multiz/ladder) in targetTurf
 	..()
 
@@ -110,7 +114,7 @@
 	attack_hand(M)
 
 /obj/structure/multiz/ladder/proc/throw_through(var/obj/item/C, var/mob/throw_man)
-	if(istype(throw_man,/mob/living/carbon/human))
+	if(istype(throw_man,/mob/living/carbon/human) && throw_man.canUnEquip(C))
 		var/mob/living/carbon/human/user = throw_man
 		var/through =  istop ? "down" : "up"
 		user.visible_message(SPAN_WARNING("[user] takes position to throw [C] [through] \the [src]."),
@@ -134,14 +138,19 @@
 	. = ..()
 	if(throw_through(I,user))
 		return
+	else if(istype(I, /obj/item/mech_equipment) || istype(I, /obj/item/mech_component) || istype(I, /obj/item/tool/mech_kit))
+		var/mob/living/exosuit = I.getContainingAtom()
+		if(exosuit)
+			attack_hand(exosuit)
 	else
 		attack_hand(user)
 
 /obj/structure/multiz/ladder/attack_hand(var/mob/M)
-	if (isrobot(M) && !isdrone(M))
+	if (isrobot(M))
 		var/mob/living/silicon/robot/R = M
-		climb(M, (climb_delay*6)/R.speed_factor) //Robots are not built for climbing, they should go around where possible
-		//I'd rather make them unable to use ladders at all, but eris' labyrinthine maintenance necessitates it
+		var/new_delay = climb_delay * (R.HasTrait(CYBORG_TRAIT_PARKOUR) ? 0.75 : 1) * (isdrone(M) ? 1 : 3 / R.speed_factor)
+		climb(M, (new_delay))	//Robots are not built for climbing, they should go around where possible
+								//I'd rather make them unable to use ladders at all, but eris' labyrinthine maintenance necessitates it
 	else
 		climb(M, climb_delay)
 
@@ -152,7 +161,7 @@
 		return
 	if(isliving(M))
 		var/mob/living/L = M
-		delay *= L.mod_climb_delay
+		delay *= (L.stats.getPerk(PERK_PARKOUR) ? 0.5 : 1)
 	var/turf/T = target.loc
 	var/mob/tempMob
 	for(var/atom/A in T)
@@ -234,8 +243,14 @@
 /obj/structure/multiz/stairs
 	name = "stairs"
 	desc = "Stairs leading to another deck. Not too useful if the gravity goes out."
+	description_info = "Bullets can be shot through this and go onto the other side."
+	description_antag = "Don't try placing traps/slippery items at the stair exit directly. They will not work"
 	icon_state = "ramptop"
 	layer = 2.4
+
+/obj/structure/multiz/stairs/can_prevent_fall(above)
+	return above ? FALSE : TRUE
+
 
 /obj/structure/multiz/stairs/enter
 	icon_state = "ramptop"
@@ -253,7 +268,7 @@
 	return TRUE // if mover is null (air movement)
 
 /obj/structure/multiz/stairs/active/find_target()
-	var/turf/targetTurf = istop ? GetBelow(src) : GetAbove(src)
+	var/turf/targetTurf = istop ? SSmapping.GetBelow(src) : SSmapping.GetAbove(src)
 	target = locate(/obj/structure/multiz/stairs/enter) in targetTurf
 	..()
 

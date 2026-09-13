@@ -22,7 +22,7 @@
 .adminticket			{color: #386AFF;	font-weight: bold;}
 
 /* Radio: Misc */
-.deadsay				{color: #530FAD;}
+.deadsay				{color: #6600cc;}
 .angelsay				{color: #ffaa00;}
 .deptradio				{color: #ff00ff;}	/* when all other department colors fail */
 .newscaster				{color: #750000;}
@@ -41,6 +41,7 @@
 
 .alium					{color: #00ff00;}
 .revolution				{color: #B00030; font-weight: bold; font-style: italic;}
+.revolution_alert		{color: #B00030; font-weight: bold; font-style: italic; font-size: 200%;}
 
 .reflex_shoot			{color: #000099; font-style: italic;}
 

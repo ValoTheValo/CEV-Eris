@@ -14,6 +14,7 @@
 	load_method = MAGAZINE
 	mag_well = MAG_WELL_SMG
 	auto_eject = FALSE
+	serial_type = "FS"
 	magazine_type = /obj/item/ammo_magazine/smg
 	matter = list(MATERIAL_STEEL = 1, MATERIAL_PLASTIC = 9)
 	price_tag = 100
@@ -26,7 +27,7 @@
 	var/choosen_color = ""
 
 	damage_multiplier = 0.8
-	penetration_multiplier = 0.2
+	penetration_multiplier = -0.2
 	init_recoil = HANDGUN_RECOIL(1.6)
 
 	gun_tags = list(GUN_SILENCABLE)
@@ -52,6 +53,8 @@
 
 	var/iconstring = initial(icon_state)
 	var/itemstring = "_" + choosen_color
+
+	wielded_item_state = "_doble_" + choosen_color
 
 	icon_state = iconstring + itemstring
 	set_item_state(itemstring)

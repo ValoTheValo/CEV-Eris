@@ -98,7 +98,7 @@
 /obj/machinery/sorter/Process()
 	if(stat & BROKEN || stat & NOPOWER)
 		progress = 0
-		use_power(0)
+		set_power_use(NO_POWER_USE)
 		update_icon()
 		return
 
@@ -106,12 +106,12 @@
 		return
 
 	if(current_item)
-		use_power(2)
+		set_power_use(ACTIVE_POWER_USE)
 		progress += speed
 		if(progress >= 100)
 			sort(current_item)
 			grab()
-			use_power(1)
+			set_power_use(IDLE_POWER_USE)
 		update_icon()
 	else
 		grab()
@@ -196,12 +196,12 @@
 	..()
 
 /obj/machinery/sorter/attack_hand(mob/user as mob)
-	return ui_interact(user)
+	return nano_ui_interact(user)
 
 
 //UI
 
-/obj/machinery/sorter/ui_data()
+/obj/machinery/sorter/nano_ui_data()
 	var/list/data = list()
 	data["currentItem"] = null
 	if(current_item)
@@ -235,8 +235,8 @@
 	return data
 
 
-/obj/machinery/sorter/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, datum/topic_state/state = GLOB.default_state)
-	var/list/data = ui_data()
+/obj/machinery/sorter/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, datum/nano_topic_state/state = GLOB.default_state)
+	var/list/data = nano_ui_data()
 
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)

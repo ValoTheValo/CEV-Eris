@@ -25,12 +25,12 @@
 
 
 /datum/event/brand_intelligence/announce()
-	command_announcement.Announce("Rampant brand intelligence has been detected aboard [station_name()], please stand-by.", "Machine Learning Alert")
+	command_announcement.Announce("Rampant brand intelligence has been detected aboard [station_name], please stand-by.", "Machine Learning Alert")
 
 
 /datum/event/brand_intelligence/start()
 	for(var/obj/machinery/vending/V in GLOB.machines)
-		if(!(V.z in GLOB.maps_data.station_levels))
+		if(!IS_SHIP_LEVEL(V.z))
 			continue
 		vendingMachines.Add(V)
 

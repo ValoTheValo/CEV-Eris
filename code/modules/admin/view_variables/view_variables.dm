@@ -9,7 +9,6 @@
 /var/list/view_variables_no_assoc = list("verbs", "contents","screen","images", "vis_contents", "vis_locs")
 
 // Acceptable 'in world', as VV would be incredibly hampered otherwise
-ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 //allows us to -see- the variables of any instance in the game. +VAREDIT needed to modify
 /client/proc/debug_variables(datum/D in world)
 	set category = "Debug"
@@ -22,11 +21,17 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 		return
 
 	var/icon/sprite
+	var/hash
+
+	var/no_icon = FALSE
+
 	if(istype(D, /atom))
-		var/atom/A = D
-		if(A.icon && A.icon_state)
-			sprite = icon(A.icon, A.icon_state)
-			usr << browse_rsc(sprite, "view_vars_sprite.png")
+		sprite = getFlatIcon(D)
+		if(sprite)
+			hash = md5(sprite)
+			src << browse_rsc(sprite, "vv[hash].png")
+		else
+			no_icon = TRUE
 
 	usr << browse_rsc('code/js/view_variables.js', "view_variables.js")
 
@@ -34,7 +39,7 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 		<html>
 		<head>
 			<script src='view_variables.js'></script>
-			<title>[D] (\ref[D] - [D.type])</title>
+			<title>[D] ([REF(D)]) = [D.type]"</title>
 			<style>
 				body { font-family: Verdana, sans-serif; font-size: 9pt; }
 				.value { font-family: "Courier New", monospace; font-size: 8pt; }
@@ -45,7 +50,7 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 				<table width='100%'><tr>
 					<td width='50%'>
 						<table align='center' width='100%'><tr>
-							[sprite ? "<td><img src='view_vars_sprite.png'></td>" : ""]
+							[no_icon ? "\[NO ICON\]" : "<td><img src='vv[hash].png'></td>"]
 							<td><div align='center'>[D.get_view_variables_header()]</div></td>
 						</tr></table>
 						<div align='center'>
@@ -55,7 +60,7 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 					</td>
 					<td width='50%'>
 						<div align='center'>
-							<a href='?_src_=vars;datumrefresh=\ref[D]'>Refresh</a>
+							<a href='byond://?_src_=vars;datumrefresh=\ref[D]'>Refresh</a>
 							<form>
 								<select name='file'
 								        size='1'
@@ -131,12 +136,12 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 	else if(istype(value, /datum))
 		var/datum/DA = value
 		if("[DA]" == "[DA.type]" || !"[DA]")
-			vtext = "<a href='?_src_=vars;Vars=\ref[DA]'>\ref[DA]</a> - [DA.type]"
+			vtext = "<a href='byond://?_src_=vars;Vars=\ref[DA]'>\ref[DA]</a> - [DA.type]"
 		else
-			vtext = "<a href='?_src_=vars;Vars=\ref[DA]'>\ref[DA]</a> - [DA] ([DA.type])"
+			vtext = "<a href='byond://?_src_=vars;Vars=\ref[DA]'>\ref[DA]</a> - [DA] ([DA.type])"
 	else if(istype(value, /client))
 		var/client/C = value
-		vtext = "<a href='?_src_=vars;Vars=\ref[C]'>\ref[C]</a> - [C] ([C.type])"
+		vtext = "<a href='byond://?_src_=vars;Vars=\ref[C]'>\ref[C]</a> - [C] ([C.type])"
 	else if(islist(value))
 		var/list/L = value
 		vtext = "/list ([L.len])"
@@ -159,9 +164,9 @@ ADMIN_VERB_ADD(/client/proc/debug_variables, R_ADMIN | R_MOD, FALSE)
 
 	if(D)
 		ecm = {"
-			(<a href='?_src_=vars;datumedit=\ref[D];varnameedit=[varname]'>E</a>)
-			(<a href='?_src_=vars;datumchange=\ref[D];varnamechange=[varname]'>C</a>)
-			(<a href='?_src_=vars;datummass=\ref[D];varnamemass=[varname]'>M</a>)
+			(<a href='byond://?_src_=vars;datumedit=\ref[D];varnameedit=[varname]'>E</a>)
+			(<a href='byond://?_src_=vars;datumchange=\ref[D];varnamechange=[varname]'>C</a>)
+			(<a href='byond://?_src_=vars;datummass=\ref[D];varnamemass=[varname]'>M</a>)
 			"}
 
 	var/valuestr = make_view_variables_value(value, varname)

@@ -3,7 +3,7 @@
 	use_power = IDLE_POWER_USE
 	idle_power_usage = 60
 	active_power_usage = 10000
-	req_access = list(access_research_equipment)
+	req_access = list(access_genetics)
 	density = TRUE
 	anchored = TRUE
 	var/color_key = "yellow"
@@ -17,17 +17,14 @@
 	color_key = default_dna_machinery_style
 	update_icon()
 	log_add("Initialization complete.")
+	if(req_access.len)
+		add_statverb(/datum/statverb/hack_console)
 
 
 /obj/machinery/dna/New()
 	..()
 	color_key = default_dna_machinery_style
 	update_icon()
-
-
-/obj/machinery/dna/initalize_statverbs()
-	if(req_access.len)
-		add_statverb(/datum/statverb/hack_console)
 
 
 /obj/machinery/dna/proc/log_add(entry, do_check)
@@ -76,12 +73,12 @@
 		return
 
 	if(hacked)
-		ui_interact(user)
+		nano_ui_interact(user)
 		update_icon()
 		log_add("Access granted to [hacked].", TRUE)
 
 	else if(allowed(user))
-		ui_interact(user)
+		nano_ui_interact(user)
 		update_icon()
 		log_add("Access granted to [user.rank_prefix_name(FindNameFromID(user))].", TRUE)
 

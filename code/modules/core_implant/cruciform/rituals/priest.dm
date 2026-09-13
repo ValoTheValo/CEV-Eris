@@ -25,7 +25,7 @@
 
 /datum/ritual/cruciform/priest/acolyte/epiphany
 	name = "Epiphany"
-	phrase = "In nomine Patris et Filii et Spiritus sancti"
+	phrase = "In nomine Patris et Filii et Spiritus sancti."
 	desc = "NeoTheology's principal sacrament is a ritual of baptism and merging with cruciform. A body, relieved of clothes should be placed on NeoTheology's special altar."
 
 /datum/ritual/cruciform/priest/acolyte/epiphany/perform(mob/living/carbon/human/user, obj/item/implant/core_implant/C)
@@ -48,7 +48,7 @@
 		return FALSE
 
 	log_and_message_admins("successfully baptized [CI.wearer]")
-	to_chat(CI.wearer, "<span class='info'>Your cruciform vibrates and warms up.</span>")
+	to_chat(CI.wearer, span_info("Your cruciform vibrates and warms up."))
 
 	CI.activate()
 
@@ -65,46 +65,9 @@
 	phrase = "Et ne inducas nos in tentationem, sed libera nos a malo"
 */
 
-/datum/ritual/cruciform/priest/acolyte/ejection
-	name = "Deprivation"
-	phrase = "Et revertatur pulvis in terram suam unde erat et spiritus redeat ad Deum qui dedit illum"
-	desc = "This litany will command cruciform to detach from bearer, if the one bearing it is dead. You will be able to use it in scanner for Resurrection."
-
-/datum/ritual/cruciform/priest/acolyte/ejection/perform(mob/living/carbon/human/user, obj/item/implant/core_implant/C)
-	var/obj/item/implant/core_implant/cruciform/CI = get_implant_from_victim(user, /obj/item/implant/core_implant/cruciform, FALSE)
-
-	if(!CI)
-		fail("There is no cruciform on this one", user, C)
-		return FALSE
-
-	if(!CI.wearer)
-		fail("Cruciform is not installed.", user, C)
-		return FALSE
-
-	var/mob/M = CI.wearer
-
-	if(ishuman(M) && M.is_dead())
-		var/mob/living/carbon/human/H = M
-		var/obj/item/organ/external/E = H.organs_by_name[BP_CHEST]
-		E.take_damage(15)
-		H.custom_pain("You feel the cruciform ripping out of your chest!",1)
-		CI.name = "[M]'s Cruciform"
-		CI.uninstall()
-		return TRUE
-
-	else if(ismob(M) && M.is_dead()) //Cruciforms can't normally be placed on non-humans, but this is still here for sanity purposes.
-		CI.name = "[M]'s Cruciform"
-		CI.uninstall()
-		return TRUE
-
-	else
-		fail("Deprivation does not work upon the living.", user, C)
-		return FALSE
-
-
 /datum/ritual/cruciform/priest/acolyte/unupgrade
 	name = "Asacris"
-	phrase = "A caelo usque ad centrum"
+	phrase = "A caelo usque ad centrum."
 	desc = "This litany will remove any upgrade from the target's Cruciform implant"
 
 /datum/ritual/cruciform/priest/acolyte/unupgrade/perform(mob/living/carbon/human/user, obj/item/implant/core_implant/C)
@@ -171,7 +134,7 @@
 	for(var/stat in stats_to_boost)
 		var/amount = stats_to_boost[stat]
 		participant.stats.addTempStat(stat, amount, effect_time, src.name)
-		addtimer(CALLBACK(src, .proc/take_boost, participant, stat, amount), effect_time)
+		addtimer(CALLBACK(src, PROC_REF(take_boost), participant, stat, amount), effect_time)
 	spawn(30)
 		to_chat(participant, SPAN_NOTICE("A wave of dizziness washes over you, and your mind is filled with a sudden insight into [get_stats_to_text()]."))
 
@@ -198,12 +161,12 @@
 
 /datum/ritual/cruciform/priest/acolyte/short_boost/wisdom
 	name = "Grace of Perseverance"
-	phrase = "Domine petra mea et robur meum et salvator meus Deus meus fortis meus sperabo in eo scutum meum et cornu salutis meae susceptor meus"
+	phrase = "Domine petra mea et robur meum et salvator meus Deus meus fortis meus sperabo in eo scutum meum et cornu salutis meae susceptor meus."
 	stats_to_boost = list(STAT_MEC = 10, STAT_COG = 10, STAT_BIO = 10)
 
 /datum/ritual/cruciform/priest/acolyte/short_boost/courage
 	name = "To Uphold the Holy Word"
-	phrase = "In Deo laudabo verbum in Domino praedicabo sermonem in Deo speravi non timebo quid faciat homo mihi"
+	phrase = "In Deo laudabo verbum in Domino praedicabo sermonem in Deo speravi non timebo quid faciat homo mihi."
 	stats_to_boost = list(STAT_ROB = 10, STAT_TGH = 10, STAT_VIG = 10)
 
 /datum/ritual/targeted/cruciform/priest/atonement
@@ -343,13 +306,6 @@
 
 	return FALSE
 
-/datum/ritual/cruciform/priest/offering/call_for_arms
-	name = "Call for arms"
-	phrase = "Pater da mihi fortitudinem cladem ad malum."
-	desc = "Ask the Eye of the Protector to give you weapons to fight evil. You must offer 40 metal, 20 plasteel and 150 biomatter."
-	req_offerings = list(/obj/item/stack/material/plasteel = 20, /obj/item/stack/material/steel = 40, /obj/item/stack/material/biomatter = 150)
-	miracles = list(ARMAMENTS)
-
 /datum/ritual/cruciform/priest/offering/divine_intervention
 	name = "Divine intervention"
 	phrase = "Auxilium instaurarent domum tuam."
@@ -359,14 +315,14 @@
 
 /datum/ritual/cruciform/priest/offering/holy_guidance
 	name = "Holy guidance"
-	phrase = "Domine deus, lux via"
+	phrase = "Domine deus, lux via."
 	desc = "Present your prayers to the Eye of the Protector. You must offer an oddity and 40 fruits."
 	req_offerings = list(/obj/item/oddity = 1, /obj/item/reagent_containers/food/snacks/grown = 40)
 	miracles = list(ALERT, INSPIRATION, ODDITY, STAT_BUFF, ENERGY_REWARD)
 
 /datum/ritual/cruciform/priest/divine_blessing
 	name = "Divine Blessing"
-	phrase = "Corpus Deus"
+	phrase = "Corpus Deus."
 	desc = "Increase an oddity's stats by a certain amount but reduce yours by half of that amount."
 	success_message = "Your oddity has been blessed."
 	fail_message = "You feel cold in your active hand."
@@ -405,7 +361,7 @@
 /datum/ritual/cruciform/priest/confirmation
 	name = "Confirmation"
 	phrase = "Misericordia et veritas non te deserant circumda eas gutturi tuo et describe in tabulis cordis tui..."
-	desc = "Ritual of assigning a disciple to specific duty within the church."
+	desc = "Ritual of assigning a disciple to a specific duty within the church."
 	power = 80
 	cooldown = TRUE
 	cooldown_time = 1 MINUTE
@@ -438,7 +394,7 @@
 
 /datum/ritual/cruciform/priest/adoption
 	name = "Adoption"
-	phrase = "Dervans semitas iustitiae et vias sanctorum custodiens"
+	phrase = "Dervans semitas iustitiae et vias sanctorum custodiens."
 	desc = "Opens church doors for target disciple."
 	power = 15
 
@@ -454,7 +410,7 @@
 
 /datum/ritual/cruciform/priest/ordination
 	name = "Ordination"
-	phrase = "Gloriam sapientes possidebunt stultorum exaltatio ignominia"
+	phrase = "Gloriam sapientes possidebunt stultorum exaltatio ignominia."
 	desc = "Opens clergy doors for target disciple."
 	power = 15
 
@@ -470,7 +426,7 @@
 
 /datum/ritual/cruciform/priest/omission
 	name = "Omission"
-	phrase = "Via impiorum tenebrosa nesciunt ubi corruant"
+	phrase = "Via impiorum tenebrosa nesciunt ubi corruant."
 	desc = "Removes all access from target disciple's cruciform."
 	power = 30
 
@@ -549,6 +505,5 @@
 		fail("You must be in front of the Eye of the Protector.", H, C)
 		return FALSE
 
-	eotp.ui_interact(H)
+	eotp.nano_ui_interact(H)
 	return TRUE
-

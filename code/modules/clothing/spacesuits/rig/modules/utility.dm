@@ -34,7 +34,7 @@
 	name = "health scanner module"
 	desc = "A hardsuit-mounted health scanner."
 	icon_state = "scanner"
-	interface_name = "health scanner"
+	interface_name = "Health scanner"
 	interface_desc = "Shows an informative health readout when used on a subject."
 	device_type = /obj/item/device/scanner/health
 	rarity_value = 2.5
@@ -44,7 +44,7 @@
 	name = "hardsuit drill mount"
 	desc = "A very heavy diamond-tipped drill."
 	icon_state = "drill"
-	interface_name = "mounted drill"
+	interface_name = "Mounted drill"
 	interface_desc = "A diamond-tipped industrial drill."
 	suit_overlay_active = "mounted-drill"
 	suit_overlay_inactive = "mounted-drill"
@@ -54,24 +54,11 @@
 
 	device_type = /obj/item/tool/pickaxe/diamonddrill/rig
 
-/obj/item/rig_module/device/anomaly_scanner
-	name = "hardsuit anomaly scanner"
-	desc = "You think it's called an Elder Sarsparilla or something."
-	icon_state = "eldersasparilla"
-	interface_name = "Alden-Saraspova counter"
-	interface_desc = "An exotic particle detector commonly used by xenoarchaeologists."
-	engage_string = "Begin Scan"
-	usable = 1
-	selectable = 0
-	device_type = /obj/item/device/ano_scanner
-	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
-
-
 /obj/item/rig_module/device/orescanner
 	name = "ore scanner module"
 	desc = "A clunky old ore scanner."
 	icon_state = "scanner"
-	interface_name = "ore detector"
+	interface_name = "Ore detector"
 	interface_desc = "A sonar system for detecting large masses of ore."
 	engage_string = "Begin Scan"
 	usable = 1
@@ -84,7 +71,7 @@
 	name = "RCD mount"
 	desc = "A cell-powered rapid construction device for a hardsuit."
 	icon_state = "rcd"
-	interface_name = "mounted RCD"
+	interface_name = "Mounted RCD"
 	interface_desc = "A device for building or removing walls. Cell-powered."
 	usable = 1
 	engage_string = "Configure RCD"
@@ -116,6 +103,8 @@
 /obj/item/rig_module/modular_injector
 	name = "mounted modular dispenser"
 	desc = "A specialized system for inserting chemicals"
+	description_info = "You can remove beakers by using a screw. Reagent injection amount can be tweaked with a Wrench. Accepts any size of beaker"
+	description_antag = "You can sabotage this by mixing in a deadly toxin. As long as its not the majority in the solution, it won't show up in the rig."
 	icon_state = "injector"
 	usable = TRUE
 	selectable = FALSE
@@ -124,7 +113,7 @@
 
 	engage_string = "Inject"
 
-	interface_name = "integrated dispenser"
+	interface_name = "Integrated dispenser"
 	interface_desc = "A chemical dispenser"
 	var/list/beakers = list()
 	var/max_beakers = 5
@@ -259,7 +248,7 @@
 		list(/obj/item/reagent_containers/glass/beaker/large, "tricordrazine", 60)
 	)
 
-	interface_name = "integrated combat dispenser"
+	interface_name = "Integrated combat dispenser"
 	interface_desc = "A chemical combat dispenser"
 
 /obj/item/rig_module/modular_injector/medical
@@ -278,7 +267,7 @@
 		list(/obj/item/reagent_containers/glass/beaker/large, "spaceacillin", 60)
 	)
 
-	interface_name = "integrated injector"
+	interface_name = "Integrated injector"
 	//Extra bit here to help get the idea that this one can inject
 	interface_desc = "Dispenses loaded chemicals directly into the wearer\'s bloodstream or patients."
 /*
@@ -294,7 +283,7 @@
 
 	engage_string = "Inject"
 
-	interface_name = "integrated chemical dispenser"
+	interface_name = "Integrated chemical dispenser"
 	interface_desc = "Dispenses loaded chemicals directly into the wearer's bloodstream."
 
 	charges = list(
@@ -414,7 +403,7 @@
 		list("nutrients",     "glucose",     0, 80),
 		)
 
-	interface_name = "combat chem dispenser"
+	interface_name = "Combat chem dispenser"
 	interface_desc = "Dispenses loaded chemicals directly into the bloodstream."
 	rarity_value = 12.5
 
@@ -425,7 +414,7 @@
 	selectable = 1
 	disruptive = 1
 
-	interface_name = "mounted chem injector"
+	interface_name = "Mounted chem injector"
 	interface_desc = "Dispenses loaded chemicals via an arm-mounted injector."
 	rarity_value = 20
 */
@@ -442,7 +431,7 @@
 
 	engage_string = "Configure Synthesiser"
 
-	interface_name = "voice synthesiser"
+	interface_name = "Voice synthesiser"
 	interface_desc = "A flexible and powerful voice modulator system."
 	rarity_value = 5
 	var/obj/item/voice_changer/voice_holder
@@ -479,8 +468,8 @@
 			var/raw_choice = sanitize(input(usr, "Please enter a new name.")  as text|null, MAX_NAME_LEN)
 			if(!raw_choice)
 				return 0
-			voice_holder.voice = raw_choice
-			to_chat(usr, "<font color='blue'>You are now mimicking <B>[voice_holder.voice]</B>.</font>")
+			voice_holder.voice_name = raw_choice
+			to_chat(usr, "<font color='blue'>You are now mimicking <B>[voice_holder.voice_name]</B>.</font>")
 	return 1
 
 /obj/item/rig_module/maneuvering_jets
@@ -500,7 +489,7 @@
 	activate_string = "Activate Thrusters"
 	deactivate_string = "Deactivate Thrusters"
 
-	interface_name = "maneuvering jets"
+	interface_name = "Maneuvering jets"
 	interface_desc = "An inbuilt EVA maneuvering system that runs off the rig air supply."
 	rarity_value = 2
 	spawn_tags = SPAWN_TAG_RIG_MODULE_COMMON
@@ -590,7 +579,7 @@
 	if(autodoc_processor.active)
 		autodoc_processor.stop()
 	autodoc_processor.set_patient(holder.wearer)
-	ui_interact(usr)
+	nano_ui_interact(usr)
 	return 1
 /obj/item/rig_module/autodoc/Topic(href, href_list)
 	return autodoc_processor.Topic(href, href_list)
@@ -610,8 +599,8 @@
 		passive_power_cost = 0
 		wearer_loc = null
 
-/obj/item/rig_module/autodoc/ui_interact(mob/user, ui_key, datum/nanoui/ui, force_open, datum/nanoui/master_ui, datum/topic_state/state = GLOB.deep_inventory_state)
-	autodoc_processor.ui_interact(user, ui_key, ui, force_open, state = GLOB.deep_inventory_state)
+/obj/item/rig_module/autodoc/nano_ui_interact(mob/user, ui_key, datum/nanoui/ui, force_open, datum/nanoui/master_ui, datum/nano_topic_state/state = GLOB.deep_inventory_state)
+	autodoc_processor.nano_ui_interact(user, ui_key, ui, force_open, state = GLOB.deep_inventory_state)
 /obj/item/rig_module/autodoc/activate()
 	return
 /obj/item/rig_module/autodoc/deactivate()

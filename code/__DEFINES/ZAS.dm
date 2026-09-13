@@ -21,31 +21,49 @@
 #define SOUTHDOWN (SOUTH|DOWN)
 #define WESTDOWN (WEST|DOWN)
 
-#define TURF_HAS_VALID_ZONE(T) (istype(T, /turf/simulated) && T:zone && !T:zone:invalid)
+#define TURF_HAS_VALID_ZONE(T) (istype(T, /turf) && T:zone && !T:zone:invalid)
 
 #ifdef MULTIZAS
 
-var/list/csrfz_check = list(NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST, NORTHUP, EASTUP, WESTUP, SOUTHUP, NORTHDOWN, EASTDOWN, WESTDOWN, SOUTHDOWN)
-var/list/gzn_check = list(NORTH, SOUTH, EAST, WEST, UP, DOWN)
+GLOBAL_LIST_INIT(gzn_check, list(
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST,
+	UP,
+	DOWN
+))
 
+GLOBAL_LIST_INIT(csrfz_check, list(
+	NORTHEAST,
+	NORTHWEST,
+	SOUTHEAST,
+	SOUTHWEST,
+	NORTHUP,
+	EASTUP,
+	WESTUP,
+	SOUTHUP,
+	NORTHDOWN,
+	EASTDOWN,
+	WESTDOWN,
+	SOUTHDOWN
+))
+// this proc was adapted to work with eris from bay
+// they have flags to define tile interaction between z-levels
+// we dont(because its really unnecesarry)
+// They  have this flag called ZM_ALLOW_ATMOS,  which is only used for open-space.
+// If you want to permit more types of turfs to move air , just make the check a function
+// and check each type in order of commonality.
 #define ATMOS_CANPASS_TURF(ret,A,B) \
 	if (A.blocks_air & AIR_BLOCKED || B.blocks_air & AIR_BLOCKED) { \
 		ret = BLOCKED; \
 	} \
 	else if (B.z != A.z) { \
 		if (B.z < A.z) { \
-			if (!istype(A, /turf/simulated/open)) { \
-				ret = BLOCKED; \
-			} else { \
-				ret = ZONE_BLOCKED; \
-			} \
+			ret = istype(A, /turf/open) ? ZONE_BLOCKED : BLOCKED; \
 		} \
 		else { \
-			if (!istype(B, /turf/simulated/open)) { \
-				ret = BLOCKED; \
-			} else { \
-				ret = ZONE_BLOCKED; \
-			} \
+			ret = istype(B, /turf/open) ? ZONE_BLOCKED : BLOCKED; \
 		} \
 	} \
 	else if (A.blocks_air & ZONE_BLOCKED || B.blocks_air & ZONE_BLOCKED) { \
@@ -78,8 +96,19 @@ var/list/gzn_check = list(NORTH, SOUTH, EAST, WEST, UP, DOWN)
 	}
 #else
 
-var/list/csrfz_check = list(NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST)
-var/list/gzn_check = list(NORTH, SOUTH, EAST, WEST)
+GLOBAL_LIST_INIT(csrfz_check, list(
+	NORTHEAST,
+	NORTHWEST,
+	SOUTHEAST,
+	SOUTHWEST
+))
+
+GLOBAL_LIST_INIT(gzn_check, list(
+	NORTH,
+	SOUTH,
+	EAST,
+	WEST
+))
 
 #define ATMOS_CANPASS_TURF(ret,A,B) \
 	if (A.blocks_air & AIR_BLOCKED || B.blocks_air & AIR_BLOCKED) { \
@@ -115,3 +144,12 @@ var/list/gzn_check = list(NORTH, SOUTH, EAST, WEST)
 	}
 
 #endif
+
+// Numbers are indexes in add_ZAS_debug_overlay()'s appearance_cache list, text is associated icon_state
+#define ZAS_DEBUG_OVERLAY_ZONE_ASSIGNED			1 // "assigned"
+#define ZAS_DEBUG_OVERLAY_ZONE_CREATED			2 // "created"
+#define ZAS_DEBUG_OVERLAY_ZONE_MERGED			3 // "merged"
+#define ZAS_DEBUG_OVERLAY_ZONE_INVALID			4 // "invalid"
+#define ZAS_DEBUG_OVERLAY_MARKED_FOR_UPDATE		5 // "mark"
+#define ZAS_DEBUG_OVERLAY_AIR_FULLY_BLOCKED		6 // "fullblock"
+#define ZAS_DEBUG_OVERLAY_AIR_DIRECTION_BLOCKED	7 // "block"

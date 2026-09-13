@@ -18,7 +18,7 @@
 	var/base_state = "pipe-s"
 
 /obj/structure/disposalconstruct/can_fall()
-	var/turf/below = GetBelow(get_turf(src))
+	var/turf/below = SSmapping.GetBelow(get_turf(src))
 	var/pipe_below = istype(below)
 	if(pipe_below)
 		pipe_below = locate(/obj/structure/disposalpipe/up) in below
@@ -303,7 +303,6 @@
 					else if(pipe_type == PIPE_TYPE_BIN) // Disposal bin
 						var/obj/machinery/disposal/P = new /obj/machinery/disposal(src.loc)
 						src.transfer_fingerprints_to(P)
-						P.mode = 0 // start with pump off
 
 					else if(pipe_type == PIPE_TYPE_OUTLET) // Disposal outlet
 

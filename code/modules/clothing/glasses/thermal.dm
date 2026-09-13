@@ -11,6 +11,7 @@
 	flash_protection = FLASH_PROTECTION_REDUCED
 	price_tag = 1000
 	tick_cost = 0.5
+	off_state = "thermal_off"
 
 
 /obj/item/clothing/glasses/powered/thermal/emp_act(severity)
@@ -33,7 +34,7 @@
 		GUN_UPGRADE_THERMAL = TRUE
 		)
 	I.gun_loc_tag = GUN_SCOPE
-	I.req_gun_tags = list(GUN_AMR, GUN_SCOPE)
+	I.req_gun_tags = list(GUN_AMR)
 
 /obj/item/clothing/glasses/powered/thermal/syndi	//These are now a contractor item, concealed as mesons.	-Pete
 	name = "Optical Meson Scanner"
@@ -48,6 +49,9 @@
 	desc = "Chinese thermals in the shape of goggles."
 	icon_state = "onestar_thermal"
 	off_state = "onestar_thermal"
+	darkness_view = 7
+	origin_tech = list(TECH_MAGNET = 6, TECH_COVERT = 2) //add replace with Tech_Onestar when thats done made -Valo
+	spawn_tags = SPAWN_TAG_TECH_OS
 	spawn_blacklisted = TRUE
 
 /obj/item/clothing/glasses/powered/thermal/plain

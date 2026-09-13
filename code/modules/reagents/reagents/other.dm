@@ -51,63 +51,6 @@
 	id = "crayon_dust_brown"
 	color = "#846F35"
 
-/datum/reagent/other/paint
-	name = "Paint"
-	id = "paint"
-	description = "This paint will stick to almost any object."
-	taste_description = "chalk"
-	reagent_state = LIQUID
-	color = "#808080"
-	overdose = REAGENTS_OVERDOSE * 0.5
-	color_weight = 20
-
-/datum/reagent/other/paint/touch_turf(turf/T)
-	if(istype(T) && !istype(T, /turf/space))
-		T.color = color
-	return TRUE
-
-/datum/reagent/other/paint/touch_obj(obj/O)
-	if(istype(O))
-		O.color = color
-
-/datum/reagent/other/paint/touch_mob(mob/M)
-	if(istype(M) && !isobserver(M)) //painting observers: not allowed
-		M.color = color //maybe someday change this to paint only clothes and exposed body parts for human mobs.
-
-/datum/reagent/other/paint/get_data()
-	return color
-
-/datum/reagent/other/paint/initialize_data(var/newdata)
-	..()
-	color = newdata
-	return
-
-/datum/reagent/other/paint/mix_data(var/newdata, var/newamount)
-	var/list/colors = list(0, 0, 0, 0)
-	var/tot_w = 0
-
-	var/hex1 = uppertext(color)
-	var/hex2 = uppertext(newdata)
-	if(length(hex1) == 7)
-		hex1 += "FF"
-	if(length(hex2) == 7)
-		hex2 += "FF"
-	if(length(hex1) != 9 || length(hex2) != 9)
-		return
-	colors[1] += hex2num(copytext(hex1, 2, 4)) * volume
-	colors[2] += hex2num(copytext(hex1, 4, 6)) * volume
-	colors[3] += hex2num(copytext(hex1, 6, 8)) * volume
-	colors[4] += hex2num(copytext(hex1, 8, 10)) * volume
-	tot_w += volume
-	colors[1] += hex2num(copytext(hex2, 2, 4)) * newamount
-	colors[2] += hex2num(copytext(hex2, 4, 6)) * newamount
-	colors[3] += hex2num(copytext(hex2, 6, 8)) * newamount
-	colors[4] += hex2num(copytext(hex2, 8, 10)) * newamount
-	tot_w += newamount
-
-	color = rgb(colors[1] / tot_w, colors[2] / tot_w, colors[3] / tot_w, colors[4] / tot_w)
-	return
-
 /* Things that didn't fit anywhere else */
 
 /datum/reagent/adminordrazine //An OP chemical for admins
@@ -132,7 +75,7 @@
 	M.setOxyLoss(0)
 	M.radiation = 0
 	M.heal_organ_damage(5,5)
-	M.adjustToxLoss(-5)
+	M.add_chemical_effect(CE_TOXIN, -50)
 	M.hallucination_power = 0
 	M.setBrainLoss(0)
 	M.disabilities = 0
@@ -201,18 +144,13 @@
 	withdrawal_threshold = 30
 
 /datum/reagent/adrenaline/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
-	M.SetParalysis(0)
-	M.SetWeakened(0)
+	M.add_chemical_effect(CE_PAINKILLER, 15)
 	M.stats.addTempStat(STAT_TGH, STAT_LEVEL_ADEPT * effect_multiplier, STIM_TIME, "adrenaline")
-	M.adjustToxLoss(rand(3))
+	M.add_chemical_effect(CE_TOXIN, 3)
+	M.add_chemical_effect(CE_PULSE, 1)
 
 /datum/reagent/adrenaline/withdrawal_act(mob/living/carbon/M)
 	M.adjustOxyLoss(15)
-
-/datum/reagent/water/holywater/touch_turf(turf/T)
-	if(volume >= 5)
-		T.holy = 1
-	return TRUE
 
 /datum/reagent/other/diethylamine
 	name = "Diethylamine"
@@ -249,9 +187,9 @@
 
 /datum/reagent/other/thermite/touch_turf(turf/T)
 	if(volume >= 5)
-		if(istype(T, /turf/simulated/wall))
-			var/turf/simulated/wall/W = T
-			W.thermite = 1
+		if(istype(T, /turf/wall))
+			var/turf/wall/W = T
+			W.thermite = TRUE
 			W.overlays += image('icons/effects/effects.dmi',icon_state = "#673910")
 			remove_self(5)
 	return TRUE
@@ -299,9 +237,9 @@
 
 /datum/reagent/other/space_cleaner/touch_turf(turf/T)
 	if(volume >= 1)
-		if(istype(T, /turf/simulated))
-			var/turf/simulated/S = T
-			if(S.wet >= 2)
+		if(istype(T, /turf))
+			var/turf/S = T
+			if(S.is_wet >= 2)
 				S.wet_floor(1, TRUE)
 		T.clean_blood()
 
@@ -347,7 +285,7 @@
 	reagent_state = LIQUID
 	color = "#009CA8"
 
-/datum/reagent/other/lube/touch_turf(turf/simulated/T)
+/datum/reagent/other/lube/touch_turf(turf/T)
 	if(!istype(T))
 		return TRUE
 	if(volume >= 1)
@@ -389,17 +327,24 @@
 	..()
 	M.add_chemical_effect(CE_PULSE, 2)
 
-#define COOLANT_LATENT_HEAT 19000 //Twice as good at cooling than water is, but may cool below 20c. It'll cause freezing that atmos will have to deal with..
 /datum/reagent/other/coolant
 	name = "Coolant"
 	id = "coolant"
-	description = "Industrial cooling substance."
+	description = "Industrial coolant. Used to lower the freezing point and raise the boiling point of liquid in a system."
 	taste_description = "sourness"
 	taste_mult = 1.1
 	reagent_state = LIQUID
 	color = "#C8A5DC"
+	var/reagent_property_coeff = 2796	// 0.7857 * 3559, the density (kg/L) and specific heat (J/(kg K)) of 50:50 propylene glycol water
+	var/latent_heat = 600			// Arbitrarily chosen amount. Just needs to be worse than refrigerant.
 
-/datum/reagent/coolant/touch_turf(var/turf/simulated/T)
+/datum/reagent/other/coolant/affect_ingest(mob/living/carbon/M, alien, effect_multiplier)
+	var/cooling_coeff = round(latent_heat / 1000, 0.1)
+	M.add_chemical_effect(CE_MECH_STABLE, cooling_coeff)
+
+/*		Proc was removed because of griefing
+#define COOLANT_LATENT_HEAT 19000
+/datum/reagent/other/coolant/touch_turf(var/turf/T)
 	if(!istype(T))
 		return
 
@@ -418,7 +363,41 @@
 		var/removed_heat = between(0, volume * COOLANT_LATENT_HEAT, -environment.get_thermal_energy_change(min_temperature))
 		environment.add_thermal_energy(-removed_heat)
 		if (prob(5) && environment && environment.temperature > T100C)
-			T.visible_message("<span class='warning'>The water sizzles as it lands on \the [T]!</span>")
+			T.visible_message("<span class='warning'>\The [src] sizzles as it lands on \the [T]!</span>")
+*/
+
+/datum/reagent/other/coolant/affect_blood(mob/living/carbon/M, alien, effect_multiplier)
+	if(ishuman(M))
+		var/mob/living/carbon/human/H = M
+		var/organ_process = pick(OP_LIVER, OP_LUNGS, OP_KIDNEYS, OP_BLOOD_VESSEL, OP_STOMACH)
+		var/obj/item/organ/internal/I = H.random_organ_by_process(organ_process)
+		if(istype(I))
+			I.take_damage(dose/2, FALSE, TOX)
+
+// This was created to give people a way to cool reagents without needing a chem heater. Use it in a sprayer.
+/datum/reagent/other/coolant/touch_obj(obj/O, amount)
+	if(!istype(O, /obj/item/reagent_containers))	// Remove this check if we want to apply this to all objects.
+		return
+
+	// Q = mc(del_T);	Realistically, we'd look at the properties of the reagent being cooled and the removed heat (Q) of the coolant/refrigerant.
+	// temp change = Q / mc
+	var/removed_heat = amount * latent_heat								// Ignoring surrounding temp for simplicity
+	var/volume_in_liters = amount / 30									// L, Water latent heat comment in core.dm says 30u is 1 L
+	var/reagent_property_divisor = volume_in_liters * reagent_property_coeff
+	var/temperature_change = removed_heat / reagent_property_divisor	// K
+
+	O.reagents.chem_temp = max(O.reagents.chem_temp - temperature_change, 2.7)
+	O.reagents.handle_reactions()
+
+// Not even close to how refrigerant is used IRL, but it's just a game.
+/datum/reagent/other/coolant/refrigerant
+	name = "Refrigerant"
+	id = "refrigerant"
+	description = "Industrial refrigerant R13. Used to remove heat."
+	taste_description = "fresh grass"
+	color = "#b6dca5"
+	reagent_property_coeff = 1496	// 1.21 * 1236, denstiy and specific heat of R22 refrigerant.
+	latent_heat = 1900				// Roughly a tenth of water's latent heat from core.dm
 
 /datum/reagent/other/ultraglue
 	name = "Ultra Glue"
@@ -502,24 +481,33 @@
 	affects_dead = TRUE
 	reagent_type = "Medicine"
 
-/datum/reagent/resuscitator/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
+/datum/reagent/resuscitator/affect_ingest(mob/living/carbon/M, var/alien, effect_multiplier)
+	return // since it's a "cardiac stimulant" it shouldn't really work unless injected
 
+/datum/reagent/resuscitator/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
-		var/obj/item/organ/internal/heart/heart = H.random_organ_by_process(OP_HEART)
-		if(heart)
-			heart.damage += 0.5
+		var/obj/item/organ/internal/vital/heart = H.random_organ_by_process(OP_HEART)
+		if(heart) //Check for existence of the heart BEFORE checking for robotic heart, otherwise function WILL return null
+			if(BP_IS_ROBOTIC(heart)) // neither it should work on robotic hearts, chemistry and stuff
+				return
+			heart.take_damage(64, TOX)
 			if(prob(30))
 				to_chat(H, SPAN_DANGER("Your heart feels like it's going to tear itself out of you!"))
-		if(H.stat == DEAD)
-			H.resuscitate()
+			if(H.stat == DEAD)
+				H.resuscitate()
+				remove_self(60)
+		else
+			if(H.stat == DEAD)
+				H.resuscitate() //it will fail and give explanations why
+				remove_self(60)
 
 /datum/reagent/resuscitator/overdose(mob/living/carbon/M, alien)
 	. = ..()
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
-		var/obj/item/organ/internal/heart/heart = H.random_organ_by_process(OP_HEART)
+		var/obj/item/organ/internal/vital/heart/heart = H.random_organ_by_process(OP_HEART)
 		if(heart)
 			heart.die()
 
@@ -532,7 +520,7 @@
 	color = "#cf820f"
 	metabolism = REM * 0.2
 	nerve_system_accumulations = 20
-	sanity_gain_ingest = 0.5	
+	sanity_gain_ingest = 0.5
 	taste_tag = list(TASTE_LIGHT)
 	glass_icon_state = "teaglass"
 	glass_name = "odd tea"

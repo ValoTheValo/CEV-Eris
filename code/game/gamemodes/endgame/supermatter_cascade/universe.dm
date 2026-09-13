@@ -20,17 +20,17 @@ var/global/universe_has_ended = 0
 		S.color = initial(S.color)
 
 /datum/universal_state/supermatter_cascade/DecayTurf(var/turf/T)
-	if(istype(T,/turf/simulated/wall))
-		var/turf/simulated/wall/W=T
+	if(istype(T,/turf/wall))
+		var/turf/wall/W=T
 		W.melt()
 		return
-	if(istype(T,/turf/simulated/floor))
-		var/turf/simulated/floor/F=T
+	if(istype(T,/turf/floor))
+		var/turf/floor/F=T
 		// Burnt?
 		if(!F.burnt)
 			F.burn_tile()
 		else
-			if(!istype(F,/turf/simulated/floor/plating))
+			if(!istype(F,/turf/floor/plating))
 				F.break_tile_to_plating()
 		return
 
@@ -43,8 +43,7 @@ var/global/universe_has_ended = 0
 	world << sound('sound/effects/cascade.ogg')
 
 	for(var/mob/living/M in GLOB.player_list)
-		if (M.HUDtech.Find("flash"))
-			flick("e_flash", M.HUDtech["flash"])
+		M.flash()
 
 	if(evacuation_controller.cancel_evacuation())
 		priority_announcement.Announce("The escape pod launch sequence has been aborted due to bluespace distortion.")
@@ -58,7 +57,7 @@ var/global/universe_has_ended = 0
 
 	spawn(rand(30,60) SECONDS)
 		var/txt = {"
-AUTOMATED ALERT: Attention [station_name()], this is a high alert broadcast to all ships from the central communication hub of the [boss_name], a catastrophe has happened on the ship [station_name()], information regarding the incident is classified.
+AUTOMATED ALERT: Attention [station_name], this is a high alert broadcast to all ships from the central communication hub of the [boss_name], a catastrophe has happened on the ship [station_name], information regarding the incident is classified.
 
 We highly suggest, that all corporate owned, and free ships within listening range depart into Bluespace. Until the incident ends, all employees aboard HTU operated ships will have their pay-rolls will be frozen, and their have benefits cut, independent ships not included.
 
@@ -77,7 +76,7 @@ AUTOMATED ALERT: Link to [command_name()] lost.
 		return
 
 /datum/universal_state/supermatter_cascade/proc/AreaSet()
-	for(var/area/A in all_areas)
+	for(var/area/A as anything in SSmapping.all_areas)
 		if(!istype(A,/area) || istype(A, /area/space))
 			continue
 
@@ -86,7 +85,7 @@ AUTOMATED ALERT: Link to [command_name()] lost.
 /datum/universal_state/supermatter_cascade/OverlayAndAmbientSet()
 	spawn(0)
 		for(var/atom/movable/lighting_overlay/L in world)
-			if(isAdminLevel(L.z))
+			if(IS_TECHNICAL_LEVEL(L.z))
 				L.update_overlay(1,1,1)
 			else
 				L.update_overlay(0, 0.4, 1)
@@ -97,7 +96,7 @@ AUTOMATED ALERT: Link to [command_name()] lost.
 /datum/universal_state/supermatter_cascade/proc/MiscSet()
 	for (var/obj/machinery/firealarm/alm in GLOB.firealarm_list)
 		if (!(alm.stat & BROKEN))
-			alm.ex_act(2)
+			alm.explosion_act(500, null)
 
 /datum/universal_state/supermatter_cascade/proc/APCSet()
 	for (var/obj/machinery/power/apc/APC in GLOB.apc_list)
@@ -112,10 +111,5 @@ AUTOMATED ALERT: Link to [command_name()] lost.
 	for(var/datum/antagonist/A in GLOB.current_antags)
 		if(!isliving(A.owner.current))
 			continue
-		if(A.owner.current.stat!=2)
-			A.owner.current.Weaken(10)
-//			flick("e_flash", M.current.flash)
-			if (A.owner.current.HUDtech.Find("flash"))
-				flick("e_flash", A.owner.current.HUDtech["flash"])
 
 		A.remove_antagonist()

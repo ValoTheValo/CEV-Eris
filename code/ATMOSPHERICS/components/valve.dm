@@ -38,11 +38,11 @@
 /obj/machinery/atmospherics/valve/hide(var/i)
 	update_underlays()
 
-/obj/machinery/atmospherics/valve/New()
+/obj/machinery/atmospherics/valve/LateInitialize()
 	switch(dir)
-		if(NORTH || SOUTH)
+		if(NORTH, SOUTH)
 			initialize_directions = NORTH|SOUTH
-		if(EAST || WEST)
+		if(EAST, WEST)
 			initialize_directions = EAST|WEST
 	..()
 
@@ -310,6 +310,5 @@
 		new /obj/item/pipe(loc, make_from=src)
 		qdel(src)
 
-/obj/machinery/atmospherics/valve/examine(mob/user)
-	..()
-	to_chat(user, "It is [open ? "open" : "closed"].")
+/obj/machinery/atmospherics/valve/examine(mob/user, extra_description = "")
+	..(user, "It is [open ? "open" : "closed"].")

@@ -1,18 +1,14 @@
 """
 DO NOT MANUALLY RUN THIS SCRIPT.
 ---------------------------------
-
 This script is designed to generate and push a CL file that can be later compiled.
 The body of the changelog is determined by the description of the PR that was merged.
-
 If a commit is pushed without being associated with a PR, or if a PR is missing a CL,
 the script is designed to exit as a failure. This is to help keep track of PRs without
 CLs and direct commits. See the relating comments in the below source to disable this function.
-
 This script depends on the tags.yml file located in the same directory. You can use that
 file to configure the exact tags you'd like this script to use when generating changelog entries.
 If this is being used in a /tg/ or Bee downstream, the default tags should work.
-
 Expected envrionmental variables:
 -----------------------------------
 GIT_NAME: Username of the github account to be used as the commiter (User provided)
@@ -71,7 +67,8 @@ else:
 write_cl['delete-after'] = True
 
 with open(Path.cwd().joinpath("tools/changelog/tags.yml")) as file:
-    tags = yaml.safe_load(file)
+    yamyl2 = yaml.YAML(typ='safe', pure=True)
+    tags = yamyl2.load(file)
 
 write_cl['changes'] = []
 

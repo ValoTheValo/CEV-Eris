@@ -1,7 +1,7 @@
 /obj/item/gun/projectile/automatic/straylight
 	name = "FS SMG .35 Auto \"Straylight\""
 	desc = "A compact, lightweight and cheap rapid-firing submachine gun. In past was primarily used for testing ammunition and weapon modifications, \
-			novadays mass produced for IH security forces. Suffers from poor recoil control and underperforming ballistic impact, \
+			nowadays mass produced for IH security forces. Suffers from poor recoil control and underperforming ballistic impact, \
 			but makes up for this through sheer firerate. Especially effective with rubber ammunition. Uses .35 Auto rounds."
 	icon = 'icons/obj/guns/projectile/straylight.dmi'
 	icon_state = "straylight"
@@ -17,20 +17,20 @@
 	matter = list(MATERIAL_PLASTEEL = 12, MATERIAL_STEEL = 2, MATERIAL_PLASTIC = 8)
 	price_tag = 1400
 	auto_eject_sound = 'sound/weapons/smg_empty_alarm.ogg'
-	damage_multiplier = 0.65	 //made with rubber rounds in mind. For lethality refer to Wintermute. Still quite lethal if you manage to land most shots.
-	penetration_multiplier = 0.5 //practically no AP, 2.5 with regular rounds and 5 with HV. Still deadly to unarmored targets.
+	damage_multiplier = 0.7	 //made with rubber rounds in mind. For lethality refer to Wintermute. Still quite lethal if you manage to land most shots.
+	penetration_multiplier = 0
 	init_recoil = SMG_RECOIL(0.55)
 	gun_tags = list(GUN_SILENCABLE)
 
 	init_firemodes = list(
 		FULL_AUTO_600,
-		SEMI_AUTO_NODELAY
+		SEMI_AUTO_300
 		)
 
 	wield_delay = 0 // Super weak SMG
 
 	spawn_tags = SPAWN_TAG_FS_PROJECTILE
-	gun_parts = list(/obj/item/part/gun/frame/straylight = 1, /obj/item/part/gun/grip/rubber = 1, /obj/item/part/gun/mechanism/smg = 1, /obj/item/part/gun/barrel/pistol = 1)
+	gun_parts = list(/obj/item/part/gun/frame/straylight = 1, /obj/item/part/gun/modular/grip/rubber = 1, /obj/item/part/gun/modular/mechanism/smg = 1, /obj/item/part/gun/modular/barrel/pistol = 1)
 	serial_type = "FS"
 
 /obj/item/gun/projectile/automatic/straylight/update_icon()
@@ -38,10 +38,12 @@
 
 	var/iconstring = initial(icon_state)
 	var/itemstring = ""
+	wielded_item_state = "_doble"
 
 	if(ammo_magazine)
 		iconstring += "_mag"
 		itemstring += "_mag"
+		wielded_item_state += "_mag"
 
 	if(!ammo_magazine || !length(ammo_magazine.stored_ammo))
 		iconstring += "_slide"
@@ -49,6 +51,7 @@
 	if(silenced)
 		iconstring += "_s"
 		itemstring += "_s"
+		wielded_item_state += "_s"
 
 	icon_state = iconstring
 	set_item_state(itemstring)
@@ -61,7 +64,7 @@
 	name = "Straylight frame"
 	desc = "A Straylight SMG frame. A rabidly fast bullet hose."
 	icon_state = "frame_ihsmg"
-	result = /obj/item/gun/projectile/automatic/straylight
-	grip = /obj/item/part/gun/grip/rubber
-	mechanism = /obj/item/part/gun/mechanism/smg
-	barrel = /obj/item/part/gun/barrel/pistol
+	resultvars = list(/obj/item/gun/projectile/automatic/straylight)
+	gripvars = list(/obj/item/part/gun/modular/grip/rubber)
+	mechanismvar = /obj/item/part/gun/modular/mechanism/smg
+	barrelvars = list(/obj/item/part/gun/modular/barrel/pistol)

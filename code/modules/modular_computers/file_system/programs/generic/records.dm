@@ -1,3 +1,5 @@
+
+#define NULL_RECORD list("name" = null, "uid" = null, "creator" = null, "file_time" = null, "fields" = null, "access" = null, "access_edit" = null)
 /datum/computer_file/program/records
 	filename = "crewrecords"
 	filedesc = "Crew Records"
@@ -15,7 +17,7 @@
 	var/datum/computer_file/report/crew_record/active_record
 	var/message = null
 
-/datum/nano_module/records/ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, state = GLOB.default_state)
+/datum/nano_module/records/nano_ui_data(mob/user)
 	var/list/data = host.initial_data()
 	var/list/user_access = get_record_access(user)
 
@@ -38,7 +40,14 @@
 		data["creation"] = check_access(user, access_heads)
 		data["dnasearch"] = check_access(user, access_moebius) || check_access(user, access_forensics_lockers)
 		data["fingersearch"] = check_access(user, access_security)
+		data += NULL_RECORD
+	return data
+#undef NULL_RECORD
 
+	
+
+/datum/nano_module/records/nano_ui_interact(mob/user, ui_key = "main", datum/nanoui/ui = null, force_open = NANOUI_FOCUS, state = GLOB.default_state)
+	var/list/data = nano_ui_data(user)
 	ui = SSnano.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if (!ui)
 		ui = new(user, src, ui_key, "crew_records.tmpl", name, 700, 540, state = state)
@@ -68,66 +77,67 @@
 		to_chat(user, "<span class='notice'>\The [nano_host()] flashes an \"Access Denied\" warning.</span>")
 		return
 	F.ask_value(user)
+	nano_ui_interact(usr)
 
 /datum/nano_module/records/Topic(href, href_list)
 	if(..())
 		return 1
 	if(href_list["clear_active"])
 		active_record = null
-		return 1
-	if(href_list["clear_message"])
+		return TRUE
+	else if(href_list["clear_message"])
 		message = null
-		return 1
+		return TRUE
 	if(href_list["set_active"])
 		var/ID = text2num(href_list["set_active"])
 		for(var/datum/computer_file/report/crew_record/R in GLOB.all_crew_records)
 			if(R.uid == ID)
 				active_record = R
 				break
-		return 1
+		return TRUE
 	if(href_list["new_record"])
 		if(!check_access(usr, access_heads))
 			to_chat(usr, "Access Denied.")
 			return
 		active_record = new/datum/computer_file/report/crew_record()
 		GLOB.all_crew_records.Add(active_record)
-		return 1
+		return TRUE
 	if(href_list["print_active"])
 		if(!active_record)
 			return
 		print_text(record_to_html(active_record, get_record_access(usr)), usr)
-		return 1
+		return TRUE
 	if(href_list["search"])
 		var/field_name = href_list["search"]
 		var/search = sanitize(input("Enter the value for search for.") as null|text)
 		if(!search)
-			return 1
+			return TRUE
 		for(var/datum/computer_file/report/crew_record/R in GLOB.all_crew_records)
 			var/datum/report_field/field = R.field_from_name(field_name)
 			if(lowertext(field.get_value()) == lowertext(search))
 				active_record = R
-				return 1
+				return TRUE
 		message = "Unable to find record containing '[search]'"
-		return 1
+		return TRUE
 
 	var/datum/computer_file/report/crew_record/R = active_record
 	if(!istype(R))
-		return 1
+		return TRUE
+
 	if(href_list["edit_photo_front"])
 		var/photo = get_photo(usr)
 		if(photo && active_record)
 			active_record.photo_front = photo
-			ui_interact(usr)
-		return 1
+		return TRUE
 	if(href_list["edit_photo_side"])
 		var/photo = get_photo(usr)
 		if(photo && active_record)
 			active_record.photo_side = photo
-			ui_interact(usr)
-		return 1
+			nano_ui_interact(usr)
+		return TRUE
 	if(href_list["edit_field"])
 		edit_field(usr, text2num(href_list["edit_field"]))
-		return 1
+		return TRUE
 
 /datum/nano_module/records/proc/get_photo(var/mob/user)
 	if(istype(user.get_active_hand(), /obj/item/photo))

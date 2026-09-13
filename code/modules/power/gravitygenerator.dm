@@ -23,12 +23,9 @@ var/const/GRAV_NEEDS_WRENCH = 3
 	anchored = TRUE
 	density = TRUE
 	use_power = NO_POWER_USE
+	health = 800
+	maxHealth = 800
 	unacidable = 1
-	var/sprite_number = 0
-
-/obj/machinery/gravity_generator/ex_act(severity, target)
-	if(severity == 1) // Very sturdy.
-		set_broken()
 
 /obj/machinery/gravity_generator/update_icon()
 	..()
@@ -103,7 +100,6 @@ var/const/GRAV_NEEDS_WRENCH = 3
 	idle_power_usage = 0
 	active_power_usage = 3000
 	power_channel = STATIC_ENVIRON
-	sprite_number = 8
 	use_power = IDLE_POWER_USE
 	interact_offline = 1
 	var/on = TRUE
@@ -125,9 +121,8 @@ var/const/GRAV_NEEDS_WRENCH = 3
 	middle.cut_overlays()
 	charge_count = 0
 	breaker = 0
-	grav_off()
-	set_power()
 	set_state(0)
+	set_power()	//this should go after set_state(0) to for proper power consuption settings
 	investigate_log("has broken down.", "gravity")
 
 /obj/machinery/gravity_generator/main/set_fix()
@@ -204,9 +199,9 @@ var/const/GRAV_NEEDS_WRENCH = 3
 		return
 	var/dat = "Gravity Generator Breaker: "
 	if(breaker)
-		dat += "<span class='linkOn'>ON</span> <A href='?src=\ref[src];gentoggle=1'>OFF</A>"
+		dat += "<span class='linkOn'>ON</span> <a href='byond://?src=\ref[src];gentoggle=1'>OFF</A>"
 	else
-		dat += "<A href='?src=\ref[src];gentoggle=1'>ON</A> <span class='linkOn'>OFF</span> "
+		dat += "<a href='byond://?src=\ref[src];gentoggle=1'>ON</A> <span class='linkOn'>OFF</span> "
 
 	dat += "<br>Generator Status:<br><div class='statusDisplay'>"
 	if(charging_state != POWER_IDLE)
@@ -252,10 +247,11 @@ var/const/GRAV_NEEDS_WRENCH = 3
 // Set the charging state based on power/breaker.
 /obj/machinery/gravity_generator/main/proc/set_power()
 	var/new_state = 0
-	if(stat & (NOPOWER|BROKEN) || !breaker)
+	if(stat & (NOPOWER|BROKEN))
 		new_state = 0
-	else if(breaker)
-		new_state = 1
+		set_power_use(NO_POWER_USE)
+	else
+		new_state = breaker
 
 	charging_state = new_state ? POWER_UP : POWER_DOWN // Startup sequence animation.
 	investigate_log("is now [charging_state == POWER_UP ? "charging" : "discharging"].", "gravity")
@@ -263,24 +259,23 @@ var/const/GRAV_NEEDS_WRENCH = 3
 
 // Set the state of the gravity.
 /obj/machinery/gravity_generator/main/proc/set_state(var/new_state)
-	if(new_state == on)
-		var/pulse = 0.5 * sin(2 * M_PI * PULSE_FREQ * world.time) + 0.5
-		set_light(3+pulse, 3+pulse, "#8AD55D")
-		return
-	on = new_state
 	charging_state = POWER_IDLE
-	use_power = on ? 2 : 1
+	on = new_state
 	if(new_state) // If we turned on
-		grav_on()
+		if(!gravity_is_on)
+			grav_on()
+		set_power_use(ACTIVE_POWER_USE)
 	else
-		grav_off()
+		if(gravity_is_on)
+			grav_off()
 		set_light(0)
+		set_power_use(IDLE_POWER_USE)
 	update_icon()
 	src.updateUsrDialog()
 
 /obj/machinery/gravity_generator/main/proc/grav_on()
-	if(!GLOB.maps_data.station_levels.len)
-		message_admins("GLOB.maps_data.station_levels is blank. Gravgen isn't properly established.")
+	if(!LAZYLEN(SSmapping.main_ship_z_levels))
+		message_admins("SSmapping.main_ship_z_levels is blank. Gravgen isn't properly established.")
 		return
 
 	gravity_is_on = 1
@@ -288,11 +283,11 @@ var/const/GRAV_NEEDS_WRENCH = 3
 	priority_announcement.Announce("The gravity generator was brought fully operational.")
 	investigate_log("was brought full online and is now producing gravity.", "gravity")
 	var/area/area = get_area(src)
-	message_admins("The gravity generator was brought fully online. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>[area.name]</a>)")
+	message_admins("The gravity generator was brought fully online. (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>[area.name]</a>)")
 
 /obj/machinery/gravity_generator/main/proc/grav_off()
-	if(!GLOB.maps_data.station_levels.len)
-		message_admins("GLOB.maps_data.station_levels is blank. Gravgen isn't properly established.")
+	if(!LAZYLEN(SSmapping.main_ship_z_levels))
+		message_admins("SSmapping.main_ship_z_levels is blank. Gravgen isn't properly established.")
 		return
 
 	gravity_is_on = 0
@@ -300,12 +295,12 @@ var/const/GRAV_NEEDS_WRENCH = 3
 	priority_announcement.Announce("The gravity generator was brought offline.")
 	investigate_log("was brought offline and there is now no gravity.", "gravity")
 	var/area/area = get_area(src)
-	message_admins("The gravity generator was brought offline with no backup generator. (<A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>[area.name]</a>)")
+	message_admins("The gravity generator was brought offline with no backup generator. (<a href='byond://?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>[area.name]</a>)")
 	shake_everyone()
 
 /obj/machinery/gravity_generator/main/proc/update_gravity(var/is_on)
-	for(var/area/A in world)
-		if(isStationLevel(A.z))
+	for(var/area/A in world) // What the fuck? --KIROV
+		if(IS_SHIP_LEVEL(A.z))
 			A.update_gravity()
 
 // Charge/Discharge and turn on/off gravity when you reach 0/100 percent.
@@ -313,6 +308,9 @@ var/const/GRAV_NEEDS_WRENCH = 3
 /obj/machinery/gravity_generator/main/Process()
 	if(stat & BROKEN)
 		return
+	if(charge_count >= 1)
+		var/pulse = 0.5 * sin(2 * M_PI * PULSE_FREQ * world.time) + 0.5
+		set_light(3+pulse, 3+pulse, "#8AD55D")
 	if(charging_state != POWER_IDLE)
 		if(charging_state == POWER_UP && charge_count >= 100)
 			set_state(1)
@@ -320,6 +318,7 @@ var/const/GRAV_NEEDS_WRENCH = 3
 			set_state(0)
 		else
 			if(charging_state == POWER_UP)
+				use_power(active_power_usage * 3)
 				charge_count += 2
 
 			else if(charging_state == POWER_DOWN)
@@ -339,7 +338,7 @@ var/const/GRAV_NEEDS_WRENCH = 3
 
 // Shake everyone to let them know that gravity was enagaged/disenagaged.
 /obj/machinery/gravity_generator/main/proc/shake_everyone()
-	for(var/mob/M in SSmobs.mob_list)
+	for(var/mob/M in SSmobs.mob_list | SShumans.mob_list)
 		var/turf/our_turf = get_turf(src.loc)
 		if(M.client)
 			shake_camera(M, 15, 1)

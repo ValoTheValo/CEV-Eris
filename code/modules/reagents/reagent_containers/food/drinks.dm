@@ -193,6 +193,39 @@
 		else
 			icon_state = "ramenempty"
 
+/obj/item/reagent_containers/food/drinks/energy
+	name = "energy drink"
+	desc = "A heart attack that fits in your pocket."
+	icon_state = "energy_drink"
+	center_of_mass = list("x"=15, "y"=13)
+	preloaded_reagents = list("sugar" = 10, "adrenaline" = 20)
+	spawn_tags = SPAWN_TAG_JUNKFOOD
+	rarity_value = 15
+
+/obj/item/reagent_containers/food/drinks/energy/update_icon()
+	if(reagent_flags == OPENCONTAINER)
+		if(reagents && reagents.total_volume)
+			icon_state = "energy_drink_open"
+		else
+			icon_state = "energy_drink_whacked"
+
+/obj/item/reagent_containers/food/drinks/protein_shake
+	name = "protein shake"
+	//desc = "Smells like prion disease..."
+	desc = "The best thing to drink after a workout, tastes like apples! At least, the description on this plastic bottle says so. Smells odd..."
+	icon_state = "protein_shake_bottle"
+	center_of_mass = list("x"=16, "y"=8)
+	preloaded_reagents = list("protein_shake_commercial" = 40)
+	rarity_value = 10
+	spawn_tags = SPAWN_TAG_JUNKFOOD
+
+/obj/item/reagent_containers/food/drinks/protein_shake/update_icon()
+	if(reagent_flags == OPENCONTAINER)
+		if(reagents && reagents.total_volume)
+			icon_state = "protein_shake_bottle"
+		else
+			icon_state = "protein_shake_bottle_whacked"
+
 /obj/item/reagent_containers/food/drinks/sillycup
 	name = "paper cup"
 	desc = "A paper water cup."
@@ -217,6 +250,7 @@
 	name = "shaker"
 	desc = "A metal shaker to mix drinks in."
 	icon_state = "shaker"
+	matter = list(MATERIAL_STEEL = 2)
 	amount_per_transfer_from_this = 10
 	possible_transfer_amounts = list(5,10,20,30,60,120)
 	volume = 120
@@ -258,8 +292,9 @@
 	center_of_mass = "x=16;y=7"
 
 /obj/item/reagent_containers/food/drinks/flask
-	name = "Captain's Flask"
+	name = "captain's flask"
 	desc = "A metal flask belonging to the captain"
+	matter = list(MATERIAL_STEEL = 1)
 	icon_state = "flask"
 	volume = 60
 	center_of_mass = list("x"=17, "y"=7)
@@ -275,7 +310,7 @@
 	icon_state = "lithiumflask"
 
 /obj/item/reagent_containers/food/drinks/flask/detflask
-	name = "Inspector's Flask"
+	name = "inspector's flask"
 	desc = "A metal flask with a leather band and golden badge belonging to the inspector."
 	icon_state = "detflask"
 	volume = 60
@@ -302,6 +337,7 @@
 	desc = "A plain mug."
 	icon_state = "mug"
 	item_state = "cup_old"
+	matter = list(MATERIAL_PLASTIC = 1)
 	volume = 30
 	center_of_mass = "x=15;y=13"
 	filling_states = "100"
@@ -312,6 +348,7 @@
 	name = "gold mug"
 	desc = "A shiny gold-like mug."
 	icon_state = "mug_gold"
+	matter = list(MATERIAL_GOLD = 1)
 
 /obj/item/reagent_containers/food/drinks/mug/old_nt
 	name = "NanoTrasen mug"
@@ -322,6 +359,7 @@
 	name = "NeoTheology mug"
 	desc = "A brown mug, it prominently features a tau-cross."
 	icon_state = "mug_new_nt"
+	matter = list(MATERIAL_WOOD = 1)
 
 /obj/item/reagent_containers/food/drinks/mug/syndie
 	name = "Syndicate mug"
@@ -379,6 +417,7 @@
 	item_state = "tea"
 	center_of_mass = "x=16;y=14"
 	filling_states = "100"
+	matter = list(MATERIAL_PLASTIC = 1)
 	base_name = "tea"
 	base_icon = "tea"
 

@@ -36,7 +36,7 @@
 					files.experiments.do_research_object(loaded_item)
 					to_chat(user, "\The [loaded_item] incremented the research points by [object_research_value].")
 					for(var/mob/living/carbon/human/H in viewers(user))
-						SEND_SIGNAL(H, COMSING_DESTRUCTIVE_ANALIZER, loaded_item)
+						SEND_SIGNAL_OLD(H, COMSING_DESTRUCTIVE_ANALIZER, loaded_item)
 				loaded_item = null
 				for(var/obj/I in contents)
 					for(var/mob/M in I.contents)
@@ -334,11 +334,10 @@
 	var/max_doors = 5
 	var/mode = 0 // 0 - Walls   1 - Doors
 
-/obj/item/inflatable_dispenser/examine(mob/user)
-	if(!..(user))
-		return
-	to_chat(user, "It has [stored_walls] wall segment\s and [stored_doors] door segment\s stored.")
-	to_chat(user, "It is set to deploy [mode ? "doors" : "walls"]")
+/obj/item/inflatable_dispenser/examine(mob/user, extra_description = "")
+	extra_description += "\nIt has [stored_walls] wall segment\s and [stored_doors] door segment\s stored."
+	extra_description += "\nIt is set to deploy [mode ? "doors" : "walls"]"
+	..(user, extra_description)
 
 /obj/item/inflatable_dispenser/attack_self()
 	mode = !mode

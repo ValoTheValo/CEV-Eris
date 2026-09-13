@@ -74,10 +74,10 @@
 
 	var/creation_time = 0 //World time when this datum was New'd. Useful to tell how long since a character spawned
 
-/datum/mind/New(var/key)
+/datum/mind/New(key)
 	src.key = key
 	creation_time = world.time
-	..()
+	active = TRUE
 
 /datum/mind/proc/transfer_to(mob/living/new_character)
 	if(!istype(new_character))
@@ -102,10 +102,7 @@
 		last_activity = world.time
 	if(new_character.client)
 		new_character.client.create_UI(new_character.type)
-		if(new_character.client.get_preference_value(/datum/client_preference/stay_in_hotkey_mode) == GLOB.PREF_YES)
-			winset(new_character.client, null, "mainwindow.macro=hotkeymode hotkey_toggle.is-checked=true mapwindow.map.focus=true input.background-color=#F0F0F0")
-			if(istype(new_character, /mob/living/silicon/robot))
-				winset(new_character.client, null, "mainwindow.macro=borgmacro")
+		new_character.client.init_verbs()
 
 /datum/mind/proc/store_memory(new_text)
 	memory += "[new_text]<BR>"
@@ -139,7 +136,10 @@
 			output += "<br><b>Your [A.role_text] objectives:</b>"
 		output += "[A.print_objectives(FALSE)]"
 	output += print_individualobjectives()
-	recipient << browse(output, "window=memory")
+
+	var/datum/browser/panel = new(recipient, "memory", "Memory", 333, 333)
+	panel.set_content(output)
+	panel.open()
 
 /datum/mind/proc/edit_memory()
 	if(SSticker.current_state != GAME_STATE_PLAYING)
@@ -148,7 +148,7 @@
 
 	var/out = "<B>[name]</B>[(current&&(current.real_name!=name))?" (as [current.real_name])":""]<br>"
 	out += "Mind currently owned by key: [key] [active?"(synced)":"(not synced)"]<br>"
-	out += "Assigned role: [assigned_role]. <a href='?src=\ref[src];role_edit=1'>Edit</a><br>"
+	out += "Assigned role: [assigned_role]. <a href='byond://?src=\ref[src];role_edit=1'>Edit</a><br>"
 	out += "<hr>"
 	out += "Special roles:<br><table>"
 
@@ -156,17 +156,17 @@
 	for(var/A in GLOB.all_antag_selectable_types)
 		var/datum/antagonist/antag = GLOB.all_antag_selectable_types[A]
 		var/antag_name = (antag.bantype in GLOB.all_antag_selectable_types) ? antag.bantype : "<font color='red'>[antag.bantype]</font>"
-		out += "<a href='?src=\ref[src];add_antagonist=[antag.bantype]'>[antag_name]</a><br>"
+		out += "<a href='byond://?src=\ref[src];add_antagonist=[antag.bantype]'>[antag_name]</a><br>"
 	out += "<br>"
 
 	for(var/datum/antagonist/antag in antagonist)
-		out += "<br><b>[antag.role_text]</b> <a href='?src=\ref[antag]'>\[EDIT\]</a> <a href='?src=\ref[antag];remove_antagonist=1'>\[DEL\]</a>"
+		out += "<br><b>[antag.role_text]</b> <a href='byond://?src=\ref[antag]'>\[EDIT\]</a> <a href='byond://?src=\ref[antag];remove_antagonist=1'>\[DEL\]</a>"
 	out += "</table><hr>"
 	out += "<br>[memory]"
 
 	out += print_individualobjectives()
 
-	out += "<br><a href='?src=\ref[src];edit_memory=1'>"
+	out += "<br><a href='byond://?src=\ref[src];edit_memory=1'>"
 	usr << browse(out, "window=edit_memory[src]")
 
 /datum/mind/Topic(href, href_list)
